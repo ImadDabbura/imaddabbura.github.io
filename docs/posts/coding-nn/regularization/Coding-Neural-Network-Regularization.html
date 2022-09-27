@@ -285,7 +285,7 @@ ga('send', {
 <li><strong>Augmentation</strong>: Add fake data by using the training examples and adding distortions to them such as rescaling and rotating the images in the case of image recognition. The idea here is that it’s always better to train the model on more data to achieve better performance. Note that augmented examples don’t add much information to the model as much as independent examples do but still it’s a valid alternative when collecting more data is not feasible.</li>
 <li><strong>Early Stopping</strong>: This method tries to optimize the cost function and regularize it so that it would have lower generalization error. The way it works is that on each iteration we record the validation error. If the validation error improves, we store a copy of the parameters and will continue until the optimization algorithm terminates. It’s a good method if computational time and resources is an issue for us.</li>
 </ol>
-<p>In this notebook, we’ll cover L2 parameter regularization.</p>
+<p>In this article, we’ll cover L2 parameter regularization.</p>
 </section>
 <section id="l2-parameter-regularization" class="level2">
 <h2 class="anchored" data-anchor-id="l2-parameter-regularization">L2 Parameter Regularization</h2>
@@ -311,7 +311,7 @@ ga('send', {
 <li>Even if <span class="math inline">\(X^TX\)</span> is not invertible, adding <span class="math inline">\(\lambda\)</span> to each feature will make it full rank matrix <span class="math inline">\(\Rightarrow\)</span> invertible.</li>
 </ul>
 <p>To illustrate how regularization helps us reduce generalization error, we’ll use the cats_vs_dogs dataset. The dataset has images for cats and dogs. We’ll try to build a neural network to classify if the image has a cat or a dog. Each image is 64 x 64 pixels on RGB scale.</p>
-<p>We’ll be using functions we wrote in <a href="https://nbviewer.jupyter.org/github/ImadDabbura/blog-posts/blob/master/notebooks/Coding-Neural-Network-Forwad-Back-Propagation.ipynb"><em>“Coding Neural Network - Forward and Backward Propagation”</em></a> notebook to initialize parameters, compute forward propagation, cross-entropy cost, gradients, etc.</p>
+<p>We’ll be using functions we wrote in <a href="https://imaddabbura.github.io/posts/coding-nn/fwd-bkwd-propagation/Coding-Neural-Network-Forwad-Back-Propagation.html"><em>“Coding Neural Network - Forward and Backward Propagation”</em></a> article to initialize parameters, compute forward propagation, cross-entropy cost, gradients, etc.</p>
 <p>Let’s import the data and take a look at the shape as well as a sample of a cat image from the training set.</p>
 <div class="cell" data-code_folding="[0]" data-execution_count="2">
 <details>

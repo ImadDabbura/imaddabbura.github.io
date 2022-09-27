@@ -273,7 +273,7 @@ ga('send', {
 </ul>
 <p>We can use different probabilities on each layer; however, the output layer would always have <code>keep_prob = 1</code> and the input layer has high <code>keep_prob</code> such as 0.9 or 1. If a hidden layer has <code>keep_prob = 0.8</code>, this means that; on each iteration, each unit has 80% probablitity of being included and 20% probability of being dropped out.</p>
 <p>Dropout is used a lot in computer vision problems because we have a lot of features and not a lot of data. Also, features (pixels) next to each other usually don’t add a lot of information. Therefore, models always suffer from overfitting.</p>
-<p>To illustrate how dropout helps us reduce generalization error, we’ll use the same dataset we’ve used in the previous notebooks. The dataset has images for cats and non-cat. We’ll try to build a neural network to classify if the image has cat or not. Each image is 64 x 64 pixels on RGB scale. Let’s import the data and take a look at the shape as well as a sample of a cat image from the training set.</p>
+<p>To illustrate how dropout helps us reduce generalization error, we’ll use the same dataset we’ve used in the previous articles. The dataset has images for cats and non-cat. We’ll try to build a neural network to classify if the image has cat or not. Each image is 64 x 64 pixels on RGB scale. Let’s import the data and take a look at the shape as well as a sample of a cat image from the training set.</p>
 <div class="cell" data-code_folding="[0]" data-execution_count="2">
 <details>
 <summary>Code</summary>
@@ -347,7 +347,7 @@ X's dimension: (12288, 50), Y's dimension: (1, 50)</code></pre>
 </section>
 <section id="implementation" class="level2">
 <h2 class="anchored" data-anchor-id="implementation">Implementation</h2>
-<p>Now, we’ll write the functions needed to apply dropout on both forward propagation and back-propagation. Note that we’ll utilize the functions we wrote in previous notebooks such as <code>initialize_parameters</code>.</p>
+<p>Now, we’ll write the functions needed to apply dropout on both forward propagation and back-propagation. Note that we’ll utilize the functions we wrote in previous articles such as <code>initialize_parameters</code>.</p>
 <div class="cell" data-code_folding="[0,36,89,147]" data-execution_count="4">
 <details>
 <summary>Code</summary>
