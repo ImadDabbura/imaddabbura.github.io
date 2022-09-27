@@ -1,0 +1,70 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Imad Dabbura"
+  repo-url: https://github.com/imaddabbura/imaddabbura.github.io
+  repo-actions: [issue]
+  favicon: profile.jpg
+  page-navigation: true
+  reader-mode: true
+  page-footer:
+    left: "Blog made with Quarto, by Imad Dabbura"
+    right:
+      - icon: linkedin
+        href: https://www.linkedin.com/in/imaddabbura/
+      - icon: envelope
+        href: mailto:imad.dabbura@hotmail.com
+      - icon: github
+        href: https://github.com/imaddabbura
+      - icon: twitter
+        href: https://twitter.com/imadphd
+
+  twitter-card:
+    creator: "@imaddabbura"
+    card-style: summary_large_image
+  search:
+    location: navbar
+    type: overlay
+  navbar:
+    background: primary
+    forground: primary
+    logo: profile.jpg
+    left:
+      - about.qmd
+      - text: Posts
+        file: index.qmd
+      - text: Projects
+        file: projects-index.qmd
+      - text: MLOps
+        file: mlops-index.qmd
+      - text: "Today I Learned"
+        file: til.qmd
+      - text: Resume
+        file: resume.pdf
+      - text: More
+        menu:
+          - about.qmd
+    right:
+      - icon: github
+        href: https://github.com/imaddabbura
+      - icon: twitter
+        href: https://twitter.com/imadphd
+  # sidebar:
+  #   style: "docked"
+  #   search: true
+  #   contents:
+  #     - section: "Coding NN From Scratch"
+  #       contents:
+  #         # - posts/optimization-algorithms/gradient-descent.qmd
+  #         - posts/optimization-algorithms/*
+format:
+  html:
+    theme: 
+      light: flatly
+      dark: darkly
+    css: styles.css
+comments:
+  giscus: 
+    repo: imaddabbura/imaddabbura.github.io
