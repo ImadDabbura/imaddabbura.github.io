@@ -301,7 +301,7 @@ ga('send', {
 </div>
 <p>For example, computers can’t understand images directly and don’t know what to do with pixels data. However, a neural network can build a simple representation of the image in the early hidden layers that identifies edges. Given the first hidden layer output, it can learn corners and contours. Given the second hidden layer, it can learn parts such as nose. Finally, it can learn the object identity.</p>
 <p>Since <strong>truth is never linear</strong> and representation is very critical to the performance of a machine learning algorithm, neural network can help us build very complex models and leave it to the algorithm to learn such representations without worrying about feature engineering that takes practitioners very long time and effort to curate a good representation.</p>
-<p>The article has two parts:</p>
+<p>The post has two parts:</p>
 <ol type="1">
 <li>Coding the neural network: This entails writing all the helper functions that would allow us to implement a multi-layer neural network. While doing so, I’ll explain the theoretical parts whenever possible and give some advices on implementations.</li>
 <li>Application: We’ll use the neural network we coded in the first part on image recognition problem to see if the network we built will be able to detect if the image has a cat or a dog and see it working :)</li>
@@ -328,7 +328,7 @@ ga('send', {
 <section id="forward-propagation" class="level3">
 <h3 class="anchored" data-anchor-id="forward-propagation">Forward Propagation</h3>
 <p>The input <span class="math inline">\(X\)</span> provides the initial information that then propagates to the hidden units at each layer and finally produce the output <span class="math inline">\(\widehat{Y}\)</span>. The architecture of the network entails determining its depth, width, and activation functions used on each layer. <strong>Depth</strong> is the number of hidden layers. <strong>Width</strong> is the number of units (nodes) on each hidden layer since we don’t control neither input layer nor output layer dimensions. There are quite a few set of activation functions such <em>Rectified Linear Unit, Sigmoid, Hyperbolic tangent, etc</em>. Research has proven that deeper networks outperform networks with more hidden units. Therefore, it’s always better and won’t hurt to train a deeper network (with diminishing returns).</p>
-<p>Lets first introduce some notations that will be used throughout the article:</p>
+<p>Lets first introduce some notations that will be used throughout the post:</p>
 <ul>
 <li><span class="math inline">\(W^l\)</span>: Weights matrix for the <span class="math inline">\(l^{th}\)</span> layer</li>
 <li><span class="math inline">\(b^l\)</span>: Bias vector for the <span class="math inline">\(l^{th}\)</span> layer</li>

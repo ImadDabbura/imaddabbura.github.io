@@ -284,7 +284,7 @@ ga('send', {
                 <div class="quarto-category">Machine Learning</div>
                 <div class="quarto-category">Data Science</div>
                 <div class="quarto-category">Unsupervised Learning</div>
-                <div class="quarto-category">clustering</div>
+                <div class="quarto-category">Clustering</div>
               </div>
                   </div>
   </div>
@@ -352,7 +352,7 @@ ga('send', {
 <p><strong>Clustering</strong> is one of the most common exploratory data analysis technique used to get an intuition about the structure of the data. It can be defined as the task of identifying subgroups in the data such that data points in the same subgroup (cluster) are very similar while data points in different clusters are very different. In other words, we try to find homogeneous subgroups within the data such that data points in each cluster are as similar as possible according to a similarity measure such as euclidean-based distance or correlation-based distance. The decision of which similarity measure to use is application-specific.</p>
 <p>Clustering analysis can be done on the basis of features where we try to find subgroups of samples based on features or on the basis of samples where we try to find subgroups of features based on samples. We’ll cover here clustering based on features. Clustering is used in market segmentation; where we try to fined customers that are similar to each other whether in terms of behaviors or attributes, image segmentation/compression; where we try to group similar regions together, document clustering based on topics, etc.</p>
 <p>Unlike supervised learning, clustering is considered an unsupervised learning method since we don’t have the ground truth to compare the output of the clustering algorithm to the true labels to evaluate its performance. We only want to try to investigate the structure of the data by grouping the data points into distinct subgroups.</p>
-<p>In this article, we will cover only <strong>Kmeans</strong> which is considered as one of the most used clustering algorithms due to its simplicity.</p>
+<p>In this post, we will cover only <strong>Kmeans</strong> which is considered as one of the most used clustering algorithms due to its simplicity.</p>
 </section>
 <section id="kmeans-algorithm" class="level2">
 <h2 class="anchored" data-anchor-id="kmeans-algorithm">Kmeans Algorithm</h2>
@@ -438,7 +438,7 @@ ga('send', {
 <section id="applications" class="level2">
 <h2 class="anchored" data-anchor-id="applications">Applications</h2>
 <p>kmeans algorithm is very popular and used in a variety of applications such as market segmentation, document clustering, image segmentation and image compression, etc. The goal usually when we undergo a cluster analysis is either: 1. Get a meaningful intuition of the structure of the data we’re dealing with. 2. Cluster-then-predict where different models will be built for different subgroups if we believe there is a wide variation in the behaviors of different subgroups. An example of that is clustering patients into different subgroups and build a model for each subgroup to predict the probability of the risk of having heart attack.</p>
-<p>In this article, we’ll apply clustering on two cases: - Geyser eruptions segmentation (2-D dataset). - Image compression.</p>
+<p>In this post, we’ll apply clustering on two cases: - Geyser eruptions segmentation (2-D dataset). - Image compression.</p>
 <section id="kmeans-on-geysers-eruptions-segmentation" class="level3">
 <h3 class="anchored" data-anchor-id="kmeans-on-geysers-eruptions-segmentation">Kmeans on Geyser’s Eruptions Segmentation</h3>
 <p>We’ll first implement the kmeans algorithm on 2D dataset and see how it works. The dataset has 272 observations and 2 features. The data covers the waiting time between eruptions and the duration of the eruption for the Old Faithful geyser in Yellowstone National Park, Wyoming, USA. We will try to find <span class="math inline">\(K\)</span> subgroups within the data points and group them accordingly. Below is the description of the features: - eruptions (float): Eruption time in minutes. - waiting (int): Waiting time to next eruption.</p>
@@ -601,7 +601,7 @@ ga('send', {
 <section id="evaluation-methods" class="level2">
 <h2 class="anchored" data-anchor-id="evaluation-methods">Evaluation Methods</h2>
 <p>Contrary to supervised learning where we have the ground truth to evaluate the model’s performance, clustering analysis doesn’t have a solid evaluation metric that we can use to evaluate the outcome of different clustering algorithms. Moreover, since kmeans requires <span class="math inline">\(k\)</span> as an input and doesn’t learn it from data, there is no right answer in terms of the number of clusters that we should have in any problem. Sometimes domain knowledge and intuition may help but usually that is not the case. In the cluster-predict methodology, we can evaluate how well the models are performing based on different <span class="math inline">\(K\)</span> clusters since clusters are used in the downstream modeling.</p>
-<p>In this article we’ll cover two metrics that may give us some intuition about <span class="math inline">\(k\)</span>:</p>
+<p>In this post we’ll cover two metrics that may give us some intuition about <span class="math inline">\(k\)</span>:</p>
 <ul>
 <li>Elbow method</li>
 <li>Silhouette analysis</li>
@@ -829,7 +829,7 @@ ga('send', {
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<p>Kmeans clustering is one of the most popular clustering algorithms and usually the first thing practitioners apply when solving clustering tasks to get an idea of the structure of the dataset. The goal of kmeans is to group data points into distinct non-overlapping subgroups. It does a very good job when the clusters have a kind of spherical shapes. However, it suffers as the geometric shapes of clusters deviates from spherical shapes. Moreover, it also doesn’t learn the number of clusters from the data and requires it to be pre-defined. To be a good practitioner, it’s good to know the assumptions behind algorithms/methods so that you would have a pretty good idea about the strength and weakness of each method. This will help you decide when to use each method and under what circumstances. In this article, we covered both strength, weaknesses, and some evaluation methods related to kmeans.</p>
+<p>Kmeans clustering is one of the most popular clustering algorithms and usually the first thing practitioners apply when solving clustering tasks to get an idea of the structure of the dataset. The goal of kmeans is to group data points into distinct non-overlapping subgroups. It does a very good job when the clusters have a kind of spherical shapes. However, it suffers as the geometric shapes of clusters deviates from spherical shapes. Moreover, it also doesn’t learn the number of clusters from the data and requires it to be pre-defined. To be a good practitioner, it’s good to know the assumptions behind algorithms/methods so that you would have a pretty good idea about the strength and weakness of each method. This will help you decide when to use each method and under what circumstances. In this post, we covered both strength, weaknesses, and some evaluation methods related to kmeans.</p>
 <p>Below are the main takeaways:</p>
 <ul>
 <li>Scale/standardize the data when applying kmeans algorithm.</li>
