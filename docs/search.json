@@ -455,6 +455,13 @@
     "text": "About 1 in 3 people who have a transient ischemic attack will eventually have a stroke, with about half occurring within a year after the transient ischemic attack.\nThe goal of this project is to build a binary classifier to predict Transient Ischemic Attack (TIA) and then deploy the best model as a RESTful API.\nCheck out the project on github."
   },
   {
+    "objectID": "mlops/airflow/Airflow-DAGs.html",
+    "href": "mlops/airflow/Airflow-DAGs.html",
+    "title": "Airflow Part 2 - DAGs",
+    "section": "",
+    "text": "Note\n\n\n\nOther than my experience and the documentation, the main resource behind this post and figures is the fantastic book :_Data Pipelines with Apache. Airflow.\n\n\n\nDAG() class is needed to instantiate a DAG which will be the starting point of any workflow.\n\nThe required arguments are: dag_id which is the name Airflow web UI uses to display workflow. start_date which is when to start running the workflow, it can be in the past\nThere are other arguments such as schedule_interval which determines the schedule to rerun the DAG\n\nOperator is responsible for a piece of work and almost represents a task.\n\nIt has task_id which is the name web UI uses to display the task\nThere are many operators such as BashOperator, PythonOperator … All of them inherits from BaseOperator\nSome operators are generic such as BashOperator and some are specific such as EmailOperator\n\nTask is a wrapper/manager over operator that makes sure the operator gets executed\n>> represents the dependencies between tasks\n\na >> b means a should run before b\n\nAirflow UI offers two views:\n\ntree view that shows the DAG runs over time. Each column is one run. Each row is a task. So we can inspect status of tasks over time\ngraph view that shows the DAG as a graph which helps showing the dependencies of tasks in the workflow\n\nIf any task failed, all successive tasks that depend on it don’t run\n\nWe can rerun the failed tasks (which also would cause successive tasks to rerun) w/o having to rerun the workflow from scratch\nWe can inspect the logs to see what was the reason for the errors\n\nTasks can run in parallel depending on their dependencies\nTo setup Airflow locally inside Python virtual env:\n\npip install apache-airflow\nairflow init db # Initialize metastore locally using SQLite; not recommended for production\nairflow users create –username admin –password admin –firstname Anonymous –lastname Admin –role Admin –email admin@example.org # Create user\nairflow webserver # Start web server to use web UI\nairflow scheduler # Start scheduler, don’t use sequential in production\n\n\n\nimport airflow\nfrom airflow import DAG\nfrom airflow.operators.bash import BashOperator\nfrom airflow.operators.python import PythonOperator\n\nf = lambda: print(1)\ndag = DAG(dag_id=\"simple-workflow\", start_date=airflow.utils.dates.days_ago(10))\na = BashOperator(task_id=\"bash\", bash_command=\"echo 'a'\", dag=dag)\nb = PythonOperator(task_id=\"python\", python_callable=f, dag=dag)\na >> b\n\n<Task(PythonOperator): python>"
+  },
+  {
     "objectID": "mlops/airflow/What-Is-Airflow.html",
     "href": "mlops/airflow/What-Is-Airflow.html",
     "title": "Airflow Part 1 - What is Airflow?",
@@ -501,6 +508,6 @@
     "href": "mlops-index.html",
     "title": "MLOps",
     "section": "",
-    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Author\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\n\n3 min\n\n\n\nData Engineering\n\n\nMLOps\n\n\nAirflow\n\n\n\n\nImad Dabbura\n\n\nJan 10, 2022\n\n\n\n\n\n\n\n\nNo matching items"
+    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Author\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\n\n2 min\n\n\n\nData Engineering\n\n\nMLOps\n\n\nAirflow\n\n\n\n\nImad Dabbura\n\n\nJan 17, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n3 min\n\n\n\nData Engineering\n\n\nMLOps\n\n\nAirflow\n\n\n\n\nImad Dabbura\n\n\nJan 10, 2022\n\n\n\n\n\n\n\n\nNo matching items"
   }
 ]
