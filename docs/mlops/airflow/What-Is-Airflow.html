@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Imad Dabbura">
+<meta name="dcterms.date" content="2022-01-10">
 
-<title>Imad Dabbura - MLOps</title>
+<title>Imad Dabbura - Airflow Part 1 - What is Airflow?</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,28 +25,26 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<script src="site_libs/quarto-search/autocomplete-preset-algolia.umd.js"></script>
-<meta name="quarto:offset" content="./">
-<link href="./profile.jpg" rel="icon" type="image/jpeg">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete-preset-algolia.umd.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../profile.jpg" rel="icon" type="image/jpeg">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -86,35 +86,6 @@ i.async=1,i.src=n,c.parentNode.insertBefore(i,c)
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-plugin-algolia-insights">
 
 </script>
-<script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-image','listing-date','listing-title','listing-subtitle','listing-categories','listing-author','listing-reading-time',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-title","listing-author","listing-date","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
 
 <script type="text/javascript">
 
@@ -130,11 +101,11 @@ ga('send', {
 });
 </script>
 
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<link rel="stylesheet" href="styles.css">
-<meta name="twitter:title" content="Imad Dabbura - MLOps">
-<meta name="twitter:image" content="./mlops/airflow/feature.png">
+<link rel="stylesheet" href="../../styles.css">
+<meta name="twitter:title" content="Imad Dabbura - Airflow Part 1 - What is Airflow?">
+<meta name="twitter:description" content="Airflow is workflow orchestration tool that is written in Python at Airbnb. The workflow is also written in Python.">
+<meta name="twitter:image" content="feature.png">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 </head>
@@ -146,10 +117,10 @@ ga('send', {
     <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
-    <a href="./index.html" class="navbar-brand navbar-brand-logo">
-    <img src="./profile.jpg" alt="" class="navbar-logo">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../profile.jpg" alt="" class="navbar-logo">
     </a>
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Imad Dabbura</span>
     </a>
   </div>
@@ -159,25 +130,25 @@ ga('send', {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./about.html">About</a>
+    <a class="nav-link" href="../../about.html">About</a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./index.html">Posts</a>
+    <a class="nav-link" href="../../index.html">Posts</a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./projects-index.html">Projects</a>
+    <a class="nav-link" href="../../projects-index.html">Projects</a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./mlops-index.html" aria-current="page">MLOps</a>
+    <a class="nav-link" href="../../mlops-index.html">MLOps</a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./til.html">Today I Learned</a>
+    <a class="nav-link" href="../../til.html">Today I Learned</a>
   </li>  
   <li class="nav-item dropdown ">
     <a class="nav-link dropdown-toggle" href="#" id="nav-menu-more" role="button" data-bs-toggle="dropdown" aria-expanded="false">More</a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-more">    
         <li>
-    <a class="dropdown-item" href="./resume.pdf">
+    <a class="dropdown-item" href="../../resume.pdf">
  <span class="dropdown-text">Resume</span></a>
   </li>  
     </ul>
@@ -211,103 +182,112 @@ ga('send', {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page-left">
-      <h1 class="title">MLOps</h1>
-                      </div>
+    <div class="quarto-title column-body">
+      <h1 class="title">Airflow Part 1 - What is Airflow?</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Data Engineering</div>
+                <div class="quarto-category">MLOps</div>
+                <div class="quarto-category">Airflow</div>
+              </div>
+                  </div>
   </div>
     
   
   <div class="quarto-title-meta">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Imad Dabbura </p>
+            </div>
+    </div>
       
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">January 10, 2022</p>
+      </div>
+    </div>
       
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Airflow">Airflow <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Data Engineering">Data Engineering <span class="quarto-category-count">(1)</span></div><div class="category" data-category="MLOps">MLOps <span class="quarto-category-count">(1)</span></div></div></div>
-<!-- main -->
-<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
-
-
-
-
-
-
-
-
-<div class="quarto-listing quarto-listing-container-grid" id="listing-listing">
-<div class="listing-actions-group">
-   <div class="input-group input-group-sm quarto-listing-sort">
-     <span class="input-group-text"><i class="bi bi-sort-down"></i></span>
-     <select id="listing-listing-sort" class="form-select" aria-label="Order By" onchange="window['quarto-listings']['listing-listing'].sort(this.options[this.selectedIndex].value, { order: this.options[this.selectedIndex].getAttribute('data-direction')})">
-       <option value="" disabled="" selected="" hidden="">Order By</option>
-       <option value="index" data-direction="asc">Default</option>
-         <option value="listing-title" data-direction="asc">
-          Title
-        </option>
-         <option value="listing-date-sort" data-direction="asc">
-          Date - Oldest
-        </option>
-         <option value="listing-date-sort" data-direction="desc">
-          Date - Newest
-        </option>
-         <option value="listing-author" data-direction="asc">
-          Author
-        </option>
-     </select>
-  </div>
-    <div class="input-group input-group-sm quarto-listing-filter">
-      <span class="input-group-text"><i class="bi bi-search"></i></span>
-      <input type="text" class="search form-control" placeholder="Filter">
     </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="feature.png" class="img-fluid figure-img"></p>
+</figure>
 </div>
-<div class="list grid quarto-listing-cols-3">
-<div class="g-col-1" data-index="0" data-categories="Data Engineering,MLOps,Airflow" data-listing-date-sort="1641794400000" data-listing-file-modified-sort="1664327478521" data-listing-reading-time-sort="3.345">
-<a href="./mlops/airflow/What-Is-Airflow.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top">
-<img src="./mlops/airflow/feature.png" class="thumbnail-image card-img" style="height: 150px;">
-</p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Airflow Part 1 - What is Airflow?
-</h5>
-<div class="listing-reading-time card-text text-muted">
-3 min
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Data Engineering'); return false;">
-Data Engineering
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('MLOps'); return false;">
-MLOps
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('Airflow'); return false;">
-Airflow
+<div class="callout-caption-container flex-fill">
+Note
 </div>
 </div>
-<div class="card-attribution card-text-small justify">
-<div class="listing-author">
-Imad Dabbura
-</div>
-<div class="listing-date">
-Jan 10, 2022
+<div class="callout-body-container callout-body">
+<p>Other than my experience and the documentation, the main resource behind this post and figures is the fantastic book :<a href="https://www.manning.com/books/data-pipelines-with-apache-airflow">_Data Pipelines with Apache. Airflow</a>.</p>
 </div>
 </div>
-</div>
-</div>
-</a>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+<p><strong>Airflow</strong> is workflow orchestration tool that is written in Python at Airbnb. The workflow is also written in Python. It defines the workflow as a <strong>DAG</strong> so it is easy to determine the dependencies between tasks. If any task failed, we don’t need to rerun the workflow again, we can just run the failed task and all the tasks that depend on it. We can also do <em>backfilling</em> by running the pipeline/tasks for time intervals in the past.</p>
+<p>Airflow consists of mainly three components:</p>
+<ul>
+<li><strong>The Airflow scheduler</strong>: Parses DAGs, checks their schedule interval, and (if the DAGs’ schedule has passed) starts scheduling the DAGs’ tasks for execution by passing them to the Airflow workers.</li>
+<li><strong>The Airflow workers</strong>: Pick up tasks that are scheduled for execution and execute them. As such, the workers are responsible for actually “doing the work.”</li>
+<li><strong>The Airflow webserver</strong>: Visualizes the DAGs parsed by the scheduler and provides the main interface for users to monitor DAG runs and their results. It uses the metadata database which has all the logs and other metadata about tasks and workflows.</li>
+</ul>
+<p>Conceptually, the scheduling algorithm follows the following steps:</p>
+<ol type="1">
+<li>For each open (= uncompleted) task in the graph, do the following: – For each edge pointing toward the task, check if the “upstream” task on the other end of the edge has been completed. – If all upstream tasks have been completed, add the task under consideration to a queue of tasks to be executed.</li>
+<li>Execute the tasks in the execution queue, marking them completed once they finish performing their work.</li>
+<li>Jump back to step 1 and repeat until all tasks in the graph have been completed.</li>
+</ol>
+<p>The scheduler in Airflow runs roughly through the following steps:</p>
+<ol type="1">
+<li>Once users have written their workflows as DAGs, the files containing these DAGs are read by the scheduler to extract the corresponding tasks, dependen- cies, and schedule interval of each DAG.</li>
+<li>For each DAG, the scheduler then checks whether the schedule interval for the DAG has passed since the last time it was read. If so, the tasks in the DAG are scheduled for execution.</li>
+<li>For each scheduled task, the scheduler then checks whether the dependencies (= upstream tasks) of the task have been completed. If so, the task is added to the execution queue.</li>
+<li>The scheduler waits for several moments before starting a new loop by jumping back to step 1.</li>
+</ol>
+<p><img src="images/scheduler-overview.png"></p>
+<p>Airflow can be run:</p>
+<ol type="1">
+<li>In python virtual environment</li>
+<li>Inside Docker containers. In this case, Airflow scheduler, webserver, and metastore would run each in separate containers</li>
+</ol>
+<p>The main disadvantages of Airflow are:</p>
+<ol type="1">
+<li>It can get very messy and hard to understand for complex workflows</li>
+<li>It is best used for batch/recurring jobs NOT streaming jobs</li>
+<li>Mainly support static DAGs and hard to implement dynamic DAGs. Imagine you’re reading from a database and you want to create a step to process each record in the database (e.g.&nbsp;to make a prediction), but you don’t know in advance how many records there are in the database, Airflow won’t be able to handle that.</li>
+<li>It is monolithic, which means it packages the entire workflow into one container. If two different steps in your workflow have different requirements, you can, in theory, create different containers for them using Airflow’s DockerOperator, but it’s not that easy to do so.</li>
+<li>Airflow’s DAGs are not parameterized, which means you can’t pass parameters into your workflows. So if you want to run the same model with different learning rates, you’ll have to create different workflows.</li>
+</ol>
+<p>To setup Airflow locally inside Python virtual env:</p>
+<ol type="1">
+<li>pip install apache-airflow</li>
+<li>airflow init db # Initialize metastore locally using SQLite; not recommended for production</li>
+<li>airflow users create –username admin –password admin –firstname Anonymous –lastname Admin –role Admin –email admin@example.org # Create user</li>
+<li>airflow webserver # Start web server to use web UI</li>
+<li>airflow scheduler # Start scheduler, don’t use sequential in production</li>
+</ol>
+
+
+
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
