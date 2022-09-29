@@ -97,8 +97,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <script src="../../site_libs/quarto-search/autocomplete-preset-algolia.umd.js"></script>
 <meta name="quarto:offset" content="../../">
 <link href="../../profile.jpg" rel="icon" type="image/jpeg">
-<script src="../../site_libs/quarto-listing/list.min.js"></script>
-<script src="../../site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="../../site_libs/quarto-html/quarto.js"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -151,35 +149,6 @@ i.async=1,i.src=n,c.parentNode.insertBefore(i,c)
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-plugin-algolia-insights">
 
 </script>
-<script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: [{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: [],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
 
 <script type="text/javascript">
 
@@ -810,17 +779,9 @@ Smoothed loss: 15.7312
 <p>Statistical language models are very crucial in Natural Language Processing (NLP) such as speech recognition and machine translation. We demonstrated in this notebook the main concepts behind statistical language models using character-level language model. The task of this model is generate names character by character using names obtained from census data that were consisted of 5,163 names. Below are the main key takeaways: - If we have more data, bigger model, and train longer we may get more interesting results. However, to get a very interesting results, we should instead use <strong>Long Short_Term Memory (LSTM)</strong> model with more than one layer deep. People have used 3 layers deep LSTM model with dropout and were able to generate very interesting results when applied on cook books and Shakespeare poems. LSTM models outperform simple RNN due to its ability in capturing longer time dependencies. - With the sampling technique we’re using, don’t expect the RNN to generate meaningful sequence of characters (names). - We used in this notebook each name as its own sequence; however, we may be able to speed up learning and get better results if we increase the batch size lets say from one name to a sequence of 50 characters. - We can control the level of randomness using the sampling strategy. Here, we balanced between what the model thinks its the right character and the level of randomness.</p>
 
 
-
 </section>
 
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
