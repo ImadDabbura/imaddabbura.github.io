@@ -167,11 +167,13 @@ ga('send', {
 
 <link rel="stylesheet" href="../../styles.css">
 <meta property="og:title" content="Imad Dabbura - Airflow Part 3 - DAG Scheduling">
+<meta property="og:description" content="Best Practices:">
 <meta property="og:image" content="https://imaddabbura.github.io/mlops/airflow/feature.png">
 <meta property="og:site-name" content="Imad Dabbura">
 <meta property="og:image:height" content="146">
 <meta property="og:image:width" content="345">
 <meta name="twitter:title" content="Imad Dabbura - Airflow Part 3 - DAG Scheduling">
+<meta name="twitter:description" content="Best Practices:">
 <meta name="twitter:image" content="https://imaddabbura.github.io/mlops/airflow/feature.png">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
@@ -298,7 +300,7 @@ ga('send', {
 <p><img src="feature.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
-<ul>
+<ol class="example" type="1">
 <li>Airflow will schedule the first execution of DAG at the end of the interval; which means after the last time point in the interval has passed. For example, if we schedule it to run <code>@daily</code>, it will run t midnight of each day starting from the <code>start_date</code> until (optionally) <code>end_date</code>. In other words, as soon as <code>23:59:59</code> has passed which means any time after <code>00:00:00</code>.
 <ul>
 <li>Example: if start_date=“2022-01-01” and schedule_interval=“<span class="citation" data-cites="daily">@daily</span>” -&gt; The first time it runs is any time soon after “2022-01-02 00:00” which is midnight of January second.</li>
@@ -313,7 +315,7 @@ ga('send', {
 <li><code>@monthly</code>: Run once a month at midnight on the first day of the month. Run once a year at midnight on January 1.</li>
 </ul></li>
 <li>Cron-based intervals:</li>
-</ul>
+</ol>
 <pre><code># ┌─────── minute (0 - 59)
 # │ ┌────── hour (0 - 23)
 # │ │ ┌───── dayofthemonth(1-31)
@@ -327,7 +329,7 @@ ga('send', {
     2. 00*** means daily at midnight
     3. 00**0 means weekly at midnight on Sunday
 - Useful link to check meaning of cron-based intervals: https://crontab.guru/</code></pre>
-<ul>
+<ol start="5" class="example" type="1">
 <li>Cron expressions have limitations when trying to specify frequency-based intervals such as every three days. The reason for this behavior is that cron expressions are stateless and don’t look at previous runs to determine next run, they only look at the current time to see if it matches the expression.</li>
 <li>Airflow allows us to use frequency-based intervals using <code>timedelta</code> from datetime library. This way we can use previous run to determine the next run.
 <ul>
@@ -340,7 +342,7 @@ ga('send', {
 <li><code>previous_execution_date</code> is a timestamp of the start time of the previous schedule interval</li>
 <li>Airflow uses Jinja-based templating such as {{variable_name}}:</li>
 </ul></li>
-</ul>
+</ol>
 <div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">fetch_events</span> = BashOperator<span class="er">(</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="va">task_id</span><span class="op">=</span><span class="st">"fetch_events"</span>,</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="va">bash_command</span><span class="op">=</span><span class="va">(</span></span>
@@ -364,9 +366,9 @@ ga('send', {
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="kw">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <pre><code>- `ds` has `YYYY-MM-DD` format while `ds_nodash` has `YYYYMMDD` format
 - Shorthands: ds, ds_nodash, next_ds, next_ds_nodash, ps, ps_nodash execution date of the next interval.</code></pre>
-<ul>
+<ol start="8" class="example" type="1">
 <li>We can also use dates or any dynamic parameters to Python function using <code>templates_dict</code> argument and the python callable will be passed the context that has the <code>templates_dict</code> For example:</li>
-</ul>
+</ol>
 <div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>    <span class="ex">calculate_stats</span> = PythonOperator<span class="er">(</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>       <span class="va">task_id</span><span class="op">=</span><span class="st">"calculate_stats"</span>,</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>       <span class="va">python_callable</span><span class="op">=</span>_calculate_stats,</span>
@@ -380,7 +382,7 @@ ga('send', {
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Calculates event statistics."""</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>            input_path <span class="op">=</span> context[<span class="st">"templates_dict"</span>][<span class="st">"input_path"</span>] </span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>            output_path <span class="op">=</span> context[<span class="st">"templates_dict"</span>][<span class="st">"output_path"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
+<ol start="9" class="example" type="1">
 <li>Because Airlfow follows <strong>Interval-Based Scheduling</strong>, that means DAGs run only after the last time point of schedule interval passed. If we run the DAG daily starting from <code>2022-01-01</code>, the first time it runs is soon after <code>2022-01-02 00:00:00</code> has passed and the <code>execution_date</code> would be <code>2022-01-01</code> even though it is running in <code>2022-01-02</code>. This is because it is running for the corresponding interval.
 <ul>
 <li>The end of the previous interval is <code>execution_date</code></li>
@@ -390,14 +392,14 @@ ga('send', {
 <ul>
 <li>Backfilling is also helpful if we change the code for the DAG. It would run all previous schedules after we clear them.</li>
 </ul></li>
-<li><strong>Best Practices</strong>:
+</ol>
+<p><strong>Best Practices</strong>:</p>
 <ul>
 <li>Task needs to be <strong>atomic</strong> which means a single coherent unit of work. This allows us to split work into smaller units where if one fails we know exactly what is it and recover easily.</li>
 <li>Task needs to be <strong>idempotent</strong> which means it has no side effects on the system when it reruns. If the task is given the same input, it should produce the same output.
 <ul>
 <li>In database systems, we can use upsert, which allows us to overwrite existing row.</li>
 <li>When writing to files, make sure that rerunning the same task for the same interval don’t write data again. <em>Append</em> doesn’t let us make the task idempotent.</li>
-</ul></li>
 </ul></li>
 </ul>
 
