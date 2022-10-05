@@ -298,13 +298,26 @@ ga('send', {
 <p><img src="feature.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Other than my experience and the documentation, the main resource behind this post and figures is the fantastic book :<a href="https://www.manning.com/books/data-pipelines-with-apache-airflow">Data Pipelines with Apache. Airflow</a>.</p>
+</div>
+</div>
 <ul>
-<li><p>Airflow uses <code>Pendulum</code> library for datetimes. It is a drop-in replacement to the Python standard library datetime but with much nicer API and more features.</p></li>
-<li><p>Not all arguments can be templates. By default, all arguments are not made into templates and <code>{{name}}</code> will be read as a literal string <code>name</code> unless it is included in <code>template_fields</code> in the list of attributes that can be templated in the Operator.</p>
+<li>Airflow uses <code>Pendulum</code> library for datetimes. It is a drop-in replacement to the Python standard library datetime but with much nicer API and more features.</li>
+<li>Not all arguments can be templates. By default, all arguments are not made into templates and <code>{{name}}</code> will be read as a literal string <code>name</code> unless it is included in <code>template_fields</code> in the list of attributes that can be templated in the Operator.
 <ul>
 <li>Elements in the <code>template_fields</code> are names for class attributes. The arguments passed to the <code>__init__</code> match the class attributes.</li>
 </ul></li>
-<li><p>All operators; such as BashOperator, take their argument as string except PythonOperator. It takes its argument as <code>python_callable</code>, which is any callable object in Python. The context and parameters will be available to this callable.</p>
+<li>All operators; such as BashOperator, take their argument as string except PythonOperator. It takes its argument as <code>python_callable</code>, which is any callable object in Python. The context and parameters will be available to this callable.
 <ul>
 <li>The context variable is a dictionary that has all the instance variables for this task.
 <ul>
