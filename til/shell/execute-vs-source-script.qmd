@@ -1,0 +1,7 @@
+---
+title: Executing vs Sourcing Script
+date: 2022-09-01
+categories: Shell
+---
+- If we execute a program from the shell (`./script.sh`), we don't get the side effects from that program. For example, if the program defines variables or change directories, those variables won't be defined in the shell and we would still be in the same directory. The reason for that is because the shell spin a new shell instance to execute the program and then terminates once done. Therefore, the changes happens in the child process which can't affect the parent process (process that invoked the sript which happens to be the shell).
+- If we load the program to the shell (`source script.sh`), then we get the side effects. Therefore, we can then use some of its functions and if some of those functions change directories it would be reflected in out shell. This happens because the script executes in the current process, which means no child process is created to execute it.

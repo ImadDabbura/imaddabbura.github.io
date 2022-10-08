@@ -513,9 +513,9 @@
   {
     "objectID": "til.html",
     "href": "til.html",
-    "title": "Today I Learned",
+    "title": "Imad Dabbura",
     "section": "",
-    "text": "In an effort to learn in public, this repo is a collection things that I learn day-to-day mainly in technology and languages."
+    "text": "In an effort to learn in public, this repo is a collection things that I learn day-to-day mainly in technology and languages.\n\n\n\n\n\n\n   \n     \n     \n       Order By\n       Default\n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Title\n        \n         \n          Author\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\nDate\n\n\nTitle\n\n\nAuthor\n\n\n\n\n\n\nOct 4, 2022\n\n\nLazy Layers\n\n\nImad Dabbura\n\n\n\n\nOct 1, 2022\n\n\nDecorators\n\n\nImad Dabbura\n\n\n\n\nSep 1, 2022\n\n\nExecuting vs Sourcing Script\n\n\nImad Dabbura\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "index.html",
@@ -544,6 +544,27 @@
     "title": "About",
     "section": "Interests",
     "text": "Interests\n\nArtificial Intelligence\nMachine Learning\nData Science"
+  },
+  {
+    "objectID": "til/python/decorators.html",
+    "href": "til/python/decorators.html",
+    "title": "Decorators",
+    "section": "",
+    "text": "@decorator\ndef func():\n    pass\nis the same as\nfunc = decorator(func)\nBoilerplate template for any decorator:\nimport functools\ndef decorator(func):\n    @functools.wraps(func)\n    def wrapper_decorator(*args, **kwargs):\n        # Do something\n        value = func(*args, **kwargs)\n        # Do something\n        return value\n    return wrapper_decorator\nIf we want the decorator to be stateful, we can use classes as decorators:\nclass Decorator:\n    def __init__(self, func):\n        # We can't use @functools.wrap(func)\n        functools.update_wrapper(self, func)\n        self.func = func\n        # keep state here\n\n    def __call__(self, *args, **kwargs):\n        # Do something, probably update state\n        value = self.func(*args, **kwargs)\n        # Do something, probably update state\n        return value\nDon’t forget to return the value of decorated function 😀"
+  },
+  {
+    "objectID": "til/shell/execute-vs-source-script.html",
+    "href": "til/shell/execute-vs-source-script.html",
+    "title": "Executing vs Sourcing Script",
+    "section": "",
+    "text": "If we execute a program from the shell (./script.sh), we don’t get the side effects from that program. For example, if the program defines variables or change directories, those variables won’t be defined in the shell and we would still be in the same directory. The reason for that is because the shell spin a new shell instance to execute the program and then terminates once done. Therefore, the changes happens in the child process which can’t affect the parent process (process that invoked the sript which happens to be the shell).\nIf we load the program to the shell (source script.sh), then we get the side effects. Therefore, we can then use some of its functions and if some of those functions change directories it would be reflected in out shell. This happens because the script executes in the current process, which means no child process is created to execute it."
+  },
+  {
+    "objectID": "til/pytorch/lazy-layers.html",
+    "href": "til/pytorch/lazy-layers.html",
+    "title": "Lazy Layers",
+    "section": "",
+    "text": "x = torch.randn(1, 20)\nlayer = nn.LazyLinear(1)\nlayer(x) #=> tensor([[-1.3754]], grad_fn=<AddmmBackward0>)"
   },
   {
     "objectID": "mlops-index.html",
