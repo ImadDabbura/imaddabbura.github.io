@@ -7,9 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2022-09-18">
 
-<title>Imad Dabbura - Lazy Layers</title>
+<title>Imad Dabbura – loading-modules-and-packages</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -166,13 +165,6 @@ ga('send', {
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Imad Dabbura - Lazy Layers">
-<meta property="og:description" content="In Pytorch, you can define a layer with only the desired output size without specifying the input size.">
-<meta property="og:site-name" content="Imad Dabbura">
-<meta name="twitter:title" content="Imad Dabbura - Lazy Layers">
-<meta name="twitter:description" content="In Pytorch, you can define a layer with only the desired output size without specifying the input size.">
-<meta name="twitter:creator" content="@imaddabbura">
-<meta name="twitter:card" content="summary_large_image">
 </head>
 
 <body class="nav-fixed fullcontent">
@@ -245,37 +237,7 @@ ga('send', {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
-      <h1 class="title">Lazy Layers</h1>
-                                <div class="quarto-categories">
-                <div class="quarto-category">PyTorch</div>
-              </div>
-                  </div>
-  </div>
-    
-  
-  <div class="quarto-title-meta">
-
-      <div>
-      <div class="quarto-title-meta-heading">Author</div>
-      <div class="quarto-title-meta-contents">
-               <p>Imad Dabbura </p>
-            </div>
-    </div>
-      
-      <div>
-      <div class="quarto-title-meta-heading">Published</div>
-      <div class="quarto-title-meta-contents">
-        <p class="date">September 18, 2022</p>
-      </div>
-    </div>
-      
-    </div>
-    
-  
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     
@@ -284,11 +246,45 @@ ga('send', {
 
 
 
-
-<p>In Pytorch, you can define a layer with only the desired output size without specifying the input size. Later, we the layer if first called, Pytorch would check the input size from the input tensor and creates the required parameters. This is kinda of lazy definition of a layer. It is very helpful when we’re not sure about the input size but know the output size. All the layerer that support <strong>lazy</strong> definitions are prefixed with <code>Lazy</code> such as <code>LazyLinear</code> and <code>LazyConv2d</code>.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> torch.randn(<span class="dv">1</span>, <span class="dv">20</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>layer <span class="op">=</span> nn.LazyLinear(<span class="dv">1</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>layer(x) <span class="co">#=&gt; tensor([[-1.3754]], grad_fn=&lt;AddmmBackward0&gt;)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The process of importing a module/package (after locating it):</p>
+<ul>
+<li>First checks if it is cached. If not, continue</li>
+<li>It creates a <code>ModuleType</code> object with that name</li>
+<li>Cache the module in <code>sys.modules</code></li>
+<li>Executes the source code inside the module (first prefixing it with .py and then assign <code>__file__</code>)
+<ul>
+<li>In the case of the package/subpackage, it assign it the <code>__init__.py</code> file</li>
+<li>It also executes all the <code>__init__.py</code> on the path</li>
+</ul></li>
+<li>Assign a variable to the module object</li>
+</ul>
+<p>Below is in roughly what it is done in Python code:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys, types</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> import_module(modname):</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Check if it is in the cache first</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> modname <span class="kw">in</span> sys.modules:</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> sys.modules[modname]</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    sourcepath <span class="op">=</span> modname <span class="op">+</span> <span class="st">'.py'</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(sourcepath, <span class="st">'r'</span>) <span class="im">as</span> f:</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        sourcecode <span class="op">=</span> f.read()</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    mod <span class="op">=</span> types.ModuleType(modname)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    mod.<span class="va">__file__</span> <span class="op">=</span> sourcepath</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Cache the module</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    sys.modules[modname] <span class="op">=</span> mod</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Convert it to Python ByteCode</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    code <span class="op">=</span> <span class="bu">compile</span>(sourcecode, sourcepath, <span class="st">'exec'</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Execute the code in the module from top to bottom</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># And update the state (globals) in the module's dictionary</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="bu">exec</span>(code, mod.__dict__)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># We return the cached one in case there is some patching inside the module</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> sys.modules[modname]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Finally, Python puts a lock when importing a module until it is done so that we don’t have multiple threads trying to import the same module at the same time.</p>
 
 
 

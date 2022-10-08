@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2022-09-18">
+<meta name="dcterms.date" content="2022-09-21">
 
-<title>Imad Dabbura - Lazy Layers</title>
+<title>Imad Dabbura - Useful Tricks with Null Device</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -166,11 +166,11 @@ ga('send', {
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Imad Dabbura - Lazy Layers">
-<meta property="og:description" content="In Pytorch, you can define a layer with only the desired output size without specifying the input size.">
+<meta property="og:title" content="Imad Dabbura - Useful Tricks with Null Device">
+<meta property="og:description" content="/dev/null is the null device. It is very useful when we want to discard output of any operation or we want truncate a file. This is due to the fact reading/writing to /dev/null has no effect.">
 <meta property="og:site-name" content="Imad Dabbura">
-<meta name="twitter:title" content="Imad Dabbura - Lazy Layers">
-<meta name="twitter:description" content="In Pytorch, you can define a layer with only the desired output size without specifying the input size.">
+<meta name="twitter:title" content="Imad Dabbura - Useful Tricks with Null Device">
+<meta name="twitter:description" content="/dev/null is the null device. It is very useful when we want to discard output of any operation or we want truncate a file. This is due to the fact reading/writing to /dev/null has no effect.">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 </head>
@@ -248,9 +248,9 @@ ga('send', {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Lazy Layers</h1>
+      <h1 class="title">Useful Tricks with Null Device</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">PyTorch</div>
+                <div class="quarto-category">Shell</div>
               </div>
                   </div>
   </div>
@@ -268,7 +268,7 @@ ga('send', {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">September 18, 2022</p>
+        <p class="date">September 21, 2022</p>
       </div>
     </div>
       
@@ -285,10 +285,11 @@ ga('send', {
 
 
 
-<p>In Pytorch, you can define a layer with only the desired output size without specifying the input size. Later, we the layer if first called, Pytorch would check the input size from the input tensor and creates the required parameters. This is kinda of lazy definition of a layer. It is very helpful when we’re not sure about the input size but know the output size. All the layerer that support <strong>lazy</strong> definitions are prefixed with <code>Lazy</code> such as <code>LazyLinear</code> and <code>LazyConv2d</code>.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> torch.randn(<span class="dv">1</span>, <span class="dv">20</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>layer <span class="op">=</span> nn.LazyLinear(<span class="dv">1</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>layer(x) <span class="co">#=&gt; tensor([[-1.3754]], grad_fn=&lt;AddmmBackward0&gt;)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><code>/dev/null</code> is the null device. It is very useful when we want to discard output of any operation or we want truncate a file. This is due to the fact reading/writing to <code>/dev/null</code> has no effect. In the case of reading, it generates end of file right away.</p>
+<p>To discard stderr, which has file descriptor 2, we can use the following redirection:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> dir <span class="dv">2</span><span class="op">&gt;</span>/dev/null</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>To truncate a file, instead of <code>rm</code> and then <code>touch</code>, we can use:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> /dev/null <span class="op">&gt;</span> file-to-truncate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
 

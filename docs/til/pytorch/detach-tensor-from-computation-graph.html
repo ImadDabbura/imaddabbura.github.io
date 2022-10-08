@@ -7,9 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2022-09-18">
 
-<title>Imad Dabbura - Lazy Layers</title>
+<title>Imad Dabbura – detach-tensor-from-computation-graph</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -166,13 +165,6 @@ ga('send', {
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Imad Dabbura - Lazy Layers">
-<meta property="og:description" content="In Pytorch, you can define a layer with only the desired output size without specifying the input size.">
-<meta property="og:site-name" content="Imad Dabbura">
-<meta name="twitter:title" content="Imad Dabbura - Lazy Layers">
-<meta name="twitter:description" content="In Pytorch, you can define a layer with only the desired output size without specifying the input size.">
-<meta name="twitter:creator" content="@imaddabbura">
-<meta name="twitter:card" content="summary_large_image">
 </head>
 
 <body class="nav-fixed fullcontent">
@@ -245,37 +237,7 @@ ga('send', {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
-      <h1 class="title">Lazy Layers</h1>
-                                <div class="quarto-categories">
-                <div class="quarto-category">PyTorch</div>
-              </div>
-                  </div>
-  </div>
-    
-  
-  <div class="quarto-title-meta">
-
-      <div>
-      <div class="quarto-title-meta-heading">Author</div>
-      <div class="quarto-title-meta-contents">
-               <p>Imad Dabbura </p>
-            </div>
-    </div>
-      
-      <div>
-      <div class="quarto-title-meta-heading">Published</div>
-      <div class="quarto-title-meta-contents">
-        <p class="date">September 18, 2022</p>
-      </div>
-    </div>
-      
-    </div>
-    
-  
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     
@@ -284,11 +246,49 @@ ga('send', {
 
 
 
-
-<p>In Pytorch, you can define a layer with only the desired output size without specifying the input size. Later, we the layer if first called, Pytorch would check the input size from the input tensor and creates the required parameters. This is kinda of lazy definition of a layer. It is very helpful when we’re not sure about the input size but know the output size. All the layerer that support <strong>lazy</strong> definitions are prefixed with <code>Lazy</code> such as <code>LazyLinear</code> and <code>LazyConv2d</code>.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> torch.randn(<span class="dv">1</span>, <span class="dv">20</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>layer <span class="op">=</span> nn.LazyLinear(<span class="dv">1</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>layer(x) <span class="co">#=&gt; tensor([[-1.3754]], grad_fn=&lt;AddmmBackward0&gt;)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We can think of a <code>Tensor</code> that implements <strong>Automatic Differentation</strong> as a regular tensor that have, among other attributes, the following attribites that helps to capture its history:</p>
+<ul>
+<li><code>inputs</code>: list of inputs such as tensors and scalars that created the output tensor. Leaf tensors have no inputs</li>
+<li><code>operation</code>: function that was applied on the inputs to create the output tensor. Leaf tensors have no operations</li>
+<li><code>data</code>: the output tensor from applying the operation on the inputs</li>
+<li><code>requires_grad</code>: whether we want to track the history of the computations when creating new tensors. If False, inputs and operation attributes will be set to <code>None</code></li>
+</ul>
+<p>Therefore, to detach a tensor from a computation graph Or if we don’t want to track temporary computations done on a tensor (such as during inference), we can do the following:</p>
+<ul>
+<li><code>Tensor.detach()</code> returns new tensor sharing the same underlying storage but make it a leaf tensor. Therefore:
+<ul>
+<li><code>inputs</code> will be set to <code>None</code></li>
+<li><code>operation</code> will be set to <code>None</code></li>
+<li><code>requires_grad</code> will be set to <code>False</code></li>
+</ul></li>
+<li><code>with torch.no_grad</code> let’s us perform computations on tensors w/o tracking those computations</li>
+<li>Operating directly on <code>Tensor.data</code> avoids recoding the operations. Useful when updating a tensor or for initialization</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> torch.tensor([[<span class="fl">1.</span>, <span class="fl">2.</span>]], requires_grad<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>a  <span class="co">#=&gt; tensor([[1., 2.]], requires_grad=True)</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># The following will record the computation</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> a <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>b.grad_fn  <span class="co">#=&gt; &lt;AddBackward0 at 0x7f81abadc8b0&gt;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># All the following forms allow us to avoid recording the computation on the tensor</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> a.data <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>b.grad_fn           <span class="co">#=&gt; None</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>b.requires_grad     <span class="co">#=&gt; False</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> a.detach() <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>b.grad_fn           <span class="co">#=&gt; None</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>b.requires_grad     <span class="co">#=&gt; False</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> torch.no_grad():</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> a <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>b.grad_fn           <span class="co">#=&gt; None</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>b.requires_grad     <span class="co">#=&gt; False</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Useful for updates/initialization because it keeps requires_grad attribute</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>a.data <span class="op">=</span> torch.randint(<span class="dv">10</span>, size<span class="op">=</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>a.grad_fn           <span class="co">#=&gt; None</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>b.requires_grad     <span class="co">#=&gt; True</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
 

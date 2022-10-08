@@ -515,7 +515,7 @@
     "href": "til.html",
     "title": "Imad Dabbura",
     "section": "",
-    "text": "In an effort to learn in public, this repo is a collection things that I learn day-to-day mainly in technology and languages.\n\n\n\n\n\n\n   \n     \n     \n       Order By\n       Default\n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Title\n        \n         \n          Author\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\nDate\n\n\nTitle\n\n\nAuthor\n\n\n\n\n\n\nOct 4, 2022\n\n\nLazy Layers\n\n\nImad Dabbura\n\n\n\n\nOct 1, 2022\n\n\nDecorators\n\n\nImad Dabbura\n\n\n\n\nSep 1, 2022\n\n\nExecuting vs Sourcing Script\n\n\nImad Dabbura\n\n\n\n\n\n\nNo matching items"
+    "text": "In an effort to learn in public, this repo is a collection things that I learn day-to-day mainly in technology and languages.\n\n\n\n\n\n\n   \n     \n     \n       Order By\n       Default\n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Title\n        \n         \n          Author\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\nDate\n\n\nTitle\n\n\nAuthor\n\n\n\n\n\n\n\n\n\n\nImad Dabbura\n\n\n\n\n\n\n\n\nImad Dabbura\n\n\n\n\n\n\n\n\nImad Dabbura\n\n\n\n\n\n\n\n\nImad Dabbura\n\n\n\n\n\n\n\n\nImad Dabbura\n\n\n\n\n\n\n\n\nImad Dabbura\n\n\n\n\n\n\n\n\nImad Dabbura\n\n\n\n\n\n\n\n\nImad Dabbura\n\n\n\n\n\n\n\n\nImad Dabbura\n\n\n\n\n\n\n\nThe following two call will use the same object for the default arg\n\n\nImad Dabbura\n\n\n\n\n\n\n\n\n\nImad Dabbura\n\n\n\n\n\n\n\n\nImad Dabbura\n\n\n\n\n\n\n\n\nImad Dabbura\n\n\n\n\n\n\n\n\nImad Dabbura\n\n\n\n\n\n\n\n\nImad Dabbura\n\n\n\n\n\n\nThe following will record the computation\n\n\nImad Dabbura\n\n\n\n\n\n\n\n\nImad Dabbura\n\n\n\n\n\n\n\n\nImad Dabbura\n\n\n\n\nSep 24, 2022\n\n\nI/O Redirection\n\n\nImad Dabbura\n\n\n\n\nSep 21, 2022\n\n\nUseful Tricks with Null Device\n\n\nImad Dabbura\n\n\n\n\nSep 20, 2022\n\n\nDecorators\n\n\nImad Dabbura\n\n\n\n\nSep 18, 2022\n\n\nLazy Layers\n\n\nImad Dabbura\n\n\n\n\nAug 30, 2022\n\n\nExecuting vs Sourcing Script\n\n\nImad Dabbura\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "index.html",
@@ -546,11 +546,116 @@
     "text": "Interests\n\nArtificial Intelligence\nMachine Learning\nData Science"
   },
   {
+    "objectID": "til/python/itemview-and-keyview.html",
+    "href": "til/python/itemview-and-keyview.html",
+    "title": "Imad Dabbura",
+    "section": "",
+    "text": "d1 = dict(zip(\"abcd\", range(1, 5))) #=> {'a': 1, 'b': 2, 'c': 3, 'd': 4}\nd2 = dict(zip(\"cdef\", range(3, 7))) #=> {'c': 3, 'd': 4, 'e': 5, 'f': 6}\nNow we can do any set operations on .items() or .keys() views.\nd1.keys() & d2.keys() #=> {'c', 'd'}\nd1.keys() | d2.keys() #=> {'a', 'b', 'c', 'd', 'e', 'f'}\nd1.items() - d2.items() #=> {('a', 1), ('b', 2)}"
+  },
+  {
+    "objectID": "til/python/modules-and-packages.html",
+    "href": "til/python/modules-and-packages.html",
+    "title": "Imad Dabbura",
+    "section": "",
+    "text": "Modules are just objects of type ModuleType. They act like a dictionary that holds references to objects it holds; module.__dict__.\n\nWe can set/delete attributes. module.x = 10 is the same as module.__dict__['x'] = 10\n\nWhen importing a module, it executes the module from top to bottom before returning to the caller.\nModule can be namespace, py file, execution environment for statements or container of global variables.\nThe dictionary has preset attributes such as __path__, __loader__, etc. Main attributes:\n\n__name__ : Module name\n__file__ : Associated source file (if any)\n__doc__: Docstring\n__path__ : Package path. It is used to look for package subcomponents\n__package__ : The module’s __package__ attribute must be set. Its value must be a string, but it can be the same value as its __name__. When the module is a package, its __package__ value should be set to its __name__. When the module is not a package, __package__ should be set to the empty string for top-level modules, or for submodules, to the parent package’s name.\n__spec__ : Module spec\n\nThe module’s attributes are set after creation and before execution\nThe main difference between modules and packages is that packages have __path__ and __package__ defined (not None)\nsys.modules serves as a cache for all imported modules/packages\n\nIt is a dictionary so we can delete/set keys\nIf we delete a module, it will force Python to import it when we reimport it\nIf we set module key to None -> result in ModuleNotFoundError\n\nEven if we import one object from a module/package, the module/package will be cached in the sys.modules but not available in the global name space\nThe module created during loading and passed to exec_module() may not be the one returned at the end of the import\n\nThis can happen if the imported module set the sys.modules[__name__] to some other module\n\nExecution of the module is what populates the module’s __dict__ (namespace of the module). This is done by the loader\nWhen a submodule is loaded using any mechanism, a binding is placed in the parent module’s namespace to the submodule object. For example, if we have a package called spam that has a submodule foo and it imports any of its objects like from .foo import x, after importing spam, spam will have an attribute foo which is bound to the submodule -> We can now use spam.foo\nRelative imports use leading dots. A single leading dot indicates a relative import, starting with the current package. Two or more leading dots indicate a relative import to the parent(s) of the current package, one level per dot after the first.\n\nCan only use this form of import: from <> import <>\nIt can’t use import .<> because this is not a valid expression\n\nAbsolute imports have to start from the top level package and go downward to refer to the module: from package.subpackage import module\n\nNot recommended because if we change the name of the package then we need to change all the import statements -> relative imports are more robust and don’t care about namings"
+  },
+  {
+    "objectID": "til/python/cond-iterator.html",
+    "href": "til/python/cond-iterator.html",
+    "title": "Imad Dabbura",
+    "section": "",
+    "text": "def gen():\n    return random.randint(1, 10)\n\ncond_iterator = iter(gen, 1)\n[e for e in cond_iterator] #=> [6, 10, 2, 4, 3, 6, 7, 5, 5, 4, 7, 10, 8, 10, 10, 8]"
+  },
+  {
+    "objectID": "til/python/scope-of-variables-in-comprehensions.html",
+    "href": "til/python/scope-of-variables-in-comprehensions.html",
+    "title": "Imad Dabbura",
+    "section": "",
+    "text": "x = 10\nl = [x for x in range(100) if x % 2 == 0]\nprint(x) #=> 10"
+  },
+  {
+    "objectID": "til/python/loading-modules-and-packages.html",
+    "href": "til/python/loading-modules-and-packages.html",
+    "title": "Imad Dabbura",
+    "section": "",
+    "text": "First checks if it is cached. If not, continue\nIt creates a ModuleType object with that name\nCache the module in sys.modules\nExecutes the source code inside the module (first prefixing it with .py and then assign __file__)\n\nIn the case of the package/subpackage, it assign it the __init__.py file\nIt also executes all the __init__.py on the path\n\nAssign a variable to the module object\n\nBelow is in roughly what it is done in Python code:\nimport sys, types\n\ndef import_module(modname):\n    # Check if it is in the cache first\n    if modname in sys.modules:\n        return sys.modules[modname]\n\n    sourcepath = modname + '.py'\n    with open(sourcepath, 'r') as f:\n        sourcecode = f.read()\n    mod = types.ModuleType(modname)\n    mod.__file__ = sourcepath\n\n    # Cache the module\n    sys.modules[modname] = mod\n\n    # Convert it to Python ByteCode\n    code = compile(sourcecode, sourcepath, 'exec')\n\n    # Execute the code in the module from top to bottom\n    # And update the state (globals) in the module's dictionary\n    exec(code, mod.__dict__)\n\n    # We return the cached one in case there is some patching inside the module\n    return sys.modules[modname]\nFinally, Python puts a lock when importing a module until it is done so that we don’t have multiple threads trying to import the same module at the same time."
+  },
+  {
+    "objectID": "til/python/user-defined-classes-are-hashable.html",
+    "href": "til/python/user-defined-classes-are-hashable.html",
+    "title": "Imad Dabbura",
+    "section": "",
+    "text": "class A:\n    ...\n\na1 = A()\na2 = A()\nid(a1) == hash(id(a1)) #=> True\nid(a2) == hash(id(a2)) #=> True\nIf a user-defined class implements __eq__, then it needs to implement __hash__ and has to guarantee that it is hashable if all its attributes are hashable and if a == b then hash(a) == hash(b)."
+  },
+  {
+    "objectID": "til/python/line-continuation.html",
+    "href": "til/python/line-continuation.html",
+    "title": "Imad Dabbura",
+    "section": "",
+    "text": "But the more pythonistic way is to use with {}, [], or () where line breaks will be ignored. For example:\nstring = (\n    \"first \"\n    \"name\"\n    )\nprint(string) #=> \"first name\""
+  },
+  {
+    "objectID": "til/python/getitem-makes-object-iterable.html",
+    "href": "til/python/getitem-makes-object-iterable.html",
+    "title": "Imad Dabbura",
+    "section": "",
+    "text": "class L:\n    def __init__(self, length=10):\n        self.data = list(range(length))\n\n    def __getitem__(self, idx):\n        return self.data[idx]\n\n    def __repr__(self):\n        res = f\"{self.__class__.__name__}: {self.data[:10]}\"\n        if len(self.data) > 10:\n            res = res[:-1] + \", ...]\"\n        return res\nl = L()\nl[i for i in l] #=> L: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]\n1 in l          #=> True"
+  },
+  {
+    "objectID": "til/python/namespace-packages.html",
+    "href": "til/python/namespace-packages.html",
+    "title": "Imad Dabbura",
+    "section": "",
+    "text": "Python first scans the whole sys.path before deciding that the package is a namespace -> If any name is found with init.py in it, it will give this priority and don’t continue.\n\nIf it finds a regular package with that name -> discard all namespace packages it found and import the regular package.\n\nIf it doesn’t find any regular package with that name -> Use all the namespace packages it found during the search and combine their paths in namespace_path so when we try to import subpackage or modules, it checks all the paths in the namespace_path (which is a list).\n\nThere can be multiple packages of the same name (under different directories) -> They all combined together and the namespace_path list would have the path for all of them. Therefore, the same package can be used to refer to completely different modules in different directories."
+  },
+  {
+    "objectID": "til/python/mutable-default-function-arguments.html",
+    "href": "til/python/mutable-default-function-arguments.html",
+    "title": "Imad Dabbura",
+    "section": "",
+    "text": "This happens because a function gets evaluated once per module load after the program starts up. As a result, default argument value is evaluated only once. This can cause odd behaviors for dynamic values (such as {}, [], or datetime.now()). Therefore:\n\nUse None as the default value for any keyword argument that has a dynamic value. Document the actual default behavior in the function’s docstring.\nUsing None to represent keyword argument default values also works correctly with type annotations.\n\ndef func(y=[]):\n    y.append(\"test\")\n    print(id(y), y)\n\n# The following two call will use the same object for the default arg\nfunc() #=> 140511381181056 ['test']\nfunc() #=> 140511381181056 ['test', 'test']\n\n# Notice how the argument is a different object\nfunc([]) #=> 140511380870592 ['another', 'test']"
+  },
+  {
+    "objectID": "til/python/immutable-objects-and-augmented-assignment-operators.html",
+    "href": "til/python/immutable-objects-and-augmented-assignment-operators.html",
+    "title": "Imad Dabbura",
+    "section": "",
+    "text": "For mutable objects such as lists:\nl = [1, 2]\nold_id = id(l)\nl += [3]            # the same as l.extend([3])\nprint(l)            #=> [1, 2, 3]\nold_id == id(l)     #=> True\nFor mutable objects such as tuples:\nt = [1, 2]\nold_id = id(t)\nt += (3,)           # the same as t = t + (3,)\nprint(t)            #=> (1, 2, 3)\nold_id == id(t)     #=> False"
+  },
+  {
+    "objectID": "til/python/truthiness-of-objects.html",
+    "href": "til/python/truthiness-of-objects.html",
+    "title": "Imad Dabbura",
+    "section": "",
+    "text": "x.__bool__() is called. If __bool__ is not implemented, then\nx.__len__() is called. If __len__() is not implemented, then\nreturn True. As a result, all user defined objects are truthy unless __bool__ or __len__ are implemented. Also, we can use if iterable w/o the need to use if len(iterable).\n\nclass A:\n    ...\n\nclass B:\n    def __bool__(self):\n        print(\"In __bool__\")\n        return False\n\nclass C:\n    def __len__(self):\n        print(\"In __len__\")\n        return False\n\nclass D:\n    def __bool__(self):\n        print(\"In __bool__\")\n        return False\n\n    def __len__(self):\n        print(\"In __len__\")\n        return False\nif A(): print(\"Truthy\")     #=> \"Truthy\"\nif B(): print(\"Truthy\")     #=> \"In __bool__\"\nif C(): print(\"Truthy\")     #=> \"In __len__\"\nif D(): print(\"Truthy\")     #=> \"In __len__\""
+  },
+  {
     "objectID": "til/python/decorators.html",
     "href": "til/python/decorators.html",
     "title": "Decorators",
     "section": "",
     "text": "@decorator\ndef func():\n    pass\nis the same as\nfunc = decorator(func)\nBoilerplate template for any decorator:\nimport functools\ndef decorator(func):\n    @functools.wraps(func)\n    def wrapper_decorator(*args, **kwargs):\n        # Do something\n        value = func(*args, **kwargs)\n        # Do something\n        return value\n    return wrapper_decorator\nIf we want the decorator to be stateful, we can use classes as decorators:\nclass Decorator:\n    def __init__(self, func):\n        # We can't use @functools.wrap(func)\n        functools.update_wrapper(self, func)\n        self.func = func\n        # keep state here\n\n    def __call__(self, *args, **kwargs):\n        # Do something, probably update state\n        value = self.func(*args, **kwargs)\n        # Do something, probably update state\n        return value\nDon’t forget to return the value of decorated function 😀"
+  },
+  {
+    "objectID": "til/python/mutability-and-inplace-operations.html",
+    "href": "til/python/mutability-and-inplace-operations.html",
+    "title": "Imad Dabbura",
+    "section": "",
+    "text": "s = \"test\"\nold_id = id(s)\ns += \" another test\"\nold_id == id(s) #=> False\nBut for mutable objects, it doesn’t create a new object. It extends/updates the existing object.\nl = [1]\nold_id = id(l)\nl += [2]\nold_id == id(l) #=> True"
+  },
+  {
+    "objectID": "til/shell/null-device.html",
+    "href": "til/shell/null-device.html",
+    "title": "Useful Tricks with Null Device",
+    "section": "",
+    "text": "To discard stderr, which has file descriptor 2, we can use the following redirection:\nls -l dir 2>/dev/null\nTo truncate a file, instead of rm and then touch, we can use:\ncat /dev/null > file-to-truncate"
+  },
+  {
+    "objectID": "til/shell/input-output-redirection.html",
+    "href": "til/shell/input-output-redirection.html",
+    "title": "I/O Redirection",
+    "section": "",
+    "text": "Redirect stdin fd to a file such as cat < file\n\nThe file descriptor that we want to redirect has to be infront of <. In the case of redirecting stdin, 0< is the same as <.\n\nRedirect stdout/stderr to a file such as ls dir > tmp or ls dir 2>error\n\nThe file descriptor that we want to redirect has also to be in the front of >. In the case of redirecting stdout, 2> is the same as >.\nIf we want to redirect some file descriptor fd0 to another file descriptor fd1, we can do fd0>fd1>.\n> truncates the file we’re redirecting the output to and writes the new output\n>> appends to the file we’re redirecting the output to, and doesn’t overwrite the old context. Example: cat /etc/passwd >> tmp."
   },
   {
     "objectID": "til/shell/execute-vs-source-script.html",
@@ -560,11 +665,46 @@
     "text": "If we execute a program from the shell (./script.sh), we don’t get the side effects from that program. For example, if the program defines variables or change directories, those variables won’t be defined in the shell and we would still be in the same directory. The reason for that is because the shell spin a new shell instance to execute the program and then terminates once done. Therefore, the changes happens in the child process which can’t affect the parent process (process that invoked the sript which happens to be the shell).\nIf we load the program to the shell (source script.sh), then we get the side effects. Therefore, we can then use some of its functions and if some of those functions change directories it would be reflected in out shell. This happens because the script executes in the current process, which means no child process is created to execute it."
   },
   {
+    "objectID": "til/chrome/navigate-and-control-browser-with-vimium.html",
+    "href": "til/chrome/navigate-and-control-browser-with-vimium.html",
+    "title": "Imad Dabbura",
+    "section": "",
+    "text": "Vimium is a chrome extension that provides keyboard shortcuts to navigate and control the browser inspired by Vim editor. It comes very handy when navigating between pages as well as on the same page and still be mouse-free. Keyboard shortcut examples: - d to go down half page - u to go up half page - gg to go the top of the page - G to go to the bottom of the page - gt to go to next tab to the right - gT to go to previous tab to the left"
+  },
+  {
+    "objectID": "til/pytorch/save-memory.html",
+    "href": "til/pytorch/save-memory.html",
+    "title": "Imad Dabbura",
+    "section": "",
+    "text": "x = torch.randn(1000, 1000)\nbefore = id(x)\nx.add_(100)\nid(x) == before #=> True\n\nOr change the current object that the tensor is pointing to\n\nx = torch.randn(1000, 1000)\nbefore = id(x)\nx += 100\nid(x) == before #=> True\n\nOr assign the result of the operation to the previously allocated tensor\n\nx = torch.randn(1000, 1000)\nbefore = id(x)\nx[:] = x + 100\nid(x) == before #=> True\nOtherwise, if we do the following, it will create new object and make x point to it. This will put pressure on the host memory.\nx = torch.randn(1000, 1000)\nbefore = id(x)\nx = x + 100\nid(x) == before #=> False"
+  },
+  {
+    "objectID": "til/pytorch/detach-tensor-from-computation-graph.html",
+    "href": "til/pytorch/detach-tensor-from-computation-graph.html",
+    "title": "Imad Dabbura",
+    "section": "",
+    "text": "inputs: list of inputs such as tensors and scalars that created the output tensor. Leaf tensors have no inputs\noperation: function that was applied on the inputs to create the output tensor. Leaf tensors have no operations\ndata: the output tensor from applying the operation on the inputs\nrequires_grad: whether we want to track the history of the computations when creating new tensors. If False, inputs and operation attributes will be set to None\n\nTherefore, to detach a tensor from a computation graph Or if we don’t want to track temporary computations done on a tensor (such as during inference), we can do the following:\n\nTensor.detach() returns new tensor sharing the same underlying storage but make it a leaf tensor. Therefore:\n\ninputs will be set to None\noperation will be set to None\nrequires_grad will be set to False\n\nwith torch.no_grad let’s us perform computations on tensors w/o tracking those computations\nOperating directly on Tensor.data avoids recoding the operations. Useful when updating a tensor or for initialization\n\na = torch.tensor([[1., 2.]], requires_grad=True)\na  #=> tensor([[1., 2.]], requires_grad=True)\n\n# The following will record the computation\nb = a + 1\nb.grad_fn  #=> <AddBackward0 at 0x7f81abadc8b0>\n\n# All the following forms allow us to avoid recording the computation on the tensor\nb = a.data + 1\nb.grad_fn           #=> None\nb.requires_grad     #=> False\n\nb = a.detach() + 1\nb.grad_fn           #=> None\nb.requires_grad     #=> False\n\nwith torch.no_grad():\n    b = a + 1\nb.grad_fn           #=> None\nb.requires_grad     #=> False\n\n# Useful for updates/initialization because it keeps requires_grad attribute\na.data = torch.randint(10, size=(1, 2))\na.grad_fn           #=> None\nb.requires_grad     #=> True"
+  },
+  {
+    "objectID": "til/pytorch/list-gpus.html",
+    "href": "til/pytorch/list-gpus.html",
+    "title": "Imad Dabbura",
+    "section": "",
+    "text": "If you specify cpu as a device such as torch.device(\"cpu\"), this means all available CPUs/cores and memory will be used in the computation of tensors.\nIf you specify cuda as a device such as torch.device(\"cuda\"), it is the same as torch.device(\"cuda:0\") which is the first GPU and memory.\nOtherwise, specify which GPU you want using torch.device(\"cuda:{i}\") for the ith device."
+  },
+  {
     "objectID": "til/pytorch/lazy-layers.html",
     "href": "til/pytorch/lazy-layers.html",
     "title": "Lazy Layers",
     "section": "",
     "text": "x = torch.randn(1, 20)\nlayer = nn.LazyLinear(1)\nlayer(x) #=> tensor([[-1.3754]], grad_fn=<AddmmBackward0>)"
+  },
+  {
+    "objectID": "til/c/char-array-vs-string-constant-pointers.html",
+    "href": "til/c/char-array-vs-string-constant-pointers.html",
+    "title": "Imad Dabbura",
+    "section": "",
+    "text": "Define it as an array of character such as:\n\nchar aname[] = \"Imad\";\n\nThe array would be of size number of characters plus 1 for the null terminating character.\n\n\nOr define it as a pointer to string constant such as:\n\nchar *pname = \"Imad\";\nThey are almost identical except for 1 subtle difference: - aname will always point to the same storage and can’t be changed to point to something else. The characters themselves can be changes. - pname is a pointer so it can be changed to point to something else. If we try to modify the underlying characters, the result is undefined."
   },
   {
     "objectID": "mlops-index.html",

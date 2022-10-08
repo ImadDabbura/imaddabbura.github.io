@@ -7,9 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2022-09-18">
 
-<title>Imad Dabbura - Lazy Layers</title>
+<title>Imad Dabbura – immutable-objects-and-augmented-assignment-operators</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -166,13 +165,6 @@ ga('send', {
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Imad Dabbura - Lazy Layers">
-<meta property="og:description" content="In Pytorch, you can define a layer with only the desired output size without specifying the input size.">
-<meta property="og:site-name" content="Imad Dabbura">
-<meta name="twitter:title" content="Imad Dabbura - Lazy Layers">
-<meta name="twitter:description" content="In Pytorch, you can define a layer with only the desired output size without specifying the input size.">
-<meta name="twitter:creator" content="@imaddabbura">
-<meta name="twitter:card" content="summary_large_image">
 </head>
 
 <body class="nav-fixed fullcontent">
@@ -245,37 +237,7 @@ ga('send', {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
-      <h1 class="title">Lazy Layers</h1>
-                                <div class="quarto-categories">
-                <div class="quarto-category">PyTorch</div>
-              </div>
-                  </div>
-  </div>
-    
-  
-  <div class="quarto-title-meta">
-
-      <div>
-      <div class="quarto-title-meta-heading">Author</div>
-      <div class="quarto-title-meta-contents">
-               <p>Imad Dabbura </p>
-            </div>
-    </div>
-      
-      <div>
-      <div class="quarto-title-meta-heading">Published</div>
-      <div class="quarto-title-meta-contents">
-        <p class="date">September 18, 2022</p>
-      </div>
-    </div>
-      
-    </div>
-    
-  
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     
@@ -284,11 +246,19 @@ ga('send', {
 
 
 
-
-<p>In Pytorch, you can define a layer with only the desired output size without specifying the input size. Later, we the layer if first called, Pytorch would check the input size from the input tensor and creates the required parameters. This is kinda of lazy definition of a layer. It is very helpful when we’re not sure about the input size but know the output size. All the layerer that support <strong>lazy</strong> definitions are prefixed with <code>Lazy</code> such as <code>LazyLinear</code> and <code>LazyConv2d</code>.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> torch.randn(<span class="dv">1</span>, <span class="dv">20</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>layer <span class="op">=</span> nn.LazyLinear(<span class="dv">1</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>layer(x) <span class="co">#=&gt; tensor([[-1.3754]], grad_fn=&lt;AddmmBackward0&gt;)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Augmented assignment operators such as <code>+=</code> and <code>*=</code> behave differently depending on whether the Python object is mutable or immutable. Let’s take <code>+=</code> as an example: Python first checks if the first object implements <code>__iadd__</code> special method. If not, Python falls back on <code>__add__</code>. Since immutable objects don’t implement any inplace operations, statement like <code>x += y</code> is the same as <code>x = x + y</code>.</p>
+<p>For mutable objects such as lists:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>l <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">2</span>]</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>old_id <span class="op">=</span> <span class="bu">id</span>(l)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>l <span class="op">+=</span> [<span class="dv">3</span>]            <span class="co"># the same as l.extend([3])</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(l)            <span class="co">#=&gt; [1, 2, 3]</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>old_id <span class="op">==</span> <span class="bu">id</span>(l)     <span class="co">#=&gt; True</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>For mutable objects such as tuples:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">2</span>]</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>old_id <span class="op">=</span> <span class="bu">id</span>(t)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>t <span class="op">+=</span> (<span class="dv">3</span>,)           <span class="co"># the same as t = t + (3,)</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(t)            <span class="co">#=&gt; (1, 2, 3)</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>old_id <span class="op">==</span> <span class="bu">id</span>(t)     <span class="co">#=&gt; False</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
 

@@ -1,0 +1,6 @@
+**Namespace packages** are packages that don't have `__init__.py`. When import machinery is looking for the package, it does not stop when it finds it and assuming there may be a regular package; i.e. package with `__init__.py`, in some other paths in `sys.path` but keeps a record of all namespace packages it found during the search. 
+
+- Python first scans the whole sys.path before deciding that the package is a namespace -> If any name is found with __init__.py in it, it will give this priority and don't continue.
+    - If it finds a regular package with that name -> discard all namespace packages it found and import the regular package. 
+- If it doesn't find any regular package with that name -> Use all the namespace packages it found during the search and combine their paths in namespace_path so when we try to import subpackage or modules, it checks all the paths in the namespace_path (which is a list).
+    - There can be multiple packages of the same name (under different directories) -> They all combined together and the namespace_path list would have the path for all of them. Therefore, the same package can be used to refer to completely different modules in different directories.

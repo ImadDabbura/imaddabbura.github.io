@@ -1,0 +1,28 @@
+- Modules are just objects of type `ModuleType`. They act like a dictionary that holds references to objects it holds; `module.__dict__`.
+    - We can set/delete attributes. `module.x = 10` is the same as `module.__dict__['x'] = 10`
+- When importing a module, it executes the module from top to bottom before returning to the caller.
+- Module can be namespace, py file, execution environment for statements or container of global variables.
+- The dictionary has preset attributes such as `__path__`, `__loader__`, etc. Main attributes:
+    - `__name__` : Module name
+    - `__file__` : Associated source file (if any)
+    - `__doc__ `: Docstring
+    - `__path__` : Package path. It is used to look for package subcomponents
+    - `__package__` : The module’s `__package__` attribute must be set. Its value must be a string, but it can be the same value as its `__name__`. When the module is a package, its `__package__` value should be set to its `__name__`. When the module is not a package, `__package__` should be set to the empty string for top-level modules, or for submodules, to the parent package’s name.
+    - `__spec__` : Module spec
+- The module's attributes are set after creation and before execution
+- The main difference between modules and packages is that packages have `__path__` and `__package__` defined (not `None`)
+- `sys.modules` serves as a cache for all imported modules/packages
+    - It is a dictionary so we can delete/set keys
+    - If we delete a module, it will force Python to import it when we reimport it
+    - If we set module key to `None` -> result in `ModuleNotFoundError`
+- Even if we import one object from a module/package, the module/package will be cached in the sys.modules but not available in the global name space
+- The module created during loading and passed to `exec_module()` may not be the one returned at the end of the import
+    - This can happen if the imported module set the `sys.modules[__name__]` to some other module
+- Execution of the module is what populates the module's `__dict__` (namespace of the module). This is done by the loader
+- When a submodule is loaded using any mechanism, a binding is placed in the parent module’s namespace to the submodule object. For example, if we have a package called spam that has a submodule foo and it imports any of its objects like `from .foo import x`, after importing spam, spam will have an attribute foo which is bound to the submodule -> We can now use `spam.foo`
+- Relative imports use leading dots. A single leading dot indicates a relative import, starting with the current package. Two or more leading dots indicate a relative import to the parent(s) of the current package, one level per dot after the first.
+    - Can only use this form of import: `from <> import <>`
+    - It can't use `import .<>` because this is not a valid expression
+- Absolute imports have to start from the top level package and go downward to refer to the module:
+`from package.subpackage import module`
+    - Not recommended because if we change the name of the package then we need to change all the import statements -> relative imports are more robust and don't care about namings
