@@ -1,3 +1,8 @@
+---
+title: User Defined Classes are Hashable
+date: 2022-09-10
+categories: Python
+---
 All user defined classes are hashable by defualt becuase they inherit `__hash__` from `object`, which is related to their `id()`. This guarantees that different instances have different hashes since they have different `id()`. Therefore, `hash(id(object)) == id(object)` which is different for different objects.
 
 ```python

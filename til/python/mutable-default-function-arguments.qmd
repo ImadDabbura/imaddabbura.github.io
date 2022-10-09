@@ -1,3 +1,8 @@
+---
+title: Mutable Default Function Arguments in Python
+date: 2022-09-14
+categories: Python
+---
 Using `None` for default argument values is especially important when the arguments are mutable. If for example we used an empty list as the default value, it would be shared by all the calls to the function.
 
 This happens because a function gets evaluated once per module load after the program starts up. As a result, default argument value is evaluated only once. This can cause odd behaviors for dynamic values (such as `{}`, `[]`, or `datetime.now()`).

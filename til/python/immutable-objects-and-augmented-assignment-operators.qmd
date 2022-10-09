@@ -1,3 +1,8 @@
+---
+title: Immutable Objects and Augmented Assignment Operators
+date: 2022-09-28
+categories: Python
+---
 Augmented assignment operators such as `+=` and `*=` behave differently depending on whether the Python object is mutable or immutable. Let's take `+=` as an example: Python first checks if the first object implements `__iadd__` special method. If not, Python falls back on `__add__`. Since immutable objects don't implement any inplace operations, statement like `x += y` is the same as `x = x + y`.
 
 For mutable objects such as lists:

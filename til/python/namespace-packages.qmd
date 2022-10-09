@@ -1,3 +1,8 @@
+---
+title: Namespace Packages in Python
+date: 2022-09-22
+categories: Python
+---
 **Namespace packages** are packages that don't have `__init__.py`. When import machinery is looking for the package, it does not stop when it finds it and assuming there may be a regular package; i.e. package with `__init__.py`, in some other paths in `sys.path` but keeps a record of all namespace packages it found during the search. 
 
 - Python first scans the whole sys.path before deciding that the package is a namespace -> If any name is found with __init__.py in it, it will give this priority and don't continue.
