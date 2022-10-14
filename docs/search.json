@@ -714,18 +714,18 @@
     "text": "Define it as an array of character such as:\n\nchar aname[] = \"Imad\";\n\nThe array would be of size number of characters plus 1 for the null terminating character.\n\n\nOr define it as a pointer to string constant such as:\n\nchar *pname = \"Imad\";\nThey are almost identical except for 1 subtle difference: - aname will always point to the same storage and can’t be changed to point to something else. The characters themselves can be changes. - pname is a pointer so it can be changed to point to something else. If we try to modify the underlying characters, the result is undefined."
   },
   {
-    "objectID": "til/sql/logical-execution-order-of-sql-query.html",
-    "href": "til/sql/logical-execution-order-of-sql-query.html",
-    "title": "Logical Execution Order of SQL Query",
-    "section": "",
-    "text": "The FROM clause is first evaluated to get the output relation\nThen WHERE predicate is applied to the records in the output relation. If WHERE is not present, the predicate is True\nRecords satisfies the WHERE clause then placed into groups according to the GROUPBY clause. If GROUPBY clause is not present, all records will be placed into one group\nThen groups will filtered acoording to HAVING clause. If it is not present, the predicate is True\nThen the SELECT clause uses the remaining groups to generate results and, if they exist, apply aggregate functions on the results\nGenerated results will be sorted according to ORDER by clause if it is present. Otherwise, the results will be displayed randomly\nFinally, if LIMIT is present, display the number of records requested in the LIMIT clause"
-  },
-  {
     "objectID": "til/sql/what-is-null.html",
     "href": "til/sql/what-is-null.html",
     "title": "What Is Null Actually?",
     "section": "",
     "text": "and operator:\n\ntrue and Null results in Null\nfalse and Null results in false\nNull and Null results in Null\n\nor operator:\n\ntrue or Null results in true\nfalse or Null results in Null\nNull or Null results in Null\n\nnot operator:\n\nnot Null results in Null\n\nTo test if a value is Null, use IS NULL or IS NOT NULL\nIn where clause, recods that evaluates to either false or Null are excluded\nAggregation functions such as sum and average discard Null records\ncount(*) returns the number of records in a table. But count(field) returns the number of not Null records in the table. This means if the field is empty (Null values only), count(field) will return zero."
+  },
+  {
+    "objectID": "til/sql/logical-execution-order-of-sql-query.html",
+    "href": "til/sql/logical-execution-order-of-sql-query.html",
+    "title": "Logical Execution Order of SQL Query",
+    "section": "",
+    "text": "The FROM clause is first evaluated to get the output relation\nThen WHERE predicate is applied to the records in the output relation. If WHERE is not present, the predicate is True\nRecords satisfies the WHERE clause then placed into groups according to the GROUPBY clause. If GROUPBY clause is not present, all records will be placed into one group\nThen groups will filtered acoording to HAVING clause. If it is not present, the predicate is True\nThen the SELECT clause uses the remaining groups to generate results and, if they exist, apply aggregate functions on the results\nGenerated results will be sorted according to ORDER by clause if it is present. Otherwise, the results will be displayed randomly\nFinally, if LIMIT is present, display the number of records requested in the LIMIT clause"
   },
   {
     "objectID": "mlops-index.html",
