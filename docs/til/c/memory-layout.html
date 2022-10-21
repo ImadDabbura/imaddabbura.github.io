@@ -22,6 +22,69 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1.6em;
   vertical-align: middle;
 }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -244,61 +307,208 @@ ga('send', {
 <li>Initialized data</li>
 <li>Text</li>
 </ul>
-<p>I omitted few segments such as <em>read-only data</em>, <em>init</em>, etc.</p>
-<pre><code>High address (args and env):
-----------------------------
-envp[55] at                                            : 0x7FF7BE0AD5D0
-environ[55] at                                         : 0x7FF7BE0AD5D0
-envp[0] at                                             : 0x7FF7BE0AD418
-environ[0] at                                          : 0x7FF7BE0AD418
-last arg at                                            : 0x7FF7BE0AD410
-first arg at                                           : 0x7FF7BE0AD408
-
-Stack:
-------
-First variable inside main at                          : 0x7FF7BE0AD294
-func_array[] ends at                                   : 0x7FF7BE0AD2C0
-func_array[] (like 'array[]', but on stack) begins at  : 0x7FF7BE0AD2B0
-argc at                                                : 0x7FF7BE0AD2A8
-argv at                                                : 0x7FF7BE0AD2A0
-envp at                                                : 0x7FF7BE0AD298
-func2 (from main): frame at                            : 0x7FF7BE0AD254
-func frame at                                          : 0x7FF7BE0AD258
-static int n within func at                            : 0x   101E5A06C
-func (called     0 times): frame at                    : 0x7FF7BE0AD258
-func2 (from func): frame at                            : 0x7FF7BE0AD234
-
-Shared memory:
---------------
-shared memory attachment begins at                     : 0x   101F84000
-shared memory attachment ends at                       : 0x   101F9C6A0
-
-Heap:
------
-malloced area ends at                                  : 0x6000026AD120
-malloced area begins at                                : 0x6000026AD100
-
-Uninitialized Data (BSS):
--------------------------
-Semaphore at                                           : 0x   101E5A0F4
-Cond at                                                : 0x   101E5A080
-Lock at                                                : 0x   101E5A0B0
-array[] ends at                                        : 0x   101E5A080
-array[] (uninitialized, fixed-size char * on BSS) from : 0x   101E5A070
-num2 (uninitialized global int) at                     : 0x   101E5A0F0
-string2 (uninitialized global char *) at               : 0x   101E5A0F8
-extern **environ at                                    : 0x7FF8497239A0
-
-Initialized Data:
------------------
-num (initialized global int) at                        : 0x   101E5A068
-string (initialized global char *) at                  : 0x   101E5A060
-
-Text Segment:
--------------
-func2 (function) at                                    : 0x   101E55440
-func (function) at                                     : 0x   101E55470
-main (function) at                                     : 0x   101E54F20</code></pre>
+<p>I omitted few segments such as <em>read-only data</em>, <em>init</em>, etc. The code that produced the layout can be found at the endof the page (credit: <a href="https://www.amazon.com/Advanced-Programming-UNIX-Environment-3rd/dp/0321637739/ref=sr_1_fkmr1_2?keywords=unix+env&amp;qid=1666316709&amp;qu=eyJxc2MiOiIxLjczIiwicXNhIjoiMC4wMCIsInFzcCI6IjAuMDAifQ%3D%3D&amp;sr=8-2-fkmr1&amp;ufe=app_do%3Aamzn1.fos.006c50ae-5d4c-4777-9bc0-4513d670b6bc">Advanced Programming in the Unix Environment</a>)</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>High address <span class="op">(</span>args and env<span class="op">):</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="op">----------------------------</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>envp<span class="op">[</span><span class="dv">55</span><span class="op">]</span> at                                            <span class="op">:</span> <span class="bn">0x7FF7BE0AD5D0</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>environ<span class="op">[</span><span class="dv">55</span><span class="op">]</span> at                                         <span class="op">:</span> <span class="bn">0x7FF7BE0AD5D0</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>envp<span class="op">[</span><span class="dv">0</span><span class="op">]</span> at                                             <span class="op">:</span> <span class="bn">0x7FF7BE0AD418</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>environ<span class="op">[</span><span class="dv">0</span><span class="op">]</span> at                                          <span class="op">:</span> <span class="bn">0x7FF7BE0AD418</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>last arg at                                            <span class="op">:</span> <span class="bn">0x7FF7BE0AD410</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>first arg at                                           <span class="op">:</span> <span class="bn">0x7FF7BE0AD408</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>Stack<span class="op">:</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="op">------</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>First variable inside main at                          <span class="op">:</span> <span class="bn">0x7FF7BE0AD294</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>func_array<span class="op">[]</span> ends at                                   <span class="op">:</span> <span class="bn">0x7FF7BE0AD2C0</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>func_array<span class="op">[]</span> <span class="op">(</span>like 'array<span class="op">[]</span>'<span class="op">,</span> but on stack<span class="op">)</span> begins at  <span class="op">:</span> <span class="bn">0x7FF7BE0AD2B0</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>argc at                                                <span class="op">:</span> <span class="bn">0x7FF7BE0AD2A8</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>argv at                                                <span class="op">:</span> <span class="bn">0x7FF7BE0AD2A0</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>envp at                                                <span class="op">:</span> <span class="bn">0x7FF7BE0AD298</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>func2 <span class="op">(</span>from main<span class="op">):</span> frame at                            <span class="op">:</span> <span class="bn">0x7FF7BE0AD254</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>func frame at                                          <span class="op">:</span> <span class="bn">0x7FF7BE0AD258</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="dt">static</span> <span class="dt">int</span> n within func at                            <span class="op">:</span> <span class="er">0x</span>   <span class="fl">101E5</span><span class="er">A06C</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>func <span class="op">(</span>called     <span class="dv">0</span> times<span class="op">):</span> frame at                    <span class="op">:</span> <span class="bn">0x7FF7BE0AD258</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>func2 <span class="op">(</span>from func<span class="op">):</span> frame at                            <span class="op">:</span> <span class="bn">0x7FF7BE0AD234</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>Shared memory<span class="op">:</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="op">--------------</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>shared memory attachment begins at                     <span class="op">:</span> <span class="er">0x</span>   <span class="dv">101</span><span class="er">F84000</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>shared memory attachment ends at                       <span class="op">:</span> <span class="er">0x</span>   <span class="dv">101</span><span class="er">F9C6A0</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>Heap<span class="op">:</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="op">-----</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>malloced area ends at                                  <span class="op">:</span> <span class="bn">0x6000026AD120</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>malloced area begins at                                <span class="op">:</span> <span class="bn">0x6000026AD100</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>Uninitialized Data <span class="op">(</span>BSS<span class="op">):</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="op">-------------------------</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>Semaphore at                                           <span class="op">:</span> <span class="er">0x</span>   <span class="fl">101E5</span><span class="er">A0F4</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>Cond at                                                <span class="op">:</span> <span class="er">0x</span>   <span class="fl">101E5</span><span class="er">A080</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>Lock at                                                <span class="op">:</span> <span class="er">0x</span>   <span class="fl">101E5</span><span class="er">A0B0</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>array<span class="op">[]</span> ends at                                        <span class="op">:</span> <span class="er">0x</span>   <span class="fl">101E5</span><span class="er">A080</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>array<span class="op">[]</span> <span class="op">(</span>uninitialized<span class="op">,</span> fixed<span class="op">-</span>size <span class="dt">char</span> <span class="op">*</span> on BSS<span class="op">)</span> from <span class="op">:</span> <span class="er">0x</span>   <span class="fl">101E5</span><span class="er">A070</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>num2 <span class="op">(</span>uninitialized global <span class="dt">int</span><span class="op">)</span> at                     <span class="op">:</span> <span class="er">0x</span>   <span class="fl">101E5</span><span class="er">A0F0</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>string2 <span class="op">(</span>uninitialized global <span class="dt">char</span> <span class="op">*)</span> at               <span class="op">:</span> <span class="er">0x</span>   <span class="fl">101E5</span><span class="er">A0F8</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="kw">extern</span> <span class="op">**</span>environ at                                    <span class="op">:</span> <span class="bn">0x7FF8497239A0</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>Initialized Data<span class="op">:</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="op">-----------------</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>num <span class="op">(</span>initialized global <span class="dt">int</span><span class="op">)</span> at                        <span class="op">:</span> <span class="er">0x</span>   <span class="fl">101E5</span><span class="er">A068</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>string <span class="op">(</span>initialized global <span class="dt">char</span> <span class="op">*)</span> at                  <span class="op">:</span> <span class="er">0x</span>   <span class="fl">101E5</span><span class="er">A060</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>Text Segment<span class="op">:</span></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="op">-------------</span></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>func2 <span class="op">(</span>function<span class="op">)</span> at                                    <span class="op">:</span> <span class="er">0x</span>   <span class="fl">101E55440</span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>func <span class="op">(</span>function<span class="op">)</span> at                                     <span class="op">:</span> <span class="er">0x</span>   <span class="fl">101E55470</span></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>main <span class="op">(</span>function<span class="op">)</span> at                                     <span class="op">:</span> <span class="er">0x</span>   <span class="fl">101E54</span><span class="bu">F</span><span class="er">20</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;errno.h&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;err.h&gt;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;string.h&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stdlib.h&gt;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;unistd.h&gt;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;pthread.h&gt;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;semaphore.h&gt;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;sys/shm.h&gt;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="pp">#define ARRAY_SIZE 16</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="pp">#define MALLOC_SIZE 32</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="pp">#define SHM_SIZE 100000</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="pp">#define SHM_MODE 0600</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span> array<span class="op">[</span>ARRAY_SIZE<span class="op">];</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span> <span class="op">*</span>string <span class="op">=</span> <span class="st">"a string"</span><span class="op">;</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span> <span class="op">*</span>string2<span class="op">;</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> num <span class="op">=</span> <span class="dv">10</span><span class="op">;</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> num2<span class="op">;</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>pthread_mutex_t lock<span class="op">;</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>pthread_cond_t cond<span class="op">;</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>sem_t sem<span class="op">;</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="kw">extern</span> <span class="dt">char</span> <span class="op">**</span>environ<span class="op">;</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> func<span class="op">(</span><span class="dt">int</span><span class="op">);</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> func2<span class="op">(</span><span class="dt">const</span> <span class="dt">char</span> <span class="op">*);</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">int</span> argc<span class="op">,</span> <span class="dt">char</span> <span class="op">**</span>argv<span class="op">,</span> <span class="dt">char</span> <span class="op">**</span>envp<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> vars<span class="op">;</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> shmid<span class="op">;</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> <span class="op">*</span>ptr<span class="op">;</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> func_array<span class="op">[</span>ARRAY_SIZE<span class="op">];</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>    vars <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> <span class="op">**</span>tmp <span class="op">=</span> envp<span class="op">;</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> <span class="op">(*</span>tmp<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>        vars<span class="op">++;</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"High address (args and env):</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"----------------------------</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"envp[%d] at                                            : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> vars<span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)&amp;</span>envp<span class="op">[</span>vars<span class="op">]);</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"environ[%d] at                                         : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> vars<span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)&amp;</span>environ<span class="op">[</span>vars<span class="op">]);</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"envp[0] at                                             : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)</span>envp<span class="op">);</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"environ[0] at                                          : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)</span>environ<span class="op">);</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"last arg at                                            : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)&amp;</span>argv<span class="op">[</span>argc<span class="op">]);</span></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"first arg at                                           : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)&amp;</span>argv<span class="op">[</span><span class="dv">0</span><span class="op">]);</span></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"Stack:</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"------</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"First variable inside main at                          : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)&amp;</span>vars<span class="op">);</span></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"func_array[] ends at                                   : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)&amp;</span>func_array<span class="op">[</span>ARRAY_SIZE<span class="op">]);</span></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"func_array[] (like 'array[]', but on stack) begins at  : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)&amp;</span>func_array<span class="op">[</span><span class="dv">0</span><span class="op">]);</span></span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"argc at                                                : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)&amp;</span>argc<span class="op">);</span></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"argv at                                                : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)&amp;</span>argv<span class="op">);</span></span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"envp at                                                : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)&amp;</span>envp<span class="op">);</span></span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>    func2<span class="op">(</span><span class="st">"from main"</span><span class="op">);</span></span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>    func<span class="op">(</span><span class="dv">0</span><span class="op">);</span></span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">"Shared memory:</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">"--------------</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">((</span>shmid <span class="op">=</span> shmget<span class="op">(</span>IPC_PRIVATE<span class="op">,</span> SHM_SIZE<span class="op">,</span> SHM_MODE<span class="op">))</span> <span class="op">&lt;</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>            fprintf<span class="op">(</span>stderr<span class="op">,</span> <span class="st">"Unable to get shared memory: %s</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span></span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>                strerror<span class="op">(</span>errno<span class="op">));</span></span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>            exit<span class="op">(</span><span class="dv">1</span><span class="op">);</span></span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">((</span>ptr <span class="op">=</span> shmat<span class="op">(</span>shmid<span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">))</span> <span class="op">==</span> <span class="op">(</span><span class="dt">void</span> <span class="op">*)-</span><span class="dv">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>            fprintf<span class="op">(</span>stderr<span class="op">,</span> <span class="st">"Unable to map shared memory: %s</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span></span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>                strerror<span class="op">(</span>errno<span class="op">));</span></span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>            exit<span class="op">(</span><span class="dv">1</span><span class="op">);</span></span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>        printf<span class="op">(</span><span class="st">"shared memory attachment begins at                     : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)</span>ptr<span class="op">);</span></span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>        printf<span class="op">(</span><span class="st">"shared memory attachment ends at                       : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)</span>ptr<span class="op">+</span>SHM_SIZE<span class="op">);</span>  <span class="op">(</span><span class="dt">void</span><span class="op">)</span></span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">"</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">"Heap:</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"-----</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">((</span>ptr <span class="op">=</span> malloc<span class="op">(</span>MALLOC_SIZE<span class="op">))</span> <span class="op">==</span> NULL<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>        err<span class="op">(</span>EXIT_FAILURE<span class="op">,</span> <span class="st">"unable to allocate memory"</span><span class="op">);</span></span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>        <span class="co">/* NOTREACHED */</span></span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"malloced area ends at                                  : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)</span>ptr<span class="op">+</span>MALLOC_SIZE<span class="op">);</span></span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"malloced area begins at                                : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)</span>ptr<span class="op">);</span></span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>    free<span class="op">(</span>ptr<span class="op">);</span></span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"Uninitialized Data (BSS):</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"-------------------------</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"Semaphore at                                           : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)&amp;</span>sem<span class="op">);</span></span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"Cond at                                                : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)&amp;</span>cond<span class="op">);</span></span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"Lock at                                                : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)&amp;</span>lock<span class="op">);</span></span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"array[] ends at                                        : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)&amp;</span>array<span class="op">[</span>ARRAY_SIZE<span class="op">]);</span></span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"array[] (uninitialized, fixed-size char * on BSS) from : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)&amp;</span>array<span class="op">[</span><span class="dv">0</span><span class="op">]);</span></span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"num2 (uninitialized global int) at                     : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)&amp;</span>num2<span class="op">);</span></span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"string2 (uninitialized global char *) at               : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)&amp;</span>string2<span class="op">);</span></span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"extern **environ at                                    : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)&amp;</span>environ<span class="op">);</span></span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"Initialized Data:</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"-----------------</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"num (initialized global int) at                        : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)&amp;</span>num<span class="op">);</span></span>
+<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"string (initialized global char *) at                  : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)&amp;</span>string<span class="op">);</span></span>
+<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"Text Segment:</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"-------------</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"func2 (function) at                                    : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)&amp;</span>func2<span class="op">);</span></span>
+<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"func (function) at                                     : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)&amp;</span>func<span class="op">);</span></span>
+<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"main (function) at                                     : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)&amp;</span>main<span class="op">);</span></span>
+<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> EXIT_SUCCESS<span class="op">;</span></span>
+<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> func<span class="op">(</span><span class="dt">int</span> recurse<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> fint<span class="op">;</span></span>
+<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> <span class="op">*</span>msg <span class="op">=</span> <span class="st">"from func"</span><span class="op">;</span></span>
+<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a>    <span class="co">/* Change this value to 0 and note how</span></span>
+<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a><span class="co">     * the location of where it is stored</span></span>
+<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a><span class="co">     * changes from the Data to BSS segment. */</span></span>
+<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a>    <span class="dt">static</span> <span class="dt">int</span> n <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"func frame at                                          : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)&amp;</span>fint<span class="op">);</span></span>
+<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>recurse<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a>        msg <span class="op">=</span> <span class="st">"recursive"</span><span class="op">;</span></span>
+<span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"static int n within func at                            : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)&amp;</span>n<span class="op">);</span></span>
+<span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">"func (called %5d times): frame at                    : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> n<span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)&amp;</span>fint<span class="op">);</span></span>
+<span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a>    n<span class="op">++;</span></span>
+<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a>    func2<span class="op">(</span>msg<span class="op">);</span></span>
+<span id="cb2-141"><a href="#cb2-141" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb2-142"><a href="#cb2-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> func2<span class="op">(</span><span class="dt">const</span> <span class="dt">char</span> <span class="op">*</span>how<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-144"><a href="#cb2-144" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> fint<span class="op">;</span></span>
+<span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dt">void</span><span class="op">)</span>printf<span class="op">(</span><span class="st">"func2 (%s): frame at                            : 0x%12lX</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> how<span class="op">,</span> <span class="op">(</span><span class="dt">unsigned</span> <span class="dt">long</span><span class="op">)&amp;</span>fint<span class="op">);</span></span>
+<span id="cb2-146"><a href="#cb2-146" aria-hidden="true" tabindex="-1"></a>    func<span class="op">(</span><span class="dv">1</span><span class="op">);</span></span>
+<span id="cb2-147"><a href="#cb2-147" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
 
