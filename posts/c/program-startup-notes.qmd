@@ -1,0 +1,86 @@
+---
+title: "C Program Startup"
+subtitle: "Does C program really start at main"
+image: "linux-prog-startup.png"
+date: "2022-10-21"
+categories: ["Software Development", "C"]
+---
+
+![Figure 1: Linux x86 program startup([Source](http://dbp-consulting.com/tutorials/debugging/linuxProgramStartup.html))](linux-prog-startup.png)
+
+## Introduction
+
+In this post, I will try to write down the steps of C program execution on x86. I used to believe that all C programs start execution at `main`, or at least this was my understanding from different books/courses until my best friend `gdb` debugger showed the symbol for `_start`. This is how I got curious until I got to the bottom of it. Below are my notes that I took during my learning.
+
+# Execution Steps
+
+1. The linker inject `_start` which is called in the process of loading.
+    - It is written in assembly language
+    - Always placed at the beginning of the `.text` section -> Always guaranteed to run before anything else
+    - It sets up some registers and arguments and calls `__start` which is called `__libc_start_main`
+2. `__libc_start_main` is written in C that:
+    - function prototype:
+    ```c
+    __libc_start_main (int (*main) (int, char `, char `),
+                       int argc,
+                       char *argv,
+                       int  (*init) (int, char `, char `),
+                       void (*fini) (void),
+                       void (*rtld_fini) (void),
+                       void *stack_end
+                      )
+    ```
+    - Define `environ` global variable using `ps_string`: `environ = ps_strings->ps_envstr` 
+        - Below are some details about ps_strings structure:
+
+    ```c
+    /*
+     * The following structure is found at the top of the user stack of each
+     * user process. The ps program uses it to locate argv and environment
+     * strings. Programs that wish ps to display other information may modify
+     * it; normally ps_argvstr points to argv[0], and ps_nargvstr is the same
+     * as the program's argc. The fields ps_envstr and ps_nenvstr are the
+     * equivalent for the environment.
+     */
+    struct ps_strings {
+        char	`ps_argvstr;	/* first of 0 or more argument strings */
+        int	ps_nargvstr;    	/* the number of argument strings */
+        char	`ps_envstr;	/* first of 0 or more environment strings */
+        int	ps_nenvstr;	        /* the number of environment strings */
+    };
+    ```
+
+    - It is typically defined as char `envp = argv[argc + 1]` in `libc_init_first`
+    - It also registers cleanup and exit handlers
+    - It define `init` & `fini` that defines function prolog and epilogue which means defining what happens when calling a function and when returning from a function. They also align the stack to be multiple of 16 bytes so it is more efficient and cache friendly. They are written in assembly language
+    - It sets %rbp to zero because `main` would be the outermost frame
+    - Finally it calls:
+    ```c
+        exit(main(ps_strings->ps_nargvstr, ps_strings->ps_argvstr, environ));
+    ```
+    - After the NULL of `envp`, there is ELF auxiliary vector that the loader uses to provide information to the process such as user id and page size etc.
+    - Therefore, `__libc_start_main` in general does the following:
+        - Set up argv and envp
+        - Initialize the thread local storage by calling `__pthread_initialize_minimal` (which only calls `__libc_setup_tls`).
+            `__libc_setup_tls` will initialize Thread Control Block and Dynamic Thread Vector.
+        - Set up the thread stack guard
+        - Register the destructor (i.e. the rtld_fini argument passed to `__libc_start_main`) of the dynamic linker (by calling `__cxa_atexit`) if there is any
+        - Initialize Glibc itself by calling `__libc_init_first`
+        - Register `__libc_csu_fini` (i.e. the fini argument passed to `__libc_start_main`) using `__cxa_atexit`
+        - Call `__libc_csu_init` (i.e. the init argument passed to `__libc_start_main`). `__libc_csu_init` execute them in the following order:
+            - Function pointers in .preinit_array section
+            - Functions marked as `__attribute__ ((constructor))`, via `_init`
+            - Function pointers in `.init_array` section 
+        - Set up data structures needed for thread unwinding/cancellation
+        - Call main of user's program.
+        - Call exit 
+            - In reverse order, functions registered via atexit or on_exit
+            - Function pointers in .fini_array section, via `__libc_csu_fini`
+            - Functions marked as `__attribute__ ((destructor))`, via `__libc_csu_fini` (which calls `_fini` after Step 2)
+            - stdio cleanup functions
+            - The `.fini_array` section must also contain function pointers and the prototype is like the destructor, i.e. taking no arguments and returning void. If the program exits normally, then the exit function (Glibc source file stdlib/exit.c) 
+
+
+## Conclusion
+
+So starting program will call `execve` that starts the loader that at some point pass control to `_start`, which calls `__libc_start_main` which calls `__libc_csu_init` which calls `_init`.
