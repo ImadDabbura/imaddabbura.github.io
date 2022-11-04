@@ -1,0 +1,14 @@
+---
+title: Python Object Lookup Process
+date: 2022-11-03
+categories: Python
+---
+Whenever a variable, function, or module is invoked in Python, there is a hierarchy that determines where it looks for these objects. 
+
+- First, Python looks inside the `locals()` array, which has entries for all local variables. Python works hard to make local variable lookups fast, and this is the only part of the chain that doesn’t require a dictionary lookup. 
+- If it doesn’t exist there, the `globals()` dictionary is searched. 
+- Finally, if the object isn’t found there, the `__builtin__` object is searched. 
+
+It is important to note that while `locals()` and `globals()` are explicitly dictionaries and `__builtin__` is technically a module object, when searching `__builtin__` for a given property, we are just doing a dictionary lookup inside its `locals()` map (this is the case for all module objects and class objects!).
+
+**Note**: `__local variables__` do not need a dictionary lookup to be found; they are stored in a very slim array that has very fast lookup times. Because of this, finding the function is quite fast!
