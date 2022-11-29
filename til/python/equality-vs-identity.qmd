@@ -1,5 +1,5 @@
 ---
-title: "`==` bs `is`"
+title: "`==` vs `is`"
 date: 2022-11-29
 categories: Python
 ---
@@ -25,4 +25,4 @@ a is b          #=> False
 id(a) == id(b)  #=> True
 ```
 
-Note: It is recommended to use `is` operator when checking if a variable is: `True`, `False`, or `None`. If we use `==`, it will invoke `__eq__` method, which if not implemented, compare the ids of both variables and is slower than `is` operator because it first has to look up `__eq__` method and then invoke `id()` on both variables.
+It is recommended to use `is` operator when checking if a variable is: `True`, `False`, or `None`. If we use `==`, it will invoke `__eq__` method, which if not implemented, compare the ids of both variables and is slower than `is` operator because it first has to look up `__eq__` method and then invoke `id()` on both variables.
