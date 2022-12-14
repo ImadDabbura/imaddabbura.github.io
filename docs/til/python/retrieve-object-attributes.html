@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2022-10-21">
+<meta name="dcterms.date" content="2022-12-14">
 
-<title>Imad Dabbura - C Program Startup</title>
+<title>Imad Dabbura - Retrieving Object’s Attributes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -166,22 +166,16 @@ ga('send', {
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Imad Dabbura - C Program Startup">
-<meta property="og:description" content="Does C program really start at main">
-<meta property="og:image" content="https://imaddabbura.github.io/posts/c/linux-prog-startup.png">
+<meta property="og:title" content="Imad Dabbura - Retrieving Object’s Attributes">
+<meta property="og:description" content="When we try to get any object’s attributes such as obj.x, the interpreter follow more or less the following steps:">
 <meta property="og:site-name" content="Imad Dabbura">
-<meta property="og:image:height" content="635">
-<meta property="og:image:width" content="741">
-<meta name="twitter:title" content="Imad Dabbura - C Program Startup">
-<meta name="twitter:description" content="Does C program really start at main">
-<meta name="twitter:image" content="https://imaddabbura.github.io/posts/c/linux-prog-startup.png">
+<meta name="twitter:title" content="Imad Dabbura - Retrieving Object’s Attributes">
+<meta name="twitter:description" content="When we try to get any object’s attributes such as obj.x, the interpreter follow more or less the following steps:">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image-height" content="635">
-<meta name="twitter:image-width" content="741">
 </head>
 
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -258,11 +252,9 @@ ga('send', {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">C Program Startup</h1>
-            <p class="subtitle lead">Does C program really start at main</p>
+      <h1 class="title">Retrieving Object’s Attributes</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">Software Development</div>
-                <div class="quarto-category">C</div>
+                <div class="quarto-category">Python</div>
               </div>
                   </div>
   </div>
@@ -280,7 +272,7 @@ ga('send', {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">October 21, 2022</p>
+        <p class="date">December 14, 2022</p>
       </div>
     </div>
       
@@ -290,120 +282,33 @@ ga('send', {
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#execution-steps" id="toc-execution-steps" class="nav-link" data-scroll-target="#execution-steps">Execution Steps</a>
-  <ul class="collapse">
-  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
-  </ul></li>
-  </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
-    </div>
+    
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
 
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="linux-prog-startup.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure 1: Linux x86 program startup(<a href="http://dbp-consulting.com/tutorials/debugging/linuxProgramStartup.html">Source</a>)</figcaption><p></p>
-</figure>
-</div>
-<section id="introduction" class="level2">
-<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>In this post, I will try to write down the steps of C program execution on x86. I used to believe that all C programs start execution at <code>main</code>, or at least this was my understanding from different books/courses until my best friend <code>gdb</code> debugger showed the symbol for <code>_start</code>. This is how I got curious until I got to the bottom of it. Below are my notes that I took during my learning.</p>
-</section>
-<section id="execution-steps" class="level1">
-<h1>Execution Steps</h1>
-<ol type="1">
-<li>The linker inject <code>_start</code> which is called in the process of loading.
+<p>When we try to get any object’s attributes such as <code>obj.x</code>, the interpreter follow more or less the following steps:</p>
 <ul>
-<li>It is written in assembly language</li>
-<li>Always placed at the beginning of the <code>.text</code> section -&gt; Always guaranteed to run before anything else</li>
-<li>It sets up some registers and arguments and calls <code>__start</code> which is called <code>__libc_start_main</code></li>
-</ul></li>
-<li><code>__libc_start_main</code> is written in C that:
-<ul>
-<li>function prototype:</li>
+<li>It invokes <code>__getattribute__</code> special method on the instance. If it fails,</li>
+<li>It invokes <code>__getattr__</code> special method. It it fails,</li>
+<li>It returns <code>AttributeError</code></li>
 </ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>__libc_start_main <span class="op">(</span><span class="dt">int</span> <span class="op">(*</span>main<span class="op">)</span> <span class="op">(</span><span class="dt">int</span><span class="op">,</span> <span class="dt">char</span> `<span class="op">,</span> <span class="dt">char</span> `<span class="op">),</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                   <span class="dt">int</span> argc<span class="op">,</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                   <span class="dt">char</span> <span class="op">*</span>argv<span class="op">,</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>                   <span class="dt">int</span>  <span class="op">(*</span>init<span class="op">)</span> <span class="op">(</span><span class="dt">int</span><span class="op">,</span> <span class="dt">char</span> `<span class="op">,</span> <span class="dt">char</span> `<span class="op">),</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>                   <span class="dt">void</span> <span class="op">(*</span>fini<span class="op">)</span> <span class="op">(</span><span class="dt">void</span><span class="op">),</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>                   <span class="dt">void</span> <span class="op">(*</span>rtld_fini<span class="op">)</span> <span class="op">(</span><span class="dt">void</span><span class="op">),</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                   <span class="dt">void</span> <span class="op">*</span>stack_end</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>                  <span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li>Define <code>environ</code> global variable using <code>ps_string</code>: <code>environ = ps_strings-&gt;ps_envstr</code>
-<ul>
-<li>Below are some details about ps_strings structure:</li>
-</ul></li>
-</ul>
-<div class="sourceCode" id="cb2"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">/*</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"> * The following structure is found at the top of the user stack of each</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"> * user process. The ps program uses it to locate argv and environment</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"> * strings. Programs that wish ps to display other information may modify</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"> * it; normally ps_argvstr points to argv[0], and ps_nargvstr is the same</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"> * as the program's argc. The fields ps_envstr and ps_nenvstr are the</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"> * equivalent for the environment.</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"> */</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> ps_strings <span class="op">{</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span>    `ps_argvstr<span class="op">;</span>    <span class="co">/* first of 0 or more argument strings */</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> ps_nargvstr<span class="op">;</span>        <span class="co">/* the number of argument strings */</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span>    `ps_envstr<span class="op">;</span> <span class="co">/* first of 0 or more environment strings */</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> ps_nenvstr<span class="op">;</span>         <span class="co">/* the number of environment strings */</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li>It is typically defined as char <code>envp = argv[argc + 1]</code> in <code>libc_init_first</code></li>
-<li>It also registers cleanup and exit handlers</li>
-<li>It define <code>init</code> &amp; <code>fini</code> that defines function prolog and epilogue which means defining what happens when calling a function and when returning from a function. They also align the stack to be multiple of 16 bytes so it is more efficient and cache friendly. They are written in assembly language</li>
-<li>It sets %rbp to zero because <code>main</code> would be the outermost frame</li>
-<li>Finally it calls:</li>
-</ul>
-<div class="sourceCode" id="cb3"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>    exit<span class="op">(</span>main<span class="op">(</span>ps_strings<span class="op">-&gt;</span>ps_nargvstr<span class="op">,</span> ps_strings<span class="op">-&gt;</span>ps_argvstr<span class="op">,</span> environ<span class="op">));</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li>After the NULL of <code>envp</code>, there is ELF auxiliary vector that the loader uses to provide information to the process such as user id and page size etc.</li>
-<li>Therefore, <code>__libc_start_main</code> in general does the following:
-<ul>
-<li>Set up argv and envp</li>
-<li>Initialize the thread local storage by calling <code>__pthread_initialize_minimal</code> (which only calls <code>__libc_setup_tls</code>). <code>__libc_setup_tls</code> will initialize Thread Control Block and Dynamic Thread Vector.</li>
-<li>Set up the thread stack guard</li>
-<li>Register the destructor (i.e.&nbsp;the rtld_fini argument passed to <code>__libc_start_main</code>) of the dynamic linker (by calling <code>__cxa_atexit</code>) if there is any</li>
-<li>Initialize Glibc itself by calling <code>__libc_init_first</code></li>
-<li>Register <code>__libc_csu_fini</code> (i.e.&nbsp;the fini argument passed to <code>__libc_start_main</code>) using <code>__cxa_atexit</code></li>
-<li>Call <code>__libc_csu_init</code> (i.e.&nbsp;the init argument passed to <code>__libc_start_main</code>). <code>__libc_csu_init</code> execute them in the following order:
-<ul>
-<li>Function pointers in .preinit_array section</li>
-<li>Functions marked as <code>__attribute__ ((constructor))</code>, via <code>_init</code></li>
-<li>Function pointers in <code>.init_array</code> section</li>
-</ul></li>
-<li>Set up data structures needed for thread unwinding/cancellation</li>
-<li>Call main of user’s program.</li>
-<li>Call exit
-<ul>
-<li>In reverse order, functions registered via atexit or on_exit</li>
-<li>Function pointers in .fini_array section, via <code>__libc_csu_fini</code></li>
-<li>Functions marked as <code>__attribute__ ((destructor))</code>, via <code>__libc_csu_fini</code> (which calls <code>_fini</code> after Step 2)</li>
-<li>stdio cleanup functions</li>
-<li>The <code>.fini_array</code> section must also contain function pointers and the prototype is like the destructor, i.e.&nbsp;taking no arguments and returning void. If the program exits normally, then the exit function (Glibc source file stdlib/exit.c)</li>
-</ul></li>
-</ul></li>
-</ul></li>
-</ol>
-<section id="conclusion" class="level2">
-<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<p>So starting program will call <code>execve</code> that starts the loader that at some point pass control to <code>_start</code>, which calls <code>__libc_start_main</code> which calls <code>__libc_csu_init</code> which calls <code>_init</code>.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> C:</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, x):</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.x <span class="op">=</span> <span class="dv">10</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__getattribute__</span>(<span class="va">self</span>, k):</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"getattribute"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">super</span>().<span class="fu">__getattribute__</span>(k)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__getattr__</span>(<span class="va">self</span>, k):</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"getattr"</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">super</span>().<span class="fu">__getattr__</span>(k)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>When we want to check if an object has a specific attribute, we can use <code>hasattr(obj, "attribute")</code>, which follows the same logic as above to test if the object has the given attribute.</p>
 
 
-</section>
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -617,7 +522,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<script src="https://giscus.app/client.js" data-repo="imaddabbura/imaddabbura.github.io" data-repo-id="" data-category="General" data-category-id="" data-mapping="title" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
+<script src="https://giscus.app/client.js" data-repo="imaddabbura/imaddabbura.github.io" data-repo-id="R_kgDOIEwRMg" data-category="General" data-category-id="DIC_kwDOIEwRMs4CRprP" data-mapping="title" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
 </script>
 </div> <!-- /content -->
 <footer class="footer">
