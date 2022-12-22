@@ -1,0 +1,16 @@
+---
+title: Running Tests With `pytests`
+date: 2022-12-22
+categories: Python
+---
+
+Below are different ways of running subsets of test in `pytest`:
+
+- Test method inside TestClass: `pytest
+  path/test_module.py::TestClass::test_method`
+- All tests in TestClass: `pytest path/test_module.py::TestClass`
+- Test function: `pytest path/test_module.py::test_function`
+- All tests a file: `pytest path/test_module.py`
+- All tests in a directory (and its subdirectories): `pytest path`
+- Tests matching a name pattern: `pytest -k pattern`
+    - We can use `not`, `and`, `or` inside regex pattern
