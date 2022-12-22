@@ -239,6 +239,12 @@ ga('send', {
 <li>Tests matching a name pattern: <code>pytest -k pattern</code>
 <ul>
 <li>We can use <code>not</code>, <code>and</code>, <code>or</code> inside regex pattern</li>
+<li>Examples:
+<ul>
+<li><code>pytest -k forward</code> would run all tests that have <em>forward</em> in their name.</li>
+<li><code>pytest -k "forward and not forward_backward"</code> would run all tests that have <em>forward</em> in their name but not <em>forward_backward</em>.</li>
+<li><code>pytest -k "forward or backward and not forward_backward"</code> would run all tests that have <em>forward</em> or <em>backward</em> in their name but not <em>forward_backward</em>.</li>
+</ul></li>
 </ul></li>
 </ul>
 
