@@ -1,0 +1,15 @@
+---
+title: "When Does `iter()` Called Internally"
+date: 2022-12-24
+categories: Python
+---
+Iterators in Python are objects that implement both `__iter__` and `__next__`
+special methods. `iter()` is called internally to support:
+
+- `for` loop.
+- Tuple unpacking, example such as `x, y = IterableObject`
+- Unpacking actual function parameters in function calls such as `*args` and
+  `**kwargs`
+- `list`, `dict`, & `set` comprehensions such as `[e for e in L]`
+- Looping over text files line by line such as `for line in file: print(line)`
+- Collection types construction such as `list(obj)` or `tuple(obj)`
