@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2022-11-06">
+<meta name="dcterms.date" content="2022-12-29">
 
-<title>Imad Dabbura - Lists vs Tuples</title>
+<title>Imad Dabbura - Context Managers</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -166,11 +166,11 @@ ga('send', {
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Imad Dabbura - Lists vs Tuples">
-<meta property="og:description" content="Tuples and Lists are referential data structures (container sequence), which means each element in them is just a pointer to objects but not the objects themselves.">
+<meta property="og:title" content="Imad Dabbura - Context Managers">
+<meta property="og:description" content="Instead of creating a class to implement the context manager protocol (__enter__ &amp; __exit__), we can use @contextmanager from contextlib library to decorate any generator function with a single…">
 <meta property="og:site-name" content="Imad Dabbura">
-<meta name="twitter:title" content="Imad Dabbura - Lists vs Tuples">
-<meta name="twitter:description" content="Tuples and Lists are referential data structures (container sequence), which means each element in them is just a pointer to objects but not the objects themselves.">
+<meta name="twitter:title" content="Imad Dabbura - Context Managers">
+<meta name="twitter:description" content="Instead of creating a class to implement the context manager protocol (__enter__ &amp; __exit__), we can use @contextmanager from contextlib library to decorate any generator function with a single…">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 </head>
@@ -263,7 +263,7 @@ ga('send', {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Lists vs Tuples</h1>
+      <h1 class="title">Context Managers</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">Python</div>
               </div>
@@ -283,7 +283,7 @@ ga('send', {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">November 6, 2022</p>
+        <p class="date">December 29, 2022</p>
       </div>
     </div>
       
@@ -300,63 +300,35 @@ ga('send', {
 
 
 
-<p><strong>Tuples</strong> and <strong>Lists</strong> are referential data structures (<strong>container sequence</strong>), which means each element in them is just a pointer to objects but not the objects themselves. This is what allowed them to contain elements of different types. Compare that with <strong>arrays</strong> (<strong>flat sequence</strong>) that hold the actual elements, which requires all elements to be of the same type.</p>
-<p>They share some of the same characteristics such as search time which is <em>O(n)</em>. However, there are some differences that makes <em>tuples</em> preferred over <em>lists</em> in certain circumstances as is seen in the Python interpretter especially when the object’s size is not expected to change.</p>
+<p>Instead of creating a class to implement the context manager protocol (<code>__enter__</code> &amp; <code>__exit__</code>), we can use <code>@contextmanager</code> from <code>contextlib</code> library to decorate any generator function with a single <code>yield</code> statement.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> gen():</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Anything here for the setup</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"setup"</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># expression after yield will be returned after calling the gen </span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># function in `with` block; otherwise, `None` will be returned</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># equivalent to `__enter__`</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">yield</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Anything here will be part of the teardown when we exit the </span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># `with` block, equivalent to `__exit__`</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"teardown"</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> gen():</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"inside `with` block"</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"outside `with` block"</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Output</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>setutp</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>inside `with` block</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>teardown</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>outside `with` block</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Here is how generator functions decorated with <code>contextmanager</code> get evaluated:</p>
 <ul>
-<li>Lists are <strong>mutable</strong> but tuples are <strong>immutable</strong>. This means that we can’t delete or replace elements in tuples or extend/shrink its size.</li>
-<li>Tuples are much faster to create because Python cache them at runtime and doesn’t communicate with the OS to allocate memory as it does for the lists.</li>
-</ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>timeit l <span class="op">=</span> [<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">7</span>,<span class="dv">8</span>,<span class="dv">9</span>] <span class="co">#=&gt; 60.5 ns ± 0.357 ns per loop (mean ± std. dev. of 7 runs, 10,000,000 loops each)</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>timeit t <span class="op">=</span> (<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">7</span>,<span class="dv">8</span>,<span class="dv">9</span>) <span class="co">#=&gt; 11.9 ns ± 0.255 ns per loop (mean ± std. dev. of 7 runs, 100,000,000 loops each)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li>Tuples can be constant folded: Python interpretter generates bytecode for a tuple in one operation, but generates bytecode for each element is the list as a seperate operation then pushes it to data stack.</li>
-</ul>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dis.dis(<span class="st">"(1, 2)"</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span>           <span class="dv">0</span> LOAD_CONST               <span class="dv">0</span> ((<span class="dv">1</span>, <span class="dv">2</span>))</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>              <span class="dv">2</span> RETURN_VALUE</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>dis.dis(<span class="st">"[1, 2]"</span>)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span>           <span class="dv">0</span> LOAD_CONST               <span class="dv">0</span> (<span class="dv">1</span>)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>              <span class="dv">2</span> LOAD_CONST               <span class="dv">1</span> (<span class="dv">2</span>)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>              <span class="dv">4</span> BUILD_LIST               <span class="dv">2</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>              <span class="dv">6</span> RETURN_VALUE</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li>Tuples can be reused instead of copied: If a tuple is hashable, <code>tuple(t)</code> returns itself because it should stay fixed. On the other side, <code>list(l)</code> would return new copy.</li>
-</ul>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> (<span class="dv">1</span>, <span class="dv">2</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">tuple</span>(t) <span class="kw">is</span> t <span class="co">#=&gt;  True</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>l <span class="op">=</span> (<span class="dv">1</span>, <span class="dv">2</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="bu">list</span>(l) <span class="kw">is</span> l <span class="co">#=&gt;  False</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li>Tuples are compact and don’t over-allocate.</li>
-</ul>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>sys.getsizeof(<span class="bu">tuple</span>(<span class="bu">iter</span>(<span class="bu">range</span>(<span class="dv">10</span>)))) <span class="co">#=&gt; 120</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>sys.getsizeof(<span class="bu">list</span>(<span class="bu">iter</span>(<span class="bu">range</span>(<span class="dv">10</span>)))) <span class="co">#=&gt; 136</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li>Tuples directly reference their elements: references to objects are incorporated directly in a tuple object. In contrast, lists have an extra layer of indirection to an external array of pointers. This gives tuples a small speed advantage for indexed lookups and unpacking:
-<ul>
-<li>Here is how the tuple (10, 20) stored:</li>
-</ul>
-<div class="sourceCode" id="cb5"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">typedef</span> <span class="kw">struct</span> <span class="op">{</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    Py_ssize_t ob_refcnt<span class="op">;</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">struct</span> _typeobject <span class="op">*</span>ob_type<span class="op">;</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    Py_ssize_t ob_size<span class="op">;</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    PyObject <span class="op">*</span>ob_item<span class="op">[</span><span class="dv">2</span><span class="op">];</span>     <span class="co">/* store a pointer to 10 and a pointer to 20 */</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> PyTupleObject<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li>Here is how the list [10, 20] stored:</li>
-</ul>
-<div class="sourceCode" id="cb6"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>PyObject arr<span class="op">[</span><span class="dv">2</span><span class="op">];</span>              <span class="co">/* store a pointer to 10 and a pointer to 20 */</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">typedef</span> <span class="kw">struct</span> <span class="op">{</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    Py_ssize_t ob_refcnt<span class="op">;</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">struct</span> _typeobject <span class="op">*</span>ob_type<span class="op">;</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    Py_ssize_t ob_size<span class="op">;</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    PyObject <span class="op">**</span>ob_item <span class="op">=</span> arr<span class="op">;</span> <span class="co">/* store a pointer to the two-pointer array */</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    Py_ssize_t allocated<span class="op">;</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> PyListObject<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<strong>Conclusion</strong>: Use tuples as immutable lists to 1) clarify that its length won’t change and 2) get a little of speed up due to some optimizations the Python interpretter may do as a result of some of the above.</li>
+<li>Evaluates the body of the generator function until the <code>yield</code> statement</li>
+<li><code>yield</code> produces values we want <code>__enter__</code> to return and evaluation stops</li>
+<li>Continue evaluating the body of the <code>with</code> block</li>
+<li>Once we are done from <code>with</code> block (exit <code>with</code> block), execution continue after the <code>yield</code> statement</li>
 </ul>
 
 
