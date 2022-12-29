@@ -826,6 +826,13 @@
     "text": "x.__bool__() is called. If __bool__ is not implemented, then\nx.__len__() is called. If __len__() is not implemented, then\nreturn True. As a result, all user defined objects are truthy unless __bool__ or __len__ are implemented. Also, we can use if iterable w/o the need to use if len(iterable).\n\nclass A:\n    ...\n\nclass B:\n    def __bool__(self):\n        print(\"In __bool__\")\n        return False\n\nclass C:\n    def __len__(self):\n        print(\"In __len__\")\n        return False\n\nclass D:\n    def __bool__(self):\n        print(\"In __bool__\")\n        return False\n\n    def __len__(self):\n        print(\"In __len__\")\n        return False\nif A(): print(\"Truthy\")     #=> \"Truthy\"\nif B(): print(\"Truthy\")     #=> \"In __bool__\"\nif C(): print(\"Truthy\")     #=> \"In __len__\"\nif D(): print(\"Truthy\")     #=> \"In __len__\""
   },
   {
+    "objectID": "til/python/reuse-fixtures.html",
+    "href": "til/python/reuse-fixtures.html",
+    "title": "Reusing Fixtues By All Tests",
+    "section": "",
+    "text": "@pytest.fixture(autouse=True)\ndef test_time():\n    start = time.time()\n    yield\n    end = time.time()\n    print(f\"test duration: {end - start:0.3} seconds\")"
+  },
+  {
     "objectID": "til/python/running-tests-in-pytest.html",
     "href": "til/python/running-tests-in-pytest.html",
     "title": "Running Tests With pytests",
@@ -838,13 +845,6 @@
     "title": "Decorators",
     "section": "",
     "text": "@decorator\ndef func():\n    pass\nis the same as\nfunc = decorator(func)\nBoilerplate template for any decorator:\nimport functools\ndef decorator(func):\n    @functools.wraps(func)\n    def wrapper_decorator(*args, **kwargs):\n        # Do something\n        value = func(*args, **kwargs)\n        # Do something\n        return value\n    return wrapper_decorator\nWe can also have decorators that take optional arguments:\n# Here _func is positional-only argument and num_times is keyword-only argument\ndef repeat(_func=None, *, num_times=1):\n    def decorator_repeat(func):\n        @functools.wraps(func)\n        def wrapper_repeat(*args, **kwargs):\n            res = 0\n            for _ in range(num_times):\n                res += func(*args, **kwargs)\n            return res\n        return wrapper_repeat\n    \n    # If the decorator is called with arguments\n    if _func is None:\n        return decorator_repeat\n    else:\n        return decorator_repeat(_func)\n\n@repeat\ndef add(x, y):\n    return x + y\nadd(10, 10)         #=> 20\n\n@repeat(num_times=3)\ndef add(x, y):\n    return x + y\nadd(10, 10)         #=> 60\nIf we want the decorator to be stateful, we can use classes as decorators:\nclass Decorator:\n    def __init__(self, func):\n        # We can't use @functools.wrap(func)\n        functools.update_wrapper(self, func)\n        self.func = func\n        # keep state here\n\n    def __call__(self, *args, **kwargs):\n        # Do something, probably update state\n        value = self.func(*args, **kwargs)\n        # Do something, probably update state\n        return value\nDon’t forget to return the value of decorated function 😀"
-  },
-  {
-    "objectID": "til/python/context-mgr.html",
-    "href": "til/python/context-mgr.html",
-    "title": "Reusing Fixtues By All Tests",
-    "section": "",
-    "text": "@pytest.fixture(autouse=True)\ndef test_time():\n    start = time.time()\n    yield\n    end = time.time()\n    print(f\"test duration: {end - start:0.3} seconds\")"
   },
   {
     "objectID": "til/python/when-iterators-used-internally.html",
