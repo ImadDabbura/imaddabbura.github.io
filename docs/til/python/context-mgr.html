@@ -300,7 +300,7 @@ ga('send', {
 
 
 
-<p>Instead of creating a class to implement the context manager protocol (<code>__enter__</code> &amp; <code>__exit__</code>), we can use <code>@contextmanager</code> from <code>contextlib</code> library to decorate any generator function with a single <code>yield</code> statement.</p>
+<p>Instead of creating a class to implement the context manager protocol (<code>__enter__</code> &amp; <code>__exit__</code>), we can use <code>@contextmanager</code> from <code>contextlib</code> library to decorate any generator function with a single <code>yield</code> statement. This done by wrapping the function in a class that implements the <code>__enter__</code> and <code>__exit__</code> methods.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> gen():</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Anything here for the setup</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"setup"</span>)</span>
@@ -325,10 +325,18 @@ ga('send', {
 <span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>outside `with` block</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Here is how generator functions decorated with <code>contextmanager</code> get evaluated:</p>
 <ul>
-<li>Evaluates the body of the generator function until the <code>yield</code> statement</li>
-<li><code>yield</code> produces values we want <code>__enter__</code> to return and evaluation stops</li>
+<li>Evaluates the body of the generator function until the <code>yield</code> statement
+<ul>
+<li>Invoke the generator function and store the generator object, for example <code>gen</code></li>
+<li>Calls <code>next(gen)</code> so the body of generator gets executed until <code>yield</code> statement</li>
+<li>Returns the value returned by <code>yield</code> so it can used to bound it to the target variable of <code>with</code>. Therefore, <code>yield</code> produces values we want <code>__enter__</code> to return and evaluation stops</li>
+</ul></li>
 <li>Continue evaluating the body of the <code>with</code> block</li>
-<li>Once we are done from <code>with</code> block (exit <code>with</code> block), execution continue after the <code>yield</code> statement</li>
+<li>Once we are done from <code>with</code> block (exit <code>with</code> block), execution continue after the <code>yield</code> statement
+<ul>
+<li>Checks if there is exception raised in <code>exc_type</code> inside <code>with</code> block. If there is exception, then invoke <code>gen.throw(exception)</code> in the <code>yield</code> line inside the generator function</li>
+<li>Else, it would invoke <code>next(gen)</code>, which makes the generator to continue execution after the <code>yield</code> line</li>
+</ul></li>
 </ul>
 
 
