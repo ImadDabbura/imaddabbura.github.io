@@ -167,8 +167,10 @@ ga('send', {
 
 <link rel="stylesheet" href="../../styles.css">
 <meta property="og:title" content="Imad Dabbura - Context Manager Protocal">
+<meta property="og:description" content="with statement is designed to work with context manager objects to simplify the try/finally pattern, which guarantees that some code is executed (clean up code) after the with block code is aborted…">
 <meta property="og:site-name" content="Imad Dabbura">
 <meta name="twitter:title" content="Imad Dabbura - Context Manager Protocal">
+<meta name="twitter:description" content="with statement is designed to work with context manager objects to simplify the try/finally pattern, which guarantees that some code is executed (clean up code) after the with block code is aborted…">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 </head>
@@ -298,6 +300,18 @@ ga('send', {
 
 
 
+<p><code>with</code> statement is designed to work with context manager objects to simplify the <code>try/finally</code> pattern, which guarantees that some code is executed (clean up code) after the <code>with</code> block code is aborted because of an exception, a <code>return</code> or <code>sys.exit()</code> call. In a sense, the clean-up that would typically be in the <code>finally</code> clause such as releasing some resources or restoring the temporarily changed state.</p>
+<p>Context manager protocol implements <code>__enter__</code> &amp; <code>__exit__</code>:</p>
+<ul>
+<li><code>__enter__</code> will be invoked on the object after <code>with</code> keyword, which is called the context manager object. It takes no arguments.</li>
+<li>The value <code>__enter__</code> returns, which could be <code>None</code>, <code>self</code>, or any other value would be assigned to the target variable that comes after <code>as</code> keyword.</li>
+<li>Once the <code>with</code> code block is terminated for any reason, <code>__exit__</code> is invoked on the context manager object, which takes 3 arguments (all default to <code>None</code>):
+<ul>
+<li><code>exc_type</code>: Exception type such as <code>ValueError</code></li>
+<li><code>exc_val</code>: Exception object`</li>
+<li><code>traceback</code>: Traceback object</li>
+</ul></li>
+</ul>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ContextProtocal:</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__enter__</span>(<span class="va">self</span>):</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Setup</span></span>
