@@ -1,0 +1,10 @@
+---
+title: "`RANK` vs `DENSE_RANK` vs `ROW`"
+date: 2023-01-21
+categories: SQL
+---
+```sql
+SELECT ROW() OVER(PARTITION BY attrib_1 ORDER BY attrib_2)
+```
+`ROW()`, `RANK()`, and `DENSE_RANK()` all share the same functionality, which
+is assigning tuples inside a *partition* ordered by some attribute(s) numbers.
