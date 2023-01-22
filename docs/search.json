@@ -998,7 +998,7 @@
     "href": "til/sql/rank-denserank-row.html",
     "title": "RANK vs DENSE_RANK vs ROW",
     "section": "",
-    "text": "ROW(), RANK(), and DENSE_RANK() all share the same functionality, which is assigning tuples inside a partition ordered by some attribute(s) numbers."
+    "text": "ROW(), RANK(), and DENSE_RANK() all share the same functionality, which is assigning numbers to tuples inside a partition ordered by some attribute(s). However, they are different in terms of assigning those numbers in the case of ties:\n\nROW() assigns numbers incrementally to tuples with the same value(s) in a non-deterministic way. In others words, same tuple that share the same value(s) with other tuples can have different numbers in different executions in a non-deterministic way.\nRANK() assigns same number to tuples with the same value(s). Also, there will be a gap between the number assigned to tuples with same value(s) and the next tuple.\nDENSE_RANK() is similar to RANK() but doesn’t create gaps."
   },
   {
     "objectID": "til/sql/what-is-null.html",

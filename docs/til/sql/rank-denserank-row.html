@@ -167,10 +167,10 @@ ga('send', {
 
 <link rel="stylesheet" href="../../styles.css">
 <meta property="og:title" content="Imad Dabbura - RANK vs DENSE_RANK vs ROW">
-<meta property="og:description" content="ROW(), RANK(), and DENSE_RANK() all share the same functionality, which is assigning tuples inside a partition ordered by some attribute(s) numbers.">
+<meta property="og:description" content="ROW(), RANK(), and DENSE_RANK() all share the same functionality, which is assigning numbers to tuples inside a partition ordered by some attribute(s).">
 <meta property="og:site-name" content="Imad Dabbura">
 <meta name="twitter:title" content="Imad Dabbura - RANK vs DENSE_RANK vs ROW">
-<meta name="twitter:description" content="ROW(), RANK(), and DENSE_RANK() all share the same functionality, which is assigning tuples inside a partition ordered by some attribute(s) numbers.">
+<meta name="twitter:description" content="ROW(), RANK(), and DENSE_RANK() all share the same functionality, which is assigning numbers to tuples inside a partition ordered by some attribute(s).">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 </head>
@@ -301,7 +301,12 @@ ga('send', {
 
 
 <div class="sourceCode" id="cb1"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="kw">ROW</span>() <span class="kw">OVER</span>(<span class="kw">PARTITION</span> <span class="kw">BY</span> attrib_1 <span class="kw">ORDER</span> <span class="kw">BY</span> attrib_2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><code>ROW()</code>, <code>RANK()</code>, and <code>DENSE_RANK()</code> all share the same functionality, which is assigning tuples inside a <em>partition</em> ordered by some attribute(s) numbers.</p>
+<p><code>ROW()</code>, <code>RANK()</code>, and <code>DENSE_RANK()</code> all share the same functionality, which is assigning numbers to tuples inside a <em>partition</em> ordered by some attribute(s). However, they are different in terms of assigning those numbers in the case of ties:</p>
+<ul>
+<li><code>ROW()</code> assigns numbers incrementally to tuples with the same value(s) in a non-deterministic way. In others words, same tuple that share the same value(s) with other tuples can have different numbers in different executions in a non-deterministic way.</li>
+<li><code>RANK()</code> assigns same number to tuples with the same value(s). Also, there will be a gap between the number assigned to tuples with same value(s) and the next tuple.</li>
+<li><code>DENSE_RANK()</code> is similar to <code>RANK()</code> but doesn’t create gaps.</li>
+</ul>
 
 
 
