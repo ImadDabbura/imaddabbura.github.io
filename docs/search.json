@@ -763,13 +763,6 @@
     "text": "First, Python looks inside the locals() array, which has entries for all local variables. Python works hard to make local variable lookups fast, and this is the only part of the chain that doesn’t require a dictionary lookup.\n\n__local variables__ do not need a dictionary lookup to be found; they are stored in a very slim array that has very fast lookup times. Because of this, finding the function is quite fast!\n\nIf it doesn’t exist there, the globals() dictionary is searched.\nFinally, if the object isn’t found there, the __builtin__ object is searched.\n\nIt is important to note that while locals() and globals() are explicitly dictionaries and __builtin__ is technically a module object, when searching __builtin__ for a given property, we are just doing a dictionary lookup inside its locals() map (this is the case for all module objects and class objects!).\nAs a result of the above:\n\nIt is recommended to import specific objects (variables/functions/classess…) from a module instead of just importing the module and use the module name to refer to the objects it contains because this will slow down the run-time.\nThe performance of the dictionary lookup is largely dependent of the hash function. Therefore, the slower the hash function, the slower the lookup and may not have O(1) lookup anymore."
   },
   {
-    "objectID": "til/python/property-descriptot.html",
-    "href": "til/python/property-descriptot.html",
-    "title": "@property",
-    "section": "",
-    "text": "The signature of property constructor is property(fget=None, fset=None, fdel=None, doc=None). Few important things about instance attributes decorated by @property:\n\nIf the attribute doesn’t have setter -> read-only attribute\nIf the attribute doesn’t have deleter -> we can’t delete the attribute\n\nclass C:\n   def __init__(self):\n       self._x = 10\n\n   @property\n   def x(self):\n       # called when we use obj.x\n       return self._x\n\n   @x.setter\n   def x(self, v):\n       # called when we use obj.x = v\n       self._x = v\n\n   @x.deleter\n   def x(self, v):\n       # called when we use obj.x = v\n       self._x = v"
-  },
-  {
     "objectID": "til/python/slicing.html",
     "href": "til/python/slicing.html",
     "title": "Sequence Slicing",
@@ -803,6 +796,13 @@
     "title": "__getitem__ Makes Object an Iterator",
     "section": "",
     "text": "class L:\n    def __init__(self, length=10):\n        self.data = list(range(length))\n\n    def __getitem__(self, idx):\n        return self.data[idx]\n\n    def __repr__(self):\n        res = f\"{self.__class__.__name__}: {self.data[:10]}\"\n        if len(self.data) > 10:\n            res = res[:-1] + \", ...]\"\n        return res\nl = L()\nl[i for i in l] #=> L: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]\n1 in l          #=> True"
+  },
+  {
+    "objectID": "til/python/property-descriptor.html",
+    "href": "til/python/property-descriptor.html",
+    "title": "@property",
+    "section": "",
+    "text": "The signature of property constructor is property(fget=None, fset=None, fdel=None, doc=None). Few important things about instance attributes decorated by @property:\n\nIf the attribute doesn’t have setter -> read-only attribute\nIf the attribute doesn’t have deleter -> we can’t delete the attribute\n\nclass C:\n   def __init__(self):\n       self._x = 10\n\n   @property\n   def x(self):\n       # called when we use obj.x\n       return self._x\n\n   @x.setter\n   def x(self, v):\n       # called when we use obj.x = v\n       self._x = v\n\n   @x.deleter\n   def x(self, v):\n       # called when we use obj.x = v\n       self._x = v"
   },
   {
     "objectID": "til/python/logging.html",
