@@ -893,7 +893,7 @@
     "href": "til/python/overriding-vs-nonoverriding-descriptor.html",
     "title": "Overriding vs Non-overriding Descriptors",
     "section": "",
-    "text": "class Test:\n    def __init__(self):\n        self._x = 1\n    \n    @propery\n    def x(self):\n        return self._x\n\nc = Test()\nprint(c.x)  #=> 1\nc.x = 10    #=> AttributeError: can't set attribute 'x'\n\nNon-overriding descriptors are descriptors that don’t implement __set__. This means that the user can shadow the attribute. The common example of a non-overriding descriptor is the instance methods. They are actually implemented using non-overriding descriptor with __get__ method.\n\nclass Test:\n    def f(self):\n        return 1\n\nc = Test()\ntype(c.f)   #=> method\nprint(c.f())    #=> 1\n\nc.f = 0\ntype(c.f)   #=> int\nprint(c.f)  #=> 0"
+    "text": "class Test:\n    def __init__(self):\n        self._x = 1\n    \n    @property\n    def x(self):\n        return self._x\n\nc = Test()\nprint(c.x)  #=> 1\nc.x = 10    #=> AttributeError: can't set attribute 'x'\n\nNon-overriding descriptors are descriptors that don’t implement __set__. This means that the user can shadow the attribute. The common example of a non-overriding descriptor is the instance methods. They are actually implemented using non-overriding descriptor with __get__ method.\n\nclass Test:\n    def f(self):\n        return 1\n\nc = Test()\ntype(c.f)   #=> method\nprint(c.f())    #=> 1\n\nc.f = 0\ntype(c.f)   #=> int\nprint(c.f)  #=> 0"
   },
   {
     "objectID": "til/python/mutability-and-inplace-operations.html",
