@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2022-12-27">
+<meta name="dcterms.date" content="2022-12-26">
 
-<title>Imad Dabbura - Testing Expected Exceptions with pytest</title>
+<title>Imad Dabbura - Fixtures’ Scopes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,69 +22,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1.6em;
   vertical-align: middle;
 }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { color: #008000; } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { color: #008000; font-weight: bold; } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -166,11 +103,11 @@ ga('send', {
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Imad Dabbura - Testing Expected Exceptions with pytest">
-<meta property="og:description" content="Tests generally fails for 3 reasons:">
+<meta property="og:title" content="Imad Dabbura - Fixtures’ Scopes">
+<meta property="og:description" content="Fixtures are functions decorated by pytest.fixture() that run before/after test functions by pytest to do the setup/teardown.">
 <meta property="og:site-name" content="Imad Dabbura">
-<meta name="twitter:title" content="Imad Dabbura - Testing Expected Exceptions with pytest">
-<meta name="twitter:description" content="Tests generally fails for 3 reasons:">
+<meta name="twitter:title" content="Imad Dabbura - Fixtures’ Scopes">
+<meta name="twitter:description" content="Fixtures are functions decorated by pytest.fixture() that run before/after test functions by pytest to do the setup/teardown.">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 </head>
@@ -263,9 +200,9 @@ ga('send', {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Testing Expected Exceptions with <code>pytest</code></h1>
+      <h1 class="title">Fixtures’ Scopes</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">Python</div>
+                <div class="quarto-category">pytest</div>
               </div>
                   </div>
   </div>
@@ -283,7 +220,7 @@ ga('send', {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">December 27, 2022</p>
+        <p class="date">December 26, 2022</p>
       </div>
     </div>
       
@@ -300,30 +237,16 @@ ga('send', {
 
 
 
-<p>Tests generally fails for 3 reasons:</p>
+<p>Fixtures are functions decorated by <code>pytest.fixture()</code> that run before/after test functions by <code>pytest</code> to do the setup/teardown. Test functions as well as other fixtures can depend on fixtures through their parameter list that would have the same name(s) of the fixture(s).</p>
+<p>Scopes of fixtures:</p>
 <ul>
-<li>The assetion test fails</li>
-<li><code>pytest.fail()</code> is called with the test</li>
-<li>An exception is raised in the code that is being tested and not handled</li>
+<li><strong>Function</strong> (default): The setup/teardown runs before/after every run of the test function or fixture that depends on it</li>
+<li><strong>Class</strong>: The setup/teardown runs before/after once for all the test methods inside a class</li>
+<li><strong>Module</strong>: The setup/teardown runs before/after once for all the test functions/methods inside a module</li>
+<li><strong>Package</strong>: The setup/teardown runs before/after once for all the test functions/methods inside a package or test directory</li>
+<li><strong>Session</strong>: The setup/teardown runs before/after once for all the test functions/methods inside per session</li>
 </ul>
-<p>We can use <code>pytest.fail()</code> to test for exceptions that our code is expected to raise in certain cases.</p>
-<p>We can test if the code raises expected exception (here <code>ValueError</code>):</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_raises_exc():</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> pytest.fail(<span class="pp">ValueError</span>):</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>        fn()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>We can test if the code raises expected exception and exception message matches correct message:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># One way</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_raises_exc():</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    msg_regex <span class="op">=</span> <span class="st">"something .* final"</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> pytest.fail(<span class="pp">ValueError</span>, match<span class="op">=</span>msg_regex):</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        fn()</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Another way</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_raises_exc():</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> pytest.fail(<span class="pp">ValueError</span>) <span class="im">as</span> exc:</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        fn()</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    expected <span class="op">=</span> <span class="st">"Some exception message"</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> expected <span class="kw">in</span> <span class="bu">str</span>(exc.value)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>A fixture can only depend on another fixture that is at the same scope level of wider. Also, for <em>package/session</em> scopes, the fixtures have to be defined inside <code>conftest.py</code> that will be read by <code>pytest</code> before running tests inorder to be actually at the <em>package/session</em> level; otherwise, they will default to the module.</p>
 
 
 

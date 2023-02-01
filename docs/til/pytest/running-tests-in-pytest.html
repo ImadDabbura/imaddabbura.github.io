@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2022-12-26">
+<meta name="dcterms.date" content="2022-12-22">
 
-<title>Imad Dabbura - pytest Fixtures’ Scopes</title>
+<title>Imad Dabbura - Running Tests</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -103,11 +103,11 @@ ga('send', {
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Imad Dabbura - pytest Fixtures’ Scopes">
-<meta property="og:description" content="Fixtures are functions decorated by pytest.fixture() that run before/after test functions by pytest to do the setup/teardown.">
+<meta property="og:title" content="Imad Dabbura - Running Tests">
+<meta property="og:description" content="Below are different ways of running subsets of test in pytest:">
 <meta property="og:site-name" content="Imad Dabbura">
-<meta name="twitter:title" content="Imad Dabbura - pytest Fixtures’ Scopes">
-<meta name="twitter:description" content="Fixtures are functions decorated by pytest.fixture() that run before/after test functions by pytest to do the setup/teardown.">
+<meta name="twitter:title" content="Imad Dabbura - Running Tests">
+<meta name="twitter:description" content="Below are different ways of running subsets of test in pytest:">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 </head>
@@ -200,9 +200,9 @@ ga('send', {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title"><code>pytest</code> Fixtures’ Scopes</h1>
+      <h1 class="title">Running Tests</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">Python</div>
+                <div class="quarto-category">pytest</div>
               </div>
                   </div>
   </div>
@@ -220,7 +220,7 @@ ga('send', {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">December 26, 2022</p>
+        <p class="date">December 22, 2022</p>
       </div>
     </div>
       
@@ -237,16 +237,24 @@ ga('send', {
 
 
 
-<p>Fixtures are functions decorated by <code>pytest.fixture()</code> that run before/after test functions by <code>pytest</code> to do the setup/teardown. Test functions as well as other fixtures can depend on fixtures through their parameter list that would have the same name(s) of the fixture(s).</p>
-<p>Scopes of fixtures:</p>
+<p>Below are different ways of running subsets of test in <code>pytest</code>:</p>
 <ul>
-<li><strong>Function</strong> (default): The setup/teardown runs before/after every run of the test function or fixture that depends on it</li>
-<li><strong>Class</strong>: The setup/teardown runs before/after once for all the test methods inside a class</li>
-<li><strong>Module</strong>: The setup/teardown runs before/after once for all the test functions/methods inside a module</li>
-<li><strong>Package</strong>: The setup/teardown runs before/after once for all the test functions/methods inside a package or test directory</li>
-<li><strong>Session</strong>: The setup/teardown runs before/after once for all the test functions/methods inside per session</li>
+<li>Test method inside TestClass: <code>pytest   path/test_module.py::TestClass::test_method</code></li>
+<li>All tests in TestClass: <code>pytest path/test_module.py::TestClass</code></li>
+<li>Test function: <code>pytest path/test_module.py::test_function</code></li>
+<li>All tests a file: <code>pytest path/test_module.py</code></li>
+<li>All tests in a directory (and its subdirectories): <code>pytest path</code></li>
+<li>Tests matching a name pattern: <code>pytest -k pattern</code>
+<ul>
+<li>We can use <code>not</code>, <code>and</code>, <code>or</code> inside regex pattern</li>
+<li>Examples:
+<ul>
+<li><code>pytest -k forward</code> would run all tests that have <em>forward</em> in their name.</li>
+<li><code>pytest -k "forward and not forward_backward"</code> would run all tests that have <em>forward</em> in their name but not <em>forward_backward</em>.</li>
+<li><code>pytest -k "forward or backward and not forward_backward"</code> would run all tests that have <em>forward</em> or <em>backward</em> in their name but not <em>forward_backward</em>.</li>
+</ul></li>
+</ul></li>
 </ul>
-<p>A fixture can only depend on another fixture that is at the same scope level of wider. Also, for <em>package/session</em> scopes, the fixtures have to be defined inside <code>conftest.py</code> that will be read by <code>pytest</code> before running tests inorder to be actually at the <em>package/session</em> level; otherwise, they will default to the module.</p>
 
 
 

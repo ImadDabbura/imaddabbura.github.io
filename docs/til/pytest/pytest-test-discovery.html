@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2022-12-22">
+<meta name="dcterms.date" content="2022-12-19">
 
-<title>Imad Dabbura - Running Tests With pytests</title>
+<title>Imad Dabbura - Test Discovery</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -103,11 +103,11 @@ ga('send', {
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Imad Dabbura - Running Tests With pytests">
-<meta property="og:description" content="Below are different ways of running subsets of test in pytest:">
+<meta property="og:title" content="Imad Dabbura - Test Discovery">
+<meta property="og:description" content="Test discovery process in pytest goes as follows:">
 <meta property="og:site-name" content="Imad Dabbura">
-<meta name="twitter:title" content="Imad Dabbura - Running Tests With pytests">
-<meta name="twitter:description" content="Below are different ways of running subsets of test in pytest:">
+<meta name="twitter:title" content="Imad Dabbura - Test Discovery">
+<meta name="twitter:description" content="Test discovery process in pytest goes as follows:">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 </head>
@@ -200,9 +200,9 @@ ga('send', {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Running Tests With <code>pytests</code></h1>
+      <h1 class="title">Test Discovery</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">Python</div>
+                <div class="quarto-category">pytest</div>
               </div>
                   </div>
   </div>
@@ -220,7 +220,7 @@ ga('send', {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">December 22, 2022</p>
+        <p class="date">December 19, 2022</p>
       </div>
     </div>
       
@@ -237,24 +237,12 @@ ga('send', {
 
 
 
-<p>Below are different ways of running subsets of test in <code>pytest</code>:</p>
+<p>Test discovery process in <code>pytest</code> goes as follows:</p>
 <ul>
-<li>Test method inside TestClass: <code>pytest   path/test_module.py::TestClass::test_method</code></li>
-<li>All tests in TestClass: <code>pytest path/test_module.py::TestClass</code></li>
-<li>Test function: <code>pytest path/test_module.py::test_function</code></li>
-<li>All tests a file: <code>pytest path/test_module.py</code></li>
-<li>All tests in a directory (and its subdirectories): <code>pytest path</code></li>
-<li>Tests matching a name pattern: <code>pytest -k pattern</code>
-<ul>
-<li>We can use <code>not</code>, <code>and</code>, <code>or</code> inside regex pattern</li>
-<li>Examples:
-<ul>
-<li><code>pytest -k forward</code> would run all tests that have <em>forward</em> in their name.</li>
-<li><code>pytest -k "forward and not forward_backward"</code> would run all tests that have <em>forward</em> in their name but not <em>forward_backward</em>.</li>
-<li><code>pytest -k "forward or backward and not forward_backward"</code> would run all tests that have <em>forward</em> or <em>backward</em> in their name but not <em>forward_backward</em>.</li>
-</ul></li>
-</ul></li>
+<li>It recursively looks for files in the given directories (use current working directory if no directory/file is given) and all their subdirectories that named with <code>test_*.py</code> or <code>*_test.py</code>.</li>
+<li>In each of the test files identified, it looks for functions/methods that start with <code>test_</code> and classes that start with <code>Test</code></li>
 </ul>
+<p>We can always run tests in specific file by running <code>pytest file</code> or specific test in a test file <code>pytest path/to/file::test_name</code></p>
 
 
 
