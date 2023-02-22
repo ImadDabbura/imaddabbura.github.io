@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2023-02-01">
+<meta name="dcterms.date" content="2023-02-14">
 
 <title>Imad Dabbura - Transformer Architecture Explained</title>
 <style>
@@ -291,7 +291,7 @@ ga('send', {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">February 1, 2023</p>
+        <p class="date">February 14, 2023</p>
       </div>
     </div>
       
@@ -316,6 +316,9 @@ ga('send', {
   <li><a href="#layer-normalization" id="toc-layer-normalization" class="nav-link" data-scroll-target="#layer-normalization">Layer Normalization</a></li>
   <li><a href="#skip-connections" id="toc-skip-connections" class="nav-link" data-scroll-target="#skip-connections">Skip Connections</a></li>
   <li><a href="#dropout" id="toc-dropout" class="nav-link" data-scroll-target="#dropout">Dropout</a></li>
+  </ul></li>
+  <li><a href="#transformer-components" id="toc-transformer-components" class="nav-link" data-scroll-target="#transformer-components">Transformer Components</a>
+  <ul class="collapse">
   <li><a href="#encoder-only-architecture" id="toc-encoder-only-architecture" class="nav-link" data-scroll-target="#encoder-only-architecture">Encoder-only Architecture</a></li>
   <li><a href="#decoder-only-architecture" id="toc-decoder-only-architecture" class="nav-link" data-scroll-target="#decoder-only-architecture">Decoder-only Architecture</a></li>
   <li><a href="#encoder-decoder-architecture" id="toc-encoder-decoder-architecture" class="nav-link" data-scroll-target="#encoder-decoder-architecture">Encoder-Decoder Architecture</a></li>
@@ -567,6 +570,9 @@ ga('send', {
 <p>Dropout is used in the Transformer in embeddings layer after adding the token and positional embeddings as well as after each multi-head/feed-forward layers in both the encoder and decoder layers.</p>
 <p>For more information on dropout, check out my <a href="https://imaddabbura.github.io/posts/coding-nn/dropout/Coding-Neural-Network-Dropout.html">previous post</a>.</p>
 </section>
+</section>
+<section id="transformer-components" class="level1">
+<h1>Transformer Components</h1>
 <section id="encoder-only-architecture" class="level2">
 <h2 class="anchored" data-anchor-id="encoder-only-architecture">Encoder-only Architecture</h2>
 <p>Encoder-only architecture are well suited for classification tasks. The most common model that uses encoder-only branch of the Transformer architecture is <a href="https://arxiv.org/abs/1810.04805">BERT</a> and all its variants such as <a href="https://arxiv.org/abs/1907.11692">RoBERTa</a>. In this architecture, we would have: - body: Stacked encoder layers. The output would be <code>B x T x hidden_sz</code>. - head: A classification head which consists of linear layer that project the hidden_sz into num_classes. We take the hidden vector of the first token, which is the special token <code>[CLS]</code> in the case of <em>BERT</em> (indicates the beginning of sequence), and pass it through the linear layer to get the logits.</p>
