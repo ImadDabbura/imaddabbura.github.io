@@ -422,8 +422,8 @@ ga('send', {
 <section id="attention" class="level2">
 <h2 class="anchored" data-anchor-id="attention">Attention</h2>
 <p><strong>Attention</strong> is a communication mechanism that is used by NN model to learn to make predictions by attending to some tokens in the context window (only current and previous tokens for decoder-only architectute). The attention weights, which are learned, are used to construct the weighted average of all the tokens attended to by each token. This will help each token focus on what is important in the context. As a reminder, with attention, there is no notion of space. This means it operates on a set of vectors. This is why we need positional encoding for tokens.</p>
-<p>The results of the attention layer would be contextualized embeddings, since the output of the embedding layer is contextless embeddings. This is very useful because we know that the meaning of a word changes according to the context, and embeddings from the embedding layer for a token is the same regardles of its context. For example, the word “bear” has the same embedding vector whether it comes in “teddy bear” or “to bear”.</p>
-<p><strong>Self-attention</strong> is a type of attention mechanism where the keys and values come from the same source as the queries, which is the input <span class="math inline">\(x\)</span>. Whereas in <strong>cross-attention</strong>, the queries still get produced from the input <span class="math inline">\(x\)</span>, but the keys and values come from some other external source (encoder module in the case of encoder-decoder architecure).</p>
+<p>The results of the attention layer would be contextualized embeddings, since the output of the embedding layer is contextless embeddings. This is very useful because we know that the meaning of a word changes according to the context, and embeddings from the embedding layer for a token is the same regardless of its context. For example, the word “bear” has the same embedding vector whether it comes in “teddy bear” or “to bear”.</p>
+<p><strong>Self-attention</strong> is a type of attention mechanism where the keys and values come from the same source as the queries, which is the input <span class="math inline">\(x\)</span>. Whereas in <strong>cross-attention</strong>, the queries still get produced from the input <span class="math inline">\(x\)</span>, but the keys and values come from some other external source (encoder module in the case of encoder-decoder architecture).</p>
 <p align="center">
 <img src="scaled-dot-product-attention.png" height="400px"><br>
 
@@ -477,7 +477,7 @@ ga('send', {
 </section>
 <section id="multi-head-attention" class="level2">
 <h2 class="anchored" data-anchor-id="multi-head-attention">Multi-Head Attention</h2>
-<p>What we described in the previous section was selt-attention mechanism with one-head. Since each attention head focuses on one specific characteristic of the data in terms of similarity such as subject-verb interaction, other heads are needed to focus on other aspects such as adjectives. We can also think of having multiple heads as if each head focuses on one or few other tokens. Remember that all of this is done in parallel and there is no communication between heads. This means that each head has no idea what other heads are doing.</p>
+<p>What we described in the previous section was self-attention mechanism with one-head. Since each attention head focuses on one specific characteristic of the data in terms of similarity such as subject-verb interaction, other heads are needed to focus on other aspects such as adjectives. We can also think of having multiple heads as if each head focuses on one or few other tokens. Remember that all of this is done in parallel and there is no communication between heads. This means that each head has no idea what other heads are doing.</p>
 <p align="center">
 <img src="multi-head-attention.png" height="400px"><br>
 
