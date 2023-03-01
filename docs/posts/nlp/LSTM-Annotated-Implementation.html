@@ -333,7 +333,8 @@ ga('send', {
 <p>Let’s first cover ,at a high level, how LSTM works:</p>
 <ul>
 <li>On each timestep <em>t</em>, there would be two states: a hidden state <span class="math inline">\(h()\)</span> and a cell state <span class="math inline">\(c()\)</span></li>
-<li>Both are vectors length <span class="math inline">\(n\)</span> • The cell stores long-term information</li>
+<li>Both are vectors length <span class="math inline">\(n\)</span></li>
+<li>The cell stores long-term information</li>
 <li>The LSTM can read, erase, and write information from the cell. Therefore, the cell becomes more like a RAM</li>
 </ul>
 <p>LSTM solves the vanishing/exploding gradients problems by making it easier to preserve information through longer timesteps.</p>
@@ -351,18 +352,21 @@ h_t = o_t \odot \tanh(c_t) \\
 \end{array}\]</span>
 <p>Where:</p>
 <ul>
-<li><span class="math inline">\(i_t\)</span> is the input gate. It looks at <span class="math inline">\(x_t\)</span> and <span class="math inline">\(h_t\)</span> and determines what information to keep an what to throw away. The output is between 0 &amp; 1 where 1 means keep all the information and 0 means get rid of this information.</li>
-<li><span class="math inline">\(f_t\)</span> is the forget gate. This gate is responsible to determine which information from the old cell state need to be forgotten in order to be replaced with new information when updating the new cell state based on the input gate.</li>
-<li><span class="math inline">\(g_t\)</span> is the cell gate. This gate determines which cell elements to update with new input data.</li>
-<li><span class="math inline">\(o_t\)</span> is the output gate. This is the last gate which determines which information from cell state to use to output to the new hidden state.</li>
+<li><span class="math inline">\(i_t\)</span> is the <strong>input gate</strong>. It looks at <span class="math inline">\(x_t\)</span> and <span class="math inline">\(h_t\)</span> and determines what information to keep and what to throw away. The output is between 0 &amp; 1 where 1 means keep all the information and 0 means get rid of this information.</li>
+<li><span class="math inline">\(f_t\)</span> is the <strong>forget gate</strong>. This gate is responsible to determine which information from the old cell state needs to be forgotten in order to be replaced with new information when updating the new cell state based on the input gate.</li>
+<li><span class="math inline">\(g_t\)</span> is the <strong>cell gate</strong>. This gate determines which cell elements to update with new input data.</li>
+<li><span class="math inline">\(o_t\)</span> is the <strong>output gate</strong>. This is the last gate which determines which information from cell state to use to output to the new hidden state.</li>
 </ul>
 <p>Even though we have 4 gates, we actually implement them using one matrix speed up the computation. Then later we will split the output to compute the corresponding gates.</p>
 <p>Let’s implement <code>LSTMCell</code> and check its correctness with pytorch.</p>
 <div class="cell" data-execution_count="2">
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn.functional <span class="im">as</span> F</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Long version</span></span>
@@ -462,7 +466,7 @@ h_t = o_t \odot \tanh(c_t) \\
 <ul>
 <li>We use sequence length as the first dimension instead of the batch first. This would give us better performance since we iterate over timesteps and we want to avoid copying memory for each operation which would be the case if the matrix is not contiguous when first dimension is the batch. Therefore, we use <code>T x B x input_sz</code>.</li>
 <li><strong>Backpropagation Through Time (BPTT)</strong>: This essentially means we backpropagate through all the history for each example when we calculate the gradient of the loss w.r.t. weights. Since for each layer, the weights are shared among all timesteps, long sequences will suffer greatly from vanishing/exploding gradients. Therefore, we typically truncate history by detaching hidden and cell states from computation graph after every batch so gradients stop at <span class="math inline">\(t_0\)</span> for each bach for each sequence. We only have access to the hidden/cell states from previous batch for the same sequence but can’t propagate beyond the first timestep of each batch.</li>
-<li>We can stack RNNs and LSTMs on top of each other using <code>num_layers</code> argument. This would build multiple LSTM layers, each has its own <code>LSTMCell</code> that is shared across all timesteps within each layer. This would increase the capacity of the model.</li>
+<li>We can stack LSTMs (and RNNs) on top of each other using <code>num_layers</code> argument. This would build multiple LSTM layers, each has its own <code>LSTMCell</code> that is shared across all timesteps within each layer. This would increase the capacity of the model.</li>
 <li>When we have multilpe layers, we can either 1) iterate first over all timesteps for each layer before moving to the next layer Or 2) iterate over number of layers first for a given timestep before moving to the next timestep.</li>
 <li>When we have long sequences, it is common that we divide the sequences into shorter segments using predefined block_size.</li>
 <li>Since not all sequences have the same length, we need to make them of the same length to utilize matrix-matrix multiplication. There are two approaches to handle this issue:
