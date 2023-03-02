@@ -5,5 +5,11 @@ image-align: left
 page-layout: full
 title-block-banner: true
 ---
+## General
 
-Placeholder for Deep Learning tips and tricks.
+- Gradient accumulation: to avoid out-of-memory errors (OOM) while training on GPUs, break larger batches into smaller batches and accumulate gradients by back-propagates after every step to gather gradients before running optimization step. It should give identical results as if we train with larger batches unless we have layers that kind of depending on the batch size in the forward pass such as BatchNorm.
+    - For example, in pytorch, instead of calling `optimizer.step()` for every batch, we call it every few batches.
+
+## NLP
+
+- With LLM, generally the more compute the better the results. We can define compute, roughly, as the number of parameters x number of tokens. Therefore, we can make the model bigger and keep the number of tokens fixed OR keep the model size the same and increase the number of tokens which means that we have to train for longer. There is a trade-off that depends on the task.

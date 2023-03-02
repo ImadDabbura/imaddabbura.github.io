@@ -102,10 +102,8 @@ ga('send', {
 
 <link rel="stylesheet" href="styles.css">
 <meta property="og:title" content="Imad Dabbura - Deep Learning Tips &amp; Tricks">
-<meta property="og:description" content="Placeholder for Deep Learning tips and tricks.">
 <meta property="og:site-name" content="Imad Dabbura">
 <meta name="twitter:title" content="Imad Dabbura - Deep Learning Tips &amp; Tricks">
-<meta name="twitter:description" content="Placeholder for Deep Learning tips and tricks.">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 </head>
@@ -223,9 +221,23 @@ ga('send', {
 
 
 
-<p>Placeholder for Deep Learning tips and tricks.</p>
+<section id="general" class="level2">
+<h2 class="anchored" data-anchor-id="general">General</h2>
+<ul>
+<li>Gradient accumulation: to avoid out-of-memory errors (OOM) while training on GPUs, break larger batches into smaller batches and accumulate gradients by back-propagates after every step to gather gradients before running optimization step. It should give identical results as if we train with larger batches unless we have layers that kind of depending on the batch size in the forward pass such as BatchNorm.
+<ul>
+<li>For example, in pytorch, instead of calling <code>optimizer.step()</code> for every batch, we call it every few batches.</li>
+</ul></li>
+</ul>
+</section>
+<section id="nlp" class="level2">
+<h2 class="anchored" data-anchor-id="nlp">NLP</h2>
+<ul>
+<li>With LLM, generally the more compute the better the results. We can define compute, roughly, as the number of parameters x number of tokens. Therefore, we can make the model bigger and keep the number of tokens fixed OR keep the model size the same and increase the number of tokens which means that we have to train for longer. There is a trade-off that depends on the task.</li>
+</ul>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
