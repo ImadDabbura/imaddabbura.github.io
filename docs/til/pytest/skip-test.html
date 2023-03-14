@@ -104,8 +104,10 @@ ga('send', {
 
 <link rel="stylesheet" href="../../styles.css">
 <meta property="og:title" content="Imad Dabbura - Difference Between pytest’s skip, skipif, &amp; xfail Markers">
+<meta property="og:description" content="Sometimes we may want to skip some tests because either 1) the functionality they test is not supported yet Or 2) some versions of the library didn’t support it.">
 <meta property="og:site-name" content="Imad Dabbura">
 <meta name="twitter:title" content="Imad Dabbura - Difference Between pytest’s skip, skipif, &amp; xfail Markers">
+<meta name="twitter:description" content="Sometimes we may want to skip some tests because either 1) the functionality they test is not supported yet Or 2) some versions of the library didn’t support it.">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 </head>
@@ -221,7 +223,7 @@ ga('send', {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">March 13, 2023</p>
+        <p class="date">2023-03-13</p>
       </div>
     </div>
       
@@ -238,6 +240,12 @@ ga('send', {
 
 
 
+<p>Sometimes we may want to skip some tests because either 1) the functionality they test is not supported yet Or 2) some versions of the library didn’t support it. We can use one of the following three <code>pytest</code> markers for this purpose:</p>
+<ul>
+<li><code>pytest.mark.skip</code>: Skip the test completely</li>
+<li><code>pytest.mark.skipif(condition, ...)</code>: Skip the test if the condition is <code>True</code></li>
+<li><code>pytest.mark.xfail(..., strict=False)</code>: Run the test even though we know if would fail. The <code>strict</code> option determines if the passed test is classified as <code>XPASSED</code> if <code>strict=False</code> OR <code>FAILED</code> if <code>strict=True</code>. If the test failed, it would always return <code>XFAIL</code> regardless of the <code>strict</code> option.</li>
+</ul>
 
 
 

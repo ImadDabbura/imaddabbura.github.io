@@ -770,6 +770,13 @@
     "text": "Scopes of fixtures:\n\nFunction (default): The setup/teardown runs before/after every run of the test function or fixture that depends on it\nClass: The setup/teardown runs before/after once for all the test methods inside a class\nModule: The setup/teardown runs before/after once for all the test functions/methods inside a module\nPackage: The setup/teardown runs before/after once for all the test functions/methods inside a package or test directory\nSession: The setup/teardown runs before/after once for all the test functions/methods inside per session\n\nA fixture can only depend on another fixture that is at the same scope level of wider. Also, for package/session scopes, the fixtures have to be defined inside conftest.py that will be read by pytest before running tests inorder to be actually at the package/session level; otherwise, they will default to the module."
   },
   {
+    "objectID": "til/pytest/skip-test.html",
+    "href": "til/pytest/skip-test.html",
+    "title": "Difference Between pytest’s skip, skipif, & xfail Markers",
+    "section": "",
+    "text": "pytest.mark.skip: Skip the test completely\npytest.mark.skipif(condition, ...): Skip the test if the condition is True\npytest.mark.xfail(..., strict=False): Run the test even though we know if would fail. The strict option determines if the passed test is classified as XPASSED if strict=False OR FAILED if strict=True. If the test failed, it would always return XFAIL regardless of the strict option."
+  },
+  {
     "objectID": "til/pytest/pytest-test-discovery.html",
     "href": "til/pytest/pytest-test-discovery.html",
     "title": "Test Discovery",
