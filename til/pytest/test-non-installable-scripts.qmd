@@ -1,0 +1,15 @@
+---
+title: "Testing Non-installable Scripts"
+date: 2023-03-21
+categories: pytest
+---
+Sometimes we may want to test scripts that can't be imported as packages and live in different directories than the `tests` directory. The easiest way to make our `src` code directory discoverable at runtime is to updata Python's `sys.path`. We can do that through pytest config file as follows:
+
+```
+[pytest]
+...
+testpaths = tests
+pythonpath = src
+...
+```
+This will add `src` directory to the `sys.path`. This is relative to `pytest.ini` file. Also, by default, pytest add `tests` directory to the `sys.path`, but we're here explicit about what is the `tests` path.
