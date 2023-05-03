@@ -386,7 +386,7 @@ ga('send', {
 </section>
 <section id="word-tokenization" class="level2">
 <h2 class="anchored" data-anchor-id="word-tokenization">Word Tokenization</h2>
-<p>The other extreme of word tokenization is to split text into words and then map each word to its corresponding index in the vocabulary. The simplest form would be to split on whitespaces (which work well for English but not other languages such as Japanes that don’t have a well-defined idea of a word):</p>
+<p>The other extreme of word tokenization is to split text into words and then map each word to its corresponding index in the vocabulary. The simplest form would be to split on whitespace (which work well for English but not other languages such as Japanese that don’t have a well-defined idea of a word):</p>
 <div class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>text.split()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
@@ -406,7 +406,7 @@ ga('send', {
 <pre><code>[0, 2, 1]</code></pre>
 </div>
 </div>
-<p>Most tokenizers would include rules and heauristics that try to separate parts of meaning even when there are no spaces such as “doesn’t” into “does n’t”.</p>
+<p>Most tokenizers would include rules and heuristics that try to separate parts of meaning even when there are no spaces such as “doesn’t” into “does n’t”.</p>
 <ul>
 <li><strong>Advantages</strong>:
 <ul>
@@ -416,7 +416,7 @@ ga('send', {
 <ul>
 <li>Size of the vocabulary will explode for large corpus due to the fact that words can include declinations, misspellings, or punctuations. If the vocabulary size has 1m words and the embedding dimension is 512 -&gt; the first embedding layer would be ~ 0.5 billion parameters!
 <ul>
-<li>We can work around this issue by includtion top n most frequent words. For example, if we include top 100,000 words -&gt; the first embedding layer would be ~ 0.5 million parameters. However, because all other words will be mapped to the <code>UNK</code> token, the model has no idea about the words associated with the <code>UNK</code> token and we may lose some important information</li>
+<li>We can work around this issue by including top n most frequent words. For example, if we include top 100,000 words -&gt; the first embedding layer would be ~ 0.5 million parameters. However, because all other words will be mapped to the <code>UNK</code> token, the model has no idea about the words associated with the <code>UNK</code> token and we may lose some important information</li>
 </ul></li>
 <li>Some languages don’t have well-defined idea of what constitute a word</li>
 </ul></li>
@@ -474,7 +474,7 @@ ga('send', {
 </section>
 <section id="sentencepiece" class="level3">
 <h3 class="anchored" data-anchor-id="sentencepiece">SentencePiece</h3>
-<p><a href="">SentencePiece</a> implements <strong>byte-pair-encoding</strong> (BPE) and unigram language modeling. It encodes the raw text as a sequence of Unicode characters. This is very useful in multilingual corpora because many languages, such as Japanes, don’t have whitespace characters. Also, it is agnostic about accents and punctuations. That is why it is commonly used in multilingual model training.</p>
+<p><a href="">SentencePiece</a> implements <strong>byte-pair-encoding</strong> (BPE) and unigram language modeling. It encodes the raw text as a sequence of Unicode characters. This is very useful in multilingual corpora because many languages, such as Japanese, don’t have whitespace characters. Also, it is agnostic about accents and punctuations. That is why it is commonly used in multilingual model training.</p>
 <p>Byte-pair-encoding works as follows:</p>
 <ol type="1">
 <li>Initialize the vocabulary with all the characters in the text plus end-of-word symbol</li>
@@ -524,7 +524,7 @@ ga('send', {
 <section id="conclusion" class="level1">
 <h1>Conclusion</h1>
 <p>Through this post, we covered three tokenization strategies along with their advantages and challenges/limitations. We mostly use tokenizers from well-known libraries such as <a href="https://spacy.io/">spaCy</a> because it is very hard to get it right ourselves.</p>
-<p><strong>NB</strong>: When using pretrained models such as DistilBERT, we must use the same tokenizer that the model used during training. Otherwise, what the model assumes token_id = 1 is will be completely different that what the new token_id = 1 represents. It has the same effect as shuffling the vocabulary.</p>
+<p><strong>NB</strong>: When using pretrained models such as DistilBERT, we must use the same tokenizer that the model used during training. Otherwise, what the model assumes token_id = 1 is will be completely different than what the new token_id = 1 represents. It has the same effect as shuffling the vocabulary.</p>
 
 
 </section>
