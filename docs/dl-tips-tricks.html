@@ -230,11 +230,12 @@ ga('send', {
 <section id="general" class="level2">
 <h2 class="anchored" data-anchor-id="general">General</h2>
 <ul>
-<li>Gradient accumulation: to avoid out-of-memory errors (OOM) while training on GPUs, break larger batches into smaller batches and accumulate gradients by back-propagating after every batch to gather gradients before running optimization step. It should give identical results as if we train with larger batches unless we have layers that kind of depending on the batch size in the forward pass such as BatchNorm.
+<li><p>Gradient accumulation: to avoid out-of-memory errors (OOM) while training on GPUs, break larger batches into smaller batches and accumulate gradients by back-propagating after every batch to gather gradients before running optimization step. It should give identical results as if we train with larger batches unless we have layers that kind of depending on the batch size in the forward pass such as BatchNorm.</p>
 <ul>
 <li>For example, in pytorch, instead of calling <code>optimizer.step()</code> for every batch, we call it every few batches.</li>
 </ul></li>
-<li>When using mixed precision, it is better to increase batch size to utilize the GPU since every batch will occupy much smaller memory. As a result, there will be less updates for each epoch because the model will see less number of batches in every epoch. This means that 1) we need to increase the number of epochs and 2) increase the learning rate.</li>
+<li><p>When using mixed precision, it is better to increase batch size to utilize the GPU since every batch will occupy much smaller memory. As a result, there will be less updates for each epoch because the model will see less number of batches in every epoch. This means that 1) we need to increase the number of epochs and 2) increase the learning rate.</p></li>
+<li><p>Mixup: linear combination of 2 random examples from training dataset using lambda parameter that is drawn from <code>Beta</code> distribution (<code>α</code>, <code>α</code>). The output vector will also be linear combination of two examples labels. This will force model to be more robust and learn linear combination of examples instead of memorizing them. As a result, model becomes less sensitive to corrupted labels and noise in the training data. This method can also be applied to tabular data. However, because it is harder for the model to learn to different between the two examples and the weight of each, we need to train for much longer to get good results.</p></li>
 </ul>
 </section>
 <section id="nlp" class="level2">
