@@ -167,10 +167,10 @@ ga('send', {
 
 <link rel="stylesheet" href="../../styles.css">
 <meta property="og:title" content="Imad Dabbura - Pseudorandom Number Generator">
-<meta property="og:description" content="Pseudorandom number generator is a proxy for truly random number generator. It is not truly random because the numbers generated are determined by an initial value call seed.">
+<meta property="og:description" content="Pseudorandom number generator is a proxy for truly random number generator. It is not truly random because the numbers generated are determined by an initial value called seed.">
 <meta property="og:site-name" content="Imad Dabbura">
 <meta name="twitter:title" content="Imad Dabbura - Pseudorandom Number Generator">
-<meta name="twitter:description" content="Pseudorandom number generator is a proxy for truly random number generator. It is not truly random because the numbers generated are determined by an initial value call seed.">
+<meta name="twitter:description" content="Pseudorandom number generator is a proxy for truly random number generator. It is not truly random because the numbers generated are determined by an initial value called seed.">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 </head>
@@ -270,7 +270,10 @@ ga('send', {
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">Pseudorandom Number Generator</h1>
-                      </div>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Python</div>
+              </div>
+                  </div>
   </div>
     
   
@@ -303,7 +306,7 @@ ga('send', {
 
 
 
-<p>Pseudorandom number generator is a proxy for truly random number generator. It is not truly random because the numbers generated are determined by an initial value call <code>seed</code>. Therefore, the numbers generated are deterministed if we know the <code>seed</code>. The randomness comes from value of the seed. In other words, if we set the seed to a fixed number such as <code>seed = 123</code>, then we can gurantee to generate the exact same sequence any time we set the seed to <code>123</code>. For example:</p>
+<p>Pseudorandom number generator is a proxy for truly random number generator. It is not truly random because the numbers generated are determined by an initial value called <code>seed</code>. Therefore, the numbers generated are deterministic if we know the <code>seed</code>. The randomness comes from the value of the seed. In other words, if we set the seed to a fixed number such as <code>seed = 123</code>, then we can guarantee to generate the exact same sequence any time we set the seed to <code>123</code>. For example:</p>
 <div class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>random.seed(<span class="dv">123</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>r1 <span class="op">=</span> random.random()</span>
@@ -318,14 +321,14 @@ ga('send', {
 <div class="cell" data-outputid="d37c0021-9141-49c9-ed9b-ed82e9fb2a7e" data-tags="[]" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>plt.plot([random.random() <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">50</span>)])<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="01_matmul_files/figure-html/cell-4-output-1.png" class="img-fluid"></p>
+<p><img src="pseudo-random-number-generator_files/figure-html/cell-4-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>Also, the pseudorandom numbers generated follow standard uniform distribution.</p>
 <div class="cell" data-outputid="4d2f345c-4d07-4bd6-e90b-b0edea8f6f44" data-tags="[]" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>plt.hist([random.random() <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10000</span>)])<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="01_matmul_files/figure-html/cell-5-output-1.png" class="img-fluid"></p>
+<p><img src="pseudo-random-number-generator_files/figure-html/cell-5-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>Simple implementation to set the <code>random_state</code> using the seed as well as generating random numbers that follow the standard uniform distribution:</p>
