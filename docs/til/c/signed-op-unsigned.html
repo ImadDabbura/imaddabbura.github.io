@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2022-09-30">
+<meta name="dcterms.date" content="2023-08-01">
 
-<title>Imad Dabbura - Character Array vs String Constant Pointers</title>
+<title>Imad Dabbura - Unintuitive Behavior on Operations with Signed &amp; Unsigned Operands</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -166,11 +166,11 @@ ga('send', {
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Imad Dabbura - Character Array vs String Constant Pointers">
-<meta property="og:description" content="In C, there is two ways to define a string:">
+<meta property="og:title" content="Imad Dabbura - Unintuitive Behavior on Operations with Signed &amp; Unsigned Operands">
+<meta property="og:description" content="When an operation involves signed operand and unsigned operand, C implicitly casts the signed operand to unsigned and perform the operation.">
 <meta property="og:site-name" content="Imad Dabbura">
-<meta name="twitter:title" content="Imad Dabbura - Character Array vs String Constant Pointers">
-<meta name="twitter:description" content="In C, there is two ways to define a string:">
+<meta name="twitter:title" content="Imad Dabbura - Unintuitive Behavior on Operations with Signed &amp; Unsigned Operands">
+<meta name="twitter:description" content="When an operation involves signed operand and unsigned operand, C implicitly casts the signed operand to unsigned and perform the operation.">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 </head>
@@ -269,7 +269,7 @@ ga('send', {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Character Array vs String Constant Pointers</h1>
+      <h1 class="title">Unintuitive Behavior on Operations with Signed &amp; Unsigned Operands</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">C</div>
               </div>
@@ -289,7 +289,7 @@ ga('send', {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">September 30, 2022</p>
+        <p class="date">August 1, 2023</p>
       </div>
     </div>
       
@@ -306,19 +306,9 @@ ga('send', {
 
 
 
-<p>In C, there is two ways to define a string:</p>
-<ol type="1">
-<li>Define it as an array of character such as:</li>
-</ol>
-<div class="sourceCode" id="cb1"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span> aname<span class="op">[]</span> <span class="op">=</span> <span class="st">"Imad"</span><span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li>The array would be of size number of characters plus 1 for the null terminating character.</li>
-</ul>
-<ol start="2" type="1">
-<li>Or define it as a pointer to string constant such as:</li>
-</ol>
-<div class="sourceCode" id="cb2"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span> <span class="op">*</span>pname <span class="op">=</span> <span class="st">"Imad"</span><span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>They are almost identical except for 1 <strong>subtle difference</strong>: - <code>aname</code> will always point to the same storage and can’t be changed to point to something else. The characters themselves can be changed. - <code>pname</code> is a pointer so it can be changed to point to something else. If we try to modify the underlying characters, the result is undefined.</p>
+<p>When an operation involves signed operand and unsigned operand, C implicitly casts the signed operand to unsigned and perform the operation. This would cause a lot of issues especially with relational operations. Below are some examples that yield unexpected results:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">-</span><span class="dv">1</span> <span class="op">&lt;</span> <span class="dv">0</span><span class="bu">U</span>                         <span class="co">// The answer is 0 because (unsigned int) -1 yield 4294967295</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dv">2147483647</span><span class="bu">U</span> <span class="op">&gt;</span> <span class="op">-</span><span class="dv">2147483647</span> <span class="op">-</span> <span class="dv">1</span>  <span class="co">//  The answer is 0 because TMin becomes TMax + 1 when converting to unsigned which is 2147483648</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
 
