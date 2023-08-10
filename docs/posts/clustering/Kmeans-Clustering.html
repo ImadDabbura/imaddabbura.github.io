@@ -354,7 +354,17 @@ ga('send', {
 <section id="kmeans-algorithm" class="level2">
 <h2 class="anchored" data-anchor-id="kmeans-algorithm">Kmeans Algorithm</h2>
 <p><strong>Kmeans</strong> algorithm is an iterative algorithm that tries to partition the dataset into <span class="math inline">\(K\)</span> pre-defined distinct non-overlapping subgroups (clusters) where each data point belongs to <strong>only one group</strong>. It tries to make the inter-cluster data points as similar as possible while also keeping the clusters as different (far) as possible. It assigns data points to a cluster such that the sum of the squared distance between the data points and the cluster’s centroid (arithmetic mean of all the data points that belong to that cluster) is at the minimum. The less variation we have within clusters, the more homogeneous (similar) the data points are within the same cluster.</p>
-<p>The way kmeans algorithm works is as follows: 1. Specify number of clusters <span class="math inline">\(K\)</span>. 2. Initialize centroids by first shuffling the dataset and then randomly selecting <span class="math inline">\(K\)</span> data points for the centroids without replacement. 3. Keep iterating until there is no change to the centroids. i.e assignment of data points to clusters isn’t changing. - Compute the sum of the squared distance between data points and all centroids. - Assign each data point to the closest cluster (centroid). - Compute the centroids for the clusters by taking the average of the all data points that belong to each cluster.</p>
+<p>The way kmeans algorithm works is as follows:</p>
+<ol type="1">
+<li>Specify number of clusters <span class="math inline">\(K\)</span>.</li>
+<li>Initialize centroids by first shuffling the dataset and then randomly selecting <span class="math inline">\(K\)</span> data points for the centroids without replacement.</li>
+<li>Keep iterating until there is no change to the centroids. i.e assignment of data points to clusters isn’t changing.
+<ul>
+<li>Compute the sum of the squared distance between data points and all centroids.</li>
+<li>Assign each data point to the closest cluster (centroid).</li>
+<li>Compute the centroids for the clusters by taking the average of the all data points that belong to each cluster.</li>
+</ul></li>
+</ol>
 <p>The approach kmeans follows to solve the problem is called <strong>Expectation-Maximization</strong>. The E-step is assigning the data points to the closest cluster. The M-step is computing the centroid of each cluster. Below is a break down of how we can solve it mathematically (feel free to skip it).</p>
 <p>The objective function is: <span class="math display">\[J = \sum_{i = 1}^{m}\sum_{k = 1}^{K}w_{ik}\|x^i - \mu_k\|^2\\{}\]</span> where <span class="math inline">\(w_{ik} = 1\)</span> for data point <span class="math inline">\(x^i\)</span> if it belongs to cluster <span class="math inline">\(k\)</span>; otherwise, <span class="math inline">\(w_{ik} = 0\)</span>. Also, <span class="math inline">\(\mu_k\)</span> is the centroid of <span class="math inline">\(x^i\)</span>’s cluster.</p>
 <p>It’s a minimization problem of two parts. We first minimize J w.r.t. <span class="math inline">\(w_{ik}\)</span> and treat <span class="math inline">\(\mu_k\)</span> fixed. Then we minimize J w.r.t. <span class="math inline">\(\mu_k\)</span> and treat <span class="math inline">\(w_{ik}\)</span> fixed. Technically speaking, we differentiate J w.r.t. <span class="math inline">\(w_{ik}\)</span> first and update cluster assignments (<em>E-step</em>). Then we differentiate J w.r.t. <span class="math inline">\(\mu_{k}\)</span> and recompute the centroids after the cluster assignments from previous step (<em>M-step</em>). Therefore, E-step is: <span class="math display">\[\frac{\partial J}{\partial w_{ik}} = \sum_{i = 1}^{m}\sum_{k = 1}^{K}\|x^i - \mu_k\|^2\\{}\]</span> <span class="math display">\[
@@ -367,7 +377,12 @@ ga('send', {
 \end{equation}\tag{1}\\{}
 \]</span> In other words, assign the data point <span class="math inline">\(x^i\)</span> to the closest cluster judged by its sum of squared distance from cluster’s centroid.</p>
 <p>And M-step is: <span class="math display">\[\ \frac{\partial J}{\partial \mu_k} = 2\sum_{i = 1}^{m}w_{ik}(x^i - \mu_k) = 0\\{}\]</span> <span class="math display">\[\Rightarrow \mu_k = \frac{\sum_{i = 1}^{m}w_{ik}x^i}{\sum_{i = 1}^{m}w_{ik}}\tag{2}\\{}\]</span> Which translates to recomputing the centroid of each cluster to reflect the new assignments.</p>
-<p>Few things to note here: - Since clustering algorithms including kmeans use distance-based measurements to determine the similarity between data points, it’s recommended to standardize the data to have a mean of zero and a standard deviation of one since almost always the features in any dataset would have different units of measurements such as age vs income. - Given kmeans iterative nature and the random initialization of centroids at the start of the algorithm, different initializations may lead to different clusters since kmeans algorithm may <em>stuck in a local optimum and may not converge to global optimum</em>. Therefore, it’s recommended to run the algorithm using different initializations of centroids and pick the results of the run that that yielded the lower sum of squared distance. - Assignment of examples isn’t changing is the same thing as no change in within-cluster variation: <span class="math display">\[\frac{1}{m_k}\sum_{i = 1}^{m_k}\|x^i - \mu_{c^k}\|^2\]</span></p>
+<p>Few things to note here:</p>
+<ul>
+<li>Since clustering algorithms including kmeans use distance-based measurements to determine the similarity between data points, it’s recommended to standardize the data to have a mean of zero and a standard deviation of one since almost always the features in any dataset would have different units of measurements such as age vs income.</li>
+<li>Given kmeans iterative nature and the random initialization of centroids at the start of the algorithm, different initializations may lead to different clusters since kmeans algorithm may <em>stuck in a local optimum and may not converge to global optimum</em>. Therefore, it’s recommended to run the algorithm using different initializations of centroids and pick the results of the run that that yielded the lower sum of squared distance.</li>
+<li>Assignment of examples isn’t changing is the same thing as no change in within-cluster variation: <span class="math display">\[\frac{1}{m_k}\sum_{i = 1}^{m_k}\|x^i - \mu_{c^k}\|^2\]</span></li>
+</ul>
 </section>
 <section id="implementation" class="level2">
 <h2 class="anchored" data-anchor-id="implementation">Implementation</h2>
@@ -434,11 +449,19 @@ ga('send', {
 </section>
 <section id="applications" class="level2">
 <h2 class="anchored" data-anchor-id="applications">Applications</h2>
-<p>kmeans algorithm is very popular and used in a variety of applications such as market segmentation, document clustering, image segmentation and image compression, etc. The goal usually when we undergo a cluster analysis is either: 1. Get a meaningful intuition of the structure of the data we’re dealing with. 2. Cluster-then-predict where different models will be built for different subgroups if we believe there is a wide variation in the behaviors of different subgroups. An example of that is clustering patients into different subgroups and build a model for each subgroup to predict the probability of the risk of having heart attack.</p>
+<p>kmeans algorithm is very popular and used in a variety of applications such as market segmentation, document clustering, image segmentation and image compression, etc. The goal usually when we undergo a cluster analysis is either:</p>
+<ol type="1">
+<li>Get a meaningful intuition of the structure of the data we’re dealing with.</li>
+<li>Cluster-then-predict where different models will be built for different subgroups if we believe there is a wide variation in the behaviors of different subgroups. An example of that is clustering patients into different subgroups and build a model for each subgroup to predict the probability of the risk of having heart attack.</li>
+</ol>
 <p>In this post, we’ll apply clustering on two cases: - Geyser eruptions segmentation (2-D dataset). - Image compression.</p>
 <section id="kmeans-on-geysers-eruptions-segmentation" class="level3">
 <h3 class="anchored" data-anchor-id="kmeans-on-geysers-eruptions-segmentation">Kmeans on Geyser’s Eruptions Segmentation</h3>
-<p>We’ll first implement the kmeans algorithm on 2D dataset and see how it works. The dataset has 272 observations and 2 features. The data covers the waiting time between eruptions and the duration of the eruption for the Old Faithful geyser in Yellowstone National Park, Wyoming, USA. We will try to find <span class="math inline">\(K\)</span> subgroups within the data points and group them accordingly. Below is the description of the features: - eruptions (float): Eruption time in minutes. - waiting (int): Waiting time to next eruption.</p>
+<p>We’ll first implement the kmeans algorithm on 2D dataset and see how it works. The dataset has 272 observations and 2 features. The data covers the waiting time between eruptions and the duration of the eruption for the Old Faithful geyser in Yellowstone National Park, Wyoming, USA. We will try to find <span class="math inline">\(K\)</span> subgroups within the data points and group them accordingly. Below is the description of the features:</p>
+<ul>
+<li>eruptions (float): Eruption time in minutes.</li>
+<li>waiting (int): Waiting time to next eruption.</li>
+</ul>
 <p>Let’s plot the data first:</p>
 <div class="cell" data-code_folding="[]" data-execution_count="2">
 <details>
