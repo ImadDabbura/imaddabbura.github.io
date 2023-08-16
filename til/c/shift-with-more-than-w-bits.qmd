@@ -1,0 +1,11 @@
+---
+title: Shift by K >= w
+date: 2023-08-15
+categories: C
+---
+If we shift an w-bit integer with k, most machines perform `k mod w` bit shift. For example, for 32-bit integers:
+```C
+int i = 1024;
+i >> 32     // Gives 1024 because 32 mod 32 = 0 -> i >> 0 = i
+i >> 36     // Gives 64 bece 36 mode 32 = 4 -> i >> 4 = 64
+```
