@@ -244,6 +244,14 @@ ga('send', {
 <ul>
 <li>When casting between signed and unsigned integers of the same data size, the bit representation doesn’t change but the interpretation of the bits change.</li>
 <li>Positive integers have the same bit representation regardless if they are signed or unsigned, but of course the interpretation is different.</li>
+<li>For arithmetic operation:
+<ul>
+<li>If one of the operands is long double, then the other is converted to long double</li>
+<li>Else if one of the operands is double, then the other is converted to double</li>
+<li>Else if one of the operands is float, then the other is converted to float</li>
+<li>Else if one of the operands is long int, then the other is converted to long int</li>
+<li>Else if one of the operands is int, then the other is converted to int</li>
+</ul></li>
 </ul>
 
 
