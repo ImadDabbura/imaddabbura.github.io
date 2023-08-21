@@ -19,10 +19,10 @@ Scopes of fixtures:
 - **Package**: The setup/teardown runs before/after once for all the test
   functions/methods inside a package or test directory
 - **Session**: The setup/teardown runs before/after once for all the test
-  functions/methods inside per session
+  functions/methods per session
 
 A fixture can only depend on another fixture that is at the same
 scope level or wider. Also, for *package/session* scopes, the fixtures have to
-be defined inside `conftest.py` that will be read by `pytest` before running
+be defined inside `conftest.py` (typically in the root of test directory) that will be read by `pytest` before running
 tests in order to be actually at the *package/session* level; otherwise, they
 will default to the module.

@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2022-11-21">
+<meta name="dcterms.date" content="2023-08-18">
 
-<title>Imad Dabbura - Clearing Registers</title>
+<title>Imad Dabbura - Notes on Vim</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -103,11 +103,9 @@ ga('send', {
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Imad Dabbura - Clearing Registers">
-<meta property="og:description" content="The easiest way to clear a register; in norma mode, is q-register_name-q.">
+<meta property="og:title" content="Imad Dabbura - Notes on Vim">
 <meta property="og:site-name" content="Imad Dabbura">
-<meta name="twitter:title" content="Imad Dabbura - Clearing Registers">
-<meta name="twitter:description" content="The easiest way to clear a register; in norma mode, is q-register_name-q.">
+<meta name="twitter:title" content="Imad Dabbura - Notes on Vim">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 </head>
@@ -206,7 +204,7 @@ ga('send', {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Clearing Registers</h1>
+      <h1 class="title">Notes on Vim</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">Vim</div>
               </div>
@@ -226,7 +224,7 @@ ga('send', {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">November 21, 2022</p>
+        <p class="date">August 18, 2023</p>
       </div>
     </div>
       
@@ -243,7 +241,20 @@ ga('send', {
 
 
 
-<p>The easiest way to clear a register; in norma mode, is <code>q-register_name-q</code>. The command <code>qa</code> will start recording a macro in the register <code>a</code>, which cleans the register before it starts the key strokes that follow. So when it is followed right away by <code>q</code>, it acts as clearing the register <code>a</code>. This is very useful if we’re trying to copy something to a register, such as copy all <strong>TODO</strong> from all project files into a register so that we can then past them in new file.</p>
+<ul>
+<li>To know which scrips <code>Vim</code> loaded, <code>:scriptnames</code></li>
+<li><code>Vim</code> uses runtimepath to determine which scripts to run at startup or buffer load time. It inspects all directories and check scripts in sub-directories to check which scripts to run</li>
+<li><code>$VIMRUNTIME</code> is the path for all files distributed with <code>Vim</code></li>
+<li><code>.vimrc</code> is the catchall config file that is used for general edition settings. These settings maybe overridden by other plugings/scripts</li>
+<li>Check <code>:options</code> to know what are all the available options that we can set</li>
+<li><code>start</code> would load at startup</li>
+<li><code>opt</code> on-demand loading using <code>packadd</code>
+<ul>
+<li>This will add the plugin base directory to the runtimepath and sources it plugin and ftdetect scripts</li>
+<li>We can use <code>:helptags ALL</code> to update help tags documentation</li>
+</ul></li>
+<li>You can use git submodules for all the packages used under <code>~/.vim</code></li>
+</ul>
 
 
 

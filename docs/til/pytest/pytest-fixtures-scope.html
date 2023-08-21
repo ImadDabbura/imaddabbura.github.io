@@ -250,9 +250,9 @@ ga('send', {
 <li><strong>Class</strong>: The setup/teardown runs before/after once for all the test methods inside a class</li>
 <li><strong>Module</strong>: The setup/teardown runs before/after once for all the test functions/methods inside a module</li>
 <li><strong>Package</strong>: The setup/teardown runs before/after once for all the test functions/methods inside a package or test directory</li>
-<li><strong>Session</strong>: The setup/teardown runs before/after once for all the test functions/methods inside per session</li>
+<li><strong>Session</strong>: The setup/teardown runs before/after once for all the test functions/methods per session</li>
 </ul>
-<p>A fixture can only depend on another fixture that is at the same scope level or wider. Also, for <em>package/session</em> scopes, the fixtures have to be defined inside <code>conftest.py</code> that will be read by <code>pytest</code> before running tests in order to be actually at the <em>package/session</em> level; otherwise, they will default to the module.</p>
+<p>A fixture can only depend on another fixture that is at the same scope level or wider. Also, for <em>package/session</em> scopes, the fixtures have to be defined inside <code>conftest.py</code> (typically in the root of test directory) that will be read by <code>pytest</code> before running tests in order to be actually at the <em>package/session</em> level; otherwise, they will default to the module.</p>
 
 
 

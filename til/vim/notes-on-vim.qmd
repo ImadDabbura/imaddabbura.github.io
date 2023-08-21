@@ -1,0 +1,15 @@
+---
+title: Notes on Vim
+date: 2023-08-18
+categories: Vim
+---
+- To know which scrips `Vim` loaded, `:scriptnames`
+- `Vim` uses runtimepath to determine which scripts to run at startup or buffer load time. It inspects all directories and check scripts in sub-directories to check which scripts to run
+- `$VIMRUNTIME` is the path for all files distributed with `Vim`
+- `.vimrc` is the catchall config file that is used for general edition settings. These settings maybe overridden by other plugings/scripts
+- Check `:options` to know what are all the available options that we can set
+- `start` would load at startup
+- `opt` on-demand loading using `packadd`
+    - This will add the plugin base directory to the runtimepath and sources it plugin and ftdetect scripts
+    - We can use `:helptags ALL` to update help tags documentation
+- You can use git submodules for all the packages used under `~/.vim`
