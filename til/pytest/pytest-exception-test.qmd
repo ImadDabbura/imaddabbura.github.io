@@ -24,13 +24,14 @@ We can test if the code raises expected exception and exception message matches
 correct message:
 
 ```python
-# One way
+# One way using regular expressions to test the message using re.search over
+value of the exception
 def test_raises_exc():
     msg_regex = "something .* final"
     with pytest.fail(ValueError, match=msg_regex):
         fn()
 
-# Another way
+# Another way to test the exact message
 def test_raises_exc():
     with pytest.fail(ValueError) as exc:
         fn()

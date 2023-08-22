@@ -1,0 +1,21 @@
+---
+title: Fixtures
+date: 2022-12-26
+categories: pytest
+---
+Fixtures are functions decorated by `pytest.fixture()` that run before (and maybe after) test functions by `pytest` to do the setup/teardown. Fixtures can do some setup work and return data to the test
+functions as well. The name of the fixture(s) are passed to the test/fixtures as parameters and `pytest` will see that and check for a fixture with that name. We can use the fixture name inside test functions to access returned data or other state(s) that the fixtute set up.
+
+To conclude, fixtures help us separate the "getting ready for" and "cleaning up after" code of test functions. If the fixture has `yield` statement, then the fixture would run until the `yield` before yielding to the test function. Once the test function is done, the code following the `yield` statement would run even if the test function failed.
+
+If we know that some fixtures have to be run always at certain times, we can
+avoid passing their names to all test functions by using `autouse=True`
+parameter in `@pytest.fixture` which means the fixture will be called always
+depending on the scope.
+
+We can also rename a fixture using `name` parameter of `@pytest.fixture`. This
+is useful if the fixture name collides with some test functions OR we follow
+the convention to have the fixture name have `fixture` suffix/prefix.
+
+Test functions as well as other fixtures can depend on fixtures through their parameter list that would have the same name(s) of the fixture(s). 
+

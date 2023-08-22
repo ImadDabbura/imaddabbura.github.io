@@ -9,7 +9,7 @@
 <meta name="author" content="Imad Dabbura">
 <meta name="dcterms.date" content="2022-12-26">
 
-<title>Imad Dabbura - Fixtures’ Scopes</title>
+<title>Imad Dabbura - Fixtures</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -103,11 +103,11 @@ ga('send', {
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Imad Dabbura - Fixtures’ Scopes">
-<meta property="og:description" content="Scopes of fixtures:">
+<meta property="og:title" content="Imad Dabbura - Fixtures">
+<meta property="og:description" content="Fixtures are functions decorated by pytest.fixture() that run before (and maybe after) test functions by pytest to do the setup/teardown.">
 <meta property="og:site-name" content="Imad Dabbura">
-<meta name="twitter:title" content="Imad Dabbura - Fixtures’ Scopes">
-<meta name="twitter:description" content="Scopes of fixtures:">
+<meta name="twitter:title" content="Imad Dabbura - Fixtures">
+<meta name="twitter:description" content="Fixtures are functions decorated by pytest.fixture() that run before (and maybe after) test functions by pytest to do the setup/teardown.">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 </head>
@@ -206,7 +206,7 @@ ga('send', {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Fixtures’ Scopes</h1>
+      <h1 class="title">Fixtures</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">pytest</div>
               </div>
@@ -243,15 +243,11 @@ ga('send', {
 
 
 
-<p>Scopes of fixtures:</p>
-<ul>
-<li><strong>Function</strong> (default): The setup/teardown runs before/after every run of the test function or fixture that depends on it</li>
-<li><strong>Class</strong>: The setup/teardown runs before/after once for all the test methods inside a class</li>
-<li><strong>Module</strong>: The setup/teardown runs before/after once for all the test functions/methods inside a module</li>
-<li><strong>Package</strong>: The setup/teardown runs before/after once for all the test functions/methods inside a package or test directory</li>
-<li><strong>Session</strong>: The setup/teardown runs before/after once for all the test functions/methods per session</li>
-</ul>
-<p>A fixture can only depend on another fixture that is at the same scope level or wider. Also, for <em>package/session</em> scopes, the fixtures have to be defined inside <code>conftest.py</code> (typically in the root of test directory) that will be read by <code>pytest</code> before running tests in order to be actually at the <em>package/session</em> level; otherwise, they will default to the module.</p>
+<p>Fixtures are functions decorated by <code>pytest.fixture()</code> that run before (and maybe after) test functions by <code>pytest</code> to do the setup/teardown. Fixtures can do some setup work and return data to the test functions as well. The name of the fixture(s) are passed to the test/fixtures as parameters and <code>pytest</code> will see that and check for a fixture with that name. We can use the fixture name inside test functions to access returned data or other state(s) that the fixtute set up.</p>
+<p>To conclude, fixtures help us separate the “getting ready for” and “cleaning up after” code of test functions. If the fixture has <code>yield</code> statement, then the fixture would run until the <code>yield</code> before yielding to the test function. Once the test function is done, the code following the <code>yield</code> statement would run even if the test function failed.</p>
+<p>If we know that some fixtures have to be run always at certain times, we can avoid passing their names to all test functions by using <code>autouse=True</code> parameter in <code>@pytest.fixture</code> which means the fixture will be called always depending on the scope.</p>
+<p>We can also rename a fixture using <code>name</code> parameter of <code>@pytest.fixture</code>. This is useful if the fixture name collides with some test functions OR we follow the convention to have the fixture name have <code>fixture</code> suffix/prefix.</p>
+<p>Test functions as well as other fixtures can depend on fixtures through their parameter list that would have the same name(s) of the fixture(s).</p>
 
 
 
