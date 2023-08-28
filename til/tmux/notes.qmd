@@ -5,5 +5,11 @@ categories: tmux
 ---
 
 - `tmux new -s session_name -d` To create a new session w/o attaching it.
-- `tmux new -s session_name -n window_name` To create a new session and name
-  the first window.
+- `tmux new -s session_name -n window_name` To create a new session and name the first window.
+- `send-keys -t session_name:window_index.pane_index 'cmd' C-m`
+    - This command allows us to execute a command in tmux `session_name`, in `pand_index` under `window_index`.
+    - `C-m` is carriage return `ENTER`
+    - For example, `send-keys -t dev:1.2 'cd ~/Documents' C-m` would change the
+      directory to `~/Documents` in `dev` session in pane index `2` under window index `1`
+
+

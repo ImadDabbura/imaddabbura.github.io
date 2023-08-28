@@ -819,6 +819,13 @@
     "text": "GitOps means that any change to a production system is done through pushes to a Git repository, which is then reflected in the production system through automation. For example, changes to a Kubernetes cluster are mostly done this way since it is percieved as read-only environment."
   },
   {
+    "objectID": "til/pytest/pytest-fixtures.html",
+    "href": "til/pytest/pytest-fixtures.html",
+    "title": "Fixtures",
+    "section": "",
+    "text": "To conclude, fixtures help us separate the “getting ready for” and “cleaning up after” code of test functions. If the fixture has yield statement, then the fixture would run until the yield before yielding to the test function. Once the test function is done, the code following the yield statement would run even if the test function failed.\nIf we know that some fixtures have to be run always at certain times, we can avoid passing their names to all test functions by using autouse=True parameter in @pytest.fixture which means the fixture will be called always depending on the scope.\nWe can also rename a fixture using name parameter of @pytest.fixture. This is useful if the fixture name collides with some test functions OR we follow the convention to have the fixture name have fixture suffix/prefix.\nTest functions as well as other fixtures can depend on fixtures through their parameter list that would have the same name(s) of the fixture(s)."
+  },
+  {
     "objectID": "til/pytest/pytest-fixtures-scope.html",
     "href": "til/pytest/pytest-fixtures-scope.html",
     "title": "Fixtures’ Scopes",
@@ -838,6 +845,13 @@
     "title": "Debugging with pytest Flags",
     "section": "",
     "text": "-lf: Runs just the tests that failed last\n-ff: Runs all the tests, starting with the last failed\n-x: Stops the tests session after the first failure\n--maxfail=num: Stops the tests after num failures\n-nf: Runs all the tests, ordered by file modification time\n--sw: Stops the tests at the first failure. Starts the tests at the last failure next time\n--sw-skip: Same as –sw, but skips the first failure\n-v: Displays all the test names, passing or failing\n--tb=[auto/long/short/line/native/no]: Controls the traceback style\n-l: Displays local variables alongside the stacktrace\n--pdb: Starts an interactive debugging session at the point of failure\n--trace: Starts the pdb source-code debugger immediately when running each test\n--pdbcls: Uses alternatives to pdb"
+  },
+  {
+    "objectID": "til/pytest/pytest-test-outcomes.html",
+    "href": "til/pytest/pytest-test-outcomes.html",
+    "title": "Test Outcomes",
+    "section": "",
+    "text": "PASSED (.): The test ran successfully\nFAILED (F): The test did not run successfully\nSKIPPED (s): The test was skipped (@pytest.mark.skip(), @pytest.mark.skipif())\nXFAIL (x): The test was not supposed to pass, and it ran and failed (@pytest.mark.xfail())\nXPASS (X): The test was marked with xfail, but it ran and passed\nERROR (E): An exception happened either during the execution of a fixtureor hook function, and not during the execution of a test function or any of the functions it called"
   },
   {
     "objectID": "til/pytest/skip-test.html",
@@ -887,6 +901,13 @@
     "title": "The Role of __init__.py in pytest",
     "section": "",
     "text": "The only role __init__.py file in pytest is that it allows for duplicate test file names in different subdirectories as long as __init__.py exist in those subdirectories. Otherwise, it would return an error."
+  },
+  {
+    "objectID": "til/pytest/pytest-parametrization.html",
+    "href": "til/pytest/pytest-parametrization.html",
+    "title": "Parametrization",
+    "section": "",
+    "text": "pytest.mark.parametrize(\n    [\"param_name1\", \"param_name2\", \"param_name3\"],\n        [\n        (1, \"a\", 3),\n        (1, \"x\", 0),\n        (5, \"d\", 100),\n    ]\n)\ndef test_func(param_name1, param_name2, param_name3):\n    pass\n\nThe first argument to pytest.mark.parametrize should either be a list of parameter names or a string of parameter names separated by “,”\nThe second argument to pytest.mark.parametrize should be a list of test cases\nThe arguments’ names to the test function should match the names in the first argument to pytest.mark.parametrize"
   },
   {
     "objectID": "til/python/object-destruction.html",
@@ -1190,6 +1211,13 @@
     "text": "Vimium is a chrome extension that provides keyboard shortcuts to navigate and control the browser inspired by Vim editor. It comes very handy when navigating between pages as well as on the same page and still be mouse-free. Keyboard shortcut examples: - d to go down half page - u to go up half page - gg to go the top of the page - G to go to the bottom of the page - gt to go to next tab to the right - gT to go to previous tab to the left"
   },
   {
+    "objectID": "til/tmux/notes.html",
+    "href": "til/tmux/notes.html",
+    "title": "Useful Tmux Notes",
+    "section": "",
+    "text": "tmux new -s session_name -d To create a new session w/o attaching it.\ntmux new -s session_name -n window_name To create a new session and name the first window.\nsend-keys -t session_name:window_index.pane_index 'cmd' C-m\n\nThis command allows us to execute a command in tmux session_name, in pand_index under window_index.\nC-m is carriage return ENTER\nFor example, send-keys -t dev:1.2 'cd ~/Documents' C-m would change the directory to ~/Documents in dev session in pane index 2 under window index 1"
+  },
+  {
     "objectID": "til/tmux/list-sessions.html",
     "href": "til/tmux/list-sessions.html",
     "title": "Listing tmux Sessions",
@@ -1405,26 +1433,5 @@
     "title": "Tiny-PyTorch",
     "section": "",
     "text": "The main learning and critical part of this project is building everything from the ground up:\n\n\n\n\ngraph BT;\n    A[Flat Array] --> B[N-Dimensional Array];\n    B[N-Dimensional Array] --> C[Tensor];\n\n\n\n\n\n\n\n\nThe main objectives to build this framework:\n\nBuild deep learning systems:\n\nContribute to open-source deep learning frameworks.\nWork on developing my own framework for specific tasks. I have been collecting my own implementation of different things in Pytorch such as analyzing gradients of each layer.\n\nUse existing systems more effectively:\n\nUnderstanding how the internals of existing deep learning systems work let you use them much more efficiently.\nThe only way to understand how things really work is to build it from scratch.\n\nUnderstand how operations are carried on both CPU and GPU so I can optimize my customized models/layers to run more efficiently."
-  },
-  {
-    "objectID": "til/pytest/pytest-test-outcomes.html",
-    "href": "til/pytest/pytest-test-outcomes.html",
-    "title": "Test Outcomes",
-    "section": "",
-    "text": "PASSED (.): The test ran successfully\nFAILED (F): The test did not run successfully\nSKIPPED (s): The test was skipped (@pytest.mark.skip(), @pytest.mark.skipif())\nXFAIL (x): The test was not supposed to pass, and it ran and failed (@pytest.mark.xfail())\nXPASS (X): The test was marked with xfail, but it ran and passed\nERROR (E): An exception happened either during the execution of a fixtureor hook function, and not during the execution of a test function or any of the functions it called"
-  },
-  {
-    "objectID": "til/pytest/pytest-fixtures.html",
-    "href": "til/pytest/pytest-fixtures.html",
-    "title": "Fixtures",
-    "section": "",
-    "text": "To conclude, fixtures help us separate the “getting ready for” and “cleaning up after” code of test functions. If the fixture has yield statement, then the fixture would run until the yield before yielding to the test function. Once the test function is done, the code following the yield statement would run even if the test function failed.\nIf we know that some fixtures have to be run always at certain times, we can avoid passing their names to all test functions by using autouse=True parameter in @pytest.fixture which means the fixture will be called always depending on the scope.\nWe can also rename a fixture using name parameter of @pytest.fixture. This is useful if the fixture name collides with some test functions OR we follow the convention to have the fixture name have fixture suffix/prefix.\nTest functions as well as other fixtures can depend on fixtures through their parameter list that would have the same name(s) of the fixture(s)."
-  },
-  {
-    "objectID": "til/tmux/notes.html",
-    "href": "til/tmux/notes.html",
-    "title": "Useful Tmux Notes",
-    "section": "",
-    "text": "tmux new -s session_name -d To create a new session w/o attaching it.\ntmux new -s session_name -n window_name To create a new session and name the first window."
   }
 ]

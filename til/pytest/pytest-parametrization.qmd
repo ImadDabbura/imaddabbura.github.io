@@ -5,4 +5,21 @@ categories: pytest
 ---
 Test parametrization allows us to avoid redundant code by writing one test
 function/fixture that tries to test the same logic with different
-values/parameters. Therefore, 
+values/parameters. `pytest` will generate tests for us by calling the same test function/fixture passing different combination of parameters each time. Example:
+
+```python
+pytest.mark.parametrize(
+    ["param_name1", "param_name2", "param_name3"],
+        [
+	    (1, "a", 3),
+	    (1, "x", 0),
+	    (5, "d", 100),
+	]
+)
+def test_func(param_name1, param_name2, param_name3):
+    pass
+```
+
+- The first argument to `pytest.mark.parametrize` should either be a list of parameter names or a string of parameter names separated by ","
+- The second argument to `pytest.mark.parametrize` should be a list of test cases
+- The arguments' names to the test function should match the names in the first argument to `pytest.mark.parametrize`
