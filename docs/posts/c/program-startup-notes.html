@@ -332,10 +332,10 @@ ga('send', {
 <ul>
 <li>function prototype:</li>
 </ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>__libc_start_main <span class="op">(</span><span class="dt">int</span> <span class="op">(*</span>main<span class="op">)</span> <span class="op">(</span><span class="dt">int</span><span class="op">,</span> <span class="dt">char</span> `<span class="op">,</span> <span class="dt">char</span> `<span class="op">),</span></span>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>__libc_start_main <span class="op">(</span><span class="dt">int</span> <span class="op">(*</span>main<span class="op">)</span> <span class="op">(</span><span class="dt">int</span><span class="op">,</span> <span class="dt">char</span> <span class="op">**,</span> <span class="dt">char</span> <span class="op">**),</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                   <span class="dt">int</span> argc<span class="op">,</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                   <span class="dt">char</span> <span class="op">*</span>argv<span class="op">,</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>                   <span class="dt">int</span>  <span class="op">(*</span>init<span class="op">)</span> <span class="op">(</span><span class="dt">int</span><span class="op">,</span> <span class="dt">char</span> `<span class="op">,</span> <span class="dt">char</span> `<span class="op">),</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>                   <span class="dt">int</span>  <span class="op">(*</span>init<span class="op">)</span> <span class="op">(</span><span class="dt">int</span><span class="op">,</span> <span class="dt">char</span> <span class="op">**,</span> <span class="dt">char</span> <span class="op">**),</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>                   <span class="dt">void</span> <span class="op">(*</span>fini<span class="op">)</span> <span class="op">(</span><span class="dt">void</span><span class="op">),</span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>                   <span class="dt">void</span> <span class="op">(*</span>rtld_fini<span class="op">)</span> <span class="op">(</span><span class="dt">void</span><span class="op">),</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                   <span class="dt">void</span> <span class="op">*</span>stack_end</span>
@@ -343,7 +343,7 @@ ga('send', {
 <ul>
 <li>Define <code>environ</code> global variable using <code>ps_string</code>: <code>environ = ps_strings-&gt;ps_envstr</code>
 <ul>
-<li>Below are some details about ps_strings structure:</li>
+<li>Below are some details about <code>ps_strings</code> structure:</li>
 </ul></li>
 </ul>
 <div class="sourceCode" id="cb2"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">/*</span></span>
@@ -355,10 +355,10 @@ ga('send', {
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"> * equivalent for the environment.</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"> */</span></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> ps_strings <span class="op">{</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span>    `ps_argvstr<span class="op">;</span>    <span class="co">/* first of 0 or more argument strings */</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> ps_nargvstr<span class="op">;</span>        <span class="co">/* the number of argument strings */</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span>    `ps_envstr<span class="op">;</span> <span class="co">/* first of 0 or more environment strings */</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> ps_nenvstr<span class="op">;</span>         <span class="co">/* the number of environment strings */</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span>    <span class="op">**</span>ps_argvstr<span class="op">;</span>       <span class="co">/* first of 0 or more argument strings */</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span>       ps_nargvstr<span class="op">;</span>      <span class="co">/* the number of argument strings */</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span>    <span class="op">**</span>ps_envstr<span class="op">;</span>        <span class="co">/* first of 0 or more environment strings */</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span>       ps_nenvstr<span class="op">;</span>       <span class="co">/* the number of environment strings */</span></span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
 <li>It is typically defined as char <code>envp = argv[argc + 1]</code> in <code>libc_init_first</code></li>
@@ -386,10 +386,10 @@ ga('send', {
 </ul></li>
 <li>Set up data structures needed for thread unwinding/cancellation</li>
 <li>Call main of user’s program.</li>
-<li>Call exit
+<li>Call <code>exit</code>
 <ul>
-<li>In reverse order, functions registered via atexit or on_exit</li>
-<li>Function pointers in .fini_array section, via <code>__libc_csu_fini</code></li>
+<li>In reverse order, functions registered via <code>atexit</code> or <code>on_exit</code></li>
+<li>Function pointers in <code>.fini_array</code> section, via <code>__libc_csu_fini</code></li>
 <li>Functions marked as <code>__attribute__ ((destructor))</code>, via <code>__libc_csu_fini</code> (which calls <code>_fini</code> after Step 2)</li>
 <li>stdio cleanup functions</li>
 <li>The <code>.fini_array</code> section must also contain function pointers and the prototype is like the destructor, i.e.&nbsp;taking no arguments and returning void. If the program exits normally, then the exit function (Glibc source file stdlib/exit.c)</li>
