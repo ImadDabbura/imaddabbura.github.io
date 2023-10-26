@@ -1,0 +1,33 @@
+---
+title: Directory Access Permissions/Representation
+date: 2023-10-16
+categories: Unix
+---
+Directory is represented as a file where the data block where each
+files/subdirectory inside it has an entry:
+
+- Name of file/subdirectory
+- inode number
+
+Therefore, when we list directory, we read the names from each entry. When we
+add/rename/remove files/subdirectories, we update the file by
+adding/updating/removing the entry that corresponds to the file we added.
+
+Meaning of access permissions on a directory:
+
+- `read`: List files in the directory
+- `write`: Add/remove/rename files in the directory
+- `execute`: Search/lookup files in the directory. It allows us to change into
+  the directory. `execute` permission is needed to do anything with a
+  directory. Even if we have `read` or `write` permissions, we can NOT do anything w/o
+  `execute` permission.
+
+```bash
+touch test              // would create a directory with rwx permissions
+chmod u-x test          // Remove execute permission
+cd test                 // Error: permission denied
+touch test/test.txt     // Error: permission denied
+```
+
+We as users never update directory file directory, ONLY kernel does the update
+and we only get to read its entries.
