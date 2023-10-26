@@ -1,0 +1,15 @@
+---
+title: "Difference Between Effective & Real `UID`/`GID`"
+date: 2023-10-26
+categories: Unix
+---
+Real `UID`/`GID` are attributes of the user that are set at login by login
+shell. They typyically stay the same.
+
+Effective `UID`/`GID` are attributes of a process that are used when checking
+access permissions for operations on files or commands.
+
+Real and effective are typyically the same, but sometimes they change when the
+executable file have it's set-user-ID bit on. This happens, for example, when a
+program needs root or other higher level permissions to perform some operations
+on behalf of the user such as `cron` program.
