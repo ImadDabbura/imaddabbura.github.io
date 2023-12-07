@@ -1,0 +1,6 @@
+---
+title: "Status Code Returned by Shell's Pipeline"
+date: 2023-12-07
+categories: Shell
+---
+By default, shell reports the return status of the last command in the pipeline. Therefore, if any command in the pipeline before the last one failed, the return status code would be `0` which indicates success. To get the return status for all the commands in the pipeline, use `echo $pipestatus` which returns all the returned codes from all the commands in the most recent pipeline.
