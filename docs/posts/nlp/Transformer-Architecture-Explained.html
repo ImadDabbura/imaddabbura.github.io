@@ -378,7 +378,7 @@ ga('send', {
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"num_hidden_layers"</span>: <span class="dv">6</span>,</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"embed_dim"</span>: <span class="dv">768</span>,</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"num_classes"</span>: <span class="dv">2</span>,</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"layer_norm_rps"</span>: <span class="fl">1e-12</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"layer_norm_eps"</span>: <span class="fl">1e-12</span>,</span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
@@ -565,7 +565,11 @@ ga('send', {
 <h1>Transformer Components</h1>
 <section id="encoder-only-architecture" class="level2">
 <h2 class="anchored" data-anchor-id="encoder-only-architecture">Encoder-only Architecture</h2>
-<p>Encoder-only architecture are well suited for classification tasks. The most common model that uses encoder-only branch of the Transformer architecture is <a href="https://arxiv.org/abs/1810.04805">BERT</a> and all its variants such as <a href="https://arxiv.org/abs/1907.11692">RoBERTa</a>. In this architecture, we would have: - body: Stacked encoder layers. The output would be <code>B x T x hidden_sz</code>. - head: A classification head which consists of linear layer that project the hidden_sz into num_classes. We take the hidden vector of the first token, which is the special token <code>[CLS]</code> in the case of <em>BERT</em> (indicates the beginning of sequence), and pass it through the linear layer to get the logits.</p>
+<p>Encoder-only architecture are well suited for classification tasks. The most common model that uses encoder-only branch of the Transformer architecture is <a href="https://arxiv.org/abs/1810.04805">BERT</a> and all its variants such as <a href="https://arxiv.org/abs/1907.11692">RoBERTa</a>. In this architecture, we would have:</p>
+<ul>
+<li>body: Stacked encoder layers. The output would be <code>B x T x hidden_sz</code>.</li>
+<li>head: A classification head which consists of linear layer that project the hidden_sz into num_classes. We take the hidden vector of the first token, which is the special token <code>[CLS]</code> in the case of <em>BERT</em> (indicates the beginning of sequence), and pass it through the linear layer to get the logits.</li>
+</ul>
 <div class="cell" data-execution_count="55">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> EncoderLayer(nn.Module):</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config):</span>
@@ -618,7 +622,11 @@ ga('send', {
 </section>
 <section id="decoder-only-architecture" class="level2">
 <h2 class="anchored" data-anchor-id="decoder-only-architecture">Decoder-only Architecture</h2>
-<p>These models are typically used as language models such as <a href="https://openai.com/blog/language-unsupervised/">GPT</a> and all its variants. In this architecture, as opposed to the encoder-only architecture, the token can only see past tokens but <strong>not future</strong> tokens because this would be a kind of cheating since we are trying to predict the next token. Therefore, we need to mask all future tokens in the attention layer. In this architecture, we would have: - body: Stacked decoder layers. The output would be <code>B x T x hidden_sz</code>. - head: A classification head which consists of linear layer that project the hidden_sz into vocab_sz. The output would then be passed through <code>softmax</code> to get the probability distribution over all tokens in the vocabulary. The token with the highest probability would be chosen during training.</p>
+<p>These models are typically used as language models such as <a href="https://openai.com/blog/language-unsupervised/">GPT</a> and all its variants. In this architecture, as opposed to the encoder-only architecture, the token can only see past tokens but <strong>not future</strong> tokens because this would be a kind of cheating since we are trying to predict the next token. Therefore, we need to mask all future tokens in the attention layer. In this architecture, we would have:</p>
+<ul>
+<li>body: Stacked decoder layers. The output would be <code>B x T x hidden_sz</code>.</li>
+<li>head: A classification head which consists of linear layer that project the hidden_sz into vocab_sz. The output would then be passed through <code>softmax</code> to get the probability distribution over all tokens in the vocabulary. The token with the highest probability would be chosen during training.</li>
+</ul>
 <p>At inference, we can use many sampling algorithms such as the greedy algorithm or top-k algorithm using the probability distribution obtained from the classification head.</p>
 <div class="cell" data-execution_count="58">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> DecoderLayer(nn.Module):</span>
@@ -665,7 +673,7 @@ ga('send', {
 <h2 class="anchored" data-anchor-id="encoder-decoder-architecture">Encoder-Decoder Architecture</h2>
 <p>The encoder-decoder architecture is the first Transformer architecture used in the <a href="">Attention Is All You Need</a> paper for Neural Machine Translation Task. It is typically used for tasks that have both their input and output as text such as <em>summarization</em>. <a href="https://arxiv.org/abs/1910.10683">T5</a> and <a href="https://arxiv.org/abs/1910.13461">BART</a> are the most common models that use such architecture.</p>
 <p>For each decoder layer, we add masked multi-head attention layer in the middle that 1) takes the hidden state from the last encoder layer to compute the keys and values and 2) takes the hidden state from layer norm to compute the query. This means, this additional middle multi-head attention layer attends to the all tokens in the input sequence. This is a kind of cross-attention that we defined earlier where keys and values come from different source (input sequence) while the query comes from other source.</p>
-<p>It is very easy to extend our modify our implementation of DecoderLayer to use it in this architecture, so I will leave it for you as an exercise!</p>
+<p>It is very easy to extend or modify our implementation of DecoderLayer to use it in this architecture, so I will leave it for you as an exercise!</p>
 </section>
 </section>
 <section id="conclusion" class="level1">
