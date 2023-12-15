@@ -264,12 +264,12 @@ ga('send', {
 
 
 <p><img src="images/mlops.png" class="preview-image img-fluid"></p>
-<p>Below are notes I gathered from my readings in MLOps as well as deplying ML systems at different companies.</p>
+<p>Below are notes I gathered from my readings in MLOps as well as deploying ML systems at different companies.</p>
 <ul>
 <li>During training, we care more about throughput. However, once we deploy the model, we care more about latency.
 <ul>
 <li>Increased latency in production leads to reduction in customer satisfaction and conversion rates, which are more important than a relatively more accurate predictions.</li>
-<li>It is commen to focus on the high percentiles of the latency such as 90th/95th/99th or even 99.9th percentiles.</li>
+<li>It is common to focus on the high percentiles of the latency such as 90th/95th/99th or even 99.9th percentiles.</li>
 </ul></li>
 <li>Map ML metrics to business metrics and see how improvement in ML model would lead to an improvement in business metrics.
 <ul>
@@ -359,8 +359,117 @@ ga('send', {
 <li>Data augmentation
 <ul>
 <li>Label-preserving transformations such as randomly flipping images or replace word with its synonym in NLP tasks</li>
-<li>Purturbation that adds noise to the data but still preserve the label. BERT uses such technique where 15% of the tokens are chosen randomly and 10% of such chosen tokens will be replaced by random tokens.</li>
+<li>Perturbation that adds noise to the data but still preserve the label. BERT uses such technique where 15% of the tokens are chosen randomly and 10% of such chosen tokens will be replaced by random tokens.</li>
 <li>Data synthesis: create data from existing data such as mixup or using templates in NLP</li>
+</ul></li>
+<li>Feature engineering. Having the right features give us the biggest performance boost compared to algorithmic techniques and hyperparameter-tuning. It requires domain-specific knowledge, SME, and algorithm-specific knowledge.
+<ul>
+<li>Missing values. Be careful that not all missing values are <code>NaN</code>. Some systems use predefined values such as empty string or 1999 for missing values.
+<ul>
+<li>Reasons for missing values:
+<ul>
+<li>Missing not at random: When the value is missing due to related observed value such as some type of customers don’t disclose their age.</li>
+<li>Missing at random: When the value is missing due to the value itself such as when people with high income mostly decide to not disclose their income.</li>
+<li>Missing completely at random: When there is no pattern for missing values such as customer forgot to insert the value. This is very rare in practice.</li>
+</ul></li>
+<li>Handling missing values:
+<ul>
+<li>Deletion:
+<ul>
+<li>Columns deletion. Not recommended for almost all cases.</li>
+<li>Row deletion.
+<ul>
+<li>It might be okay if the % of rows with missing values are very small especially for large datasets and it is missing completely at random</li>
+<li>It is very risking to delete such rows if the missing are either not at random or at random</li>
+</ul></li>
+</ul></li>
+<li>Imputation. The most common is median/mode imputation. Make sure that if the filled value is constant to not be a possible value for the feature such as <code>-999</code></li>
+<li>It is almost always a good idea to add an indicator for each feature that indicates whether a value is missing</li>
+</ul></li>
+</ul></li>
+<li>Scaling. Most classical ML algorithms such as logistic regression and gradient-boosted trees as well as NN require that features are normalized.
+<ul>
+<li>We can normalize to have range [0, 1] or [-1, 1] if we don’t want to make any assumption on the distribution of the data. This would change the distribution of the data.</li>
+<li>Standardization. This would preserve the distribution. Be careful that the statistics used from training data may be out of date when used during inference if the distribution of the feature changes dramatically. Therefore, we need to train the model frequently to update such statistics.</li>
+<li>Other transformation: <code>log(1 + x)</code> or <code>sqrt(x)</code></li>
+</ul></li>
+<li>Discretization/Binning. Convert the feature into small buckets (bins) which will make the feature categorical. It is useful if values within a bucket is not that different in terms of the feature itself or the behavior of the customer. It is rarely proven to be useful. It is a challenge to pick the number of bins or the bin boundaries. Quantiles are commonly used for bins boundaries.</li>
+<li>Encoding categorical features. Some features have fixed categories such as marital status while others have categories that change all the time such as product names.
+<ul>
+<li>It is risky to encode infrequent/unknown categories to one category.</li>
+<li>Hashing is pretty good especially if the hashing space is big enough where collision rate is low. We don’t have to worry about unknown categories in production.</li>
+</ul></li>
+<li>Feature crossing. It helps learn nonlinear relationships between features especially for models that aren’t good at learning nonlinear relationships such as logistic regression and tree-based models. The caveat is that it makes the feature space of the new feature blow up and requires more data to learn all these possible values. For example, if two features have 10 unique categories each, then the new feature would possible have 10 x 10 = 100 possible values.</li>
+</ul></li>
+<li>Data leakage. It refers to the case where some form of the label leaks into the feature(s) that aren’t available during inference. Common causes for data leakage:
+<ul>
+<li>Splitting time-correlated data randomly. This is due to the fact that trends are time-correlated and the model would have access to future things it wouldn’t have otherwise.</li>
+<li>Scaling before splitting</li>
+<li>Fill missing values before splitting</li>
+<li>Poor handling data duplication before splitting. Check for duplicates or near-duplicates before/after splitting</li>
+<li>Leakage from data generation process. Need to check with SME because this is the hardest cause of data leakage to uncover because it requires detailed knowledge about the process.</li>
+<li>Group leakage: group of data have correlated labels but are spread into different splits such as images of the same person are spread into training and test</li>
+</ul></li>
+<li>Feature importance is very important to avoid useless features as well as checking for data leakage. It is also helpful to interpret the model.
+<ul>
+<li>Be careful of features that have very high importance</li>
+<li>It is better to remove features if they are useless even if the model can ignore them</li>
+</ul></li>
+<li>Feature generalization:
+<ul>
+<li>Features coverage (% of missing values). Check whether the coverage is similar between splits. Also, if the coverage is low, check if it adds value to the model; otherwise, delete it.</li>
+<li>Distribution of values between data splits. Aim for 100% overlaps of values for all features between the splits.
+<ul>
+<li>Build a model to predict whether a row is in train or valid using the features used to build the main model. If the new model is good enough, check the most important features because those will be the features that have different distributions between train and valid splits.</li>
+<li>There is a trade-off between generalization and specifity. IS_RUSH_HOUR is more generalizable than HOUR_OF_DAY.</li>
+</ul></li>
+</ul></li>
+<li>Model development:
+<ul>
+<li>Baslines:
+<ul>
+<li>Random</li>
+<li>Most common</li>
+<li>Simple heuristics</li>
+<li>Random Forest is also a good baseline</li>
+</ul></li>
+<li>Evaluation methods:
+<ul>
+<li>Perturbation tests. Ideally, we don’t want the output of the model to change much if inputs are close to each other. We can add random noise to the test data to see how the model behaves and check its sensitivity.</li>
+<li>Directional expectation tests. Check if changes in some features would lead to changes in the output in the expected direction; otherwise, the model might be learning the wrong thing.</li>
+<li>Model calibration. Unless the model is explicitly trained using <code>LogLoss</code>, the probabilities from the model won’t be calibrated. We need to calibrate the model so that the probability produced by the model should match the underlying probability distribution of the data.</li>
+<li>Confidence level measurement. We can avoid showing uncertain predictions and maybe involve human in the loop or ask the user for more info. For example, predict positive class if probability &gt;= 80% and negative class if probability &lt;= 20%.</li>
+<li>Slice-based evaluation. Evaluate the model on different slices of data to either make sure the model’s performance across different slices are acceptable OR if we care about critical slices we can confirm our requirements. This also gives us indication of how to improve the model. We can discover slices by:
+<ul>
+<li>Simple heuristics that come from domain knowledge and heavy EDA of the data</li>
+<li>Error analysis</li>
+<li>Slice finder algorithms</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>Model Deployment:
+<ul>
+<li>Online prediction: Predictions generated on demand using either streaming features OR both streaming and batch features.
+<ul>
+<li>Pros: Always adapt to new behaviors/trends. Also don’t have to compute predictions not needed and waste compute/storage</li>
+<li>Cons: Constrained by latency</li>
+</ul></li>
+<li>Batch prediction: Predictions generated periodically using batch features.
+<ul>
+<li>Pros: Not constrained by latency and utilize vectorization/parallel computations and allows to use very complex models that takes time to generate predictions</li>
+<li>Cons: Model is not responsive to changes in customers behaviors/trends</li>
+</ul></li>
+<li>Model compression:
+<ul>
+<li>Knowledge distillation</li>
+<li>Pruning</li>
+<li>Quantization</li>
+</ul></li>
+<li>Cloud vs Edge:
+<ul>
+<li>Cloud is much easier to setup and very flexible at the cost of privacy and network latency.</li>
+<li>Edge avoid network latence and privacy concerns but device must have enough memory, compute, and battery. Also, It takes more engineering work and model compression to make the model run on devices with a reasonable latency.</li>
+</ul></li>
 </ul></li>
 </ul>
 

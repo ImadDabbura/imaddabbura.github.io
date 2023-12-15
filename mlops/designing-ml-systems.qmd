@@ -6,11 +6,11 @@ categories: MLOps
 
 ![](images/mlops.png){.preview-image}
 
-Below are notes I gathered from my readings in MLOps as well as deplying ML systems at different companies.
+Below are notes I gathered from my readings in MLOps as well as deploying ML systems at different companies.
 
 - During training, we care more about throughput. However, once we deploy the model, we care more about latency.
     - Increased latency in production leads to reduction in customer satisfaction and conversion rates, which are more important than a relatively more accurate predictions.
-    - It is commen to focus on the high percentiles of the latency such as 90th/95th/99th or even 99.9th percentiles.
+    - It is common to focus on the high percentiles of the latency such as 90th/95th/99th or even 99.9th percentiles.
 - Map ML metrics to business metrics and see how improvement in ML model would lead to an improvement in business metrics.
     - In some cases, ML is just a small part of the overall process that makes it hard to attribute loss/revenue to a particular component in the process.
 - Requirements of ML systems:
@@ -72,5 +72,72 @@ Below are notes I gathered from my readings in MLOps as well as deplying ML syst
             - Ensembles sometimes help with class imbalance
 - Data augmentation
     - Label-preserving transformations such as randomly flipping images or replace word with its synonym in NLP tasks
-    - Purturbation that adds noise to the data but still preserve the label. BERT uses such technique where 15% of the tokens are chosen randomly and 10% of such chosen tokens will be replaced by random tokens.
+    - Perturbation that adds noise to the data but still preserve the label. BERT uses such technique where 15% of the tokens are chosen randomly and 10% of such chosen tokens will be replaced by random tokens.
     - Data synthesis: create data from existing data such as mixup or using templates in NLP
+- Feature engineering. Having the right features give us the biggest performance boost compared to algorithmic techniques and hyperparameter-tuning. It requires domain-specific knowledge, SME, and algorithm-specific knowledge.
+    - Missing values. Be careful that not all missing values are `NaN`. Some systems use predefined values such as empty string or 1999 for missing values.
+        - Reasons for missing values:
+            - Missing not at random: When the value is missing due to related observed value such as some type of customers don't disclose their age.
+            - Missing at random: When the value is missing due to the value itself such as when people with high income mostly decide to not disclose their income.
+            - Missing completely at random: When there is no pattern for missing values such as customer forgot to insert the value. This is very rare in practice.
+        - Handling missing values:
+            - Deletion:
+                - Columns deletion. Not recommended for almost all cases.
+                - Row deletion. 
+                    - It might be okay if the % of rows with missing values are very small especially for large datasets and it is missing completely at random
+                    - It is very risking to delete such rows if the missing are either not at random or at random
+            - Imputation. The most common is median/mode imputation. Make sure that if the filled value is constant to not be a possible value for the feature such as `-999`
+            - It is almost always a good idea to add an indicator for each feature that indicates whether a value is missing
+    - Scaling. Most classical ML algorithms such as logistic regression and gradient-boosted trees as well as NN require that features are normalized.
+        - We can normalize to have range [0, 1] or [-1, 1] if we don't want to make any assumption on the distribution of the data. This would change the distribution of the data.
+        - Standardization. This would preserve the distribution. Be careful that the statistics used from training data may be out of date when used during inference if the distribution of the feature changes dramatically. Therefore, we need to train the model frequently to update such statistics.
+        - Other transformation: `log(1 + x)` or `sqrt(x)`
+    - Discretization/Binning. Convert the feature into small buckets (bins) which will make the feature categorical. It is useful if values within a bucket is not that different in terms of the feature itself or the behavior of the customer. It is rarely proven to be useful. It is a challenge to pick the number of bins or the bin boundaries. Quantiles are commonly used for bins boundaries.
+    - Encoding categorical features. Some features have fixed categories such as marital status while others have categories that change all the time such as product names.
+        - It is risky to encode infrequent/unknown categories to one category.
+        - Hashing is pretty good especially if the hashing space is big enough where collision rate is low. We don't have to worry about unknown categories in production.
+    - Feature crossing. It helps learn nonlinear relationships between features especially for models that aren't good at learning nonlinear relationships such as logistic regression and tree-based models. The caveat is that it makes the feature space of the new feature blow up and requires more data to learn all these possible values. For example, if two features have 10 unique categories each, then the new feature would possible have 10 x 10 = 100 possible values.
+- Data leakage. It refers to the case where some form of the label leaks into the feature(s) that aren't available during inference. Common causes for data leakage:
+  - Splitting time-correlated data randomly. This is due to the fact that trends are time-correlated and the model would have access to future things it wouldn't have otherwise.
+  - Scaling before splitting
+  - Fill missing values before splitting
+  - Poor handling data duplication before splitting. Check for duplicates or near-duplicates before/after splitting
+  - Leakage from data generation process. Need to check with SME because this is the hardest cause of data leakage to uncover because it requires detailed knowledge about the process.
+  - Group leakage: group of data have correlated labels but are spread into different splits such as images of the same person are spread into training and test
+- Feature importance is very important to avoid useless features as well as checking for data leakage. It is also helpful to interpret the model.
+    - Be careful of features that have very high importance
+    - It is better to remove features if they are  useless even if the model can ignore them
+- Feature generalization: 
+    - Features coverage (% of missing values). Check whether the coverage is similar between splits. Also, if the coverage is low, check if it adds value to the model; otherwise, delete it.
+    - Distribution of values between data splits. Aim for 100% overlaps of values for all features between the splits.
+        - Build a model to predict whether a row is in train or valid using the features used to build the main model. If the new model is good enough, check the most important features because those will be the features that have different distributions between train and valid splits.
+        - There is a trade-off between generalization and specifity. IS_RUSH_HOUR is more generalizable than HOUR_OF_DAY.
+- Model development:
+    - Baslines:
+        - Random
+        - Most common
+        - Simple heuristics
+        - Random Forest is also a good baseline
+    - Evaluation methods:
+        - Perturbation tests. Ideally, we don't want the output of the model to change much if inputs are close to each other. We can add random noise to the test data to see how the model behaves and check its sensitivity.
+        - Directional expectation tests. Check if changes in some features would lead to changes in the output in the expected direction; otherwise, the model might be learning the wrong thing.
+        - Model calibration. Unless the model is explicitly trained using `LogLoss`, the probabilities from the model won't be calibrated. We need to calibrate the model so that the probability produced by the model should match the underlying probability distribution of the data.
+        - Confidence level measurement. We can avoid showing uncertain predictions and maybe involve human in the loop or ask the user for more info. For example, predict positive class if probability >= 80% and negative class if probability <= 20%.
+        - Slice-based evaluation. Evaluate the model on different slices of data to either make sure the model's performance across different slices are acceptable OR if we care about critical slices we can confirm our requirements. This also gives us indication of how to improve the model. We can discover slices by:
+            - Simple heuristics that come from domain knowledge and heavy EDA of the data
+            - Error analysis
+            - Slice finder algorithms
+- Model Deployment:
+    - Online prediction: Predictions generated on demand using either streaming features OR both streaming and batch features.
+        - Pros: Always adapt to new behaviors/trends. Also don't have to compute predictions not needed and waste compute/storage
+        - Cons: Constrained by latency 
+    - Batch prediction: Predictions generated periodically using batch features.
+        - Pros: Not constrained by latency and utilize vectorization/parallel computations and allows to use very complex models that takes time to generate predictions
+        - Cons: Model is not responsive to changes in customers behaviors/trends
+    - Model compression:
+        - Knowledge distillation
+        - Pruning
+        - Quantization
+    - Cloud vs Edge:
+        - Cloud is much easier to setup and very flexible at the cost of privacy and network latency.
+        - Edge avoid network latence and privacy concerns but device must have enough memory, compute, and battery. Also, It takes more engineering work and model compression to make the model run on devices with a reasonable latency.
