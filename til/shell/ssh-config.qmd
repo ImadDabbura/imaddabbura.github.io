@@ -1,0 +1,21 @@
+---
+title: ssh configuration
+date: 2023-12-19
+categories: Shell
+---
+We can use `config` file under `~/.ssh/` to host ssh login information for
+different servers to avoid typing them every time we want to `ssh` into such
+servers. Below are few examples of such configs:
+
+```bash
+Host vm
+    User foobar
+    HostName 172.16.174.141
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519
+    RemoteForward 9999 localhost:8888
+
+# Configs can also take wildcards
+Host *.company.com
+    User foobaz
+```
