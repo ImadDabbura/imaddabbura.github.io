@@ -23,6 +23,8 @@ Below are notes I gathered from my readings in MLOps as well as deploying ML sys
   - Adaptability: ML system should adapt quickly to change in data distribution and business requirements
 - Developing an ML system is an iterative process that we typically go back and forth between different steps such as: scoping project, data engineering, model development, model deployment, monitoring and retraining, business analysis, etc.
 - For multiclass classification problems with a lot of classes, it may be helpful to frame it as a hierarchical classification where each example is first classified into few major classes then another classifier is used to classify subclasses and so on.
+    - For each class, ML model needs at least 100 samples to learn to classify
+      that class.
 - For mutlilabel classification problems, we either build a binary classifier for each label or use one model for all labels
     - It is more challenging to build one model with multilabel because now we need to figure out how to get predictions out of raw probabilities
 - If we have multiple objectives, it is better to decouple the objectives and train different model for each objective. Finally, get the final score of each prediction by combining the output from each model using different weight for each objective (which can be tuned based on business priorities). This way we can change one model without the need to retrain all the models.
@@ -113,7 +115,7 @@ Below are notes I gathered from my readings in MLOps as well as deploying ML sys
         - Build a model to predict whether a row is in train or valid using the features used to build the main model. If the new model is good enough, check the most important features because those will be the features that have different distributions between train and valid splits.
         - There is a trade-off between generalization and specifity. IS_RUSH_HOUR is more generalizable than HOUR_OF_DAY.
 - Model development:
-    - Baslines:
+    - Baselines:
         - Random
         - Most common
         - Simple heuristics
@@ -140,4 +142,138 @@ Below are notes I gathered from my readings in MLOps as well as deploying ML sys
         - Quantization
     - Cloud vs Edge:
         - Cloud is much easier to setup and very flexible at the cost of privacy and network latency.
-        - Edge avoid network latence and privacy concerns but device must have enough memory, compute, and battery. Also, It takes more engineering work and model compression to make the model run on devices with a reasonable latency.
+        - Edge avoid network latency and privacy concerns but device must have enough memory, compute, and battery. Also, It takes more engineering work and model compression to make the model run on devices with a reasonable latency.
+- Causes of ML system failures:
+    - Software system failures such 1) server is down, 2) hardware failures, 3)
+      dependency failure, 4) deployment failure. Addressing such failures
+      require more of SWE skills than ML skills.
+    - ML-specific failures. They are hard to detect and fix. Examples of such
+      failures such as 1) data processing/feature engineering errors, 2) wrong
+      hyperparameter values, 3) data distribution shifts.
+- Data Distribution Shifts:
+    - Production data is usually different than training data:
+        - Production data is not the same as the training data
+        - Production data is not stationary. It can change
+          suddenly/gradually/seasonally.
+    - Sometimes data shifts are due to internal errors that have nothing the
+      data such as bugs in data pipeline, missing values are incorrectly
+      inputted, inconsistency between training and inference features, wrong
+      model version, etc.
+    - Edge case is related to model performance in which the model performs
+      badly on such cases. ML systems need to take into account such
+      edge/corner cases and decide what to do with them when the model face
+      them in production.
+    - Degenerate feedback loop is when the model's output affect user behavior
+      which affects the input to the ML model which again affects its output.
+      This is why popular recommendations get more popular because the model
+      first recommends them, then the users are more likely to click on them
+      than the rest which will feed back to the model which will make it
+      recommend them more with higher probabilities. 
+        - We can use different metrics to detect degenerate feedback loop such 
+          as hit rate against popularity and the accuracy of the model for 
+          item groups with different popularities feedback loop such as hit 
+          rate against popularity and the accuracy of the model for item groups 
+          with different popularities.
+        - Correcting degenerate feedback loop can be through either
+          randomization of recommendation until we gather enough feedback of an
+          item that reflects its true quality OR change the positions of the
+          recommendation
+    - Types of data shifts:
+        - Covariate shift: When $P(X)$ changes but $P(Y/X)$ remains the same.
+          For example, if age distribution changes but probability of success
+          given a certain age remains the same. It can happen for many reasons 
+          during training such as over/under sampling and selection bias. It 
+          also can happen in production such as doing campaigns to attract 
+          certain group of users.
+        - Label shift: When $P(Y)$ changes but $P(X/Y)$ remains the same.
+        - Concept shift: When $P(Y/X)$ changes but $P(X)$ remains the same.
+          Happens typically for seasonal/cyclic trends.
+        - Feature change such as possible values for a feature changes or the
+          unit of measurement changes such as age is now in months instead of
+          years.
+        - Label schema changes such as we have more classes or possible values
+          changes in the case of regression.
+    - We can monitor $P(X)$, $P(Y)$, $P(Y/X)$, and $P(X/Y)$. We can monitor
+      spatially and temporally.
+        - Temporal monitoring is more complicated and requires monitoring at
+          different granularity using different time windows as well as using
+          sliding statistics and cumulative statistics.
+    - Retraining: Either retrain from scratch or continue training from last
+      checkpoint. Also, we need to decide which data to use for retraining:
+      Last month, old data plus new data, only data that started to drift. We
+      need to do some experiments to figure out which strategy works best for a
+      given use case.
+    - Monitoring:
+        - Monitor operations-related metrics such as uptime
+        - Monitor ML-specific metrics such as accuracy-related metrics,
+          predictions feedback, prediction and feature distribution, feature
+          validation (using libraries such as Great Expectations).
+- Continual Learning: How our deployed model gets (re)trained and the
+  frequency.
+    - Stateless retraining means training the model from scratch on every run
+      using some predefined historical data window.
+    - Stateful training means continue training using new data to update the
+      model with new data. Much less compute needed and less complicated. It
+      only works if the architecture is still the same and the features are
+      still the same. If anyone changes, we may need to retrain from scratch.
+        - The best use cases for such training strategy are the ones that
+          collect natural labels from users after making predictions;
+          Otherwise, it will be bottlenecked by the availability of labeled data.
+        - The evaluation period also affects how fast we can deploy new models
+          especially if we are dealing with imbalanced datasets.
+        - The main drawback of this approach is that the new model is
+          susceptible to attacks that would result in the model outputting
+          catastrophic predictions.
+        - A model update may be triggered based on time, performance, volume,
+          or data drifts.
+        - Experiments with the importance of data freshness by training the
+          model on different datasets from the past to predict current month
+          and see how the performance deteriorates as we go back.
+- Testing in production:
+    - Test on holdout data split
+    - Test on the most recent data (backtest) such as last day
+    - Shadow deployment. The main disadvantage is the compute cost because now
+      we're doing two predictions for each data point.
+        - Deploy the candidate model in parallel with the existing model.
+        - For each incoming request, route it to both models to make predictions, 
+          but only serve the existing model’s prediction to the user.
+        - Log the predictions from the new model for analysis purposes.
+    - A/B Testing. We just need to figure out the sample size needed to achieve
+      the needed statistical significance. It is the most common in the
+      industry.
+        - Deploy the candidate model alongside the existing model.
+        - A percentage of traffic is routed to the new model for predictions;
+          the rest is routed to the existing model for predictions. It’s
+          common for both variants to serve prediction traffic at the same
+          time. However, there are cases where one model’s predictions might
+          affect another model’s predictions —e.g., in ridesharing’s dynamic
+          pricing, a model’s predicted prices might influence the number of
+          available drivers and riders, which, in turn, influence the other
+          model’s predictions. In those cases, you might have to run your
+          variants alternatively, e.g., serve model A one day and then serve
+          model B the next day.
+        - Monitor and analyze the predictions and
+           user feedback, if any, from both models to determine whether the
+           difference in the two models’ performance is
+           statistically significant
+    - Canary release. Reduces the risk of introducing the model by gradually
+      rolling it out to the users and monitor the performance of the new
+      (candidate) model.
+        - Deploy the candidate model alongside the existing model. The
+          candidate model is called the canary.
+        - A portion of the traffic is routed to the candidate model.
+        - If its performance is satisfactory, increase the traffic to the 
+          candidate model. If not, abort the canary and route all the traffic 
+          back to the existing model.
+        - Stop when either the canary serves all the traffic (the candidate model 
+          has replaced the existing model) or when the canary is aborted.
+    - Interleaving experiment. We can randomly provide
+      predictions/recommendations from different models to the same user and
+      see how the user interact with these recommendations. It is different
+      than A/B testing in the sense that we don't split user base to receive
+      recommendations from specific models but the same user receives
+      recommendations from different models.
+    - Bandits algorithm (least adopted). It is much more efficient than A/B 
+      testing in that it requires much less data to determine which model is 
+      better. It is stateful (as opposed to A/B testing which is stateless).
+      It routes traffic based on exploitation/exploration criteria.
