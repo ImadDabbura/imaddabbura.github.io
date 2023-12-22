@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Imad Dabbura">
+<meta name="dcterms.date" content="2023-12-22">
+
+<title>Imad Dabbura - Git Confident</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete-preset-algolia.umd.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../images/profile.jpg" rel="icon" type="image/jpeg">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "algolia": {
+    "application-id": "PVDXB8B7OS",
+    "search-only-api-key": "eb3007c200831c30465f8a5172690cf0",
+    "index-name": "Initial-Website-Search-Index",
+    "analytics-events": true,
+    "show-logo": true,
+    "libDir": "site_libs"
+  },
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdn.jsdelivr.net/npm/algoliasearch@4.5.1/dist/algoliasearch-lite.umd.js"></script>
+
+
+<script type="text/javascript">
+var ALGOLIA_INSIGHTS_SRC = "https://cdn.jsdelivr.net/npm/search-insights/dist/search-insights.iife.min.js";
+!function(e,a,t,n,s,i,c){e.AlgoliaAnalyticsObject=s,e[s]=e[s]||function(){
+(e[s].queue=e[s].queue||[]).push(arguments)},i=a.createElement(t),c=a.getElementsByTagName(t)[0],
+i.async=1,i.src=n,c.parentNode.insertBefore(i,c)
+}(window,document,"script",ALGOLIA_INSIGHTS_SRC,"aa");
+</script>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-plugin-algolia-insights">
+
+</script>
+
+<script type="text/javascript">
+
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-127825273-1', 'auto');
+
+ga('send', {
+  hitType: 'pageview',
+  'anonymizeIp': true,
+});
+</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+<meta property="og:title" content="Imad Dabbura - Git Confident">
+<meta property="og:description" content="">
+<meta property="og:image" content="https://imaddabbura.github.io/posts/git/git.webp">
+<meta property="og:site-name" content="Imad Dabbura">
+<meta name="twitter:title" content="Imad Dabbura - Git Confident">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="https://imaddabbura.github.io/posts/git/git.webp">
+<meta name="twitter:creator" content="@imaddabbura">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../images/palestine-flag.png" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Imad Dabbura</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html" rel="" target="">
+ <span class="menu-text">Posts</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../projects-index.html" rel="" target="">
+ <span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../mlops.html" rel="" target="">
+ <span class="menu-text">MLOps</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../til.html" rel="" target="">
+ <span class="menu-text">Today I Learned</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../dl-tips-tricks.html" rel="" target="">
+ <span class="menu-text">DL Tips &amp; Tricks</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../cmn-ai.html" rel="" target="">
+ <span class="menu-text">cmn_ai</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../tiny-pytorch.html" rel="" target="">
+ <span class="menu-text">Tiny-PyTorch</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-more" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">More</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-more">    
+        <li>
+    <a class="dropdown-item" href="../../books-summaries.html" rel="" target="">
+ <span class="dropdown-text">Books Summaries</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../misc-notes.html" rel="" target="">
+ <span class="dropdown-text">Misc. Notes</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../reading-list.html" rel="" target="">
+ <span class="dropdown-text">Reading List</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../resume.html" rel="" target="">
+ <span class="dropdown-text">Resume</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/imaddabbura" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/imadphd" rel="" target=""><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Git Confident</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Git</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Imad Dabbura </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">December 22, 2023</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#general" id="toc-general" class="nav-link active" data-scroll-target="#general">General</a></li>
+  <li><a href="#managing-history" id="toc-managing-history" class="nav-link" data-scroll-target="#managing-history">Managing History</a></li>
+  <li><a href="#undoing" id="toc-undoing" class="nav-link" data-scroll-target="#undoing">Undoing</a></li>
+  <li><a href="#rebasing-history" id="toc-rebasing-history" class="nav-link" data-scroll-target="#rebasing-history">Rebasing History</a></li>
+  <li><a href="#git-object-model" id="toc-git-object-model" class="nav-link" data-scroll-target="#git-object-model">Git Object Model</a></li>
+  <li><a href="#object-model-operations" id="toc-object-model-operations" class="nav-link" data-scroll-target="#object-model-operations">Object Model Operations</a></li>
+  <li><a href="#branches" id="toc-branches" class="nav-link" data-scroll-target="#branches">Branches</a></li>
+  <li><a href="#tags" id="toc-tags" class="nav-link" data-scroll-target="#tags">Tags</a></li>
+  <li><a href="#remote-branches" id="toc-remote-branches" class="nav-link" data-scroll-target="#remote-branches">Remote Branches</a></li>
+  <li><a href="#head-object" id="toc-head-object" class="nav-link" data-scroll-target="#head-object">HEAD Object</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#operations" id="toc-operations" class="nav-link" data-scroll-target="#operations">Operations</a></li>
+  <li><a href="#git-customization" id="toc-git-customization" class="nav-link" data-scroll-target="#git-customization">Git Customization</a></li>
+  <li><a href="#github-and-remotes" id="toc-github-and-remotes" class="nav-link" data-scroll-target="#github-and-remotes">Github and Remotes</a></li>
+  <li><a href="#vim-and-git-integration" id="toc-vim-and-git-integration" class="nav-link" data-scroll-target="#vim-and-git-integration">Vim and Git Integration</a></li>
+  <li><a href="#thoughtbot-workflow" id="toc-thoughtbot-workflow" class="nav-link" data-scroll-target="#thoughtbot-workflow">Thoughtbot Workflow</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources">Resources</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<p><img src="git.webp" align="center" height="300px" width="500px"></p>
+<section id="general" class="level2">
+<h2 class="anchored" data-anchor-id="general">General</h2>
+<ol type="1">
+<li><code>git stash</code> does not by default save untracked files, it only saves untracked changes to tracked files. It will be stored under <code>.git/refs</code>
+<ul>
+<li><code>git stash -u</code> will save everything</li>
+<li><code>git stash drop</code> will delete the saved changes</li>
+<li><code>git stash pop</code> will bring back the saved changes</li>
+</ul></li>
+<li><code>git reflog</code> remember all actions taken in a repository (even intermediate steps such as creating branches, clone, pull, etc.) and not just commits. So we can always get back to some state.
+<ul>
+<li><code>git reflog show hash_value</code> will show all the actions happened for the hash.</li>
+</ul></li>
+</ol>
+</section>
+<section id="managing-history" class="level2">
+<h2 class="anchored" data-anchor-id="managing-history">Managing History</h2>
+<ol type="1">
+<li><p><code>git log</code> has all the information we need to the repo’s history.</p>
+<ul>
+<li><code>git log --all --decorate --graph --oneline</code> is great to get an overview and see the divergence of branches</li>
+<li><code>git log -n</code> will limit the log to the top n</li>
+<li><code>git log --oneline file</code> is useful to get an overview of the log of one file</li>
+<li><code>git log --pretty=format:'%C(yellow)%h%C(reset) - %an [%C(green)%ar%C(reset)] %s</code> to change the format of the log output</li>
+<li><code>git log -E -i --grep regexp</code> will do extended search the logs for the regexp phrase; case insensitive</li>
+<li><code>git log -S term</code> will search for changes related to that term in the code base (addition/deletion). Check this <a href="https://thoughtbot.com/blog/code-sleuthing-with-git">post</a></li>
+<li><code>git log -G regexp</code> will search for changes related to the regexp in the code base; but looks for patterns not literal string.</li>
+</ul></li>
+<li><p><code>git show commit</code> will show everything that happened with that commit including <strong>diff</strong></p></li>
+<li><p><code>git blame file</code> is useful to know who did what to the file</p></li>
+</ol>
+</section>
+<section id="undoing" class="level2">
+<h2 class="anchored" data-anchor-id="undoing">Undoing</h2>
+<p><strong>Commits are immutable. This means that even though we can fix some stuff related to commits, we can’t change the commits themselves. They will still be in the history.</strong></p>
+<ol type="1">
+<li><p><code>git commit --amend</code> will open an editor to write a new commit message to the already committed changes.</p>
+<ul>
+<li><code>git commit --amend -m "message"</code> is a shorthand</li>
+<li><code>git commit --amend --no-edit</code> will add new files to the last commit; in case we forgot to add some files to that belong to the same commit</li>
+</ul></li>
+<li><p><code>git reset file</code> will undo the staging of the file. This is helpful if we staged a file and then we need to change some things before committing.</p></li>
+<li><p><code>get checkout file</code> will delete all the changes made to a file. We will never be able to get back the deleted changes.</p></li>
+<li><p><code>get reset --soft HEAD^1</code> This will remove the commit from the history and point HEAD to its parent. <code>--soft</code> here means to keep the changes of the current working directory.</p></li>
+<li><p>To cancel the commit while writing the message, we can exit vim with <code>:cquit</code> which exits vim with error and git will get that error -&gt; won’t proceed in creating the commit.</p></li>
+</ol>
+</section>
+<section id="rebasing-history" class="level2">
+<h2 class="anchored" data-anchor-id="rebasing-history">Rebasing History</h2>
+<ol type="1">
+<li><p><code>git add file</code> or <code>git add --all</code> or <code>git add directory</code>. This will add all changes made to a specific file/directory.</p></li>
+<li><p><code>git add --patch</code> Allows us to cherry pick the changes that we want to stage. This is useful if we want to split the changes we made to a specific file into different commits. When we run the command, we will interactively choose what we want to stage using shortcuts.</p></li>
+<li><p><code>git diff/log HEAD..HEAD~2</code> will give us the diff/log for the range between two commits in history. We can either choose hash_values of commits or their references such as HEAD/master.</p></li>
+<li><p><code>git reset --hard HEAD~1</code> will make HEAD point to its parent and remove last commit from log history. Note that the last commit is not completely removed, we see that with <code>git reflog</code>.</p></li>
+<li><p><code>git cherry-pick origin/master..master</code> will replay the commits with this range in another branch. This is useful when we commit to the wrong branch and we want to make those commits in another branch. We can use this command after we checkout the correct branch and run the above command. To remove the commits from the branch we first commit, we can use <code>git reset --hard</code> (even though the removed commits are still in our history).</p></li>
+<li><p><code>git rebase master</code> We want to take the work we’ve done on our feature branch, and reapply it as if it was done on top of the additional commits in our master branch. When performing the rebase, Git finds the commits unique to our branch and computes the diff off the changes they introduced, then moves to the target branch, master in this case, and one by one applies the diffs, creating new commits reusing the commit messages from our branch. Once done, it updates our branch to point at the newest of these commits created by reapplying the diffs.</p></li>
+<li><p>While we would never revise published history, specifically the master branch, we almost always revise our commits on feature branches before merging them in. We value a clean history, and the majority of the time, the commits in a feature branch contain many rounds of refactoring and PR reviews which we don’t want in the permanent history. Instead, we want the most direct and concise form of the history that fully captures the change we settled on in our feature branch after completing any refactoring or updates. Use <code>git rebase -i master</code> will allow us to do just that.</p></li>
+</ol>
+</section>
+<section id="git-object-model" class="level2">
+<h2 class="anchored" data-anchor-id="git-object-model">Git Object Model</h2>
+<ul>
+<li>Git stores everything in <strong>.git</strong> directory. So deleting this directory will basically delete the whole history and can’t be recovered.</li>
+<li>Git stores all of its representations using <strong>objects</strong> directory. Object can be: blob or tree or commit.</li>
+<li>Git use <strong>sha1sum</strong> to get the hash value of each object. It is 40 hexadecimal characters (160 bits).
+<ul>
+<li>Git uses the first two characters for the name of directory for the object and the other 38 characters for the object itself.</li>
+<li>Git stores objects based on their hash values (content addressable storage).</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// a file is a bunch of bytes</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>type object <span class="op">=</span> blob <span class="op">|</span> tree <span class="op">|</span> commit</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>objects <span class="op">=</span> map<span class="op">&lt;</span>sha1sum<span class="op">(</span>object<span class="op">),</span> object<span class="op">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> store(obj):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="bu">id</span> <span class="op">=</span> sha1sum(obj)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  objects[<span class="bu">id</span>] <span class="op">=</span> obj</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> a directory contains named files <span class="kw">and</span> directories</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span> tree <span class="op">=</span> <span class="bu">map</span><span class="op">&lt;</span>string, tree <span class="op">|</span> <span class="bu">file</span><span class="op">&gt;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> load(<span class="bu">id</span>):</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> objects[<span class="bu">id</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+</ul>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>ls <span class="op">-</span>al ..<span class="op">/</span>..<span class="op">/</span>.git</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>total 48
+drwxr-xr-x  15 imad  staff   480 Nov  5 09:08 .
+drwxr-xr-x@ 12 imad  staff   384 Nov  5 06:56 ..
+-rw-r--r--   1 imad  staff    15 Mar 17  2020 COMMIT_EDITMSG
+-rw-r--r--   1 imad  staff    23 Feb 12  2020 HEAD
+drwxr-xr-x   2 imad  staff    64 Feb 12  2020 branches
+-rw-r--r--   1 imad  staff   455 Mar 17  2020 config
+-rw-r--r--   1 imad  staff    73 Feb 12  2020 description
+drwxr-xr-x  13 imad  staff   416 Feb 12  2020 hooks
+-rw-r--r--   1 imad  staff  3913 Nov  5 09:08 index
+drwxr-xr-x   3 imad  staff    96 Feb 12  2020 info
+drwxr-xr-x   4 imad  staff   128 Feb 12  2020 logs
+drwxr-xr-x   3 imad  staff    96 Mar 17  2020 modules
+drwxr-xr-x  94 imad  staff  3008 Mar 17  2020 objects
+-rw-r--r--   1 imad  staff   114 Feb 12  2020 packed-refs
+drwxr-xr-x   5 imad  staff   160 Feb 12  2020 refs</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="27">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>ls <span class="op">-</span>a ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>objects</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>.    0c   1a   26   37   43   50   62   72   8b   9e   b1   c5   d1   e0   fc
+..   0f   1d   29   38   45   52   63   73   8e   a2   b2   c7   d2   e1   ff
+00   12   1f   2a   39   49   58   64   75   91   a5   b3   ca   d3   eb   info
+03   13   20   2b   3f   4a   5a   67   77   96   a9   b4   cc   d8   ee   pack
+07   17   21   2c   40   4b   5f   68   7f   98   aa   b6   ce   dc   f0
+08   19   22   33   42   4d   61   6f   8a   9d   b0   b8   d0   dd   f8</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>ls <span class="op">-</span>Ral ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>objects<span class="op">/</span>ee</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>total 8
+drwxr-xr-x   3 imad  staff    96 Mar  4  2020 .
+drwxr-xr-x  94 imad  staff  3008 Mar 17  2020 ..
+-r--r--r--   1 imad  staff   166 Mar  4  2020 5941ab3c125a3a669370d96cd5cb8496f8acde</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>git cat<span class="op">-</span><span class="bu">file</span> <span class="op">-</span>p ee5941ab3c125a3a669370d96cd5cb8496f8acde</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>100644 blob b6e47617de110dea7ca47e087ff1347cc2646eda    .gitignore
+100644 blob 261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64    LICENSE
+100644 blob 58da9de606d62625c379fea5ca020d19d958fb18    README.md
+040000 tree 6fea6c3802fd1cf83bf19bfc2302da6b79638ab5    missing-cs-semester</code></pre>
+</div>
+</div>
+<ul>
+<li><code>blobs</code>: Binary large objects which stores only the context of the file; not its name (array of bytes).</li>
+</ul>
+<div class="sourceCode" id="cb11"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>type blob <span class="op">=</span> array<span class="op">&lt;</span>byte<span class="op">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>    - It passed the type of file which is "blob", the number of characters in it, the separator character, and the actual content to the sha1sum to get the hash value.
+    - Since Git does not store the name of the file or any of its metadata, if you have two files with the same content then Git only stores it once.</code></pre>
+<div class="cell" data-execution_count="30">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>git cat<span class="op">-</span><span class="bu">file</span> <span class="op">-</span>p <span class="dv">58</span><span class="er">da9de606d62625c379fea5ca020d19d958fb18</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># software-engineering
+Materials for software engineering.</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="31">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>wc ..<span class="op">/</span>..<span class="op">/</span>README.md</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       2       6      59 ../../README.md</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="68">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>cat <span class="op">&lt;</span>(echo <span class="op">-</span>e <span class="st">"blob 60</span><span class="ch">\0</span><span class="st">"</span>) ..<span class="op">/</span>..<span class="op">/</span>README.md</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>blob 60
+# software-engineering
+Materials for software engineering.</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="75">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # Since todo.md and todo2.md are identical, Git saves ONLY one copy</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 100644 blob b3dfa8b0b7c73f2c7156dfc69c737d05f2f900c3    file.txt</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 100644 blob c1ee9d5404109b66f21fa193da635aa8c4f04c47    todo.md</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 100644 blob c1ee9d5404109b66f21fa193da635aa8c4f04c47    todo2.md</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="66">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>cat <span class="op">&lt;</span>(echo <span class="op">-</span>e <span class="st">"blob 58</span><span class="ch">\0</span><span class="st">"</span>) ..<span class="op">/</span>..<span class="op">/</span>README.md <span class="op">|</span> shasum</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>5ee782528aa7bc3d388c33339962f6fce514b39e  -</code></pre>
+</div>
+</div>
+<ul>
+<li><code>trees</code>: Tree is a recursive data structure that contains other trees/blobs; i.e.&nbsp;it contains a list of pointers to other trees/blobs. In this context, tree is a directory. Therefore, the root directory is the main directory that has .git as its subdir. Each line in the tree object’s file contains a pointer (the object’s hash) to one such object (tree or blob), while also providing the mode, object type, and a name for the file or directory.</li>
+</ul>
+<div class="sourceCode" id="cb22"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">// a directory contains named files and directories</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>type tree <span class="op">=</span> map<span class="op">&lt;</span>sha1sum<span class="op">(</span>tree <span class="op">|</span> file<span class="op">),</span> tree <span class="op">|</span> file<span class="op">&gt;;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>- It maps strings(hash values) to objects. So if a directory is empty, Git does not add it as untracked change until we add a file to it or any of its directory because empty directory has nothing to map stuff to. Therefore, to track empty directories, we can add `.gitkeep` to the directory if it is empty to be able to track it.
+- We pass all objects (not their contents) to get the hash value.
+- Tree objects themselves do not have names, much like blobs. Parent trees associate names for subtrees, and the root tree, referred to as the "working tree" of a repository, in fact has no name. This has two fun characteristics:
+    - The repo doesn't care what you call it. You can rename your local directory that contains your repository to anything you'd like. Git is blissfully unaware of the name of the directory that contains the .git repo directory.
+    - We can rename subtrees as much as we want, and only parent objects need to update. The subtree object itself and everything below remain untouched.</code></pre>
+<ul>
+<li>Trees summary:
+<ul>
+<li>Trees list out the contents of a directory (blobs and subtrees).</li>
+<li>For each object, the mode, permissions, type, hash, and name is listed.</li>
+<li>Tree objects must contain at least one blob or tree; otherwise, it won’t be tracked.</li>
+<li>Trees can be nested to any depth.</li>
+<li>Trees, like blobs, don’t store names. The names are stored in parent trees. Therefore, changing names of subtrees only change the names in the parent tree. Therefore, since root directory has no parent, changing its name doesn’t have any effect on git.</li>
+<li>Trees are named and stored in the objects directory by hashing their contents (the list of objects described above).</li>
+</ul></li>
+</ul>
+<div class="cell" data-execution_count="78">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># master is a branch that points to a commit which also points to a tree</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>git ls<span class="op">-</span>tree master</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>100644 blob ced9612a7d927cdb23d0ba2de47679504b0c9fc3    Command-Line-Environment.ipynb
+100644 blob 68fe60e479d316b7f40f194a8d3400e7f5c8af60    Data-Wrangling.ipynb
+100644 blob dcee12ed0ae6096339dc40a70c5ff67a2afdec31    Debugging-And-Profiling.ipynb
+100644 blob 40582a6d5d23028acc251c54f6e124ce9f2ec5ba    Petpouri.ipynb
+100644 blob 6405b8d2b26e17020b12f98639148615d6c9baea    Plan.ipynb
+100644 blob f0aca55804924d43eb3d687ebc9a780f3b8baff3    Security-And-Cryptography.ipynb
+100644 blob 035f52d11f6126cac575b899f6ff0011060aeddd    Shell-Scripting.ipynb
+100644 blob a2235c5c9a32920e7f15c3bf63afde41e60c4e52    Version-Control(Git).ipynb
+100644 blob 395d086c29d15560f0b3eee28c0489afe1b6de8e    Vim-Tutor-Summaries.ipynb
+100644 blob 9d756b15f398735d1bd414fd97afa5f709db06f5    basic.png
+100644 blob 50daf1bb695821f251fbc44880413ca17ca8a8b6    commit_history.png
+100644 blob 43d8b8f1031c6c81f0153e0616be7576de6401f9    pycallgraph.png
+100644 blob 5a0fa1a6cb3918e9c2d316433edfd5ccd275bd59    vim-tutorial.md</code></pre>
+</div>
+</div>
+<ul>
+<li><code>commits</code>: Contain parent, message, author, commiter, and current tree. Therefore, it is a file like any other object.</li>
+</ul>
+<div class="sourceCode" id="cb26"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co">// a commit has parents, metadata, and the top-level tree</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>type commit <span class="op">=</span> <span class="kw">struct</span> <span class="op">{</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    parent<span class="op">:</span> array<span class="op">&lt;</span>commit<span class="op">&gt;;</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    author<span class="op">:</span> string</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    message<span class="op">:</span> string</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    snapshot<span class="op">:</span> tree</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>- It's worth noting that the commit object only contains a single reference to a working directory; Git doesn't store diffs. When diffing between two commits, it compares the working trees of the commits, computing the diff on demand.</code></pre>
+<p>Git only stores the delta changes between commits and not everything. It also point to blobs/trees that have not been changed using old commits and don’t store them again for new commits. Therefore, if a file has not been changed from previous commit, the hash value for that commit is the same so its address is still the same -&gt; keep the same pointer.</p>
+<p><img src="git-objects-simple.png" height="400px" width="300px" align="center"></p>
+</section>
+<section id="object-model-operations" class="level2">
+<h2 class="anchored" data-anchor-id="object-model-operations">Object Model Operations</h2>
+<p>Review of the basic Git objects: - <strong>Blobs</strong>: Our base objects, storing the contents of a single version of a file. - <strong>Trees</strong>:Trees store directory listings, pointing at blobs and other trees to define a full directory structure. - <strong>Commits</strong>: Commits lock in a version of our code, pointing at a single tree, the “working tree”, as well as holding the commit message and author info. Commits also point at parent commits to capture the history of our code.</p>
+<p><strong>References</strong>: References are nothing but pointers to commits. They are stored under <code>.git/refs</code> directory as files where each file contains the hash_value of some commit. - Since it is a hassle to always refer to objects by their 40 hexadecimal string, we can use references to refer to objects. Contrary to objects, references are mutable. For example, <code>master</code> always refers to the latest commit in the main branch. <code>HEAD</code> refers to where we currently are in the history which will be used when creating new snapshot by making the parent for this commit the <code>HEAD</code> and then update <code>HEAD</code>.</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>references <span class="op">=</span> <span class="bu">map</span><span class="op">&lt;</span>string, commit<span class="op">&gt;;</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> update_reference(name, <span class="bu">id</span>):</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    references[name] <span class="op">=</span> <span class="bu">id</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> read_reference(name):</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> references[name]</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> load_reference(name_or_id):</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> name_or_id <span class="kw">in</span> references:</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> load(references[name_or_id])</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> load(name_or_id)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="88">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C <span class="op">-</span>L <span class="dv">1</span> ..<span class="op">/</span>..<span class="op">/</span>.git</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>../../.git
+├── COMMIT_EDITMSG
+├── HEAD
+├── branches
+├── config
+├── description
+├── hooks
+├── index
+├── info
+├── logs
+├── modules
+├── objects
+├── packed-refs
+└── refs
+
+7 directories, 6 files</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="89">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C <span class="op">-</span>L <span class="dv">1</span> ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>../../.git/refs/
+├── heads
+├── remotes
+└── tags
+
+3 directories, 0 files</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="90">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C <span class="op">-</span>L <span class="dv">1</span> ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>heads<span class="op">/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>../../.git/refs/heads/
+└── master
+
+0 directories, 1 file</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="91">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>cat ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>heads<span class="op">/</span>master</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>e1d95ecb4c02e0c30a8635a37631c523d2041299</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="93">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>git cat<span class="op">-</span><span class="bu">file</span> <span class="op">-</span>t e1d95ecb4c02e0c30a8635a37631c523d2041299</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>commit</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="94">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>git cat<span class="op">-</span><span class="bu">file</span> <span class="op">-</span>p e1d95ecb4c02e0c30a8635a37631c523d2041299</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>tree 75407c234b245d258c809de234e030f57dd98148
+parent 429137bbf1334dcea2719458bcc3a323cd829ecd
+author Imad &lt;imad.dabbura@hotmail.com&gt; 1584462760 -0500
+committer Imad &lt;imad.dabbura@hotmail.com&gt; 1584462760 -0500
+
+Review all nbs</code></pre>
+</div>
+</div>
+</section>
+<section id="branches" class="level2">
+<h2 class="anchored" data-anchor-id="branches">Branches</h2>
+<ul>
+<li><code>heads</code> aka branches (because it is a collection of HEADS for each branch in Git repo) are nothing but pointers to commits. They are very simple objects, they only contain hash_value of the commit they are pointing to. Therefore, creating a branch is just creating a file in <code>refs/heads</code> with the name of the branch that has the commit of the HEAD of that branch. At the beginning, this file will have the commit the HEAD points to from master branch.</li>
+<li><code>heads</code> are for local branches.</li>
+</ul>
+</section>
+<section id="tags" class="level2">
+<h2 class="anchored" data-anchor-id="tags">Tags</h2>
+<ul>
+<li><strong>Tags</strong> are like branches, they too point to a commit and stored under <code>.git/refs</code> dir in <code>tags</code> dir. They are basically files that have the commits they are pointing to.</li>
+<li>Tags can be created simply by <code>git tag version_no</code>. We can also create more complex tags by adding annotations, PGP signature, and other metadata. In this case, they will be stored in <code>refs/objects</code> dir and the tag will simply be the hash value of the tag object (which will also contain the hash of the commit that was tagged).</li>
+<li>The <strong>difference</strong> between tags and branches is that branches evolve over time; however, tags point to fixed commit in repo’s history.</li>
+</ul>
+<div class="cell" data-execution_count="96">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C <span class="op">/</span>Users<span class="op">/</span>imad<span class="op">/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>/Users/imad/Desktop/git-repo/.git/refs/
+├── heads
+│&nbsp;&nbsp; ├── feature
+│&nbsp;&nbsp; ├── master
+│&nbsp;&nbsp; └── test
+└── tags
+    └── v.0.1
+
+2 directories, 4 files</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="97">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>cat <span class="op">/</span>Users<span class="op">/</span>imad<span class="op">/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>tags<span class="op">/*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>6e9c6886a2180fdfde291a130aa9e10a52bac679</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="100">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>cd <span class="op">~/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>git graph2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>* 6e9c688    (HEAD -&gt; master, tag: v.0.1, test) Renaming (Imad)
+* ff9e667    Add test1 dir (Imad)
+* e503b6e    Add test dir (Imad)
+* 8610c78    Add copied file (Imad)
+* ed738c9    (feature) Rebased all commits (Imad)
+* 2050b90    Add host to file (Imad)
+* 91eacf5    Add host (Imad)
+* ed27259    patch commit (Imad)
+* ff2d260    third commit (Imad)
+* 6dd0c14    Change second commit (Imad)
+* c2b7166    first commit (Imad)</code></pre>
+</div>
+</div>
+</section>
+<section id="remote-branches" class="level2">
+<h2 class="anchored" data-anchor-id="remote-branches">Remote Branches</h2>
+<p><strong>Remote Branches</strong> are the same as local branches. They are again files that point to commits. - We can have multiple remotes where each one has its own branches. <code>origin</code> is the main one typically used for the upstream.</p>
+<div class="cell" data-execution_count="108">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>remotes<span class="op">/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>../../.git/refs/remotes/
+└── origin
+    ├── HEAD
+    └── master
+
+1 directory, 2 files</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="109">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>cat ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>remotes<span class="op">/</span>origin<span class="op">/*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>ref: refs/remotes/origin/master
+e1d95ecb4c02e0c30a8635a37631c523d2041299</code></pre>
+</div>
+</div>
+</section>
+<section id="head-object" class="level2">
+<h2 class="anchored" data-anchor-id="head-object">HEAD Object</h2>
+<p><code>HEAD</code>, unlike the other objects we’ve discussed, is a singleton, meaning that there is only ever one HEAD. It identifies the currently checked out object. Typically, this is a branch (with that branch pointing to a commit), but it is possible to check out a commit directly, in which case HEAD would be pointing at that commit.</p>
+<p>HEAD is a file just like our branch objects. It lives at the root of the .git/ directory and its contents are similarly simple.</p>
+<div class="cell" data-execution_count="114">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>cat <span class="op">/</span>Users<span class="op">/</span>imad<span class="op">/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span>.git<span class="op">/</span>HEAD</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>ref: refs/heads/master</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="115">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>cd <span class="op">~/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span></span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>git graph2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>* 6e9c688    (HEAD -&gt; master, tag: v.0.1, test) Renaming (Imad)
+* ff9e667    Add test1 dir (Imad)
+* e503b6e    Add test dir (Imad)
+* 8610c78    Add copied file (Imad)
+* ed738c9    (feature) Rebased all commits (Imad)
+* 2050b90    Add host to file (Imad)
+* 91eacf5    Add host (Imad)
+* ed27259    patch commit (Imad)
+* ff2d260    third commit (Imad)
+* 6dd0c14    Change second commit (Imad)
+* c2b7166    first commit (Imad)</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="116">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>cd <span class="op">~/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>git checkout <span class="dv">8610</span><span class="er">c78</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Note: checking out '8610c78'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by performing another checkout.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -b with the checkout command again. Example:
+
+  git checkout -b &lt;new-branch-name&gt;
+
+HEAD is now at 8610c78 Add copied file</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="118">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>cat <span class="op">/</span>Users<span class="op">/</span>imad<span class="op">/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span>.git<span class="op">/</span>HEAD</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>8610c78113fe423b20a9f84d485b49af5ad089b0</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="117">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>cd <span class="op">~/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span></span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>git graph2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>* 6e9c688    (tag: v.0.1, test, master) Renaming (Imad)
+* ff9e667    Add test1 dir (Imad)
+* e503b6e    Add test dir (Imad)
+* 8610c78    (HEAD) Add copied file (Imad)
+* ed738c9    (feature) Rebased all commits (Imad)
+* 2050b90    Add host to file (Imad)
+* 91eacf5    Add host (Imad)
+* ed27259    patch commit (Imad)
+* ff2d260    third commit (Imad)
+* 6dd0c14    Change second commit (Imad)
+* c2b7166    first commit (Imad)</code></pre>
+</div>
+</div>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<ul>
+<li><strong>Objects</strong>: blobs, trees, and commits.</li>
+<li><strong>Refs</strong>: branches, tags, and remote branches.</li>
+<li><strong>HEAD</strong>: The single pointer to rule them all.</li>
+</ul>
+<p><img src="git-objects.png" width="500"></p>
+</section>
+<section id="operations" class="level2">
+<h2 class="anchored" data-anchor-id="operations">Operations</h2>
+<ul>
+<li><strong>Checkout</strong>: <code>git checkout -b new-branch</code> First Git will follow from the HEAD to the current branch to determine what commit hash that branch points at. With that info, Git creates a new file in .git/refs/heads with our new branch name as the file name, and the commit hash as the contents. Lastly, it updates HEAD to point at this new ref.</li>
+<li><strong>Verbose Checkout</strong>: <code>git checkout -b new-branch master</code> It is almost the same as the previous checkout, but instead of starting from <code>HEAD</code>, it starts from the base branch we provided which is <code>master</code> in this case.</li>
+<li><strong>Checkout a File</strong>: <code>git checkout commit/refs -- file_name</code> This will look at the tree that the commit is pointing at (in the case of refs, it looks first for the commit that the refs is pointing at), then walking down the tree to get to the blob for the file and restore that version of that file.</li>
+<li><strong>Committing</strong>: <code>git commit -m "test"</code> When we commit, It involves at least a change to one blob. This will lead to a creation of new tree with current state of the code that reflect the changes. Git then creates commit object that will point to the new tree. Finally, it will update the current branch to point to the newly created branch.</li>
+<li><strong>Fast-Forward Merge</strong>: <code>git merge --ff-only branch-name</code> This kind of merge creates no objects, It just updates the current branch to a different commit.</li>
+<li><strong>Merge</strong>: <code>git merge branch-name</code> In contrast to the fast forward merge, Git creates a new tree by trying its best to combine two divergent branches. It then creates a new commit that point to the newly created tree and the parent would be the two commits; latest commit from each branch. This is what <em>merging using pull requests</em> does on Github. It may not be preferable because the actual code changes during merge when Git tries to combine all of them and we may end up with conflict.</li>
+<li><strong>Rebase</strong>: <code>git rebase master</code> Rebase can be performed when we have new commits on both our feature branch, and our “upstream” branch (typically master). We want to update the commits on our branch so they include the changes on master. When we rebase, we essentially replay our work on the current version of the upstream branch. Git does this by calculating each of the diffs for the commits unique to our branch, then applies them onto the upstream branch one by one. Each application of a diff creates a new commit, reusing the associated commit message and author details. Note that the old commits still exist, but they are now orphaned. No refs point to them any longer and so they are essentially unreachable, although we could easily restore them by checking the reflog. Once all the new commits have been created, our branch is updated to point at the tip commit of our rebased group. From here, we could now fast-forward merge the master branch into ours, as we are now in line with its history. The key difference between this and a traditional merge is that all of the commits here were created by us, and we get to interact with them and test them as needed before merging them into master.</li>
+<li><strong>Interactive Rebase</strong>: <code>git rebase -i master</code> This mainly happens when we are on a feature branch that is ahead of master and we want to combine both branches w/o incorporating all the commits from feature branch. In this case, we want to squash all the commits in the feature branch into one commit that will be later part of the master branch and not pollute the logs on master branch with a lot small incremental commits from the feature branch. Note that interactive rebase doesn’t change any code, it only cleans up history.</li>
+</ul>
+</section>
+<section id="git-customization" class="level2">
+<h2 class="anchored" data-anchor-id="git-customization">Git Customization</h2>
+<ul>
+<li>The <code>gitconfig</code> file is where Git stores and reads all configuration. The file lives in your home directory as a “dotfile”, ~/.gitconfig. The gitconfig file is read automatically before any Git command is run. That turns out to be very handy as it means you never have to reload or experience out-of-sync commands. Additionally, git automatically writes to it when we run commands like git config –global alias.ga.</li>
+<li>The config file is split into sections such as <em>color, alias, core, push, etc.</em> For example:</li>
+</ul>
+<div class="sourceCode" id="cb61"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="ex">[push]</span></span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>    <span class="ex">default</span> = upstream</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>is the same as git config –global push.default upstream. - Few useful configurations: - <code>push.default upstream</code> this instructs Git how to respond when you run git push with no arguments. With the upstream configuration, it will push the configured upstream tracking branch (set up with git push -u). - <code>merge.ff only</code> this configuration tells Git to reject merges that are non-fastforward. With fast-forward merges, no new commits are created, but instead the merging branch (typically master) is only moved to point at the commits on the target branch (typically our feature branch). - <code>fetch.prune true</code> this instructs Git to clear local references to remote branches which have been deleted when you pull. - By default, we can only execute one git command when aliasing. To execute more than one command, we can start the command with <code>!</code> and then we can execute multiple shell commands using pipes, &amp;&amp;, and ||. For example, <code>!git checkout master &amp;&amp; git pull &amp;&amp; git checkout -</code>. - <strong>Git subcommands</strong>: This would allow us to write scripts in any language we want; not necessarily bash, and make Git executes it. The script subcommand has to be: - On our $PATH - Marked as executable - The file name has to be prefixed with git and then dash and then the name of the command. For example, <code>git-subcommand-name</code>. Actually, all git commands are files that share all those criteria such as <code>git-add</code>. Below is an example of subcommand: ``<code>bash     #!/bin/bash     #     # Small wrapper around git commit. Bare 'cm' will enter normal git commit     # editor, but with args it will do a direct</code>commit -m`</p>
+<pre><code>if [[ $# &gt; 0 ]]; then
+    git commit -m "$@"
+else
+    git commit -v
+fi
+```</code></pre>
+<ul>
+<li><strong>Hooks</strong>: Hooks are scripts that can be set to run in response to certain events in Git such as before committing or after checkout. Some uses might be to enforce certain commit message standards on pushed commits, or to run the tests before committing. <a href="https://thoughtbot.com/blog/use-git-hooks-to-automate-annoying-tasks">Check out this post for more details</a></li>
+</ul>
+</section>
+<section id="github-and-remotes" class="level2">
+<h2 class="anchored" data-anchor-id="github-and-remotes">Github and Remotes</h2>
+<ul>
+<li><strong>Hub</strong> and Github CLI tool <strong>gh</strong> make it easy to interact with Github from the command line and integrate well with Git. Useful commands are <code>compare</code>, <code>browse</code>, and <code>pull-request</code>.</li>
+<li>To share the code on a given branch using a URL that always point to the same code, we can press <code>y</code> to change the name of the branch with its hash that will always point to the same version of code even if we make changes to the branch. We can also select lines from the code file that will be highlighted when we open the URL.</li>
+<li>If we are creating a new branch locally and want to have an upstream version for that branch:
+<ul>
+<li><code>git branch --remote origin/new-branch-name</code> will create upstream version of the branch so we can easily push.</li>
+<li><code>git push -u origin new-branch-name</code> will create the new branch while pushing to Github</li>
+<li>If we want the upstream name to have different name than the local branch name, <code>git push -u origin local-branch-name:upstream-branch-name</code></li>
+</ul></li>
+<li>If we want to delete a branch:
+<ul>
+<li>Locally: <code>git branch -d branch-name</code></li>
+<li>Upstream: <code>git remote --delete branch-name</code></li>
+</ul></li>
+<li>We can force to push local branch to another existing upstream branch. This is risky and we may not need to use it <code>git push --force origin local-branch:upstream-branch</code></li>
+</ul>
+</section>
+<section id="vim-and-git-integration" class="level2">
+<h2 class="anchored" data-anchor-id="vim-and-git-integration">Vim and Git Integration</h2>
+<ul>
+<li>Add this to Vim <code>autocmd Filetype gitcommit setlocal spell textwidth=72</code></li>
+<li><a href="https://github.com/tpope/vim-fugitive">Fugitive Plugin</a>
+<ul>
+<li><a href="http://vimcasts.org/blog/2011/05/the-fugitive-series/">five part Fugitive series on Vimcasts</a></li>
+</ul></li>
+<li><a href="https://github.com/christoomey/vim-conflicted">Conflicted</a> Optimizing Fugitive for merge and rebase conflicts</li>
+</ul>
+</section>
+<section id="thoughtbot-workflow" class="level2">
+<h2 class="anchored" data-anchor-id="thoughtbot-workflow">Thoughtbot Workflow</h2>
+<ul>
+<li>Always start by creating new branch for new features. Almost always strive to not commit directly to master branch even for small changes. The workflow is:</li>
+</ul>
+<p>create new branch <strong>-&gt;</strong> make small changes <strong>-&gt;</strong> create pull request <strong>-&gt;</strong> pass code reviews and other stuff like CI/CD <strong>-&gt;</strong> Rebase master into feature branch <strong>-&gt;</strong> Interactive rebase to squash all commits from feature branch into one commit message <strong>-&gt;</strong> Fast forward merge with master <strong>-&gt;</strong> push master <strong>-&gt;</strong> delete feature branch locally and on upstream. - Always commit small changes and don’t wait for large changes to commit. It will be harder to figure out what changes have been made and make it difficult for code reviewers to understand. We can always refine commits with interactive rebase. - <strong>Pull Requests:</strong> - We first need to push the feature branch into Github using <code>git push -u origin feature-branch</code> - We then have two choices to open PRs: Either through Github UI or though command line tools like <code>hub</code> and <code>gh</code>. The advantage of Github UI is that it lets you review the code one more time through compare view before submitting it. - Provide as much context as possible when drafting your PR description. Try to provide as much useful detail as you can. Answering the following questions is a great start: - Why is this change needed? - Were other solutions considered? - Were any assumptions made? - For work that can’t be broken down into small changes, we can use Github Task lists that shows all the items that need to be worked on and the methodology so that people would know not to do in depth code reviews. So every time we push changes we mark items that were already done. - Code reviews resources: - <a href="http://confreaks.tv/videos/railsconf2015-implementing-a-strong-code-review-culture">Derek Prior’s talk on Code Review Culture</a> - <a href="https://github.com/thoughtbot/guides/tree/master/code-review">thoughtbot guide to code review</a> - After getting the feedback from the team on the code reviews as well as the CI comments, we can incorporate the changes that team recommended. Then push the new commits to the feature branch and those will automatically be included in the PR. - We prefer a clean history built using fast-forward merges. In order to ensure this, before merging our PR we always pull master and rebase our feature branch onto master to ensure that our commits are ahead of master. One nice helper for this is the mup alias which checks out master, pulls, then checks back out our feature branch: <code>mup = !git checkout master &amp;&amp; git pull &amp;&amp; git checkout -</code> - Once we’re ahead of master, we can perform an interactive rebase to revise our commits and craft our history. In particular, we can use this time to squash down cleanup and WIP commits, ensuring that each commit we keep is useful and has a solid commit message. - This is the time to ensure that we’ve captured as much context as possible in our commit message to describe the “why” of the change. Two great resources on this topic are: - <a href="https://robots.thoughtbot.com/5-useful-tips-for-a-better-commit-message">Five Rules for A Good Git Commit Message</a> - <a href="http://rakeroutes.com/blog/deliberate-git">Stephen Ball’s Deliberate Git talk</a> - If we’ve performed any form of rebase, then we’ll have created new commits and will want to push those up to GitHub in order to get everything in sync. To do this we can force push (git push -f) our branch. - Final steps: - If we’ve force pushed after rebasing as described above, we should be all set, but never hurts to give one last git push just to confirm that our local and remote feature branches are in sync. - Merge fast-forward: <code>git co master</code> &amp; <code>git merge - --ff-only</code> - Push master: Now that we’ve merged master, we can push it up to GitHub with git push. As a reminder, with a fast-forward merge we are simply moving our master branch pointer to point at our feature branches tip commit, not actually creating any new commits. This is one of the main benefits of using fast-forward merges, namely that all commits are created and can be reviewed on our feature branch before merging into master. With “Big Green Button on GitHub” merges and other non-fast-forward merges, the merge commit is created directly on master based on Git’s merging algorithm. - Delete local branch: <code>git branch -d decks-ordering</code> - Delete remote branch: <code>git push origin --delete &lt;branchName&gt;</code>. We can also delete the branch via the GitHub PR page, and then git pull on master, letting the fetch prune setting automatically clean up our local reference to the remote branch. - Pull request auto closing. Assuming we’ve performed the steps outlined above, GitHub will have automatically closed the PR based on the fact that master now contains our branch’s commits.</p>
+</section>
+<section id="resources" class="level2">
+<h2 class="anchored" data-anchor-id="resources">Resources</h2>
+<ul>
+<li><a href="http://gitready.com/">Git Ready</a>: Practical how-to pages on topics like “get a file from a specific revision.”</li>
+<li><a href="https://progit.org/">Pro Git</a>: A great in-depth resource I find myself continually coming back to.</li>
+<li><a href="https://github.com/pluralsight/git-internals-pdf">Git Internals</a>: A deep dive into the Git object model, with more detail and nuance than we could cover in the this course’s video on the topic</li>
+<li><a href="https://github.com/thoughtbot/guides/tree/main/">Thoughtbot Guides</a></li>
+<li><a href="https://cli.github.com/">Github CLI</a></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<script src="https://giscus.app/client.js" data-repo="imaddabbura/imaddabbura.github.io" data-repo-id="R_kgDOIEwRMg" data-category="General" data-category-id="DIC_kwDOIEwRMs4CRprP" data-mapping="title" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Blog made with Quarto, by Imad Dabbura</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/imaddabbura/">
+      <i class="bi bi-linkedin" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="mailto:imad.dabbura@hotmail.com">
+      <i class="bi bi-envelope" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/imaddabbura">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/imadphd">
+      <i class="bi bi-twitter" role="img">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>
