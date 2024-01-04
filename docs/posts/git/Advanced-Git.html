@@ -289,7 +289,11 @@ ga('send', {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#general" id="toc-general" class="nav-link active" data-scroll-target="#general">General</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#cloning-repository" id="toc-cloning-repository" class="nav-link" data-scroll-target="#cloning-repository">Cloning Repository</a></li>
+  <li><a href="#ignoring-files" id="toc-ignoring-files" class="nav-link" data-scroll-target="#ignoring-files">Ignoring Files</a></li>
+  <li><a href="#removing-files" id="toc-removing-files" class="nav-link" data-scroll-target="#removing-files">Removing Files</a></li>
+  <li><a href="#general" id="toc-general" class="nav-link" data-scroll-target="#general">General</a></li>
   <li><a href="#managing-history" id="toc-managing-history" class="nav-link" data-scroll-target="#managing-history">Managing History</a></li>
   <li><a href="#undoing" id="toc-undoing" class="nav-link" data-scroll-target="#undoing">Undoing</a></li>
   <li><a href="#rebasing-history" id="toc-rebasing-history" class="nav-link" data-scroll-target="#rebasing-history">Rebasing History</a></li>
@@ -317,9 +321,59 @@ ga('send', {
 
 
 <p><img src="git.webp" align="center" height="300px" width="500px"></p>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p><strong>Git</strong> is a distributed version control system that thinks/stores it data as a series of snapshots (not delta). Each commit is a snapshot for the state of the system at the time of the commit. For files that haven’t changed, <em>Git</em> doesn’t store the file again but uses a pointer to the previous identical file that it stored before. It also lets us do almost all operations locally.</p>
+<p>Everything in <em>Git</em> is checksummed before it is stores in its object store using <code>SHA-1</code> hash. <code>SHA-1</code> hash returns 40 hexadecimal characters. All objects are referred to by their checksummed because <em>Git</em> is content addressable filesystem. This means that Git notice any changes to the files it tracks by comparing the checksummed of the stored version vs the current version.</p>
+<p>All actions in <em>Git</em> only add data to the object store (Git database). Therefore, it is almost impossible to not undo any operation especially if we regularly push our Git database to other repository such as <em>Github</em>.</p>
+<p>Git has three states:</p>
+<ul>
+<li><strong>Modified</strong>: file changed but not yet committed.</li>
+<li><strong>Staged</strong>: marked changed file to go to next commit snapshot. Staging area is a single file that is typically called “index”, which stores information about what will go into our next commit snapshot.</li>
+<li><strong>Committed</strong>: store data (snapshot) in the database. The snapshot is represented as tree for root directory of the Git project.</li>
+</ul>
+<p><code>.git</code> directory which is at the root directory of the project has all the metadata for Git project such as the database (object store).</p>
+<p>Files can be in two states:</p>
+<ul>
+<li><strong>UnTracked</strong>: files that Git doesn’t know about. They are files that weren’t in any snapshot or in staging area. Therefore, they don’t have modified/unmodified states.</li>
+<li><strong>Tracked</strong>: files that were in last snapshot or in staging area. They have all states mentioned above.</li>
+</ul>
+</section>
+<section id="cloning-repository" class="level2">
+<h2 class="anchored" data-anchor-id="cloning-repository">Cloning Repository</h2>
+<p><code>git clone https://github.com/UserName/RepoName</code> would do the following:</p>
+<ul>
+<li>Create a directory called <code>RepoName</code></li>
+<li>Create a directory called <code>.git</code> inside <code>RepoName</code></li>
+<li>Pull down all versions for every file for the history of the project</li>
+<li>Check out the latest version</li>
+</ul>
+<p>As a result, if initially a huge file was committed but then deleted years ago, cloning will pull down the huge file even if such file is never needed again. Therefore, if a project has a long history, we may not need to clone all history and restrict to last <code>N</code> days.</p>
+</section>
+<section id="ignoring-files" class="level2">
+<h2 class="anchored" data-anchor-id="ignoring-files">Ignoring Files</h2>
+<p><code>.gitignore</code> hosts all patterns that Git should ignore and not track. It is typically located at the root directory of the project and applies recursively to all subsdirectories; however, we can have <code>.gitignore</code> in subdirectories that only gets applied specifically to those subdirectories.</p>
+<p>The rules for the patterns you can put in the .gitignore file are as follows:</p>
+<ul>
+<li>Blank lines or lines starting with <code>#</code> are ignored.</li>
+<li>Standard glob patterns work, and will be applied recursively throughout the entire working tree. Example:
+<ul>
+<li><code>*.log</code> ignores all files that end with <code>log</code> recursively</li>
+<li><code>doc/*.txt</code> ignores all <code>.txt</code> files under <code>doc</code></li>
+<li><code>doc/**/*.pdf</code> igores all pdf files in the <code>doc</code> directory and all its subdirectoris</li>
+</ul></li>
+<li>We can start patterns with a forward slash (/) to avoid recursivity. Example: <code>/TODO</code> ignores TODO in the current directory.</li>
+<li>You can end patterns with a forward slash (/) to specify a directory. Example: <code>build/</code> ignores all files under <code>build</code> in all directories.</li>
+<li>You can negate a pattern by starting it with an exclamation point (!). Example: <code>!test.log</code> tracks <code>test.log</code></li>
+</ul>
+</section>
+<section id="removing-files" class="level2">
+<h2 class="anchored" data-anchor-id="removing-files">Removing Files</h2>
+<p><code>git rm</code> would remove a file from working tree and stage it. If we ever staged files by mistake, we could run <code>git rm --cached filename</code> to remove it from staging area and keep it on hard drive especially if we don’t want Git to track it.</p>
+</section>
 <section id="general" class="level2">
 <h2 class="anchored" data-anchor-id="general">General</h2>
-<ol type="1">
+<ul>
 <li><code>git stash</code> does not by default save untracked files, it only saves untracked changes to tracked files. It will be stored under <code>.git/refs</code>
 <ul>
 <li><code>git stash -u</code> will save everything</li>
@@ -330,7 +384,10 @@ ga('send', {
 <ul>
 <li><code>git reflog show hash_value</code> will show all the actions happened for the hash.</li>
 </ul></li>
-</ol>
+<li><code>git diff</code> to see the changes in the working tree compared to the index</li>
+<li><code>git diff --cached</code> to see the changes we changed compared to the last commit</li>
+<li><code>git difftool</code> shoes the changes in external tools such as <em>vimdiff</em></li>
+</ul>
 </section>
 <section id="managing-history" class="level2">
 <h2 class="anchored" data-anchor-id="managing-history">Managing History</h2>
@@ -351,15 +408,15 @@ ga('send', {
 </section>
 <section id="undoing" class="level2">
 <h2 class="anchored" data-anchor-id="undoing">Undoing</h2>
-<p><strong>Commits are immutable. This means that even though we can fix some stuff related to commits, we can’t change the commits themselves. They will still be in the history.</strong></p>
+<p><strong>Commits are immutable. This means that even though we can fix some stuff related to commits, we can’t change the commits themselves. They will still be in the history.</strong> Therefore, anything that is committed in Git can almost always be recovered. Even commits that were on branches that were deleted or commits that were overwritten with an –amend commit can be recovered. However, anything you lose that was never committed is likely never to be seen again.</p>
 <ol type="1">
 <li><p><code>git commit --amend</code> will open an editor to write a new commit message to the already committed changes.</p>
 <ul>
 <li><code>git commit --amend -m "message"</code> is a shorthand</li>
 <li><code>git commit --amend --no-edit</code> will add new files to the last commit; in case we forgot to add some files to that belong to the same commit</li>
 </ul></li>
-<li><p><code>git reset file</code> will undo the staging of the file. This is helpful if we staged a file and then we need to change some things before committing.</p></li>
-<li><p><code>get checkout file</code> will delete all the changes made to a file. We will never be able to get back the deleted changes.</p></li>
+<li><p><code>git reset HEAD file</code> OR <code>git restore --staged file</code> will undo the staging of the file. This is helpful if we staged a file and then we need to change some things before committing.</p></li>
+<li><p><code>get checkout -- file</code> OR <code>git restore file</code> will delete all the changes made to a file. We will never be able to get back the deleted changes.</p></li>
 <li><p><code>get reset --soft HEAD^1</code> This will remove the commit from the history and point HEAD to its parent. <code>--soft</code> here means to keep the changes of the current working directory.</p></li>
 <li><p>To cancel the commit while writing the message, we can exit vim with <code>:cquit</code> which exits vim with error and git will get that error -&gt; won’t proceed in creating the commit.</p></li>
 </ol>
@@ -641,8 +698,21 @@ Review all nbs</code></pre>
 <h2 class="anchored" data-anchor-id="tags">Tags</h2>
 <ul>
 <li><strong>Tags</strong> are like branches, they too point to a commit and stored under <code>.git/refs</code> dir in <code>tags</code> dir. They are basically files that have the commits they are pointing to.</li>
-<li>Tags can be created simply by <code>git tag version_no</code>. We can also create more complex tags by adding annotations, PGP signature, and other metadata. In this case, they will be stored in <code>refs/objects</code> dir and the tag will simply be the hash value of the tag object (which will also contain the hash of the commit that was tagged).</li>
+<li>Tags can be created simply by <code>git tag version_no</code>. We can also create more complex tags by adding annotations, PGP signature, and other metadata. In this case, they will be stored in <code>refs/objects</code> dir and the tag will simply be the hash value of the tag object (which will also contain the hash of the commit that was tagged).
+<ul>
+<li>Annotated tags, however, are stored as full objects in the Git database. They’re checksummed; contain the tagger name, email, and date; have a tagging message; and can be signed and verified with GNU Privacy Guard (GPG). It’s generally recommended that you create annotated tags so you can have all this information.</li>
+</ul></li>
+<li>We can also tag previous commits by specifying their hash abbreviation: <code>git tag -a v1.0 ca21323</code></li>
+<li><code>git push</code> doesn’t transfer tags to remote server, we have to explicityly push tags: <code>git push origin v1.0</code></li>
+<li><code>git tag</code> to list all tags</li>
+<li><code>git tag -l pattern</code> to look for tags that match specific patters</li>
+<li>We can checkout tags to inspect files from that version: <code>git checkout tagname</code>. Any changes that are made and committed wouldn’t belong to any branch and be unreachable unless we use exact commit hash. Therefore, to fix issues, create new branch from tag and do the changes.</li>
 <li>The <strong>difference</strong> between tags and branches is that branches evolve over time; however, tags point to fixed commit in repo’s history.</li>
+<li>We can delete tags:
+<ul>
+<li>locally: <code>git tag -d tagname</code></li>
+<li>remote: <code>git push remote_name -d tagname</code> OR <code>git push remote_name :refs/tags/tagname</code></li>
+</ul></li>
 </ul>
 <div class="cell" data-execution_count="96">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C <span class="op">/</span>Users<span class="op">/</span>imad<span class="op">/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -685,7 +755,7 @@ Review all nbs</code></pre>
 </section>
 <section id="remote-branches" class="level2">
 <h2 class="anchored" data-anchor-id="remote-branches">Remote Branches</h2>
-<p><strong>Remote Branches</strong> are the same as local branches. They are again files that point to commits. - We can have multiple remotes where each one has its own branches. <code>origin</code> is the main one typically used for the upstream. - Remote references are read-only, which means we will never update them using <code>git commit</code> but <em>Git</em> manages them as bookmarks. - By default, <em>Git</em> fetches all references from remote to heads -&gt; All branches. We can change this behavior on the command line when running <code>git fetch remote_name remote_branch:refs/remotes/remote_name/branch_name</code></p>
+<p><strong>Remote Branches</strong> are the same as local branches. They are again files that point to commits. - We can have multiple remotes where each one has its own branches. <code>origin</code> is the main one typically used for the upstream. <code>git remote -v</code> would list all the remotes for the repository. We can add remotes <code>git remote add remote_name remote_url</code> - <code>git fetch</code> download the changes from all branches from remote to local repository without merging them. We should do the merge ourselves. - <code>git pull</code> download and merge the changes from remote to local branches. - <code>git remote show remote_name</code> will show everything in details about the <code>remote_name</code> such as URL, local/remote branches, etc. - We can rename/delete remotes as <code>git remote rename/remove remote_name</code>. If we delete remote, it deletes all config/settings related to the deleted remote. Renaming would rename branches. - Remote references are read-only, which means we will never update them using <code>git commit</code> but <em>Git</em> manages them as bookmarks. - By default, <em>Git</em> fetches all references from remote to heads -&gt; All branches. We can change this behavior on the command line when running <code>git fetch remote_name remote_branch:refs/remotes/remote_name/branch_name</code></p>
 <div class="cell" data-execution_count="108">
 <div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>remotes<span class="op">/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
