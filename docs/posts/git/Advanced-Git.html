@@ -294,6 +294,7 @@ ga('send', {
   <li><a href="#undoing" id="toc-undoing" class="nav-link" data-scroll-target="#undoing">Undoing</a></li>
   <li><a href="#rebasing-history" id="toc-rebasing-history" class="nav-link" data-scroll-target="#rebasing-history">Rebasing History</a></li>
   <li><a href="#git-object-model" id="toc-git-object-model" class="nav-link" data-scroll-target="#git-object-model">Git Object Model</a></li>
+  <li><a href="#packfiles" id="toc-packfiles" class="nav-link" data-scroll-target="#packfiles">Packfiles</a></li>
   <li><a href="#object-model-operations" id="toc-object-model-operations" class="nav-link" data-scroll-target="#object-model-operations">Object Model Operations</a></li>
   <li><a href="#branches" id="toc-branches" class="nav-link" data-scroll-target="#branches">Branches</a></li>
   <li><a href="#tags" id="toc-tags" class="nav-link" data-scroll-target="#tags">Tags</a></li>
@@ -304,7 +305,7 @@ ga('send', {
   <li><a href="#git-customization" id="toc-git-customization" class="nav-link" data-scroll-target="#git-customization">Git Customization</a></li>
   <li><a href="#github-and-remotes" id="toc-github-and-remotes" class="nav-link" data-scroll-target="#github-and-remotes">Github and Remotes</a></li>
   <li><a href="#vim-and-git-integration" id="toc-vim-and-git-integration" class="nav-link" data-scroll-target="#vim-and-git-integration">Vim and Git Integration</a></li>
-  <li><a href="#thoughtbot-workflow" id="toc-thoughtbot-workflow" class="nav-link" data-scroll-target="#thoughtbot-workflow">Thoughtbot Workflow</a></li>
+  <li><a href="#typical-workflow" id="toc-typical-workflow" class="nav-link" data-scroll-target="#typical-workflow">Typical Workflow</a></li>
   <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources">Resources</a></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
@@ -384,6 +385,7 @@ ga('send', {
 <ul>
 <li>Git uses the first two characters for the name of directory for the object and the other 38 characters for the object itself.</li>
 <li>Git stores objects based on their hash values (content addressable storage).</li>
+<li>Git compresses the contents using zlib</li>
 </ul>
 <div class="sourceCode" id="cb1"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// a file is a bunch of bytes</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>type object <span class="op">=</span> blob <span class="op">|</span> tree <span class="op">|</span> commit</span>
@@ -542,6 +544,10 @@ Materials for software engineering.</code></pre>
 <p>Git only stores the delta changes between commits and not everything. It also point to blobs/trees that have not been changed using old commits and don’t store them again for new commits. Therefore, if a file has not been changed from previous commit, the hash value for that commit is the same so its address is still the same -&gt; keep the same pointer.</p>
 <p><img src="git-objects-simple.png" height="400px" width="300px" align="center"></p>
 </section>
+<section id="packfiles" class="level2">
+<h2 class="anchored" data-anchor-id="packfiles">Packfiles</h2>
+<p>These are files that <em>Git</em> uses to combine files into single file to save space instead of having different versions of the same file taking all the space and only saves the original version with deltas where pack index file will have offsets that point to the object in the pack file. <em>Git</em> automatically runs this when we have too many loose files or when run <code>git gc</code> command or when we push to remote server.</p>
+</section>
 <section id="object-model-operations" class="level2">
 <h2 class="anchored" data-anchor-id="object-model-operations">Object Model Operations</h2>
 <p>Review of the basic Git objects: - <strong>Blobs</strong>: Our base objects, storing the contents of a single version of a file. - <strong>Trees</strong>:Trees store directory listings, pointing at blobs and other trees to define a full directory structure. - <strong>Commits</strong>: Commits lock in a version of our code, pointing at a single tree, the “working tree”, as well as holding the commit message and author info. Commits also point at parent commits to capture the history of our code.</p>
@@ -679,7 +685,7 @@ Review all nbs</code></pre>
 </section>
 <section id="remote-branches" class="level2">
 <h2 class="anchored" data-anchor-id="remote-branches">Remote Branches</h2>
-<p><strong>Remote Branches</strong> are the same as local branches. They are again files that point to commits. - We can have multiple remotes where each one has its own branches. <code>origin</code> is the main one typically used for the upstream.</p>
+<p><strong>Remote Branches</strong> are the same as local branches. They are again files that point to commits. - We can have multiple remotes where each one has its own branches. <code>origin</code> is the main one typically used for the upstream. - Remote references are read-only, which means we will never update them using <code>git commit</code> but <em>Git</em> manages them as bookmarks. - By default, <em>Git</em> fetches all references from remote to heads -&gt; All branches. We can change this behavior on the command line when running <code>git fetch remote_name remote_branch:refs/remotes/remote_name/branch_name</code></p>
 <div class="cell" data-execution_count="108">
 <div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>remotes<span class="op">/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -842,8 +848,8 @@ fi
 <li><a href="https://github.com/christoomey/vim-conflicted">Conflicted</a> Optimizing Fugitive for merge and rebase conflicts</li>
 </ul>
 </section>
-<section id="thoughtbot-workflow" class="level2">
-<h2 class="anchored" data-anchor-id="thoughtbot-workflow">Thoughtbot Workflow</h2>
+<section id="typical-workflow" class="level2">
+<h2 class="anchored" data-anchor-id="typical-workflow">Typical Workflow</h2>
 <ul>
 <li>Always start by creating new branch for new features. Almost always strive to not commit directly to master branch even for small changes. The workflow is:</li>
 </ul>
