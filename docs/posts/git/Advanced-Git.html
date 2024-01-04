@@ -391,8 +391,8 @@ ga('send', {
 </section>
 <section id="managing-history" class="level2">
 <h2 class="anchored" data-anchor-id="managing-history">Managing History</h2>
-<ol type="1">
-<li><p><code>git log</code> has all the information we need to the repo’s history.</p>
+<ul>
+<li><code>git log</code> has all the information we need to the repo’s history.
 <ul>
 <li><code>git log --all --decorate --graph --oneline</code> is great to get an overview and see the divergence of branches</li>
 <li><code>git log -n</code> will limit the log to the top n</li>
@@ -402,36 +402,36 @@ ga('send', {
 <li><code>git log -S term</code> will search for changes related to that term in the code base (addition/deletion). Check this <a href="https://thoughtbot.com/blog/code-sleuthing-with-git">post</a></li>
 <li><code>git log -G regexp</code> will search for changes related to the regexp in the code base; but looks for patterns not literal string.</li>
 </ul></li>
-<li><p><code>git show commit</code> will show everything that happened with that commit including <strong>diff</strong></p></li>
-<li><p><code>git blame file</code> is useful to know who did what to the file</p></li>
-</ol>
+<li><code>git show commit</code> will show everything that happened with that commit including <strong>diff</strong></li>
+<li><code>git blame file</code> is useful to know who did what to the file</li>
+</ul>
 </section>
 <section id="undoing" class="level2">
 <h2 class="anchored" data-anchor-id="undoing">Undoing</h2>
 <p><strong>Commits are immutable. This means that even though we can fix some stuff related to commits, we can’t change the commits themselves. They will still be in the history.</strong> Therefore, anything that is committed in Git can almost always be recovered. Even commits that were on branches that were deleted or commits that were overwritten with an –amend commit can be recovered. However, anything you lose that was never committed is likely never to be seen again.</p>
-<ol type="1">
-<li><p><code>git commit --amend</code> will open an editor to write a new commit message to the already committed changes.</p>
+<ul>
+<li><code>git commit --amend</code> will open an editor to write a new commit message to the already committed changes.
 <ul>
 <li><code>git commit --amend -m "message"</code> is a shorthand</li>
 <li><code>git commit --amend --no-edit</code> will add new files to the last commit; in case we forgot to add some files to that belong to the same commit</li>
 </ul></li>
-<li><p><code>git reset HEAD file</code> OR <code>git restore --staged file</code> will undo the staging of the file. This is helpful if we staged a file and then we need to change some things before committing.</p></li>
-<li><p><code>get checkout -- file</code> OR <code>git restore file</code> will delete all the changes made to a file. We will never be able to get back the deleted changes.</p></li>
-<li><p><code>get reset --soft HEAD^1</code> This will remove the commit from the history and point HEAD to its parent. <code>--soft</code> here means to keep the changes of the current working directory.</p></li>
-<li><p>To cancel the commit while writing the message, we can exit vim with <code>:cquit</code> which exits vim with error and git will get that error -&gt; won’t proceed in creating the commit.</p></li>
-</ol>
+<li><code>git reset HEAD file</code> OR <code>git restore --staged file</code> will undo the staging of the file. This is helpful if we staged a file and then we need to change some things before committing.</li>
+<li><code>get checkout -- file</code> OR <code>git restore file</code> will delete all the changes made to a file. We will never be able to get back the deleted changes.</li>
+<li><code>get reset --soft HEAD^1</code> This will remove the commit from the history and point HEAD to its parent. <code>--soft</code> here means to keep the changes of the current working directory.</li>
+<li>To cancel the commit while writing the message, we can exit vim with <code>:cquit</code> which exits vim with error and git will get that error -&gt; won’t proceed in creating the commit.</li>
+</ul>
 </section>
 <section id="rebasing-history" class="level2">
 <h2 class="anchored" data-anchor-id="rebasing-history">Rebasing History</h2>
-<ol type="1">
-<li><p><code>git add file</code> or <code>git add --all</code> or <code>git add directory</code>. This will add all changes made to a specific file/directory.</p></li>
-<li><p><code>git add --patch</code> Allows us to cherry pick the changes that we want to stage. This is useful if we want to split the changes we made to a specific file into different commits. When we run the command, we will interactively choose what we want to stage using shortcuts.</p></li>
-<li><p><code>git diff/log HEAD..HEAD~2</code> will give us the diff/log for the range between two commits in history. We can either choose hash_values of commits or their references such as HEAD/master.</p></li>
-<li><p><code>git reset --hard HEAD~1</code> will make HEAD point to its parent and remove last commit from log history. Note that the last commit is not completely removed, we see that with <code>git reflog</code>.</p></li>
-<li><p><code>git cherry-pick origin/master..master</code> will replay the commits with this range in another branch. This is useful when we commit to the wrong branch and we want to make those commits in another branch. We can use this command after we checkout the correct branch and run the above command. To remove the commits from the branch we first commit, we can use <code>git reset --hard</code> (even though the removed commits are still in our history).</p></li>
-<li><p><code>git rebase master</code> We want to take the work we’ve done on our feature branch, and reapply it as if it was done on top of the additional commits in our master branch. When performing the rebase, Git finds the commits unique to our branch and computes the diff off the changes they introduced, then moves to the target branch, master in this case, and one by one applies the diffs, creating new commits reusing the commit messages from our branch. Once done, it updates our branch to point at the newest of these commits created by reapplying the diffs.</p></li>
-<li><p>While we would never revise published history, specifically the master branch, we almost always revise our commits on feature branches before merging them in. We value a clean history, and the majority of the time, the commits in a feature branch contain many rounds of refactoring and PR reviews which we don’t want in the permanent history. Instead, we want the most direct and concise form of the history that fully captures the change we settled on in our feature branch after completing any refactoring or updates. Use <code>git rebase -i master</code> will allow us to do just that.</p></li>
-</ol>
+<ul>
+<li><code>git add file</code> or <code>git add --all</code> or <code>git add directory</code>. This will add all changes made to a specific file/directory.</li>
+<li><code>git add --patch</code> Allows us to cherry pick the changes that we want to stage. This is useful if we want to split the changes we made to a specific file into different commits. When we run the command, we will interactively choose what we want to stage using shortcuts.</li>
+<li><code>git diff/log HEAD..HEAD~2</code> will give us the diff/log for the range between two commits in history. We can either choose hash_values of commits or their references such as HEAD/master.</li>
+<li><code>git reset --hard HEAD~1</code> will make HEAD point to its parent and remove last commit from log history. Note that the last commit is not completely removed, we see that with <code>git reflog</code>.</li>
+<li><code>git cherry-pick origin/master..master</code> will replay the commits with this range in another branch. This is useful when we commit to the wrong branch and we want to make those commits in another branch. We can use this command after we checkout the correct branch and run the above command. To remove the commits from the branch we first commit, we can use <code>git reset --hard</code> (even though the removed commits are still in our history).</li>
+<li><code>git rebase master</code> We want to take the work we’ve done on our feature branch, and reapply it as if it was done on top of the additional commits in our master branch. When performing the rebase, Git finds the commits unique to our branch and computes the diff off the changes they introduced, then moves to the target branch, master in this case, and one by one applies the diffs, creating new commits reusing the commit messages from our branch. Once done, it updates our branch to point at the newest of these commits created by reapplying the diffs.</li>
+<li>While we would never revise published history, specifically the master branch, we almost always revise our commits on feature branches before merging them in. We value a clean history, and the majority of the time, the commits in a feature branch contain many rounds of refactoring and PR reviews which we don’t want in the permanent history. Instead, we want the most direct and concise form of the history that fully captures the change we settled on in our feature branch after completing any refactoring or updates. Use <code>git rebase -i master</code> will allow us to do just that.</li>
+</ul>
 </section>
 <section id="git-object-model" class="level2">
 <h2 class="anchored" data-anchor-id="git-object-model">Git Object Model</h2>
@@ -607,8 +607,16 @@ Materials for software engineering.</code></pre>
 </section>
 <section id="object-model-operations" class="level2">
 <h2 class="anchored" data-anchor-id="object-model-operations">Object Model Operations</h2>
-<p>Review of the basic Git objects: - <strong>Blobs</strong>: Our base objects, storing the contents of a single version of a file. - <strong>Trees</strong>:Trees store directory listings, pointing at blobs and other trees to define a full directory structure. - <strong>Commits</strong>: Commits lock in a version of our code, pointing at a single tree, the “working tree”, as well as holding the commit message and author info. Commits also point at parent commits to capture the history of our code.</p>
-<p><strong>References</strong>: References are nothing but pointers to commits. They are stored under <code>.git/refs</code> directory as files where each file contains the hash_value of some commit. - Since it is a hassle to always refer to objects by their 40 hexadecimal string, we can use references to refer to objects. Contrary to objects, references are mutable. For example, <code>master</code> always refers to the latest commit in the main branch. <code>HEAD</code> refers to where we currently are in the history which will be used when creating new snapshot by making the parent for this commit the <code>HEAD</code> and then update <code>HEAD</code>.</p>
+<p>Review of the basic Git objects:</p>
+<ul>
+<li><strong>Blobs</strong>: Our base objects, storing the contents of a single version of a file.</li>
+<li><strong>Trees</strong>:Trees store directory listings, pointing at blobs and other trees to define a full directory structure.</li>
+<li><strong>Commits</strong>: Commits lock in a version of our code, pointing at a single tree, the “working tree”, as well as holding the commit message and author info. Commits also point at parent commits to capture the history of our code.</li>
+</ul>
+<p><strong>References</strong>: References are nothing but pointers to commits. They are stored under <code>.git/refs</code> directory as files where each file contains the hash_value of some commit.</p>
+<ul>
+<li>Since it is a hassle to always refer to objects by their 40 hexadecimal string, we can use references to refer to objects. Contrary to objects, references are mutable. For example, <code>master</code> always refers to the latest commit in the main branch. <code>HEAD</code> refers to where we currently are in the history which will be used when creating new snapshot by making the parent for this commit the <code>HEAD</code> and then update <code>HEAD</code>.</li>
+</ul>
 <div class="sourceCode" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>references <span class="op">=</span> <span class="bu">map</span><span class="op">&lt;</span>string, commit<span class="op">&gt;;</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> update_reference(name, <span class="bu">id</span>):</span>
@@ -755,7 +763,16 @@ Review all nbs</code></pre>
 </section>
 <section id="remote-branches" class="level2">
 <h2 class="anchored" data-anchor-id="remote-branches">Remote Branches</h2>
-<p><strong>Remote Branches</strong> are the same as local branches. They are again files that point to commits. - We can have multiple remotes where each one has its own branches. <code>origin</code> is the main one typically used for the upstream. <code>git remote -v</code> would list all the remotes for the repository. We can add remotes <code>git remote add remote_name remote_url</code> - <code>git fetch</code> download the changes from all branches from remote to local repository without merging them. We should do the merge ourselves. - <code>git pull</code> download and merge the changes from remote to local branches. - <code>git remote show remote_name</code> will show everything in details about the <code>remote_name</code> such as URL, local/remote branches, etc. - We can rename/delete remotes as <code>git remote rename/remove remote_name</code>. If we delete remote, it deletes all config/settings related to the deleted remote. Renaming would rename branches. - Remote references are read-only, which means we will never update them using <code>git commit</code> but <em>Git</em> manages them as bookmarks. - By default, <em>Git</em> fetches all references from remote to heads -&gt; All branches. We can change this behavior on the command line when running <code>git fetch remote_name remote_branch:refs/remotes/remote_name/branch_name</code></p>
+<p><strong>Remote Branches</strong> are the same as local branches. They are again files that point to commits.</p>
+<ul>
+<li>We can have multiple remotes where each one has its own branches. <code>origin</code> is the main one typically used for the upstream. <code>git remote -v</code> would list all the remotes for the repository. We can add remotes <code>git remote add remote_name remote_url</code></li>
+<li><code>git fetch</code> download the changes from all branches from remote to local repository without merging them. We should do the merge ourselves.</li>
+<li><code>git pull</code> download and merge the changes from remote to local branches.</li>
+<li><code>git remote show remote_name</code> will show everything in details about the <code>remote_name</code> such as URL, local/remote branches, etc.</li>
+<li>We can rename/delete remotes as <code>git remote rename/remove remote_name</code>. If we delete remote, it deletes all config/settings related to the deleted remote. Renaming would rename branches.</li>
+<li>Remote references are read-only, which means we will never update them using <code>git commit</code> but <em>Git</em> manages them as bookmarks.</li>
+<li>By default, <em>Git</em> fetches all references from remote to heads -&gt; All branches. We can change this behavior on the command line when running <code>git fetch remote_name remote_branch:refs/remotes/remote_name/branch_name</code></li>
+</ul>
 <div class="cell" data-execution_count="108">
 <div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>remotes<span class="op">/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
