@@ -295,6 +295,7 @@ ga('send', {
   <li><a href="#removing-files" id="toc-removing-files" class="nav-link" data-scroll-target="#removing-files">Removing Files</a></li>
   <li><a href="#general" id="toc-general" class="nav-link" data-scroll-target="#general">General</a></li>
   <li><a href="#managing-history" id="toc-managing-history" class="nav-link" data-scroll-target="#managing-history">Managing History</a></li>
+  <li><a href="#inspecting-commit-ranges" id="toc-inspecting-commit-ranges" class="nav-link" data-scroll-target="#inspecting-commit-ranges">Inspecting Commit Ranges</a></li>
   <li><a href="#undoing" id="toc-undoing" class="nav-link" data-scroll-target="#undoing">Undoing</a></li>
   <li><a href="#rebasing-history" id="toc-rebasing-history" class="nav-link" data-scroll-target="#rebasing-history">Rebasing History</a></li>
   <li><a href="#git-object-model" id="toc-git-object-model" class="nav-link" data-scroll-target="#git-object-model">Git Object Model</a></li>
@@ -345,8 +346,8 @@ ga('send', {
 <li>Author name</li>
 <li>Committer name</li>
 <li>Commit message</li>
-<li>parent(s) commit. First commit would have no parents. Following commits may have 1 parent or more parents in the case of merges</li>
-<li>pointer to the root project tree</li>
+<li>Parent(s) commit. First commit would have no parents. Following commits may have 1 parent or more parents in the case of merges</li>
+<li>Pointer to the root project tree</li>
 </ul></li>
 </ul></li>
 </ul>
@@ -398,7 +399,7 @@ ga('send', {
 <li><code>git stash drop</code> will delete the saved changes</li>
 <li><code>git stash pop</code> will bring back the saved changes</li>
 </ul></li>
-<li><code>git reflog</code> remember all actions taken in a repository (even intermediate steps such as creating branches, clone, pull, etc.) and not just commits. So we can always get back to some state.
+<li><code>git reflog</code> remember all actions taken in a repository (even intermediate steps such as creating branches, clone, pull, etc.) and not just commits. It is local to your copy of the respository and others who have the same copy of the repoository would have their own version of reflog. It also starts empty after we clone the repository. Therefore, it is more like <code>shell</code> history. We can always get back to some state.
 <ul>
 <li><code>git reflog show hash_value</code> will show all the actions happened for the hash.</li>
 </ul></li>
@@ -422,6 +423,20 @@ ga('send', {
 </ul></li>
 <li><code>git show commit</code> will show everything that happened with that commit including <strong>diff</strong></li>
 <li><code>git blame file</code> is useful to know who did what to the file</li>
+</ul>
+</section>
+<section id="inspecting-commit-ranges" class="level2">
+<h2 class="anchored" data-anchor-id="inspecting-commit-ranges">Inspecting Commit Ranges</h2>
+<ul>
+<li><code>^</code> refers to the parent. <code>HEAD^</code> means the parent of last commit in the current branch.</li>
+<li><code>~</code> refers to the first parent. <code>HEAD~</code> means the first parent of last commit in the current branch. It will be different than <code>^</code> in the case a commit has multiple parents as is the case of merge commits that have multiple parents.</li>
+<li><code>HEAD~5</code> is equivalent in some sense to <code>HEAD^^^^^</code>.</li>
+<li>Double dots (<code>..</code>): If we want to see the commits that are reachable from target branch (commit) but not the source branch (commit), we use <code>git log sourcecommit..targetcommit</code>.</li>
+<li>Triple dots (<code>...</code>): If we want to see the commits that are reachable by either of the branches (commits) but not from both of them, we use <code>git log sourcecommit...targetcommit</code>. This will return commits unique to sourcecommit and targetcommit but not common commit.</li>
+<li>Multiple points: If we want to see the commits for multiple points such as <code>git log refA refB ^refC</code> which means commits reachable from refA and refB but not C. Therefore:
+<ul>
+<li><code>git log refA..refB</code> is equivalent to <code>git log refB ^refA</code></li>
+</ul></li>
 </ul>
 </section>
 <section id="undoing" class="level2">
