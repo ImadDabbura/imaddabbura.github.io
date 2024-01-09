@@ -294,6 +294,8 @@ ga('send', {
   <li><a href="#ignoring-files" id="toc-ignoring-files" class="nav-link" data-scroll-target="#ignoring-files">Ignoring Files</a></li>
   <li><a href="#removing-files" id="toc-removing-files" class="nav-link" data-scroll-target="#removing-files">Removing Files</a></li>
   <li><a href="#general" id="toc-general" class="nav-link" data-scroll-target="#general">General</a></li>
+  <li><a href="#interactive-staging" id="toc-interactive-staging" class="nav-link" data-scroll-target="#interactive-staging">Interactive Staging</a></li>
+  <li><a href="#stashing" id="toc-stashing" class="nav-link" data-scroll-target="#stashing">Stashing</a></li>
   <li><a href="#managing-history" id="toc-managing-history" class="nav-link" data-scroll-target="#managing-history">Managing History</a></li>
   <li><a href="#inspecting-commit-ranges" id="toc-inspecting-commit-ranges" class="nav-link" data-scroll-target="#inspecting-commit-ranges">Inspecting Commit Ranges</a></li>
   <li><a href="#undoing" id="toc-undoing" class="nav-link" data-scroll-target="#undoing">Undoing</a></li>
@@ -407,6 +409,24 @@ ga('send', {
 <li><code>git diff --cached</code> to see the changes we changed compared to the last commit</li>
 <li><code>git difftool</code> shoes the changes in external tools such as <em>vimdiff</em></li>
 </ul>
+</section>
+<section id="interactive-staging" class="level2">
+<h2 class="anchored" data-anchor-id="interactive-staging">Interactive Staging</h2>
+<p>We can use interactive staging to control which files to stage and which parts of the files (patches) to stage all interactively. This is very helpful if we have done a lot of work on many files without staging anything. <code>git add -i</code> would put us in the interactive window.</p>
+<p>We can add/checkout/restore/stash patches (parts of files) by adding <code>--patch</code> or <code>-p</code> flag to their corresponding git command.</p>
+</section>
+<section id="stashing" class="level2">
+<h2 class="anchored" data-anchor-id="stashing">Stashing</h2>
+<p>It is very helpful when we staged some work and have modified tracked files and want to jump to different branch to work on something else. By default, Git stashes only modified and staged tracked files but not untracked files. We can add <code>-u</code> to add also untracked files.</p>
+<ul>
+<li>We can run <code>git stash</code> to stash the work.</li>
+<li><code>git stash list</code> to list all the stashes.</li>
+<li><code>git stash apply</code> to apply last stash OR <code>git stash apply stashname</code>. This keeps the stash on the stack.</li>
+<li><code>git stash drop</code> to remove a stash.</li>
+<li><code>git stash pop</code> to apply and remove last stash in one command.</li>
+</ul>
+<p>We can apply stashes from one branch on another branches.</p>
+<p>To avoid issues/merge conflicts when trying to apply stashes, it may be helpful to create new branch and apply stash in the new branch. This can be done by <code>git stash branch newbranchname</code>. This will create new branch, checkout last commit you were on, apply stash, and then drop the stash.</p>
 </section>
 <section id="managing-history" class="level2">
 <h2 class="anchored" data-anchor-id="managing-history">Managing History</h2>
