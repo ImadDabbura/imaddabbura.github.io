@@ -297,6 +297,7 @@ ga('send', {
   <li><a href="#interactive-staging" id="toc-interactive-staging" class="nav-link" data-scroll-target="#interactive-staging">Interactive Staging</a></li>
   <li><a href="#stashing" id="toc-stashing" class="nav-link" data-scroll-target="#stashing">Stashing</a></li>
   <li><a href="#managing-history" id="toc-managing-history" class="nav-link" data-scroll-target="#managing-history">Managing History</a></li>
+  <li><a href="#resetting" id="toc-resetting" class="nav-link" data-scroll-target="#resetting">Resetting</a></li>
   <li><a href="#inspecting-commit-ranges" id="toc-inspecting-commit-ranges" class="nav-link" data-scroll-target="#inspecting-commit-ranges">Inspecting Commit Ranges</a></li>
   <li><a href="#grep" id="toc-grep" class="nav-link" data-scroll-target="#grep">Grep</a></li>
   <li><a href="#undoing" id="toc-undoing" class="nav-link" data-scroll-target="#undoing">Undoing</a></li>
@@ -445,6 +446,21 @@ ga('send', {
 <li><code>git show commit</code> will show everything that happened with that commit including <strong>diff</strong></li>
 <li><code>git blame file</code> is useful to know who did what to the file</li>
 </ul>
+</section>
+<section id="resetting" class="level2">
+<h2 class="anchored" data-anchor-id="resetting">Resetting</h2>
+<p><code>git reset HEAD|commit</code> command allows us to:</p>
+<ul>
+<li>Move what the branch <code>HEAD</code> points to (stops if <code>--soft</code> and everything will be in the staging).</li>
+<li>Make the index look like HEAD (stops here if not <code>--hard</code>)</li>
+<li>Make the working directory look like the index</li>
+</ul>
+<p>If we provide a path such as <code>git reset filepath</code>, it does the following:</p>
+<ul>
+<li>Move what the branch <code>HEAD</code> points to</li>
+<li>Make the index look like <code>HEAD</code>; i.e.&nbsp;has the effect of unstaging the file</li>
+</ul>
+<p>Finally, if we run <code>git reset commit -- filepath</code>, it will act as if we reverted the content of the file to what was in the commit and then ran <code>git add</code> on the file without changing working directory. The <code>HEAD</code> and the working directory would have the same version of the file. Therefore, running <code>git commit</code> will commit the changes back to what was in the commit leaving both index file and <code>HEAD</code> point to the same changes.</p>
 </section>
 <section id="inspecting-commit-ranges" class="level2">
 <h2 class="anchored" data-anchor-id="inspecting-commit-ranges">Inspecting Commit Ranges</h2>
