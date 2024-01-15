@@ -257,7 +257,29 @@ ga('send', {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#project-scoping" id="toc-project-scoping" class="nav-link active" data-scroll-target="#project-scoping">Project Scoping</a></li>
+  <li><a href="#types-of-data" id="toc-types-of-data" class="nav-link" data-scroll-target="#types-of-data">Types of Data</a></li>
+  <li><a href="#data-passing-modes" id="toc-data-passing-modes" class="nav-link" data-scroll-target="#data-passing-modes">Data Passing Modes</a></li>
+  <li><a href="#feature-types" id="toc-feature-types" class="nav-link" data-scroll-target="#feature-types">Feature Types</a></li>
+  <li><a href="#sampling-methods" id="toc-sampling-methods" class="nav-link" data-scroll-target="#sampling-methods">Sampling Methods</a></li>
+  <li><a href="#models-feedback" id="toc-models-feedback" class="nav-link" data-scroll-target="#models-feedback">Model’s Feedback</a></li>
+  <li><a href="#data-labeling" id="toc-data-labeling" class="nav-link" data-scroll-target="#data-labeling">Data Labeling</a></li>
+  <li><a href="#class-imbalance" id="toc-class-imbalance" class="nav-link" data-scroll-target="#class-imbalance">Class imbalance</a></li>
+  <li><a href="#data-augmentation" id="toc-data-augmentation" class="nav-link" data-scroll-target="#data-augmentation">Data Augmentation</a></li>
+  <li><a href="#feature-engineering" id="toc-feature-engineering" class="nav-link" data-scroll-target="#feature-engineering">Feature Engineering</a></li>
+  <li><a href="#data-leakage" id="toc-data-leakage" class="nav-link" data-scroll-target="#data-leakage">Data leakage</a></li>
+  <li><a href="#model-development" id="toc-model-development" class="nav-link" data-scroll-target="#model-development">Model development</a></li>
+  <li><a href="#model-deployment" id="toc-model-deployment" class="nav-link" data-scroll-target="#model-deployment">Model Deployment</a></li>
+  <li><a href="#causes-of-ml-system-failures" id="toc-causes-of-ml-system-failures" class="nav-link" data-scroll-target="#causes-of-ml-system-failures">Causes of ML System Failures</a></li>
+  <li><a href="#data-distribution-shifts" id="toc-data-distribution-shifts" class="nav-link" data-scroll-target="#data-distribution-shifts">Data Distribution Shifts</a></li>
+  <li><a href="#continual-learning" id="toc-continual-learning" class="nav-link" data-scroll-target="#continual-learning">Continual Learning</a></li>
+  <li><a href="#testing-in-production" id="toc-testing-in-production" class="nav-link" data-scroll-target="#testing-in-production">Testing in Production</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
@@ -267,6 +289,8 @@ ga('send', {
 
 <p><img src="images/mlops.png" class="preview-image img-fluid"></p>
 <p>Below are notes I gathered from my readings in MLOps as well as deploying ML systems at different companies.</p>
+<section id="project-scoping" class="level2">
+<h2 class="anchored" data-anchor-id="project-scoping">Project Scoping</h2>
 <ul>
 <li>During training, we care more about throughput. However, once we deploy the model, we care more about latency.
 <ul>
@@ -300,22 +324,34 @@ ga('send', {
 </ul></li>
 <li>If we have multiple objectives, it is better to decouple the objectives and train different model for each objective. Finally, get the final score of each prediction by combining the output from each model using different weight for each objective (which can be tuned based on business priorities). This way we can change one model without the need to retrain all the models.</li>
 <li>Data-centric approach to ML model development tends to lead to the best results as compared to algorithm-centric approach. Data is the critical piece in obtaining good performance if we have decent architecture.</li>
-<li>Types of data:
+</ul>
+</section>
+<section id="types-of-data" class="level2">
+<h2 class="anchored" data-anchor-id="types-of-data">Types of Data</h2>
 <ul>
-<li>first-party data: Data collected by companies about their customers</li>
+<li>First-party data: Data collected by companies about their customers</li>
 <li>Second-party data: Data collected by another companies about their customers</li>
 <li>Third-party data: Data collected on the public on who aren’t their customers</li>
 <li>User data are the most messy and require heavy cleanups</li>
-</ul></li>
-<li>Data passing modes through:
+</ul>
+</section>
+<section id="data-passing-modes" class="level2">
+<h2 class="anchored" data-anchor-id="data-passing-modes">Data Passing Modes</h2>
 <ul>
 <li>Databases. Not recommended for applications with strong latency requirements</li>
 <li>Services using requests such as REST or RPC. Recommended for applications that rely more on logic than data. It is called <code>request-driven</code>/microservice architecture, which is the most common</li>
 <li>Real-time transport such as Kafka. Recommended for applications that are data-heavy. It is called <code>event-driven</code> architecture.</li>
-</ul></li>
+</ul>
+</section>
+<section id="feature-types" class="level2">
+<h2 class="anchored" data-anchor-id="feature-types">Feature Types</h2>
+<ul>
 <li>Batch features (also called static features) are features that aren’t expected to change frequently, which are computed using batch processing.</li>
 <li>Streaming features (also called dynamic features) are features that changes quickly, which are computed using stream processing.</li>
-<li>Sampling Methods:
+</ul>
+</section>
+<section id="sampling-methods" class="level2">
+<h2 class="anchored" data-anchor-id="sampling-methods">Sampling Methods</h2>
 <ul>
 <li>Nonprobability sampling such as selecting the most recent data</li>
 <li>Random sampling</li>
@@ -323,17 +359,27 @@ ga('send', {
 <li>Weighted sampling</li>
 <li>Reservoir sampling</li>
 <li>Importance sampling</li>
-</ul></li>
+</ul>
+</section>
+<section id="models-feedback" class="level2">
+<h2 class="anchored" data-anchor-id="models-feedback">Model’s Feedback</h2>
+<ul>
 <li>Extracting labels from feedback: User feedback goes through different stages where each stage has different volume, strength of signal, and feedback loop length</li>
 <li>There is a trade-off between accuracy and speed of the feedback loop window. The shorter the feedback loop window the less accurate the labels. But also the longer the feedback loop window the longer to notice and fix model problems.</li>
-<li>Data labeling:
+</ul>
+</section>
+<section id="data-labeling" class="level2">
+<h2 class="anchored" data-anchor-id="data-labeling">Data Labeling</h2>
 <ul>
 <li>Weak supervision: Have no labeled data and use labeling functions to label data (Snorkel)</li>
 <li>Semi supervision: Have limited labeled data that are used to generate more labels through different methods such as perturbation</li>
 <li>Transfer learning</li>
 <li>Active learning: Selectively pick the samples to train the model on such as the most confident wrong samples</li>
-</ul></li>
-<li>Class imbalance: There are different degrees of class imbalance.
+</ul>
+</section>
+<section id="class-imbalance" class="level2">
+<h2 class="anchored" data-anchor-id="class-imbalance">Class imbalance</h2>
+<p>There are different degrees of class imbalance.</p>
 <ul>
 <li>It affects learning algorithms in many ways:
 <ul>
@@ -360,14 +406,19 @@ ga('send', {
 <li>Ensembles sometimes help with class imbalance</li>
 </ul></li>
 </ul></li>
-</ul></li>
-<li>Data augmentation
+</ul>
+</section>
+<section id="data-augmentation" class="level2">
+<h2 class="anchored" data-anchor-id="data-augmentation">Data Augmentation</h2>
 <ul>
 <li>Label-preserving transformations such as randomly flipping images or replace word with its synonym in NLP tasks</li>
 <li>Perturbation that adds noise to the data but still preserve the label. BERT uses such technique where 15% of the tokens are chosen randomly and 10% of such chosen tokens will be replaced by random tokens.</li>
 <li>Data synthesis: create data from existing data such as mixup or using templates in NLP</li>
-</ul></li>
-<li>Feature engineering. Having the right features give us the biggest performance boost compared to algorithmic techniques and hyperparameter-tuning. It requires domain-specific knowledge, SME, and algorithm-specific knowledge.
+</ul>
+</section>
+<section id="feature-engineering" class="level2">
+<h2 class="anchored" data-anchor-id="feature-engineering">Feature Engineering</h2>
+<p>Having the right features give us the biggest performance boost compared to algorithmic techniques and hyperparameter-tuning. It requires domain-specific knowledge, SME, and algorithm-specific knowledge.</p>
 <ul>
 <li>Missing values. Be careful that not all missing values are <code>NaN</code>. Some systems use predefined values such as empty string or 1999 for missing values.
 <ul>
@@ -405,8 +456,11 @@ ga('send', {
 <li>Hashing is pretty good especially if the hashing space is big enough where collision rate is low. We don’t have to worry about unknown categories in production.</li>
 </ul></li>
 <li>Feature crossing. It helps learn nonlinear relationships between features especially for models that aren’t good at learning nonlinear relationships such as logistic regression and tree-based models. The caveat is that it makes the feature space of the new feature blow up and requires more data to learn all these possible values. For example, if two features have 10 unique categories each, then the new feature would possible have 10 x 10 = 100 possible values.</li>
-</ul></li>
-<li>Data leakage. It refers to the case where some form of the label leaks into the feature(s) that aren’t available during inference. Common causes for data leakage:
+</ul>
+</section>
+<section id="data-leakage" class="level2">
+<h2 class="anchored" data-anchor-id="data-leakage">Data leakage</h2>
+<p>It refers to the case where some form of the label leaks into the feature(s) that aren’t available during inference. Common causes for data leakage:</p>
 <ul>
 <li>Splitting time-correlated data randomly. This is due to the fact that trends are time-correlated and the model would have access to future things it wouldn’t have otherwise.</li>
 <li>Scaling before splitting</li>
@@ -414,7 +468,6 @@ ga('send', {
 <li>Poor handling data duplication before splitting. Check for duplicates or near-duplicates before/after splitting</li>
 <li>Leakage from data generation process. Need to check with SME because this is the hardest cause of data leakage to uncover because it requires detailed knowledge about the process.</li>
 <li>Group leakage: group of data have correlated labels but are spread into different splits such as images of the same person are spread into training and test</li>
-</ul></li>
 <li>Feature importance is very important to avoid useless features as well as checking for data leakage. It is also helpful to interpret the model.
 <ul>
 <li>Be careful of features that have very high importance</li>
@@ -429,7 +482,10 @@ ga('send', {
 <li>There is a trade-off between generalization and specifity. IS_RUSH_HOUR is more generalizable than HOUR_OF_DAY.</li>
 </ul></li>
 </ul></li>
-<li>Model development:
+</ul>
+</section>
+<section id="model-development" class="level2">
+<h2 class="anchored" data-anchor-id="model-development">Model development</h2>
 <ul>
 <li>Baselines:
 <ul>
@@ -451,8 +507,10 @@ ga('send', {
 <li>Slice finder algorithms</li>
 </ul></li>
 </ul></li>
-</ul></li>
-<li>Model Deployment:
+</ul>
+</section>
+<section id="model-deployment" class="level2">
+<h2 class="anchored" data-anchor-id="model-deployment">Model Deployment</h2>
 <ul>
 <li>Online prediction: Predictions generated on demand using either streaming features OR both streaming and batch features.
 <ul>
@@ -475,13 +533,17 @@ ga('send', {
 <li>Cloud is much easier to setup and very flexible at the cost of privacy and network latency.</li>
 <li>Edge avoid network latency and privacy concerns but device must have enough memory, compute, and battery. Also, It takes more engineering work and model compression to make the model run on devices with a reasonable latency.</li>
 </ul></li>
-</ul></li>
-<li>Causes of ML system failures:
+</ul>
+</section>
+<section id="causes-of-ml-system-failures" class="level2">
+<h2 class="anchored" data-anchor-id="causes-of-ml-system-failures">Causes of ML System Failures</h2>
 <ul>
 <li>Software system failures such 1) server is down, 2) hardware failures, 3) dependency failure, 4) deployment failure. Addressing such failures require more of SWE skills than ML skills.</li>
 <li>ML-specific failures. They are hard to detect and fix. Examples of such failures such as 1) data processing/feature engineering errors, 2) wrong hyperparameter values, 3) data distribution shifts.</li>
-</ul></li>
-<li>Data Distribution Shifts:
+</ul>
+</section>
+<section id="data-distribution-shifts" class="level2">
+<h2 class="anchored" data-anchor-id="data-distribution-shifts">Data Distribution Shifts</h2>
 <ul>
 <li>Production data is usually different than training data:
 <ul>
@@ -513,8 +575,11 @@ ga('send', {
 <li>Monitor operations-related metrics such as uptime</li>
 <li>Monitor ML-specific metrics such as accuracy-related metrics, predictions feedback, prediction and feature distribution, feature validation (using libraries such as Great Expectations).</li>
 </ul></li>
-</ul></li>
-<li>Continual Learning: How our deployed model gets (re)trained and the frequency.
+</ul>
+</section>
+<section id="continual-learning" class="level2">
+<h2 class="anchored" data-anchor-id="continual-learning">Continual Learning</h2>
+<p>How our deployed model gets (re)trained and the frequency.</p>
 <ul>
 <li>Stateless retraining means training the model from scratch on every run using some predefined historical data window.</li>
 <li>Stateful training means continue training using new data to update the model with new data. Much less compute needed and less complicated. It only works if the architecture is still the same and the features are still the same. If anyone changes, we may need to retrain from scratch.
@@ -525,8 +590,10 @@ ga('send', {
 <li>A model update may be triggered based on time, performance, volume, or data drifts.</li>
 <li>Experiments with the importance of data freshness by training the model on different datasets from the past to predict current month and see how the performance deteriorates as we go back.</li>
 </ul></li>
-</ul></li>
-<li>Testing in production:
+</ul>
+</section>
+<section id="testing-in-production" class="level2">
+<h2 class="anchored" data-anchor-id="testing-in-production">Testing in Production</h2>
 <ul>
 <li>Test on holdout data split</li>
 <li>Test on the most recent data (backtest) such as last day</li>
@@ -551,10 +618,10 @@ ga('send', {
 </ul></li>
 <li>Interleaving experiment. We can randomly provide predictions/recommendations from different models to the same user and see how the user interact with these recommendations. It is different than A/B testing in the sense that we don’t split user base to receive recommendations from specific models but the same user receives recommendations from different models.</li>
 <li>Bandits algorithm (least adopted). It is much more efficient than A/B testing in that it requires much less data to determine which model is better. It is stateful (as opposed to A/B testing which is stateless). It routes traffic based on exploitation/exploration criteria.</li>
-</ul></li>
 </ul>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -913,7 +980,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     <div class="nav-footer-left">Blog made with Quarto, by Imad Dabbura</div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action">Report an issue</a></p></div></div></div>
+    </div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
     <li class="nav-item compact">
