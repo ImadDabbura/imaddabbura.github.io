@@ -444,7 +444,7 @@ ga('send', {
 <li><code>git log -G regexp</code> will search for changes related to the regexp in the code base; but looks for patterns not literal string.</li>
 </ul></li>
 <li><code>git show commit</code> will show everything that happened with that commit including <strong>diff</strong></li>
-<li><code>git blame file</code> is useful to know who did what to the file</li>
+<li><code>git blame file</code> is useful to know who did what to the file. Use <code>-L</code> to restrict to specific lines. Use <code>-C</code> to detect if block of lines were copied from other files that were in the same commit.</li>
 </ul>
 </section>
 <section id="resetting" class="level2">
@@ -455,12 +455,18 @@ ga('send', {
 <li>Make the index look like HEAD (stops here if not <code>--hard</code>)</li>
 <li>Make the working directory look like the index</li>
 </ul>
-<p>If we provide a path such as <code>git reset filepath</code>, it does the following:</p>
+<p>If we provide a path such as <code>git reset filepath</code>, it is a shorthand for <code>git reset --mixed HEAD filepath</code> and does the following:</p>
 <ul>
-<li>Move what the branch <code>HEAD</code> points to</li>
+<li>Move what the branch <code>HEAD</code> points to (skipped)</li>
 <li>Make the index look like <code>HEAD</code>; i.e.&nbsp;has the effect of unstaging the file</li>
 </ul>
-<p>Finally, if we run <code>git reset commit -- filepath</code>, it will act as if we reverted the content of the file to what was in the commit and then ran <code>git add</code> on the file without changing working directory. The <code>HEAD</code> and the working directory would have the same version of the file. Therefore, running <code>git commit</code> will commit the changes back to what was in the commit leaving both index file and <code>HEAD</code> point to the same changes.</p>
+<p>If we run <code>git reset commit -- filepath</code>, it will act as if we reverted the content of the file to what was in the commit and then ran <code>git add</code> on the file without changing working directory. The <code>HEAD</code> and the working directory would have the same version of the file. Therefore, running <code>git commit</code> will commit the changes back to what was in the commit leaving both index file and <code>HEAD</code> point to the same changes.</p>
+<p><code>git checkout</code> without paths is similar to <code>git reset</code> with two differences:</p>
+<ul>
+<li><code>reset</code> moves the branch <code>HEAD</code> points to while <code>checkout</code> moves <code>HEAD</code> itself. For example, <code>git checkout branch</code> would change what <code>HEAD</code> is pointing to while <code>git reset commit</code> would change what branch points to.</li>
+<li><code>checkout</code> is working-directory safe where it tries to do a trivial merge but <code>reset --hard</code> will overwrite working-directory.</li>
+</ul>
+<p><code>git checkout filepath</code> is similar to `git reset –hard filepath -&gt; overwrite working directory.</p>
 </section>
 <section id="inspecting-commit-ranges" class="level2">
 <h2 class="anchored" data-anchor-id="inspecting-commit-ranges">Inspecting Commit Ranges</h2>
@@ -492,7 +498,7 @@ ga('send', {
 </ul></li>
 <li><code>git reset HEAD file</code> OR <code>git restore --staged file</code> will undo the staging of the file. This is helpful if we staged a file and then we need to change some things before committing.</li>
 <li><code>get checkout -- file</code> OR <code>git restore file</code> will delete all the changes made to a file. We will never be able to get back the deleted changes.</li>
-<li><code>get reset --soft HEAD^1</code> This will remove the commit from the history and point HEAD to its parent. <code>--soft</code> here means to keep the changes of the current working directory.</li>
+<li><code>get reset --soft HEAD~2</code> This will remove the commit from the history and point HEAD to its grand parent. <code>--soft</code> here means to keep the changes in the current working directory and index file. Therefore, running <code>git commit</code> would commit the latest changes and make grand parent as the parent of changes (<strong>Squashing Commits</strong>).</li>
 <li>To cancel the commit while writing the message, we can exit vim with <code>:cquit</code> which exits vim with error and git will get that error -&gt; won’t proceed in creating the commit.</li>
 </ul>
 </section>
@@ -1002,7 +1008,7 @@ HEAD is now at 8610c78 Add copied file</code></pre>
 <ul>
 <li><strong>Checkout</strong>: <code>git checkout -b new-branch</code> First Git will follow from the HEAD to the current branch to determine what commit hash that branch points at. With that info, Git creates a new file in .git/refs/heads with our new branch name as the file name, and the commit hash as the contents. Lastly, it updates HEAD to point at this new ref.</li>
 <li><strong>Verbose Checkout</strong>: <code>git checkout -b new-branch master</code> It is almost the same as the previous checkout, but instead of starting from <code>HEAD</code>, it starts from the base branch we provided which is <code>master</code> in this case.</li>
-<li><strong>Checkout a File</strong>: <code>git checkout commit/refs -- file_name</code> This will look at the tree that the commit is pointing at (in the case of refs, it looks first for the commit that the refs is pointing at), then walking down the tree to get to the blob for the file and restore that version of that file.</li>
+<li><strong>Checkout a File</strong>: <code>git checkout commit/refs -- file_name</code> This will look at the tree that the commit is pointing at (in the case of refs, it looks first for the commit that the refs is pointing at), then walking down the tree to get to the blob for the file and restore that version of that file. This will update the working directory and the index file with the version we checked out.</li>
 <li><strong>Committing</strong>: <code>git commit -m "test"</code> When we commit, It involves at least a change to one blob. This will lead to a creation of new tree with current state of the code that reflect the changes. Git then creates commit object that will point to the new tree. Finally, it will update the current branch to point to the newly created branch.</li>
 <li><strong>Fast-Forward Merge</strong>: <code>git merge --ff-only branch-name</code> This kind of merge creates no objects, It just updates the current branch to a different commit.</li>
 <li><strong>Merge</strong>: <code>git merge branch-name</code> In contrast to the fast forward merge, Git creates a new tree by trying its best to combine two divergent branches. It then creates a new commit that point to the newly created tree and the parent would be the two commits; latest commit from each branch. This is what <em>merging using pull requests</em> does on Github. It may not be preferable because the actual code changes during merge when Git tries to combine all of them and we may end up with conflict.</li>
