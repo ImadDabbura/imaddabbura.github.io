@@ -298,6 +298,7 @@ ga('send', {
   <li><a href="#stashing" id="toc-stashing" class="nav-link" data-scroll-target="#stashing">Stashing</a></li>
   <li><a href="#managing-history" id="toc-managing-history" class="nav-link" data-scroll-target="#managing-history">Managing History</a></li>
   <li><a href="#bisect" id="toc-bisect" class="nav-link" data-scroll-target="#bisect">Bisect</a></li>
+  <li><a href="#submodules" id="toc-submodules" class="nav-link" data-scroll-target="#submodules">Submodules</a></li>
   <li><a href="#resetting" id="toc-resetting" class="nav-link" data-scroll-target="#resetting">Resetting</a></li>
   <li><a href="#inspecting-commit-ranges" id="toc-inspecting-commit-ranges" class="nav-link" data-scroll-target="#inspecting-commit-ranges">Inspecting Commit Ranges</a></li>
   <li><a href="#grep" id="toc-grep" class="nav-link" data-scroll-target="#grep">Grep</a></li>
@@ -462,6 +463,14 @@ ga('send', {
 <ul>
 <li><code>git bisect start badcommit goodcommit</code></li>
 <li><code>git bisect run test-script.sh</code> OR <code>git bisect run make rule</code> OR <code>git bisect run pytest</code>. For each commit, <code>git bisect</code> runs the script or command on the checked out commit. If it returns 0 -&gt; good; otherwise, bad.</li>
+</ul>
+</section>
+<section id="submodules" class="level2">
+<h2 class="anchored" data-anchor-id="submodules">Submodules</h2>
+<p>Git submodules are Git repositories inside Git repository that allows us to track them and keep commit histories separate. Each submodule would be in different directory inside the project git repository.</p>
+<ul>
+<li>We can add submodule by <code>git submodule add URL</code>. This will create a directory with the name of the Git repository (we can have different names using <code>git submodule add URL name</code>). If we run <code>git status</code>, we see that Git added the directory as special type of file as well as add a file named <code>.gitmodules</code> that has the <em>path</em> and the <em>URL</em> for each submodule. We need to commit those two files to include them in our main project history.</li>
+<li>If we clone a project that has submodules, we can either pass <code>--recurse-submodules</code> to initialize and pull all contents of all submodules OR go in each submodule directory and run <code>git submodule init</code> and <code>git submodule update</code>.</li>
 </ul>
 </section>
 <section id="resetting" class="level2">
