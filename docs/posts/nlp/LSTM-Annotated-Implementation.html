@@ -311,20 +311,20 @@ ga('send', {
 <p><img src="lstm-cell.jpeg" class="img-fluid"></p>
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
-<p><strong>Long Short-Term Memory (LSTM)</strong> is an a recurrent neural network (RNN) architectute that was introduced by <a href="https://www.bioinf.jku.at/publications/older/2604.pdf">Hochreiter and Schmidhuber</a> in 1997 to solve the problem of vanishing gradients that RNNs suffered from for long sequences. This issue is the result of repeated multiplication using the same weights in all timesteps since the weights are shared between all timesteps. Instead of having one hidden state as is the case for RNNs, we have two hidden states: cell state that is responsible for retaining long short-term memory, and hidden state that is focused on predicting the next word.</p>
-<p>RNNs and LSTMs are <strong>sequential models</strong>, which means they can only take one input at a time to produce one output because the output at time <em>t</em> depends not only on <span class="math inline">\(x_t\)</span> but also on the hidden state(s) from <span class="math inline">\(t -1\)</span>. This means, we can’t parallelize the forward pass and need iterate over all the timesteps to get all the results.</p>
-<p>In this post, we will focus on implementing LSTM from scratch and compare it with <a href="https://pytorch.org/">pytorch</a> to check our implementation. Along the way, we will consider performance issues and some ways to optimize our implementation. Hopefully this will help use better understand LSTMs, since the only way to really understand something is to build it yourself from scratch.</p>
+<p><strong>Long Short-Term Memory (LSTM)</strong> is a recurrent neural network (RNN) architectute that was introduced by <a href="https://www.bioinf.jku.at/publications/older/2604.pdf">Hochreiter and Schmidhuber</a> in 1997 to solve the problem of vanishing gradients that RNNs suffered from for long sequences. This issue is the result of repeated multiplication using the same weights in all timesteps since the weights are shared between all timesteps. Instead of having one hidden state as is the case for RNNs, we have two hidden states: cell state that is responsible for retaining long short-term memory, and hidden state that is focused on predicting the next word.</p>
+<p>RNNs and LSTMs are <strong>sequential models</strong>, which means they can only take one input at a time to produce one output because the output at time <em>t</em> depends not only on <span class="math inline">\(x_t\)</span> but also on the hidden state(s) from <span class="math inline">\(t -1\)</span>. In other words, we can’t parallelize the forward pass and need to iterate over all the timesteps to get all the results.</p>
+<p>In this post, we will focus on implementing LSTM from scratch and compare it with <a href="https://pytorch.org/">pytorch</a> to check our implementation. Along the way, we will consider performance issues and some ways to optimize our implementation. Hopefully this will help us better understand LSTMs, since the only way to really understand something is to build it yourself from scratch.</p>
 </section>
 <section id="implementation" class="level1">
 <h1>Implementation</h1>
-<p>Let’s first cover ,at a high level, how LSTM works:</p>
+<p>Let’s first cover, at a high level, how LSTM works:</p>
 <ul>
 <li>On each timestep <em>t</em>, there would be two states: a hidden state <span class="math inline">\(h()\)</span> and a cell state <span class="math inline">\(c()\)</span></li>
-<li>Both are vectors length <span class="math inline">\(n\)</span></li>
+<li>Both are vectors length of <span class="math inline">\(n\)</span></li>
 <li>The cell stores long-term information</li>
 <li>The LSTM can read, erase, and write information from the cell. Therefore, the cell becomes more like a RAM</li>
 </ul>
-<p>LSTM solves the vanishing/exploding gradients problems by making it easier to preserve information through longer timesteps.</p>
+<p>LSTM solves the vanishing/exploding gradients problem by making it easier to preserve information through longer timesteps.</p>
 <p>We will first start with implementing <code>LSTMCell</code> that operates on 1 input at a time. Next, we will implement <code>LSTM</code> module that wraps the <code>LSTMCell</code> to work on sequence of inputs and, optionally, stack multiple layers on top of each other to increase the capacity of the model with some regularization using <code>dropout</code>.</p>
 <section id="lstm-cell" class="level2">
 <h2 class="anchored" data-anchor-id="lstm-cell">LSTM Cell</h2>
@@ -344,7 +344,7 @@ h_t = o_t \odot \tanh(c_t) \\
 <li><span class="math inline">\(g_t\)</span> is the <strong>cell gate</strong>. This gate determines which cell elements to update with new input data.</li>
 <li><span class="math inline">\(o_t\)</span> is the <strong>output gate</strong>. This is the last gate which determines which information from cell state to use to output to the new hidden state.</li>
 </ul>
-<p>Even though we have 4 gates, we actually implement them using one matrix speed up the computation. Then later we will split the output to compute the corresponding gates.</p>
+<p>Even though we have 4 gates, we actually implement them using one matrix to speed up the computation. Then later we will split the output to compute the corresponding gates.</p>
 <p>Let’s implement <code>LSTMCell</code> and check its correctness with pytorch.</p>
 <div class="cell" data-execution_count="2">
 <details>
@@ -449,7 +449,7 @@ h_t = o_t \odot \tanh(c_t) \\
 </section>
 <section id="lstm" class="level2">
 <h2 class="anchored" data-anchor-id="lstm">LSTM</h2>
-<p>There few things worth mentioning about our <code>LSTM</code> implementations as well as other implementations in common libraries:</p>
+<p>There are few things worth mentioning about our <code>LSTM</code> implementations as well as other implementations in common libraries:</p>
 <ul>
 <li>We use sequence length as the first dimension instead of the batch first. This would give us better performance since we iterate over timesteps and we want to avoid copying memory for each operation which would be the case if the matrix is not contiguous when first dimension is the batch. Therefore, we use <code>T x B x input_sz</code>.</li>
 <li><strong>Backpropagation Through Time (BPTT)</strong>: This essentially means we backpropagate through all the history for each example when we calculate the gradient of the loss w.r.t. weights. Since for each layer, the weights are shared among all timesteps, long sequences will suffer greatly from vanishing/exploding gradients. Therefore, we typically truncate history by detaching hidden and cell states from computation graph after every batch so gradients stop at <span class="math inline">\(t_0\)</span> for each bach for each sequence. We only have access to the hidden/cell states from previous batch for the same sequence but can’t propagate beyond the first timestep of each batch.</li>
@@ -524,7 +524,7 @@ h_t = o_t \odot \tanh(c_t) \\
 </section>
 <section id="conclusion" class="level1">
 <h1>Conclusion</h1>
-<p>LSTMs were for a long time the solution for vanishing/exploding gradients problems vanialla RNNs have. They were the backbone models used in many NLP tasks such as machine translation and classification. In this post, we implemented both LSTM and LSTMCell. Hopefully, working through the implementation step by step made it a little easier and less intimidating to understand it.</p>
+<p>LSTMs were for a long time the solution for vanishing/exploding gradients problems vanilla RNNs have. They were the backbone models used in many NLP tasks such as machine translation and classification. In this post, we implemented both LSTM and LSTMCell. Hopefully, working through the implementation step by step made it a little easier and less intimidating to understand it.</p>
 <p>The key takeaways are:</p>
 <ol type="1">
 <li>RNNs and LSTMs are sequential models. They iteratively go through tokens in the sequence, or batch of sequences, one token at a time to predict the next word. Therefore, we can’t parallelize them as we do with FNNs or CNNs.</li>
