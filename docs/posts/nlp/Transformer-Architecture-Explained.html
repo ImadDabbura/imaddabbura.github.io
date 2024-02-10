@@ -280,7 +280,7 @@ ga('send', {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">February 14, 2023</p>
+        <p class="date">2023-02-14</p>
       </div>
     </div>
     
@@ -324,6 +324,12 @@ ga('send', {
 
 
 
+<ul>
+<li>Check the dimension returned by each attention head and multihead attention
+<ul>
+<li>It should take embed_dim not hidden_sz as second argument for Linear</li>
+</ul></li>
+</ul>
 <p align="center">
 <img src="full-transformer-architecture.png" width="600px"><br>
 
@@ -357,7 +363,7 @@ ga('send', {
 <li><em>Relative Positional Encoding</em>: Encode the relative position of tokens. We need to adjust the attention mechanism itself by adding new terms to be used when dot-products are used to encode the relative position between tokens up to maximum relative position.</li>
 <li><em>Rotary Encoding</em>: Combine both absolute and relative position of tokens to achieve great results. This can be done by encoding the absolute positions with a rotation matrix that will be multiplied with key and value matrices of each attenetion layer to add the relative position information at every layer.</li>
 </ul>
-<div class="cell" data-execution_count="48">
+<div class="cell" data-execution_count="3">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
@@ -437,29 +443,31 @@ ga('send', {
 <li>Finally, we multiply the attention weights with the value matrix <span class="math inline">\(V\)</span> to get the contextualized embeddings</li>
 </ul>
 <p>In equations: <span class="math display">\[attn(Q,K,V) = softmax(\frac{QK^T}{\sqrt d_k})V\]</span></p>
-<div class="cell" data-execution_count="43">
+<div class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> AttentionHead(nn.Module):</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config, head_dim, is_decoder<span class="op">=</span><span class="va">False</span>) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.k <span class="op">=</span> nn.Linear(config.hidden_sz, head_dim, bias<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.q <span class="op">=</span> nn.Linear(config.hidden_sz, head_dim, bias<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.v <span class="op">=</span> nn.Linear(config.hidden_sz, head_dim, bias<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.k <span class="op">=</span> nn.Linear(config.embed_dim, head_dim, bias<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.q <span class="op">=</span> nn.Linear(config.embed_dim, head_dim, bias<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.v <span class="op">=</span> nn.Linear(config.embed_dim, head_dim, bias<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.is_decoder <span class="op">=</span> is_decoder</span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.is_decoder:</span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.register_buffer(</span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>                <span class="st">"mask"</span>, torch.tril(torch.ones(config.block_sz, config.block_sz))</span>
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        )</span>
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>        <span class="co"># k,q,v are each B x T x config.hidden_sz</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        k, q, v <span class="op">=</span> [func(x) <span class="cf">for</span> func <span class="kw">in</span> (<span class="va">self</span>.k, <span class="va">self</span>.q, <span class="va">self</span>.v)]</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        <span class="co"># w is B x T x T</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        w <span class="op">=</span> q <span class="op">@</span> k.transpose(<span class="dv">2</span>, <span class="dv">1</span>) <span class="op">/</span> (k.shape[<span class="op">-</span><span class="dv">1</span>] <span class="op">**</span> <span class="fl">0.5</span>)</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.is_decoder:</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>            w <span class="op">=</span> w.masked_fill(<span class="va">self</span>.mask <span class="op">==</span> <span class="dv">0</span>, <span class="op">-</span><span class="bu">float</span>(<span class="st">"inf"</span>))</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>        w <span class="op">=</span> F.softmax(w, dim<span class="op">=-</span><span class="dv">1</span>)</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>        <span class="co"># output is B x T x config.hidden_sz</span></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> w <span class="op">@</span> v</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, query, key, value):</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>        <span class="co"># query, key, value are each B x T x embed_dim</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        q <span class="op">=</span> <span class="va">self</span>.q(query)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        k <span class="op">=</span> <span class="va">self</span>.k(key)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        v <span class="op">=</span> <span class="va">self</span>.v(value)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        <span class="co"># w is B x T x T</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>        w <span class="op">=</span> q <span class="op">@</span> k.transpose(<span class="dv">2</span>, <span class="dv">1</span>) <span class="op">/</span> (k.shape[<span class="op">-</span><span class="dv">1</span>] <span class="op">**</span> <span class="fl">0.5</span>)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.is_decoder:</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>            w <span class="op">=</span> w.masked_fill(<span class="va">self</span>.mask <span class="op">==</span> <span class="dv">0</span>, <span class="op">-</span><span class="bu">float</span>(<span class="st">"inf"</span>))</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>        w <span class="op">=</span> F.softmax(w, dim<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>        <span class="co"># output is B x T x head_dim</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> w <span class="op">@</span> v</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="multi-head-attention" class="level2">
@@ -479,14 +487,14 @@ ga('send', {
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MultiHeadAttention(nn.Module):</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config, is_decoder<span class="op">=</span><span class="va">False</span>) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        head_dim <span class="op">=</span> config.hidden_sz <span class="op">//</span> config.num_attention_heads</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        head_dim <span class="op">=</span> config.embed_dim <span class="op">//</span> config.num_attention_heads</span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.heads <span class="op">=</span> nn.ModuleList(</span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>            [</span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                AttentionHead(head_dim, config, is_decoder)</span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(config.num_attention_heads)</span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>            ]</span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.output <span class="op">=</span> nn.Linear(config.hidden_sz, config.hidden_sz)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.output <span class="op">=</span> nn.Linear(config.embed_dim, config.embed_dim)</span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> torch.cat([head(x) <span class="cf">for</span> head <span class="kw">in</span> <span class="va">self</span>.heads], dim<span class="op">=-</span><span class="dv">1</span>)</span>
@@ -501,9 +509,9 @@ ga('send', {
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> FeedForwardNN(nn.Module):</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config):</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        <span class="co"># intermediate_sz is typically 4x hidden_sz</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.l1 <span class="op">=</span> nn.Linear(config.hidden_sz, config.intermediate_sz)</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.l2 <span class="op">=</span> nn.Linear(config.intermediate_sz, config.hidden_sz)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        <span class="co"># intermediate_sz is typically 4 x embed_dim</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.l1 <span class="op">=</span> nn.Linear(config.embed_dim, config.intermediate_sz)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.l2 <span class="op">=</span> nn.Linear(config.intermediate_sz, config.embed_dim)</span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.dropout <span class="op">=</span> nn.Dropout(config.hidden_dropout_prob)</span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
@@ -575,8 +583,8 @@ ga('send', {
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config):</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.attn <span class="op">=</span> MultiHeadAttention(config)</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.layer_norm_1 <span class="op">=</span> nn.LayerNorm(config.head_dim)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.layer_norm_2 <span class="op">=</span> nn.LayerNorm(config.head_dim)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.layer_norm_1 <span class="op">=</span> nn.LayerNorm(config.embed_dim)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.layer_norm_2 <span class="op">=</span> nn.LayerNorm(config.embed_dim)</span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.ff <span class="op">=</span> FeedForwardNN(config)</span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
@@ -610,7 +618,7 @@ ga('send', {
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.encoder <span class="op">=</span> TransformerEncoder(config)</span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.dropout <span class="op">=</span> nn.Dropout(config.hidden_dropout_prob)</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.classifier <span class="op">=</span> nn.Linear(config.head_dim, config.num_classes)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.classifier <span class="op">=</span> nn.Linear(config.embed_dim, config.num_classes)</span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        <span class="co"># We take the hidden state of the [CLS] token as</span></span>
