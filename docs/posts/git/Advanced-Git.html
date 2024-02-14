@@ -470,7 +470,9 @@ ga('send', {
 <p>Git submodules are Git repositories inside Git repository that allows us to track them and keep commit histories separate. Each submodule would be in different directory inside the project git repository.</p>
 <ul>
 <li>We can add submodule by <code>git submodule add URL</code>. This will create a directory with the name of the Git repository (we can have different names using <code>git submodule add URL name</code>). If we run <code>git status</code>, we see that Git added the directory as special type of file as well as add a file named <code>.gitmodules</code> that has the <em>path</em> and the <em>URL</em> for each submodule. We need to commit those two files to include them in our main project history.</li>
-<li>If we clone a project that has submodules, we can either pass <code>--recurse-submodules</code> to initialize and pull all contents of all submodules OR go in each submodule directory and run <code>git submodule init</code> and <code>git submodule update</code>.</li>
+<li>If we clone a project that has submodules, we can either pass <code>--recurse-submodules</code> to initialize and pull all contents of all submodules OR go in each submodule directory and run <code>git submodule update --init</code> (add <code>--recursive</code> if there are any nested submodules.</li>
+<li>To pull out changes made to submodules, run <code>git submodule update --remote submodule_name</code></li>
+<li><code>git diff --submodule</code> to get a nice diff for submodules</li>
 </ul>
 </section>
 <section id="resetting" class="level2">
