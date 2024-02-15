@@ -299,6 +299,7 @@ ga('send', {
   <li><a href="#managing-history" id="toc-managing-history" class="nav-link" data-scroll-target="#managing-history">Managing History</a></li>
   <li><a href="#bisect" id="toc-bisect" class="nav-link" data-scroll-target="#bisect">Bisect</a></li>
   <li><a href="#submodules" id="toc-submodules" class="nav-link" data-scroll-target="#submodules">Submodules</a></li>
+  <li><a href="#hooks" id="toc-hooks" class="nav-link" data-scroll-target="#hooks">Hooks</a></li>
   <li><a href="#resetting" id="toc-resetting" class="nav-link" data-scroll-target="#resetting">Resetting</a></li>
   <li><a href="#inspecting-commit-ranges" id="toc-inspecting-commit-ranges" class="nav-link" data-scroll-target="#inspecting-commit-ranges">Inspecting Commit Ranges</a></li>
   <li><a href="#grep" id="toc-grep" class="nav-link" data-scroll-target="#grep">Grep</a></li>
@@ -317,6 +318,7 @@ ga('send', {
   <li><a href="#github-and-remotes" id="toc-github-and-remotes" class="nav-link" data-scroll-target="#github-and-remotes">Github and Remotes</a></li>
   <li><a href="#vim-and-git-integration" id="toc-vim-and-git-integration" class="nav-link" data-scroll-target="#vim-and-git-integration">Vim and Git Integration</a></li>
   <li><a href="#typical-workflow" id="toc-typical-workflow" class="nav-link" data-scroll-target="#typical-workflow">Typical Workflow</a></li>
+  <li><a href="#configuration" id="toc-configuration" class="nav-link" data-scroll-target="#configuration">Configuration</a></li>
   <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources">Resources</a></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
@@ -473,6 +475,24 @@ ga('send', {
 <li>If we clone a project that has submodules, we can either pass <code>--recurse-submodules</code> to initialize and pull all contents of all submodules OR go in each submodule directory and run <code>git submodule update --init</code> (add <code>--recursive</code> if there are any nested submodules.</li>
 <li>To pull out changes made to submodules, run <code>git submodule update --remote submodule_name</code></li>
 <li><code>git diff --submodule</code> to get a nice diff for submodules</li>
+</ul>
+</section>
+<section id="hooks" class="level2">
+<h2 class="anchored" data-anchor-id="hooks">Hooks</h2>
+<p>Git hooks are either client-side hooks that run for operations such as committing/merging or system-side hooks that run on network operations such as receiving pushed commits. All hooks are stored in <code>.git/hooks</code> directory. Git prepopulates any new Git repository with example hooks that end with <code>.sample</code>. To use such hooks, remove the extrension. We can write hooks in many languages such as Python but they have to be executable and can’t have any extension. Also, client-side hooks aren’t copied when the repository is cloned.</p>
+<p>Below are the most common client-side hooks:</p>
+<ul>
+<li><code>pre-commit</code>: Runs before we type the commit message and abort if the return code is not zero. This can be used to run tests, check code style, check for documentation or whitespaces, etc.</li>
+<li><code>prepare-commit-msg</code>: Runs before the commit message editor but after the default message is created.</li>
+<li><code>commit-msg</code>: Typically used to check if a commit message conforms to some predefined patterns.</li>
+<li><code>post-commit</code>: Runs after the commit proccess is completed.</li>
+</ul>
+<p>There are other client-side hooks such as <code>pre-rebase</code>, <code>pre-merge</code>, <code>post-merge</code>, etc.</p>
+<p>Below are the most common system-side hooks:</p>
+<ul>
+<li><code>pre-receive</code>: Runs when handling a push from client. It can be used to check for things such as rejecting non-fast-forwards or access control.</li>
+<li><code>update</code>: Similar to <code>pre-receive</code> but runs once for each branch the pusher is trying to update.</li>
+<li><code>post-receive</code>: Runs after the entire push process is completed. It can be used to notify users or update services.</li>
 </ul>
 </section>
 <section id="resetting" class="level2">
@@ -1136,6 +1156,15 @@ fi
 <li>Pull request auto closing. Assuming we’ve performed the steps outlined above, GitHub will have automatically closed the PR based on the fact that master now contains our branch’s commits.</li>
 </ul></li>
 </ul></li>
+</ul>
+</section>
+<section id="configuration" class="level2">
+<h2 class="anchored" data-anchor-id="configuration">Configuration</h2>
+<p>Git looks for configurations in the following places:</p>
+<ul>
+<li>First look for/inside <code>/etc/gitconfig</code>. Any time we use <code>git config --system</code>, it reads/writes this file</li>
+<li>Second look for/inside <code>~/.gitconfig</code> for each user. Any time we use <code>git config --global</code>, it reads/writes this file</li>
+<li>Finaly look for/inside <code>.gitconfig</code> inside the Git directory. Any time we use <code>git config --local</code>, it reads/writes this file</li>
 </ul>
 </section>
 <section id="resources" class="level2">
