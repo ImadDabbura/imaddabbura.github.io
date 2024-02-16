@@ -290,6 +290,8 @@ ga('send', {
    
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#git-object-model" id="toc-git-object-model" class="nav-link" data-scroll-target="#git-object-model">Git Object Model</a></li>
+  <li><a href="#branches" id="toc-branches" class="nav-link" data-scroll-target="#branches">Branches</a></li>
   <li><a href="#cloning-repository" id="toc-cloning-repository" class="nav-link" data-scroll-target="#cloning-repository">Cloning Repository</a></li>
   <li><a href="#ignoring-files" id="toc-ignoring-files" class="nav-link" data-scroll-target="#ignoring-files">Ignoring Files</a></li>
   <li><a href="#removing-files" id="toc-removing-files" class="nav-link" data-scroll-target="#removing-files">Removing Files</a></li>
@@ -305,14 +307,9 @@ ga('send', {
   <li><a href="#grep" id="toc-grep" class="nav-link" data-scroll-target="#grep">Grep</a></li>
   <li><a href="#undoing" id="toc-undoing" class="nav-link" data-scroll-target="#undoing">Undoing</a></li>
   <li><a href="#rebasing-history" id="toc-rebasing-history" class="nav-link" data-scroll-target="#rebasing-history">Rebasing History</a></li>
-  <li><a href="#git-object-model" id="toc-git-object-model" class="nav-link" data-scroll-target="#git-object-model">Git Object Model</a></li>
   <li><a href="#packfiles" id="toc-packfiles" class="nav-link" data-scroll-target="#packfiles">Packfiles</a></li>
-  <li><a href="#object-model-operations" id="toc-object-model-operations" class="nav-link" data-scroll-target="#object-model-operations">Object Model Operations</a></li>
-  <li><a href="#branches" id="toc-branches" class="nav-link" data-scroll-target="#branches">Branches</a></li>
   <li><a href="#tags" id="toc-tags" class="nav-link" data-scroll-target="#tags">Tags</a></li>
   <li><a href="#remote-branches" id="toc-remote-branches" class="nav-link" data-scroll-target="#remote-branches">Remote Branches</a></li>
-  <li><a href="#head-object" id="toc-head-object" class="nav-link" data-scroll-target="#head-object">HEAD Object</a></li>
-  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   <li><a href="#operations" id="toc-operations" class="nav-link" data-scroll-target="#operations">Operations</a></li>
   <li><a href="#git-customization" id="toc-git-customization" class="nav-link" data-scroll-target="#git-customization">Git Customization</a></li>
   <li><a href="#github-and-remotes" id="toc-github-and-remotes" class="nav-link" data-scroll-target="#github-and-remotes">Github and Remotes</a></li>
@@ -364,209 +361,6 @@ ga('send', {
 <ul>
 <li><strong>UnTracked</strong>: files that Git doesn’t know about. They are files that weren’t in any snapshot or in staging area. Therefore, they don’t have modified/unmodified states.</li>
 <li><strong>Tracked</strong>: files that were in last snapshot or in staging area. They have all states mentioned above.</li>
-</ul>
-</section>
-<section id="cloning-repository" class="level2">
-<h2 class="anchored" data-anchor-id="cloning-repository">Cloning Repository</h2>
-<p><code>git clone https://github.com/UserName/RepoName</code> would do the following:</p>
-<ul>
-<li>Create a directory called <code>RepoName</code></li>
-<li>Create a directory called <code>.git</code> inside <code>RepoName</code></li>
-<li>Pull down all versions for every file for the history of the project</li>
-<li>Check out the latest version</li>
-</ul>
-<p>As a result, if initially a huge file was committed but then deleted years ago, cloning will pull down the huge file even if such file is never needed again. Therefore, if a project has a long history, we may not need to clone all history and restrict to last <code>N</code> days.</p>
-</section>
-<section id="ignoring-files" class="level2">
-<h2 class="anchored" data-anchor-id="ignoring-files">Ignoring Files</h2>
-<p><code>.gitignore</code> hosts all patterns that Git should ignore and not track. It is typically located at the root directory of the project and applies recursively to all subsdirectories; however, we can have <code>.gitignore</code> in subdirectories that only gets applied specifically to those subdirectories.</p>
-<p>The rules for the patterns you can put in the .gitignore file are as follows:</p>
-<ul>
-<li>Blank lines or lines starting with <code>#</code> are ignored.</li>
-<li>Standard glob patterns work, and will be applied recursively throughout the entire working tree. Example:
-<ul>
-<li><code>*.log</code> ignores all files that end with <code>log</code> recursively</li>
-<li><code>doc/*.txt</code> ignores all <code>.txt</code> files under <code>doc</code></li>
-<li><code>doc/**/*.pdf</code> igores all pdf files in the <code>doc</code> directory and all its subdirectoris</li>
-</ul></li>
-<li>We can start patterns with a forward slash (/) to avoid recursivity. Example: <code>/TODO</code> ignores TODO in the current directory.</li>
-<li>You can end patterns with a forward slash (/) to specify a directory. Example: <code>build/</code> ignores all files under <code>build</code> in all directories.</li>
-<li>You can negate a pattern by starting it with an exclamation point (!). Example: <code>!test.log</code> tracks <code>test.log</code></li>
-</ul>
-</section>
-<section id="removing-files" class="level2">
-<h2 class="anchored" data-anchor-id="removing-files">Removing Files</h2>
-<p><code>git rm</code> would remove a file from working tree and stage it. If we ever staged files by mistake, we could run <code>git rm --cached filename</code> to remove it from staging area and keep it on hard drive especially if we don’t want Git to track it.</p>
-</section>
-<section id="general" class="level2">
-<h2 class="anchored" data-anchor-id="general">General</h2>
-<ul>
-<li><code>git stash</code> does not by default save untracked files, it only saves untracked changes to tracked files. It will be stored under <code>.git/refs</code>
-<ul>
-<li><code>git stash -u</code> will save everything</li>
-<li><code>git stash drop</code> will delete the saved changes</li>
-<li><code>git stash pop</code> will bring back the saved changes</li>
-</ul></li>
-<li><code>git reflog</code> remember all actions taken in a repository (even intermediate steps such as creating branches, clone, pull, etc.) and not just commits. It is local to your copy of the respository and others who have the same copy of the repoository would have their own version of reflog. It also starts empty after we clone the repository. Therefore, it is more like <code>shell</code> history. We can always get back to some state.
-<ul>
-<li><code>git reflog show hash_value</code> will show all the actions happened for the hash.</li>
-</ul></li>
-<li><code>git diff</code> to see the changes in the working tree compared to the index</li>
-<li><code>git diff --cached</code> to see the changes we changed compared to the last commit</li>
-<li><code>git difftool</code> shoes the changes in external tools such as <em>vimdiff</em></li>
-</ul>
-</section>
-<section id="interactive-staging" class="level2">
-<h2 class="anchored" data-anchor-id="interactive-staging">Interactive Staging</h2>
-<p>We can use interactive staging to control which files to stage and which parts of the files (patches) to stage all interactively. This is very helpful if we have done a lot of work on many files without staging anything. <code>git add -i</code> would put us in the interactive window.</p>
-<p>We can add/checkout/restore/stash patches (parts of files) by adding <code>--patch</code> or <code>-p</code> flag to their corresponding git command.</p>
-</section>
-<section id="stashing" class="level2">
-<h2 class="anchored" data-anchor-id="stashing">Stashing</h2>
-<p>It is very helpful when we staged some work and have modified tracked files and want to jump to different branch to work on something else. By default, Git stashes only modified and staged tracked files but not untracked files. We can add <code>-u</code> to add also untracked files.</p>
-<ul>
-<li>We can run <code>git stash</code> to stash the work.</li>
-<li><code>git stash list</code> to list all the stashes.</li>
-<li><code>git stash apply</code> to apply last stash OR <code>git stash apply stashname</code>. This keeps the stash on the stack.</li>
-<li><code>git stash drop</code> to remove a stash.</li>
-<li><code>git stash pop</code> to apply and remove last stash in one command.</li>
-</ul>
-<p>We can apply stashes from one branch on another branches.</p>
-<p>To avoid issues/merge conflicts when trying to apply stashes, it may be helpful to create new branch and apply stash in the new branch. This can be done by <code>git stash branch newbranchname</code>. This will create new branch, checkout last commit you were on, apply stash, and then drop the stash.</p>
-</section>
-<section id="managing-history" class="level2">
-<h2 class="anchored" data-anchor-id="managing-history">Managing History</h2>
-<ul>
-<li><code>git log</code> has all the information we need to the repo’s history.
-<ul>
-<li><code>git log --all --decorate --graph --oneline</code> is great to get an overview and see the divergence of branches</li>
-<li><code>git log -n</code> will limit the log to the top n</li>
-<li><code>git log --oneline file</code> is useful to get an overview of the log of one file</li>
-<li><code>git log --pretty=format:'%C(yellow)%h%C(reset) - %an [%C(green)%ar%C(reset)] %s</code> to change the format of the log output</li>
-<li><code>git log -E -i --grep regexp</code> will do extended search the logs for the regexp phrase; case insensitive</li>
-<li><code>git log -S term</code> will search for changes related to that term in the code base (addition/deletion). Check this <a href="https://thoughtbot.com/blog/code-sleuthing-with-git">post</a></li>
-<li><code>git log -G regexp</code> will search for changes related to the regexp in the code base; but looks for patterns not literal string.</li>
-</ul></li>
-<li><code>git show commit</code> will show everything that happened with that commit including <strong>diff</strong></li>
-<li><code>git blame file</code> is useful to know who did what to the file and when especially if we want to trace who introduced some bug/logic to the codebase. Use <code>-L</code> to restrict to specific lines. Use <code>-C</code> to detect if block of lines were copied from other files that were in the same commit.</li>
-</ul>
-</section>
-<section id="bisect" class="level2">
-<h2 class="anchored" data-anchor-id="bisect">Bisect</h2>
-<p>Git Bisect is useful to trace when a bug is introduced to get the commit that introduced the bug especially if the commit was pretty far in the history. It does binary search between the commit that you believe was good (no bug) and the current commit or any commit that we know has the bug. Below are a typical workflow:</p>
-<ul>
-<li><code>git bisect start</code> to start the binary search</li>
-<li><code>git bisect bad</code> which means current <code>HEAD</code> is the bad commit which would be last commit in the range of commits of the binary search</li>
-<li><code>git bisect good commit</code> which tells Git that the provided commit didn’t have the bug and would be the first commit in the range of commits of the binary search</li>
-<li>We can use the three commands in one command <code>git bisect start badcommit goodcommit</code></li>
-<li>From here, we interactively run either <code>git bisect good</code> to tell Git the given commit is good so it does binary search from next commit to the last commit OR <code>git bisect bad</code> to tell Git that the given commit is bad and the next binary search stops at the commit before it. We keep doing this until we arrive at the commit that introduced the bug.</li>
-</ul>
-<p>We can also use a script that runs tests for us to check whether a commit is good or bad and automate the whole process:</p>
-<ul>
-<li><code>git bisect start badcommit goodcommit</code></li>
-<li><code>git bisect run test-script.sh</code> OR <code>git bisect run make rule</code> OR <code>git bisect run pytest</code>. For each commit, <code>git bisect</code> runs the script or command on the checked out commit. If it returns 0 -&gt; good; otherwise, bad.</li>
-</ul>
-</section>
-<section id="submodules" class="level2">
-<h2 class="anchored" data-anchor-id="submodules">Submodules</h2>
-<p>Git submodules are Git repositories inside Git repository that allows us to track them and keep commit histories separate. Each submodule would be in different directory inside the project git repository.</p>
-<ul>
-<li>We can add submodule by <code>git submodule add URL</code>. This will create a directory with the name of the Git repository (we can have different names using <code>git submodule add URL name</code>). If we run <code>git status</code>, we see that Git added the directory as special type of file as well as add a file named <code>.gitmodules</code> that has the <em>path</em> and the <em>URL</em> for each submodule. We need to commit those two files to include them in our main project history.</li>
-<li>If we clone a project that has submodules, we can either pass <code>--recurse-submodules</code> to initialize and pull all contents of all submodules OR go in each submodule directory and run <code>git submodule update --init</code> (add <code>--recursive</code> if there are any nested submodules.</li>
-<li>To pull out changes made to submodules, run <code>git submodule update --remote submodule_name</code></li>
-<li><code>git diff --submodule</code> to get a nice diff for submodules</li>
-</ul>
-</section>
-<section id="hooks" class="level2">
-<h2 class="anchored" data-anchor-id="hooks">Hooks</h2>
-<p>Git hooks are either client-side hooks that run for operations such as committing/merging or system-side hooks that run on network operations such as receiving pushed commits. All hooks are stored in <code>.git/hooks</code> directory. Git prepopulates any new Git repository with example hooks that end with <code>.sample</code>. To use such hooks, remove the extrension. We can write hooks in many languages such as Python but they have to be executable and can’t have any extension. Also, client-side hooks aren’t copied when the repository is cloned.</p>
-<p>Below are the most common client-side hooks:</p>
-<ul>
-<li><code>pre-commit</code>: Runs before we type the commit message and abort if the return code is not zero. This can be used to run tests, check code style, check for documentation or whitespaces, etc.</li>
-<li><code>prepare-commit-msg</code>: Runs before the commit message editor but after the default message is created.</li>
-<li><code>commit-msg</code>: Typically used to check if a commit message conforms to some predefined patterns.</li>
-<li><code>post-commit</code>: Runs after the commit proccess is completed.</li>
-</ul>
-<p>There are other client-side hooks such as <code>pre-rebase</code>, <code>pre-merge</code>, <code>post-merge</code>, etc.</p>
-<p>Below are the most common system-side hooks:</p>
-<ul>
-<li><code>pre-receive</code>: Runs when handling a push from client. It can be used to check for things such as rejecting non-fast-forwards or access control.</li>
-<li><code>update</code>: Similar to <code>pre-receive</code> but runs once for each branch the pusher is trying to update.</li>
-<li><code>post-receive</code>: Runs after the entire push process is completed. It can be used to notify users or update services.</li>
-</ul>
-</section>
-<section id="resetting" class="level2">
-<h2 class="anchored" data-anchor-id="resetting">Resetting</h2>
-<p><code>git reset HEAD|commit</code> command allows us to:</p>
-<ul>
-<li>Move what the branch <code>HEAD</code> points to (stops if <code>--soft</code> and everything will be in the staging).</li>
-<li>Make the index look like HEAD (stops here if not <code>--hard</code>)</li>
-<li>Make the working directory look like the index</li>
-</ul>
-<p>If we provide a path such as <code>git reset filepath</code>, it is a shorthand for <code>git reset --mixed HEAD filepath</code> and does the following:</p>
-<ul>
-<li>Move what the branch <code>HEAD</code> points to (skipped)</li>
-<li>Make the index look like <code>HEAD</code>; i.e.&nbsp;has the effect of unstaging the file</li>
-</ul>
-<p>If we run <code>git reset commit -- filepath</code>, it will act as if we reverted the content of the file to what was in the commit and then ran <code>git add</code> on the file without changing working directory. The <code>HEAD</code> and the working directory would have the same version of the file. Therefore, running <code>git commit</code> will commit the changes back to what was in the commit leaving both index file and <code>HEAD</code> point to the same changes.</p>
-<p><code>git checkout</code> without paths is similar to <code>git reset</code> with two differences:</p>
-<ul>
-<li><code>reset</code> moves the branch <code>HEAD</code> points to while <code>checkout</code> moves <code>HEAD</code> itself. For example, <code>git checkout branch</code> would change what <code>HEAD</code> is pointing to while <code>git reset commit</code> would change what branch points to.</li>
-<li><code>checkout</code> is working-directory safe where it tries to do a trivial merge but <code>reset --hard</code> will overwrite working-directory.</li>
-</ul>
-<p><code>git checkout filepath</code> is similar to `git reset –hard filepath -&gt; overwrite working directory.</p>
-</section>
-<section id="inspecting-commit-ranges" class="level2">
-<h2 class="anchored" data-anchor-id="inspecting-commit-ranges">Inspecting Commit Ranges</h2>
-<ul>
-<li><code>^</code> refers to the parent. <code>HEAD^</code> means the parent of last commit in the current branch.</li>
-<li><code>~</code> refers to the first parent. <code>HEAD~</code> means the first parent of last commit in the current branch. It will be different than <code>^</code> in the case a commit has multiple parents as is the case of merge commits that have multiple parents.</li>
-<li><code>HEAD~5</code> is equivalent in some sense to <code>HEAD^^^^^</code>.</li>
-<li>Double dots (<code>..</code>): If we want to see the commits that are reachable from target branch (commit) but not the source branch (commit), we use <code>git log sourcecommit..targetcommit</code>.</li>
-<li>Triple dots (<code>...</code>): If we want to see the commits that are reachable by either of the branches (commits) but not from both of them, we use <code>git log sourcecommit...targetcommit</code>. This will return commits unique to sourcecommit and targetcommit but not common commit.</li>
-<li>Multiple points: If we want to see the commits for multiple points such as <code>git log refA refB ^refC</code> which means commits reachable from refA and refB but not C. Therefore:
-<ul>
-<li><code>git log refA..refB</code> is equivalent to <code>git log refB ^refA</code></li>
-</ul></li>
-</ul>
-</section>
-<section id="grep" class="level2">
-<h2 class="anchored" data-anchor-id="grep">Grep</h2>
-<p>Git <code>grep</code> allows us to search for a pattern in working directory, index, and committed tree. We can also search in older versions of the code such as using old tags/commits, which <code>grep/ack</code> tools can’t.</p>
-<p>The most useful flags to use with grep is <code>git grep -n -p --break --heading pattern optional_path optionalcommit</code>.</p>
-</section>
-<section id="undoing" class="level2">
-<h2 class="anchored" data-anchor-id="undoing">Undoing</h2>
-<p><strong>Commits are immutable. This means that even though we can fix some stuff related to commits, we can’t change the commits themselves. They will still be in the history.</strong> Therefore, anything that is committed in Git can almost always be recovered. Even commits that were on branches that were deleted or commits that were overwritten with an –amend commit can be recovered. However, anything you lose that was never committed is likely never to be seen again.</p>
-<ul>
-<li><code>git commit --amend</code> will open an editor to write a new commit message to the already committed changes.
-<ul>
-<li><code>git commit --amend -m "message"</code> is a shorthand</li>
-<li><code>git commit --amend --no-edit</code> will add new files to the last commit; in case we forgot to add some files to that belong to the same commit</li>
-</ul></li>
-<li><code>git reset HEAD file</code> OR <code>git restore --staged file</code> will undo the staging of the file. This is helpful if we staged a file and then we need to change some things before committing.</li>
-<li><code>get checkout -- file</code> OR <code>git restore file</code> will delete all the changes made to a file. We will never be able to get back the deleted changes.</li>
-<li><code>get reset --soft HEAD~2</code> This will remove the commit from the history and point HEAD to its grand parent. <code>--soft</code> here means to keep the changes in the current working directory and index file. Therefore, running <code>git commit</code> would commit the latest changes and make grand parent as the parent of changes (<strong>Squashing Commits</strong>).</li>
-<li>To cancel the commit while writing the message, we can exit vim with <code>:cquit</code> which exits vim with error and git will get that error -&gt; won’t proceed in creating the commit.</li>
-</ul>
-</section>
-<section id="rebasing-history" class="level2">
-<h2 class="anchored" data-anchor-id="rebasing-history">Rebasing History</h2>
-<ul>
-<li><code>git add file</code> or <code>git add --all</code> or <code>git add directory</code>. This will add all changes made to a specific file/directory.</li>
-<li><code>git add --patch</code> Allows us to cherry pick the changes that we want to stage. This is useful if we want to split the changes we made to a specific file into different commits. When we run the command, we will interactively choose what we want to stage using shortcuts.</li>
-<li><code>git diff/log HEAD..HEAD~2</code> will give us the diff/log for the range between two commits in history. We can either choose hash_values of commits or their references such as HEAD/master.</li>
-<li><code>git reset --hard HEAD~1</code> will make HEAD point to its parent and remove last commit from log history. Note that the last commit is not completely removed, we see that with <code>git reflog</code>.</li>
-<li><code>git cherry-pick origin/master..master</code> will replay the commits with this range in another branch. This is useful when we commit to the wrong branch and we want to make those commits in another branch. We can use this command after we checkout the correct branch and run the above command. To remove the commits from the branch we first commit, we can use <code>git reset --hard</code> (even though the removed commits are still in our history).</li>
-<li><code>git rebase master</code> We want to take the work we’ve done on our feature branch, and reapply it as if it was done on top of the additional commits in our master branch. When performing the rebase, Git finds the commits unique to our branch and computes the diff off the changes they introduced, then moves to the target branch, master in this case, and one by one applies the diffs, creating new commits reusing the commit messages from our branch. Once done, it updates our branch to point at the newest of these commits created by reapplying the diffs.</li>
-<li>While we would never revise published history, specifically the master branch, we almost always revise our commits on feature branches before merging them in. We value a clean history, and the majority of the time, the commits in a feature branch contain many rounds of refactoring and PR reviews which we don’t want in the permanent history. Instead, we want the most direct and concise form of the history that fully captures the change we settled on in our feature branch after completing any refactoring or updates. Use <code>git rebase -i master</code> will allow us to do just that.
-<ul>
-<li>We can remove, reorder, squash, edit, and split commits using interactive rebase.</li>
-<li>Git applies and rewrite the changed commits and all the commits that follow the changed ones.</li>
-<li>It is highly recommended to not change history if you already pushed it to the remote server unless we’re working on feature branch and are doing it to clean up history before merging and close the pull request.</li>
-<li>Reording is simply reordering the commits shown in the editor.</li>
-<li>Be careful that the order of commits is reverse order. This means last commit will be last.</li>
-</ul></li>
 </ul>
 </section>
 <section id="git-object-model" class="level2">
@@ -736,19 +530,6 @@ Materials for software engineering.</code></pre>
 <pre><code>- It's worth noting that the commit object only contains a single reference to a working directory; Git doesn't store diffs. When diffing between two commits, it compares the working trees of the commits, computing the diff on demand.</code></pre>
 <p>Git only stores the delta changes between commits and not everything. It also point to blobs/trees that have not been changed using old commits and don’t store them again for new commits. Therefore, if a file has not been changed from previous commit, the hash value for that commit is the same so its address is still the same -&gt; keep the same pointer.</p>
 <p><img src="git-objects-simple.png" height="400px" width="300px" align="center"></p>
-</section>
-<section id="packfiles" class="level2">
-<h2 class="anchored" data-anchor-id="packfiles">Packfiles</h2>
-<p>These are files that <em>Git</em> uses to combine files into single file to save space instead of having different versions of the same file taking all the space and only saves the original version with deltas where pack index file will have offsets that point to the object in the pack file. <em>Git</em> automatically runs this when we have too many loose files or when run <code>git gc</code> command or when we push to remote server.</p>
-</section>
-<section id="object-model-operations" class="level2">
-<h2 class="anchored" data-anchor-id="object-model-operations">Object Model Operations</h2>
-<p>Review of the basic Git objects:</p>
-<ul>
-<li><strong>Blobs</strong>: Our base objects, storing the contents of a single version of a file.</li>
-<li><strong>Trees</strong>:Trees store directory listings, pointing at blobs and other trees to define a full directory structure.</li>
-<li><strong>Commits</strong>: Commits lock in a version of our code, pointing at a single tree, the “working tree”, as well as holding the commit message and author info. Commits also point at parent commits to capture the history of our code.</li>
-</ul>
 <p><strong>References</strong>: References are nothing but pointers to commits. They are stored under <code>.git/refs</code> directory as files where each file contains the hash_value of some commit.</p>
 <ul>
 <li>Since it is a hassle to always refer to objects by their 40 hexadecimal string, we can use references to refer to objects. Contrary to objects, references are mutable. For example, <code>master</code> always refers to the latest commit in the main branch. <code>HEAD</code> refers to where we currently are in the history which will be used when creating new snapshot by making the parent for this commit the <code>HEAD</code> and then update <code>HEAD</code>.</li>
@@ -830,6 +611,82 @@ committer Imad &lt;imad.dabbura@hotmail.com&gt; 1584462760 -0500
 Review all nbs</code></pre>
 </div>
 </div>
+<p><code>HEAD</code>, unlike the other objects we’ve discussed, is a singleton, meaning that there is only ever one HEAD. It identifies the currently checked out object. Typically, this is a branch (with that branch pointing to a commit), but it is possible to check out a commit directly, in which case HEAD would be pointing at that commit.</p>
+<p>HEAD is a file just like our branch objects. It lives at the root of the .git/ directory and its contents are similarly simple.</p>
+<div class="cell" data-execution_count="114">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>cat <span class="op">/</span>Users<span class="op">/</span>imad<span class="op">/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span>.git<span class="op">/</span>HEAD</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>ref: refs/heads/master</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="115">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>cd <span class="op">~/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>git graph2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>* 6e9c688    (HEAD -&gt; master, tag: v.0.1, test) Renaming (Imad)
+* ff9e667    Add test1 dir (Imad)
+* e503b6e    Add test dir (Imad)
+* 8610c78    Add copied file (Imad)
+* ed738c9    (feature) Rebased all commits (Imad)
+* 2050b90    Add host to file (Imad)
+* 91eacf5    Add host (Imad)
+* ed27259    patch commit (Imad)
+* ff2d260    third commit (Imad)
+* 6dd0c14    Change second commit (Imad)
+* c2b7166    first commit (Imad)</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="116">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>cd <span class="op">~/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>git checkout <span class="dv">8610</span><span class="er">c78</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Note: checking out '8610c78'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by performing another checkout.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -b with the checkout command again. Example:
+
+  git checkout -b &lt;new-branch-name&gt;
+
+HEAD is now at 8610c78 Add copied file</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="118">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>cat <span class="op">/</span>Users<span class="op">/</span>imad<span class="op">/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span>.git<span class="op">/</span>HEAD</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>8610c78113fe423b20a9f84d485b49af5ad089b0</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="117">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>cd <span class="op">~/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>git graph2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>* 6e9c688    (tag: v.0.1, test, master) Renaming (Imad)
+* ff9e667    Add test1 dir (Imad)
+* e503b6e    Add test dir (Imad)
+* 8610c78    (HEAD) Add copied file (Imad)
+* ed738c9    (feature) Rebased all commits (Imad)
+* 2050b90    Add host to file (Imad)
+* 91eacf5    Add host (Imad)
+* ed27259    patch commit (Imad)
+* ff2d260    third commit (Imad)
+* 6dd0c14    Change second commit (Imad)
+* c2b7166    first commit (Imad)</code></pre>
+</div>
+</div>
+<p>Summary:</p>
+<ul>
+<li><strong>Objects</strong>: blobs, trees, and commits.</li>
+<li><strong>Refs</strong>: branches, tags, and remote branches.</li>
+<li><strong>HEAD</strong>: The single pointer to rule them all.</li>
+</ul>
+<p><img src="git-objects.png" width="500"></p>
 </section>
 <section id="branches" class="level2">
 <h2 class="anchored" data-anchor-id="branches">Branches</h2>
@@ -866,6 +723,213 @@ Review all nbs</code></pre>
 <li><code>heads</code> are for local branches.</li>
 </ul>
 </section>
+<section id="cloning-repository" class="level2">
+<h2 class="anchored" data-anchor-id="cloning-repository">Cloning Repository</h2>
+<p><code>git clone https://github.com/UserName/RepoName</code> would do the following:</p>
+<ul>
+<li>Create a directory called <code>RepoName</code></li>
+<li>Create a directory called <code>.git</code> inside <code>RepoName</code></li>
+<li>Pull down all versions for every file for the history of the project</li>
+<li>Check out the latest version</li>
+</ul>
+<p>As a result, if initially a huge file was committed but then deleted years ago, cloning will pull down the huge file even if such file is never needed again. Therefore, if a project has a long history, we may not need to clone all history and restrict to last <code>N</code> days.</p>
+</section>
+<section id="ignoring-files" class="level2">
+<h2 class="anchored" data-anchor-id="ignoring-files">Ignoring Files</h2>
+<p><code>.gitignore</code> hosts all patterns that Git should ignore and not track. It is typically located at the root directory of the project and applies recursively to all subsdirectories; however, we can have <code>.gitignore</code> in subdirectories that only gets applied specifically to those subdirectories.</p>
+<p>The rules for the patterns you can put in the .gitignore file are as follows:</p>
+<ul>
+<li>Blank lines or lines starting with <code>#</code> are ignored.</li>
+<li>Standard glob patterns work, and will be applied recursively throughout the entire working tree. Example:
+<ul>
+<li><code>*.log</code> ignores all files that end with <code>log</code> recursively</li>
+<li><code>doc/*.txt</code> ignores all <code>.txt</code> files under <code>doc</code></li>
+<li><code>doc/**/*.pdf</code> igores all pdf files in the <code>doc</code> directory and all its subdirectoris</li>
+</ul></li>
+<li>We can start patterns with a forward slash (/) to avoid recursivity. Example: <code>/TODO</code> ignores TODO in the current directory.</li>
+<li>You can end patterns with a forward slash (/) to specify a directory. Example: <code>build/</code> ignores all files under <code>build</code> in all directories.</li>
+<li>You can negate a pattern by starting it with an exclamation point (!). Example: <code>!test.log</code> tracks <code>test.log</code></li>
+</ul>
+</section>
+<section id="removing-files" class="level2">
+<h2 class="anchored" data-anchor-id="removing-files">Removing Files</h2>
+<p><code>git rm</code> would remove a file from working tree and stage it. If we ever staged files by mistake, we could run <code>git rm --cached filename</code> to remove it from staging area and keep it on hard drive especially if we don’t want Git to track it.</p>
+</section>
+<section id="general" class="level2">
+<h2 class="anchored" data-anchor-id="general">General</h2>
+<ul>
+<li><code>git stash</code> does not by default save untracked files, it only saves untracked changes to tracked files. It will be stored under <code>.git/refs</code>
+<ul>
+<li><code>git stash -u</code> will save everything</li>
+<li><code>git stash drop</code> will delete the saved changes</li>
+<li><code>git stash pop</code> will bring back the saved changes</li>
+</ul></li>
+<li><code>git reflog</code> remember all actions taken in a repository (even intermediate steps such as creating branches, clone, pull, etc.) and not just commits. It is local to your copy of the respository and others who have the same copy of the repoository would have their own version of reflog. It also starts empty after we clone the repository. Therefore, it is more like <code>shell</code> history. We can always get back to some state.
+<ul>
+<li><code>git reflog show hash_value</code> will show all the actions happened for the hash.</li>
+</ul></li>
+<li><code>git diff</code> to see the changes in the working tree compared to the index</li>
+<li><code>git diff --cached</code> to see the changes we changed compared to the last commit</li>
+<li><code>git difftool</code> shoes the changes in external tools such as <em>vimdiff</em></li>
+</ul>
+</section>
+<section id="interactive-staging" class="level2">
+<h2 class="anchored" data-anchor-id="interactive-staging">Interactive Staging</h2>
+<p>We can use interactive staging to control which files to stage and which parts of the files (patches) to stage all interactively. This is very helpful if we have done a lot of work on many files without staging anything. <code>git add -i</code> would put us in the interactive window.</p>
+<p>We can add/checkout/restore/stash patches (parts of files) by adding <code>--patch</code> or <code>-p</code> flag to their corresponding git command.</p>
+</section>
+<section id="stashing" class="level2">
+<h2 class="anchored" data-anchor-id="stashing">Stashing</h2>
+<p>It is very helpful when we staged some work and have modified tracked files and want to jump to different branch to work on something else. By default, Git stashes only modified and staged tracked files but not untracked files. We can add <code>-u</code> to add also untracked files.</p>
+<ul>
+<li>We can run <code>git stash</code> to stash the work.</li>
+<li><code>git stash list</code> to list all the stashes.</li>
+<li><code>git stash apply</code> to apply last stash OR <code>git stash apply stashname</code>. This keeps the stash on the stack.</li>
+<li><code>git stash drop</code> to remove a stash.</li>
+<li><code>git stash pop</code> to apply and remove last stash in one command.</li>
+</ul>
+<p>We can apply stashes from one branch on another branches.</p>
+<p>To avoid issues/merge conflicts when trying to apply stashes, it may be helpful to create new branch and apply stash in the new branch. This can be done by <code>git stash branch newbranchname</code>. This will create new branch, checkout last commit you were on, apply stash, and then drop the stash.</p>
+</section>
+<section id="managing-history" class="level2">
+<h2 class="anchored" data-anchor-id="managing-history">Managing History</h2>
+<ul>
+<li><code>git log</code> has all the information we need to the repo’s history.
+<ul>
+<li><code>git log --all --decorate --graph --oneline</code> is great to get an overview and see the divergence of branches</li>
+<li><code>git log -n</code> will limit the log to the top n</li>
+<li><code>git log --oneline file</code> is useful to get an overview of the log of one file</li>
+<li><code>git log --pretty=format:'%C(yellow)%h%C(reset) - %an [%C(green)%ar%C(reset)] %s</code> to change the format of the log output</li>
+<li><code>git log -E -i --grep regexp</code> will do extended search the logs for the regexp phrase; case insensitive</li>
+<li><code>git log -S term</code> will search for changes related to that term in the code base (addition/deletion). Check this <a href="https://thoughtbot.com/blog/code-sleuthing-with-git">post</a></li>
+<li><code>git log -G regexp</code> will search for changes related to the regexp in the code base; but looks for patterns not literal string.</li>
+</ul></li>
+<li><code>git show commit</code> will show everything that happened with that commit including <strong>diff</strong></li>
+<li><code>git blame file</code> is useful to know who did what to the file and when especially if we want to trace who introduced some bug/logic to the codebase. Use <code>-L</code> to restrict to specific lines. Use <code>-C</code> to detect if block of lines were copied from other files that were in the same commit.</li>
+</ul>
+</section>
+<section id="bisect" class="level2">
+<h2 class="anchored" data-anchor-id="bisect">Bisect</h2>
+<p>Git Bisect is useful to trace when a bug is introduced to get the commit that introduced the bug especially if the commit was pretty far in the history. It does binary search between the commit that you believe was good (no bug) and the current commit or any commit that we know has the bug. Below are a typical workflow:</p>
+<ul>
+<li><code>git bisect start</code> to start the binary search</li>
+<li><code>git bisect bad</code> which means current <code>HEAD</code> is the bad commit which would be last commit in the range of commits of the binary search</li>
+<li><code>git bisect good commit</code> which tells Git that the provided commit didn’t have the bug and would be the first commit in the range of commits of the binary search</li>
+<li>We can use the three commands in one command <code>git bisect start badcommit goodcommit</code></li>
+<li>From here, we interactively run either <code>git bisect good</code> to tell Git the given commit is good so it does binary search from next commit to the last commit OR <code>git bisect bad</code> to tell Git that the given commit is bad and the next binary search stops at the commit before it. We keep doing this until we arrive at the commit that introduced the bug.</li>
+</ul>
+<p>We can also use a script that runs tests for us to check whether a commit is good or bad and automate the whole process:</p>
+<ul>
+<li><code>git bisect start badcommit goodcommit</code></li>
+<li><code>git bisect run test-script.sh</code> OR <code>git bisect run make rule</code> OR <code>git bisect run pytest</code>. For each commit, <code>git bisect</code> runs the script or command on the checked out commit. If it returns 0 -&gt; good; otherwise, bad.</li>
+</ul>
+</section>
+<section id="submodules" class="level2">
+<h2 class="anchored" data-anchor-id="submodules">Submodules</h2>
+<p>Git submodules are Git repositories inside Git repository that allows us to track them and keep commit histories separate. Each submodule would be in different directory inside the project git repository.</p>
+<ul>
+<li>We can add submodule by <code>git submodule add URL</code>. This will create a directory with the name of the Git repository (we can have different names using <code>git submodule add URL name</code>). If we run <code>git status</code>, we see that Git added the directory as special type of file as well as add a file named <code>.gitmodules</code> that has the <em>path</em> and the <em>URL</em> for each submodule. We need to commit those two files to include them in our main project history.</li>
+<li>If we clone a project that has submodules, we can either pass <code>--recurse-submodules</code> to initialize and pull all contents of all submodules OR go in each submodule directory and run <code>git submodule update --init</code> (add <code>--recursive</code> if there are any nested submodules.</li>
+<li>To pull out changes made to submodules, run <code>git submodule update --remote submodule_name</code></li>
+<li><code>git diff --submodule</code> to get a nice diff for submodules</li>
+</ul>
+</section>
+<section id="hooks" class="level2">
+<h2 class="anchored" data-anchor-id="hooks">Hooks</h2>
+<p>Git <a href="https://thoughtbot.com/blog/use-git-hooks-to-automate-annoying-tasks">hooks</a> are scripts that can either be client-side hooks that run for operations such as committing/merging or system-side hooks that run on network operations such as receiving pushed commits. All hooks are stored in <code>.git/hooks</code> directory. Git prepopulates any new Git repository with example hooks that end with <code>.sample</code>. To use such hooks, remove the extrension. We can write hooks in many languages such as Python but they have to be executable and can’t have any extension. Also, client-side hooks aren’t copied when the repository is cloned.</p>
+<p>Below are the most common client-side hooks:</p>
+<ul>
+<li><code>pre-commit</code>: Runs before we type the commit message and abort if the return code is not zero. This can be used to run tests, check code style, check for documentation or whitespaces, etc.</li>
+<li><code>prepare-commit-msg</code>: Runs before the commit message editor but after the default message is created.</li>
+<li><code>commit-msg</code>: Typically used to check if a commit message conforms to some predefined patterns.</li>
+<li><code>post-commit</code>: Runs after the commit proccess is completed.</li>
+</ul>
+<p>There are other client-side hooks such as <code>pre-rebase</code>, <code>pre-merge</code>, <code>post-merge</code>, etc.</p>
+<p>Below are the most common system-side hooks:</p>
+<ul>
+<li><code>pre-receive</code>: Runs when handling a push from client. It can be used to check for things such as rejecting non-fast-forwards or access control.</li>
+<li><code>update</code>: Similar to <code>pre-receive</code> but runs once for each branch the pusher is trying to update.</li>
+<li><code>post-receive</code>: Runs after the entire push process is completed. It can be used to notify users or update services.</li>
+</ul>
+</section>
+<section id="resetting" class="level2">
+<h2 class="anchored" data-anchor-id="resetting">Resetting</h2>
+<p><code>git reset HEAD|commit</code> command allows us to:</p>
+<ul>
+<li>Move what the branch <code>HEAD</code> points to (stops if <code>--soft</code> and everything will be in the staging).</li>
+<li>Make the index look like HEAD (stops here if not <code>--hard</code>)</li>
+<li>Make the working directory look like the index</li>
+</ul>
+<p>If we provide a path such as <code>git reset filepath</code>, it is a shorthand for <code>git reset --mixed HEAD filepath</code> and does the following:</p>
+<ul>
+<li>Move what the branch <code>HEAD</code> points to (skipped)</li>
+<li>Make the index look like <code>HEAD</code>; i.e.&nbsp;has the effect of unstaging the file</li>
+</ul>
+<p>If we run <code>git reset commit -- filepath</code>, it will act as if we reverted the content of the file to what was in the commit and then ran <code>git add</code> on the file without changing working directory. The <code>HEAD</code> and the working directory would have the same version of the file. Therefore, running <code>git commit</code> will commit the changes back to what was in the commit leaving both index file and <code>HEAD</code> point to the same changes.</p>
+<p><code>git checkout</code> without paths is similar to <code>git reset</code> with two differences:</p>
+<ul>
+<li><code>reset</code> moves the branch <code>HEAD</code> points to while <code>checkout</code> moves <code>HEAD</code> itself. For example, <code>git checkout branch</code> would change what <code>HEAD</code> is pointing to while <code>git reset commit</code> would change what branch points to.</li>
+<li><code>checkout</code> is working-directory safe where it tries to do a trivial merge but <code>reset --hard</code> will overwrite working-directory.</li>
+</ul>
+<p><code>git checkout filepath</code> is similar to `git reset –hard filepath -&gt; overwrite working directory.</p>
+</section>
+<section id="inspecting-commit-ranges" class="level2">
+<h2 class="anchored" data-anchor-id="inspecting-commit-ranges">Inspecting Commit Ranges</h2>
+<ul>
+<li><code>^</code> refers to the parent. <code>HEAD^</code> means the parent of last commit in the current branch.</li>
+<li><code>~</code> refers to the first parent. <code>HEAD~</code> means the first parent of last commit in the current branch. It will be different than <code>^</code> in the case a commit has multiple parents as is the case of merge commits that have multiple parents.</li>
+<li><code>HEAD~5</code> is equivalent in some sense to <code>HEAD^^^^^</code>.</li>
+<li>Double dots (<code>..</code>): If we want to see the commits that are reachable from target branch (commit) but not the source branch (commit), we use <code>git log sourcecommit..targetcommit</code>.</li>
+<li>Triple dots (<code>...</code>): If we want to see the commits that are reachable by either of the branches (commits) but not from both of them, we use <code>git log sourcecommit...targetcommit</code>. This will return commits unique to sourcecommit and targetcommit but not common commit.</li>
+<li>Multiple points: If we want to see the commits for multiple points such as <code>git log refA refB ^refC</code> which means commits reachable from refA and refB but not C. Therefore:
+<ul>
+<li><code>git log refA..refB</code> is equivalent to <code>git log refB ^refA</code></li>
+</ul></li>
+</ul>
+</section>
+<section id="grep" class="level2">
+<h2 class="anchored" data-anchor-id="grep">Grep</h2>
+<p>Git <code>grep</code> allows us to search for a pattern in working directory, index, and committed tree. We can also search in older versions of the code such as using old tags/commits, which <code>grep/ack</code> tools can’t.</p>
+<p>The most useful flags to use with grep is <code>git grep -n -p --break --heading pattern optional_path optionalcommit</code>.</p>
+</section>
+<section id="undoing" class="level2">
+<h2 class="anchored" data-anchor-id="undoing">Undoing</h2>
+<p><strong>Commits are immutable. This means that even though we can fix some stuff related to commits, we can’t change the commits themselves. They will still be in the history.</strong> Therefore, anything that is committed in Git can almost always be recovered. Even commits that were on branches that were deleted or commits that were overwritten with an –amend commit can be recovered. However, anything you lose that was never committed is likely never to be seen again.</p>
+<ul>
+<li><code>git commit --amend</code> will open an editor to write a new commit message to the already committed changes.
+<ul>
+<li><code>git commit --amend -m "message"</code> is a shorthand</li>
+<li><code>git commit --amend --no-edit</code> will add new files to the last commit; in case we forgot to add some files to that belong to the same commit</li>
+</ul></li>
+<li><code>git reset HEAD file</code> OR <code>git restore --staged file</code> will undo the staging of the file. This is helpful if we staged a file and then we need to change some things before committing.</li>
+<li><code>get checkout -- file</code> OR <code>git restore file</code> will delete all the changes made to a file. We will never be able to get back the deleted changes.</li>
+<li><code>get reset --soft HEAD~2</code> This will remove the commit from the history and point HEAD to its grand parent. <code>--soft</code> here means to keep the changes in the current working directory and index file. Therefore, running <code>git commit</code> would commit the latest changes and make grand parent as the parent of changes (<strong>Squashing Commits</strong>).</li>
+<li>To cancel the commit while writing the message, we can exit vim with <code>:cquit</code> which exits vim with error and git will get that error -&gt; won’t proceed in creating the commit.</li>
+</ul>
+</section>
+<section id="rebasing-history" class="level2">
+<h2 class="anchored" data-anchor-id="rebasing-history">Rebasing History</h2>
+<ul>
+<li><code>git add file</code> or <code>git add --all</code> or <code>git add directory</code>. This will add all changes made to a specific file/directory.</li>
+<li><code>git add --patch</code> Allows us to cherry pick the changes that we want to stage. This is useful if we want to split the changes we made to a specific file into different commits. When we run the command, we will interactively choose what we want to stage using shortcuts.</li>
+<li><code>git diff/log HEAD..HEAD~2</code> will give us the diff/log for the range between two commits in history. We can either choose hash_values of commits or their references such as HEAD/master.</li>
+<li><code>git reset --hard HEAD~1</code> will make HEAD point to its parent and remove last commit from log history. Note that the last commit is not completely removed, we see that with <code>git reflog</code>.</li>
+<li><code>git cherry-pick origin/master..master</code> will replay the commits with this range in another branch. This is useful when we commit to the wrong branch and we want to make those commits in another branch. We can use this command after we checkout the correct branch and run the above command. To remove the commits from the branch we first commit, we can use <code>git reset --hard</code> (even though the removed commits are still in our history).</li>
+<li><code>git rebase master</code> We want to take the work we’ve done on our feature branch, and reapply it as if it was done on top of the additional commits in our master branch. When performing the rebase, Git finds the commits unique to our branch and computes the diff off the changes they introduced, then moves to the target branch, master in this case, and one by one applies the diffs, creating new commits reusing the commit messages from our branch. Once done, it updates our branch to point at the newest of these commits created by reapplying the diffs.</li>
+<li>While we would never revise published history, specifically the master branch, we almost always revise our commits on feature branches before merging them in. We value a clean history, and the majority of the time, the commits in a feature branch contain many rounds of refactoring and PR reviews which we don’t want in the permanent history. Instead, we want the most direct and concise form of the history that fully captures the change we settled on in our feature branch after completing any refactoring or updates. Use <code>git rebase -i master</code> will allow us to do just that.
+<ul>
+<li>We can remove, reorder, squash, edit, and split commits using interactive rebase.</li>
+<li>Git applies and rewrite the changed commits and all the commits that follow the changed ones.</li>
+<li>It is highly recommended to not change history if you already pushed it to the remote server unless we’re working on feature branch and are doing it to clean up history before merging and close the pull request.</li>
+<li>Reording is simply reordering the commits shown in the editor.</li>
+<li>Be careful that the order of commits is reverse order. This means last commit will be last.</li>
+</ul></li>
+</ul>
+</section>
+<section id="packfiles" class="level2">
+<h2 class="anchored" data-anchor-id="packfiles">Packfiles</h2>
+<p>These are files that <em>Git</em> uses to combine files into single file to save space instead of having different versions of the same file taking all the space and only saves the original version with deltas where pack index file will have offsets that point to the object in the pack file. <em>Git</em> automatically runs this when we have too many loose files or when run <code>git gc</code> command or when we push to remote server.</p>
+</section>
 <section id="tags" class="level2">
 <h2 class="anchored" data-anchor-id="tags">Tags</h2>
 <ul>
@@ -887,7 +951,7 @@ Review all nbs</code></pre>
 </ul></li>
 </ul>
 <div class="cell" data-execution_count="96">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C <span class="op">/</span>Users<span class="op">/</span>imad<span class="op">/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C <span class="op">/</span>Users<span class="op">/</span>imad<span class="op">/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>/Users/imad/Desktop/git-repo/.git/refs/
 ├── heads
@@ -901,15 +965,15 @@ Review all nbs</code></pre>
 </div>
 </div>
 <div class="cell" data-execution_count="97">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>cat <span class="op">/</span>Users<span class="op">/</span>imad<span class="op">/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>tags<span class="op">/*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>cat <span class="op">/</span>Users<span class="op">/</span>imad<span class="op">/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>tags<span class="op">/*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>6e9c6886a2180fdfde291a130aa9e10a52bac679</code></pre>
 </div>
 </div>
 <div class="cell" data-execution_count="100">
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>cd <span class="op">~/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span></span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>git graph2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>cd <span class="op">~/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>git graph2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>* 6e9c688    (HEAD -&gt; master, tag: v.0.1, test) Renaming (Imad)
 * ff9e667    Add test1 dir (Imad)
@@ -952,7 +1016,7 @@ Review all nbs</code></pre>
 <li>We can delete remote branch <code>git push origin --delete branchname</code></li>
 </ul>
 <div class="cell" data-execution_count="108">
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>remotes<span class="op">/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>remotes<span class="op">/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>../../.git/refs/remotes/
 └── origin
@@ -963,93 +1027,12 @@ Review all nbs</code></pre>
 </div>
 </div>
 <div class="cell" data-execution_count="109">
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>cat ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>remotes<span class="op">/</span>origin<span class="op">/*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>cat ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>remotes<span class="op">/</span>origin<span class="op">/*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>ref: refs/remotes/origin/master
 e1d95ecb4c02e0c30a8635a37631c523d2041299</code></pre>
 </div>
 </div>
-</section>
-<section id="head-object" class="level2">
-<h2 class="anchored" data-anchor-id="head-object">HEAD Object</h2>
-<p><code>HEAD</code>, unlike the other objects we’ve discussed, is a singleton, meaning that there is only ever one HEAD. It identifies the currently checked out object. Typically, this is a branch (with that branch pointing to a commit), but it is possible to check out a commit directly, in which case HEAD would be pointing at that commit.</p>
-<p>HEAD is a file just like our branch objects. It lives at the root of the .git/ directory and its contents are similarly simple.</p>
-<div class="cell" data-execution_count="114">
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>cat <span class="op">/</span>Users<span class="op">/</span>imad<span class="op">/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span>.git<span class="op">/</span>HEAD</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>ref: refs/heads/master</code></pre>
-</div>
-</div>
-<div class="cell" data-execution_count="115">
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
-<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>cd <span class="op">~/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span></span>
-<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>git graph2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>* 6e9c688    (HEAD -&gt; master, tag: v.0.1, test) Renaming (Imad)
-* ff9e667    Add test1 dir (Imad)
-* e503b6e    Add test dir (Imad)
-* 8610c78    Add copied file (Imad)
-* ed738c9    (feature) Rebased all commits (Imad)
-* 2050b90    Add host to file (Imad)
-* 91eacf5    Add host (Imad)
-* ed27259    patch commit (Imad)
-* ff2d260    third commit (Imad)
-* 6dd0c14    Change second commit (Imad)
-* c2b7166    first commit (Imad)</code></pre>
-</div>
-</div>
-<div class="cell" data-execution_count="116">
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
-<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>cd <span class="op">~/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span></span>
-<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>git checkout <span class="dv">8610</span><span class="er">c78</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Note: checking out '8610c78'.
-
-You are in 'detached HEAD' state. You can look around, make experimental
-changes and commit them, and you can discard any commits you make in this
-state without impacting any branches by performing another checkout.
-
-If you want to create a new branch to retain commits you create, you may
-do so (now or later) by using -b with the checkout command again. Example:
-
-  git checkout -b &lt;new-branch-name&gt;
-
-HEAD is now at 8610c78 Add copied file</code></pre>
-</div>
-</div>
-<div class="cell" data-execution_count="118">
-<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>cat <span class="op">/</span>Users<span class="op">/</span>imad<span class="op">/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span>.git<span class="op">/</span>HEAD</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>8610c78113fe423b20a9f84d485b49af5ad089b0</code></pre>
-</div>
-</div>
-<div class="cell" data-execution_count="117">
-<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
-<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>cd <span class="op">~/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span></span>
-<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>git graph2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>* 6e9c688    (tag: v.0.1, test, master) Renaming (Imad)
-* ff9e667    Add test1 dir (Imad)
-* e503b6e    Add test dir (Imad)
-* 8610c78    (HEAD) Add copied file (Imad)
-* ed738c9    (feature) Rebased all commits (Imad)
-* 2050b90    Add host to file (Imad)
-* 91eacf5    Add host (Imad)
-* ed27259    patch commit (Imad)
-* ff2d260    third commit (Imad)
-* 6dd0c14    Change second commit (Imad)
-* c2b7166    first commit (Imad)</code></pre>
-</div>
-</div>
-</section>
-<section id="conclusion" class="level2">
-<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<ul>
-<li><strong>Objects</strong>: blobs, trees, and commits.</li>
-<li><strong>Refs</strong>: branches, tags, and remote branches.</li>
-<li><strong>HEAD</strong>: The single pointer to rule them all.</li>
-</ul>
-<p><img src="git-objects.png" width="500"></p>
 </section>
 <section id="operations" class="level2">
 <h2 class="anchored" data-anchor-id="operations">Operations</h2>
@@ -1066,22 +1049,6 @@ HEAD is now at 8610c78 Add copied file</code></pre>
 </section>
 <section id="git-customization" class="level2">
 <h2 class="anchored" data-anchor-id="git-customization">Git Customization</h2>
-<ul>
-<li>The <code>gitconfig</code> file is where Git stores and reads all configuration. The file lives in your home directory as a “dotfile”, ~/.gitconfig. The gitconfig file is read automatically before any Git command is run. That turns out to be very handy as it means you never have to reload or experience out-of-sync commands. Additionally, git automatically writes to it when we run commands like git config –global alias.ga.</li>
-<li>The config file is split into sections such as <em>color, alias, core, push, etc.</em> For example:</li>
-</ul>
-<div class="sourceCode" id="cb61"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="ex">[push]</span></span>
-<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>    <span class="ex">default</span> = upstream</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>is the same as git config –global push.default upstream. - Few useful configurations: - <code>push.default upstream</code> this instructs Git how to respond when you run git push with no arguments. With the upstream configuration, it will push the configured upstream tracking branch (set up with git push -u). - <code>merge.ff only</code> this configuration tells Git to reject merges that are non-fastforward. With fast-forward merges, no new commits are created, but instead the merging branch (typically master) is only moved to point at the commits on the target branch (typically our feature branch). - <code>fetch.prune true</code> this instructs Git to clear local references to remote branches which have been deleted when you pull. - By default, we can only execute one git command when aliasing. To execute more than one command, we can start the command with <code>!</code> and then we can execute multiple shell commands using pipes, &amp;&amp;, and ||. For example, <code>!git checkout master &amp;&amp; git pull &amp;&amp; git checkout -</code>. - <strong>Git subcommands</strong>: This would allow us to write scripts in any language we want; not necessarily bash, and make Git executes it. The script subcommand has to be: - On our $PATH - Marked as executable - The file name has to be prefixed with git and then dash and then the name of the command. For example, <code>git-subcommand-name</code>. Actually, all git commands are files that share all those criteria such as <code>git-add</code>. Below is an example of subcommand: ``<code>bash     #!/bin/bash     #     # Small wrapper around git commit. Bare 'cm' will enter normal git commit     # editor, but with args it will do a direct</code>commit -m`</p>
-<pre><code>if [[ $# &gt; 0 ]]; then
-    git commit -m "$@"
-else
-    git commit -v
-fi
-```</code></pre>
-<ul>
-<li><strong>Hooks</strong>: Hooks are scripts that can be set to run in response to certain events in Git such as before committing or after checkout. Some uses might be to enforce certain commit message standards on pushed commits, or to run the tests before committing. <a href="https://thoughtbot.com/blog/use-git-hooks-to-automate-annoying-tasks">Check out this post for more details</a></li>
-</ul>
 </section>
 <section id="github-and-remotes" class="level2">
 <h2 class="anchored" data-anchor-id="github-and-remotes">Github and Remotes</h2>
@@ -1166,6 +1133,19 @@ fi
 <li>Second look for/inside <code>~/.gitconfig</code> for each user. Any time we use <code>git config --global</code>, it reads/writes this file</li>
 <li>Finaly look for/inside <code>.gitconfig</code> inside the Git directory. Any time we use <code>git config --local</code>, it reads/writes this file</li>
 </ul>
+<p><code>gitconfig</code> file is read automatically before any Git command is run. That turns out to be very handy as it means you never have to reload or experience out-of-sync commands. Additionally, git automatically writes to it when we run commands like git config –global alias.ga.</p>
+<ul>
+<li>The config file is split into sections such as <em>color, alias, core, push, etc.</em> For example:</li>
+</ul>
+<div class="sourceCode" id="cb61"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="ex">[push]</span></span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>    <span class="ex">default</span> = upstream</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>is the same as git config –global push.default upstream. - Few useful configurations: - <code>push.default upstream</code> this instructs Git how to respond when you run git push with no arguments. With the upstream configuration, it will push the configured upstream tracking branch (set up with git push -u). - <code>merge.ff only</code> this configuration tells Git to reject merges that are non-fastforward. With fast-forward merges, no new commits are created, but instead the merging branch (typically master) is only moved to point at the commits on the target branch (typically our feature branch). - <code>fetch.prune true</code> this instructs Git to clear local references to remote branches which have been deleted when you pull. - By default, we can only execute one git command when aliasing. To execute more than one command, we can start the command with <code>!</code> and then we can execute multiple shell commands using pipes, &amp;&amp;, and ||. For example, <code>!git checkout master &amp;&amp; git pull &amp;&amp; git checkout -</code>. - <strong>Git subcommands</strong>: This would allow us to write scripts in any language we want; not necessarily bash, and make Git executes it. The script subcommand has to be: - On our $PATH - Marked as executable - The file name has to be prefixed with git and then dash and then the name of the command. For example, <code>git-subcommand-name</code>. Actually, all git commands are files that share all those criteria such as <code>git-add</code>. Below is an example of subcommand: ``<code>bash     #!/bin/bash     #     # Small wrapper around git commit. Bare 'cm' will enter normal git commit     # editor, but with args it will do a direct</code>commit -m`</p>
+<pre><code>if [[ $# &gt; 0 ]]; then
+    git commit -m "$@"
+else
+    git commit -v
+fi
+```</code></pre>
 </section>
 <section id="resources" class="level2">
 <h2 class="anchored" data-anchor-id="resources">Resources</h2>
