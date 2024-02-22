@@ -290,8 +290,17 @@ ga('send', {
    
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#git-object-model" id="toc-git-object-model" class="nav-link" data-scroll-target="#git-object-model">Git Object Model</a></li>
+  <li><a href="#git-object-model" id="toc-git-object-model" class="nav-link" data-scroll-target="#git-object-model">Git Object Model</a>
+  <ul class="collapse">
+  <li><a href="#blobs" id="toc-blobs" class="nav-link" data-scroll-target="#blobs">Blobs</a></li>
+  <li><a href="#trees" id="toc-trees" class="nav-link" data-scroll-target="#trees">Trees</a></li>
+  <li><a href="#commits" id="toc-commits" class="nav-link" data-scroll-target="#commits">Commits</a></li>
+  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section"></a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  </ul></li>
   <li><a href="#branches" id="toc-branches" class="nav-link" data-scroll-target="#branches">Branches</a></li>
+  <li><a href="#remote-branches" id="toc-remote-branches" class="nav-link" data-scroll-target="#remote-branches">Remote Branches</a></li>
+  <li><a href="#tags" id="toc-tags" class="nav-link" data-scroll-target="#tags">Tags</a></li>
   <li><a href="#cloning-repository" id="toc-cloning-repository" class="nav-link" data-scroll-target="#cloning-repository">Cloning Repository</a></li>
   <li><a href="#ignoring-files" id="toc-ignoring-files" class="nav-link" data-scroll-target="#ignoring-files">Ignoring Files</a></li>
   <li><a href="#removing-files" id="toc-removing-files" class="nav-link" data-scroll-target="#removing-files">Removing Files</a></li>
@@ -308,8 +317,6 @@ ga('send', {
   <li><a href="#undoing" id="toc-undoing" class="nav-link" data-scroll-target="#undoing">Undoing</a></li>
   <li><a href="#rebasing-history" id="toc-rebasing-history" class="nav-link" data-scroll-target="#rebasing-history">Rebasing History</a></li>
   <li><a href="#packfiles" id="toc-packfiles" class="nav-link" data-scroll-target="#packfiles">Packfiles</a></li>
-  <li><a href="#tags" id="toc-tags" class="nav-link" data-scroll-target="#tags">Tags</a></li>
-  <li><a href="#remote-branches" id="toc-remote-branches" class="nav-link" data-scroll-target="#remote-branches">Remote Branches</a></li>
   <li><a href="#operations" id="toc-operations" class="nav-link" data-scroll-target="#operations">Operations</a></li>
   <li><a href="#git-customization" id="toc-git-customization" class="nav-link" data-scroll-target="#git-customization">Git Customization</a></li>
   <li><a href="#github-and-remotes" id="toc-github-and-remotes" class="nav-link" data-scroll-target="#github-and-remotes">Github and Remotes</a></li>
@@ -329,16 +336,16 @@ ga('send', {
 <p><img src="git.webp" align="center" height="300px" width="500px"></p>
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p><strong>Git</strong> is a distributed version control system that thinks/stores it data as a series of snapshots (not delta). Each commit is a snapshot for the state of the system at the time of the commit. For files that haven’t changed, <em>Git</em> doesn’t store the file again but uses a pointer to the previous identical file that it stored before. It also lets us do almost all operations locally.</p>
-<p>Everything in <em>Git</em> is checksummed before it is stores in its object store using <code>SHA-1</code> hash. <code>SHA-1</code> hash returns 40 hexadecimal characters. All objects are referred to by their checksummed because <em>Git</em> is content addressable filesystem. This means that Git notice any changes to the files it tracks by comparing the checksummed of the stored version vs the current version.</p>
+<p><strong>Git</strong> is a distributed version control system that thinks/stores its data as a series of snapshots (not delta). Each commit is a snapshot for the state of the system at the time of the commit. For files that haven’t changed, <em>Git</em> doesn’t store the file again but uses a pointer to the previous identical file that it stored before. It also lets us do almost all operations locally.</p>
+<p>Everything in <em>Git</em> is checksummed before it is stored in its object store using <code>SHA-1</code> hash. <code>SHA-1</code> hash returns 40 hexadecimal characters. All objects are referred to by their checksummed because <em>Git</em> is content addressable filesystem. This means that Git notice any changes to the files it tracks by comparing the checksummed of the stored version vs the current version.</p>
 <p>All actions in <em>Git</em> only add data to the object store (Git database). Therefore, it is almost impossible to not undo any operation especially if we regularly push our Git database to other repository such as <em>Github</em>.</p>
 <p>Git has three states:</p>
 <ul>
 <li><strong>Modified</strong>: file changed but not yet committed.</li>
 <li><strong>Staged</strong>: marked changed file to go to next commit snapshot. Staging area is a single file that is typically called “index”, which stores information about what will go into our next commit snapshot. When we run <code>git add file</code>, Git does the following:
 <ul>
-<li>Computes checksum of the file and store the SHA-1 value in index file.</li>
-<li>Compress the contents of the file and store it in <code>.git</code> directory under <code>objects</code> where the first two characters of the checkum would be the name of the directory and the next 38 characters would be the name of the file.</li>
+<li>Computes checksum of the file and store the SHA-1 value in index file</li>
+<li>Compress the contents of the file and store it in <code>.git</code> directory under <code>objects</code> where the first two characters of the checkum would be the name of the directory and the next 38 characters would be the name of the file</li>
 <li>Add the checksum to the index file (staging area)</li>
 </ul></li>
 <li><strong>Committed</strong>: store data (snapshot) in the database. The snapshot is represented as tree for root directory of the Git project. When we run <code>git commit</code>, Git does the following:
@@ -359,7 +366,7 @@ ga('send', {
 <p><code>.git</code> directory which is at the root directory of the project has all the metadata for Git project such as the database (object store).</p>
 <p>Files can be in two states:</p>
 <ul>
-<li><strong>UnTracked</strong>: files that Git doesn’t know about. They are files that weren’t in any snapshot or in staging area. Therefore, they don’t have modified/unmodified states.</li>
+<li><strong>UnTracked</strong>: files that Git doesn’t know about. They are files that are neither in any snapshot nor in staging area. Therefore, they don’t have modified/unmodified states.</li>
 <li><strong>Tracked</strong>: files that were in last snapshot or in staging area. They have all states mentioned above.</li>
 </ul>
 </section>
@@ -436,28 +443,32 @@ drwxr-xr-x  94 imad  staff  3008 Mar 17  2020 ..
 040000 tree 6fea6c3802fd1cf83bf19bfc2302da6b79638ab5    missing-cs-semester</code></pre>
 </div>
 </div>
+<section id="blobs" class="level3">
+<h3 class="anchored" data-anchor-id="blobs">Blobs</h3>
 <ul>
-<li><code>blobs</code>: Binary large objects which stores only the context of the file; not its name (array of bytes).</li>
+<li><code>blobs</code> are binary large objects which stores only the context of the file; not its name (array of bytes).</li>
 </ul>
 <div class="sourceCode" id="cb11"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>type blob <span class="op">=</span> array<span class="op">&lt;</span>byte<span class="op">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<pre><code>    - It passed the type of file which is "blob", the number of characters in it, the separator character, and the actual content to the sha1sum to get the hash value.
-    - Since Git does not store the name of the file or any of its metadata, if you have two files with the same content then Git only stores it once.</code></pre>
+<ul>
+<li>The type of file which is “blob”, the number of characters in it, the separator character, and the actual content are passed to the sha1sum to get the hash value.</li>
+<li>Since Git does not store the name of the file or any of its metadata, if you have two files with the same content then Git only stores it once.</li>
+</ul>
 <div class="cell" data-execution_count="30">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>git cat<span class="op">-</span><span class="bu">file</span> <span class="op">-</span>p <span class="dv">58</span><span class="er">da9de606d62625c379fea5ca020d19d958fb18</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>git cat<span class="op">-</span><span class="bu">file</span> <span class="op">-</span>p <span class="dv">58</span><span class="er">da9de606d62625c379fea5ca020d19d958fb18</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># software-engineering
 Materials for software engineering.</code></pre>
 </div>
 </div>
 <div class="cell" data-execution_count="31">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>wc ..<span class="op">/</span>..<span class="op">/</span>README.md</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>wc ..<span class="op">/</span>..<span class="op">/</span>README.md</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       2       6      59 ../../README.md</code></pre>
 </div>
 </div>
 <div class="cell" data-execution_count="68">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>cat <span class="op">&lt;</span>(echo <span class="op">-</span>e <span class="st">"blob 60</span><span class="ch">\0</span><span class="st">"</span>) ..<span class="op">/</span>..<span class="op">/</span>README.md</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>cat <span class="op">&lt;</span>(echo <span class="op">-</span>e <span class="st">"blob 60</span><span class="ch">\0</span><span class="st">"</span>) ..<span class="op">/</span>..<span class="op">/</span>README.md</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>blob 60
 # software-engineering
@@ -465,42 +476,47 @@ Materials for software engineering.</code></pre>
 </div>
 </div>
 <div class="cell" data-execution_count="75">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # Since todo.md and todo2.md are identical, Git saves ONLY one copy</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 100644 blob b3dfa8b0b7c73f2c7156dfc69c737d05f2f900c3    file.txt</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 100644 blob c1ee9d5404109b66f21fa193da635aa8c4f04c47    todo.md</span></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 100644 blob c1ee9d5404109b66f21fa193da635aa8c4f04c47    todo2.md</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # Since todo.md and todo2.md are identical, Git saves ONLY one copy</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 100644 blob b3dfa8b0b7c73f2c7156dfc69c737d05f2f900c3    file.txt</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 100644 blob c1ee9d5404109b66f21fa193da635aa8c4f04c47    todo.md</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 100644 blob c1ee9d5404109b66f21fa193da635aa8c4f04c47    todo2.md</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="66">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>cat <span class="op">&lt;</span>(echo <span class="op">-</span>e <span class="st">"blob 58</span><span class="ch">\0</span><span class="st">"</span>) ..<span class="op">/</span>..<span class="op">/</span>README.md <span class="op">|</span> shasum</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>cat <span class="op">&lt;</span>(echo <span class="op">-</span>e <span class="st">"blob 58</span><span class="ch">\0</span><span class="st">"</span>) ..<span class="op">/</span>..<span class="op">/</span>README.md <span class="op">|</span> shasum</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>5ee782528aa7bc3d388c33339962f6fce514b39e  -</code></pre>
 </div>
 </div>
+</section>
+<section id="trees" class="level3">
+<h3 class="anchored" data-anchor-id="trees">Trees</h3>
 <ul>
-<li><code>trees</code>: Tree is a recursive data structure that contains other trees/blobs; i.e.&nbsp;it contains a list of pointers to other trees/blobs. In this context, tree is a directory. Therefore, the root directory is the main directory that has .git as its subdir. Each line in the tree object’s file contains a pointer (the object’s hash) to one such object (tree or blob), while also providing the mode, object type, and a name for the file or directory.</li>
+<li>Tree is a recursive data structure that contains other trees/blobs; i.e.&nbsp;it contains a list of pointers to other trees/blobs. In this context, tree is a directory. Therefore, the root directory is the main directory that has .git as its subdirectory. Each line in the tree object’s file contains a pointer (the object’s hash) to one such object (tree or blob), while also providing the mode, object type, and a name for the file or directory.</li>
 </ul>
-<div class="sourceCode" id="cb22"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">// a directory contains named files and directories</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>type tree <span class="op">=</span> map<span class="op">&lt;</span>sha1sum<span class="op">(</span>tree <span class="op">|</span> file<span class="op">),</span> tree <span class="op">|</span> file<span class="op">&gt;;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<pre><code>- It maps strings(hash values) to objects. So if a directory is empty, Git does not add it as untracked change until we add a file to it or any of its directory because empty directory has nothing to map stuff to. Therefore, to track empty directories, we can add `.gitkeep` to the directory if it is empty to be able to track it.
-- We pass all objects (not their contents) to get the hash value.
-- Tree objects themselves do not have names, much like blobs. Parent trees associate names for subtrees, and the root tree, referred to as the "working tree" of a repository, in fact has no name. This has two fun characteristics:
-    - The repo doesn't care what you call it. You can rename your local directory that contains your repository to anything you'd like. Git is blissfully unaware of the name of the directory that contains the .git repo directory.
-    - We can rename subtrees as much as we want, and only parent objects need to update. The subtree object itself and everything below remain untouched.</code></pre>
+<div class="sourceCode" id="cb21"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">// a directory contains named files and directories</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>type tree <span class="op">=</span> map<span class="op">&lt;</span>sha1sum<span class="op">(</span>tree <span class="op">|</span> file<span class="op">),</span> tree <span class="op">|</span> file<span class="op">&gt;;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
+<li>It maps strings (hash values) to objects. So if a directory is empty, Git does not add it as untracked change until we add a file or a directory to it because empty directory has nothing to map stuff to. Therefore, to track empty directories, we can add <code>.gitkeep</code> to the directory if it is empty to be able to track it.</li>
+<li>We pass all objects (not their contents) to get the hash value.</li>
+<li>Tree objects themselves do not have names, much like blobs. Parent trees associate names for subtrees, and the root tree, referred to as the “working tree” of a repository, in fact has no name. This has two fun characteristics:
+<ul>
+<li>The repo doesn’t care what you call it. You can rename your local directory that contains your repository to anything you’d like. Git is blissfully unaware of the name of the directory that contains the .git repo directory.</li>
+<li>We can rename subtrees as much as we want, and only parent objects need to update. The subtree object itself and everything below remain untouched.</li>
+</ul></li>
 <li>Trees summary:
 <ul>
-<li>Trees list out the contents of a directory (blobs and subtrees).</li>
-<li>For each object, the mode, permissions, type, hash, and name is listed.</li>
-<li>Tree objects must contain at least one blob or tree; otherwise, it won’t be tracked.</li>
-<li>Trees can be nested to any depth.</li>
-<li>Trees, like blobs, don’t store names. The names are stored in parent trees. Therefore, changing names of subtrees only change the names in the parent tree. Therefore, since root directory has no parent, changing its name doesn’t have any effect on git.</li>
-<li>Trees are named and stored in the objects directory by hashing their contents (the list of objects described above).</li>
+<li>Trees list out the contents of a directory (blobs and subtrees)</li>
+<li>For each object, the mode, permissions, type, hash, and name is listed</li>
+<li>Tree objects must contain at least one blob or tree; otherwise, it won’t be tracked</li>
+<li>Trees can be nested to any depth</li>
+<li>Trees, like blobs, don’t store names. The names are stored in parent trees. Therefore, changing names of subtrees only change the names in the parent tree. Therefore, since root directory has no parent, changing its name doesn’t have any effect on git</li>
+<li>Trees are named and stored in the objects directory by hashing their contents (the list of objects described above)</li>
 </ul></li>
 </ul>
 <div class="cell" data-execution_count="78">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># master is a branch that points to a commit which also points to a tree</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>git ls<span class="op">-</span>tree master</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># master is a branch that points to a commit which also points to a tree</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>git ls<span class="op">-</span>tree master</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>100644 blob ced9612a7d927cdb23d0ba2de47679504b0c9fc3    Command-Line-Environment.ipynb
 100644 blob 68fe60e479d316b7f40f194a8d3400e7f5c8af60    Data-Wrangling.ipynb
@@ -517,38 +533,43 @@ Materials for software engineering.</code></pre>
 100644 blob 5a0fa1a6cb3918e9c2d316433edfd5ccd275bd59    vim-tutorial.md</code></pre>
 </div>
 </div>
+</section>
+<section id="commits" class="level3">
+<h3 class="anchored" data-anchor-id="commits">Commits</h3>
+</section>
+<section id="section" class="level3">
+<h3 class="anchored" data-anchor-id="section"></h3>
 <ul>
-<li><code>commits</code>: Contain parent, message, author, commiter, and current tree. Therefore, it is a file like any other object.</li>
+<li><code>commits</code> contain parent, message, author, commiter, and current tree. Therefore, it is a file like any other object.</li>
 </ul>
-<div class="sourceCode" id="cb26"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co">// a commit has parents, metadata, and the top-level tree</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>type commit <span class="op">=</span> <span class="kw">struct</span> <span class="op">{</span></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    parent<span class="op">:</span> array<span class="op">&lt;</span>commit<span class="op">&gt;;</span></span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    author<span class="op">:</span> string</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    message<span class="op">:</span> string</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    snapshot<span class="op">:</span> tree</span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<pre><code>- It's worth noting that the commit object only contains a single reference to a working directory; Git doesn't store diffs. When diffing between two commits, it compares the working trees of the commits, computing the diff on demand.</code></pre>
+<div class="sourceCode" id="cb24"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co">// a commit has parents, metadata, and the top-level tree</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>type commit <span class="op">=</span> <span class="kw">struct</span> <span class="op">{</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    parent<span class="op">:</span> array<span class="op">&lt;</span>commit<span class="op">&gt;;</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    author<span class="op">:</span> string</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    message<span class="op">:</span> string</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    snapshot<span class="op">:</span> tree</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>It’s worth noting that the commit object only contains a single reference to a working directory; Git doesn’t store diffs. When diffing between two commits, it compares the working trees of the commits, computing the diff on demand.</li>
+</ul>
 <p>Git only stores the delta changes between commits and not everything. It also point to blobs/trees that have not been changed using old commits and don’t store them again for new commits. Therefore, if a file has not been changed from previous commit, the hash value for that commit is the same so its address is still the same -&gt; keep the same pointer.</p>
 <p><img src="git-objects-simple.png" height="400px" width="300px" align="center"></p>
-<p><strong>References</strong>: References are nothing but pointers to commits. They are stored under <code>.git/refs</code> directory as files where each file contains the hash_value of some commit.</p>
-<ul>
-<li>Since it is a hassle to always refer to objects by their 40 hexadecimal string, we can use references to refer to objects. Contrary to objects, references are mutable. For example, <code>master</code> always refers to the latest commit in the main branch. <code>HEAD</code> refers to where we currently are in the history which will be used when creating new snapshot by making the parent for this commit the <code>HEAD</code> and then update <code>HEAD</code>.</li>
-</ul>
-<div class="sourceCode" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>references <span class="op">=</span> <span class="bu">map</span><span class="op">&lt;</span>string, commit<span class="op">&gt;;</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> update_reference(name, <span class="bu">id</span>):</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    references[name] <span class="op">=</span> <span class="bu">id</span></span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> read_reference(name):</span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> references[name]</span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> load_reference(name_or_id):</span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> name_or_id <span class="kw">in</span> references:</span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> load(references[name_or_id])</span>
-<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
-<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> load(name_or_id)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>References</strong> are nothing but pointers to commits. They are stored under <code>.git/refs</code> directory as files where each file contains the hash value of some commit. Since it is a hassle to always refer to objects by their 40 hexadecimal string, we can use references to refer to objects. Contrary to objects, references are mutable. For example, <code>master</code> always refers to the latest commit in the main branch. <code>HEAD</code> refers to where we currently are in the history which will be used when creating new snapshot by making the parent for this commit the <code>HEAD</code> and then update <code>HEAD</code>.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>references <span class="op">=</span> <span class="bu">map</span><span class="op">&lt;</span>string, commit<span class="op">&gt;;</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> update_reference(name, <span class="bu">id</span>):</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    references[name] <span class="op">=</span> <span class="bu">id</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> read_reference(name):</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> references[name]</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> load_reference(name_or_id):</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> name_or_id <span class="kw">in</span> references:</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> load(references[name_or_id])</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> load(name_or_id)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell" data-execution_count="88">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C <span class="op">-</span>L <span class="dv">1</span> ..<span class="op">/</span>..<span class="op">/</span>.git</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C <span class="op">-</span>L <span class="dv">1</span> ..<span class="op">/</span>..<span class="op">/</span>.git</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>../../.git
 ├── COMMIT_EDITMSG
@@ -569,7 +590,7 @@ Materials for software engineering.</code></pre>
 </div>
 </div>
 <div class="cell" data-execution_count="89">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C <span class="op">-</span>L <span class="dv">1</span> ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C <span class="op">-</span>L <span class="dv">1</span> ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>../../.git/refs/
 ├── heads
@@ -580,7 +601,7 @@ Materials for software engineering.</code></pre>
 </div>
 </div>
 <div class="cell" data-execution_count="90">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C <span class="op">-</span>L <span class="dv">1</span> ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>heads<span class="op">/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C <span class="op">-</span>L <span class="dv">1</span> ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>heads<span class="op">/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>../../.git/refs/heads/
 └── master
@@ -589,19 +610,19 @@ Materials for software engineering.</code></pre>
 </div>
 </div>
 <div class="cell" data-execution_count="91">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>cat ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>heads<span class="op">/</span>master</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>cat ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>heads<span class="op">/</span>master</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>e1d95ecb4c02e0c30a8635a37631c523d2041299</code></pre>
 </div>
 </div>
 <div class="cell" data-execution_count="93">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>git cat<span class="op">-</span><span class="bu">file</span> <span class="op">-</span>t e1d95ecb4c02e0c30a8635a37631c523d2041299</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>git cat<span class="op">-</span><span class="bu">file</span> <span class="op">-</span>t e1d95ecb4c02e0c30a8635a37631c523d2041299</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>commit</code></pre>
 </div>
 </div>
 <div class="cell" data-execution_count="94">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>git cat<span class="op">-</span><span class="bu">file</span> <span class="op">-</span>p e1d95ecb4c02e0c30a8635a37631c523d2041299</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>git cat<span class="op">-</span><span class="bu">file</span> <span class="op">-</span>p e1d95ecb4c02e0c30a8635a37631c523d2041299</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>tree 75407c234b245d258c809de234e030f57dd98148
 parent 429137bbf1334dcea2719458bcc3a323cd829ecd
@@ -612,17 +633,17 @@ Review all nbs</code></pre>
 </div>
 </div>
 <p><code>HEAD</code>, unlike the other objects we’ve discussed, is a singleton, meaning that there is only ever one HEAD. It identifies the currently checked out object. Typically, this is a branch (with that branch pointing to a commit), but it is possible to check out a commit directly, in which case HEAD would be pointing at that commit.</p>
-<p>HEAD is a file just like our branch objects. It lives at the root of the .git/ directory and its contents are similarly simple.</p>
+<p>HEAD is a file just like our branch objects. It lives at the root of the .git directory and its contents are similarly simple.</p>
 <div class="cell" data-execution_count="114">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>cat <span class="op">/</span>Users<span class="op">/</span>imad<span class="op">/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span>.git<span class="op">/</span>HEAD</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>cat <span class="op">/</span>Users<span class="op">/</span>imad<span class="op">/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span>.git<span class="op">/</span>HEAD</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>ref: refs/heads/master</code></pre>
 </div>
 </div>
 <div class="cell" data-execution_count="115">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>cd <span class="op">~/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span></span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>git graph2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>cd <span class="op">~/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>git graph2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>* 6e9c688    (HEAD -&gt; master, tag: v.0.1, test) Renaming (Imad)
 * ff9e667    Add test1 dir (Imad)
@@ -638,9 +659,9 @@ Review all nbs</code></pre>
 </div>
 </div>
 <div class="cell" data-execution_count="116">
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>cd <span class="op">~/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span></span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>git checkout <span class="dv">8610</span><span class="er">c78</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>cd <span class="op">~/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>git checkout <span class="dv">8610</span><span class="er">c78</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Note: checking out '8610c78'.
 
@@ -657,15 +678,15 @@ HEAD is now at 8610c78 Add copied file</code></pre>
 </div>
 </div>
 <div class="cell" data-execution_count="118">
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>cat <span class="op">/</span>Users<span class="op">/</span>imad<span class="op">/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span>.git<span class="op">/</span>HEAD</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>cat <span class="op">/</span>Users<span class="op">/</span>imad<span class="op">/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span>.git<span class="op">/</span>HEAD</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>8610c78113fe423b20a9f84d485b49af5ad089b0</code></pre>
 </div>
 </div>
 <div class="cell" data-execution_count="117">
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>cd <span class="op">~/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span></span>
-<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>git graph2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>cd <span class="op">~/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>git graph2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>* 6e9c688    (tag: v.0.1, test, master) Renaming (Imad)
 * ff9e667    Add test1 dir (Imad)
@@ -680,19 +701,22 @@ HEAD is now at 8610c78 Add copied file</code></pre>
 * c2b7166    first commit (Imad)</code></pre>
 </div>
 </div>
-<p>Summary:</p>
+</section>
+<section id="summary" class="level3">
+<h3 class="anchored" data-anchor-id="summary">Summary</h3>
 <ul>
-<li><strong>Objects</strong>: blobs, trees, and commits.</li>
-<li><strong>Refs</strong>: branches, tags, and remote branches.</li>
-<li><strong>HEAD</strong>: The single pointer to rule them all.</li>
+<li><strong>Objects</strong>: blobs, trees, and commits</li>
+<li><strong>Refs</strong>: branches, tags, and remote branches</li>
+<li><strong>HEAD</strong>: The single pointer to rule them all</li>
 </ul>
 <p><img src="git-objects.png" width="500"></p>
+</section>
 </section>
 <section id="branches" class="level2">
 <h2 class="anchored" data-anchor-id="branches">Branches</h2>
 <ul>
-<li><code>heads</code> aka branches (because it is a collection of HEADS for each branch in Git repo) are nothing but pointers to commits. They are very simple objects, they only contain hash_value of the commit they are pointing to. Therefore, creating a branch is just creating a file in <code>refs/heads</code> with the name of the branch that has the commit of the HEAD of that branch. At the beginning, this file will have the commit the HEAD points to from the branch you were on when created the branch.</li>
-<li>When you switch branches, Git resets your working directory to look like it did the last time you committed on that branch. It adds, removes, and modifies files automatically to make sure your working copy is what the branch looked like on your last commit to it.</li>
+<li><code>heads</code> aka branches (because it is a collection of <code>HEAD</code>s for each branch in Git repo) are nothing but pointers to commits. They are very simple objects, they only contain hash value of the commit they are pointing to. Therefore, creating a branch is just creating a file in <code>refs/heads</code> with the name of the branch that has the commit of the HEAD of that branch. At the beginning, this file will have the commit the HEAD points to from the branch you were on when created the branch.</li>
+<li>When you switch branches, Git resets your working directory to look like it did the last time you committed on that branch. It adds, removes, and modifies files automatically to make sure your working copy is what the branch looked like on your last commit.</li>
 <li>Merging:
 <ul>
 <li>If we are merging a feature branch into master branch and the feature branch is directly ahead of master where master’s last commit can be reached following feature branch commit’s history, Git will do fast-forward merge, which means it just updates the pointer to point forward.</li>
@@ -722,6 +746,110 @@ HEAD is now at 8610c78 Add copied file</code></pre>
 </ul></li>
 <li><code>heads</code> are for local branches.</li>
 </ul>
+</section>
+<section id="remote-branches" class="level2">
+<h2 class="anchored" data-anchor-id="remote-branches">Remote Branches</h2>
+<p><strong>Remote Branches</strong> are the same as local branches. They are again files that point to commits.</p>
+<ul>
+<li>We can have multiple remotes where each one has its own branches. <code>origin</code> is the (default) main one typically used for the upstream (we can change it to other names when cloning a repo such as <code>git clone URL -o anothername</code>. <code>git remote -v</code> would list all the remotes for the repository. We can add remotes <code>git remote add remote_name remote_url</code></li>
+<li>All the remote branches under <code>remotes/origin/</code> will be updated ONLY when communicating with the remote server. Such branches act more as bookmarks and can’t be changed by any Git commands to point to different commits directly.</li>
+<li>Local branch is called <strong>Tracking Branch</strong> if it trackds a remote branche (called <strong>Upstream Branches</strong>)
+<ul>
+<li><code>git checkout branchname</code> would create tracking branch that tracks default remote remotename/branchname if branchname doesn’t exist and exactly matches one upstream branch names.</li>
+<li>We can have local branches track branches from different remotes: <code>git checkout -b remotename/remotebranch</code> which would create local branch named remotebranch that tracks remotebranch on remotename server. We can have different name for our local branch as <code>git checkout -b localbranchname remotename/remotebranch</code>.</li>
+<li>If we already have a local branch, we can use <code>git branch --set-upstream-to=remotename/remotebranch</code> to make current branch track remotebranch on remotename server</li>
+<li>If I am on a tracking branch and run <code>git pull</code>, it knows which server to fetch from and which branch to merge in</li>
+</ul></li>
+<li><code>git fetch</code> download the changes from all branches from remote to local repository without merging them. We should do the merge ourselves such as <code>git merge origin/branchname</code></li>
+<li><code>git pull</code> download and merge the changes from remote to local branches.</li>
+<li><code>git remote show remote_name</code> will show everything in details about the <code>remote_name</code> such as URL, local/remote branches, etc.</li>
+<li>We can rename/delete remotes as <code>git remote rename/remove remote_name</code>. If we delete remote, it deletes all config/settings related to the deleted remote. Renaming would rename branches.</li>
+<li>Remote references are read-only, which means we will never update them using <code>git commit</code> but <em>Git</em> manages them as bookmarks.</li>
+<li>By default, <em>Git</em> fetches all references from remote to heads -&gt; All branches. We can change this behavior on the command line when running <code>git fetch remote_name remote_branch:refs/remotes/remote_name/branch_name</code></li>
+<li>Pushing local branch to remote can be done in different forms:
+<ul>
+<li><code>git push origin branchname</code></li>
+<li><code>git push origin localbranchname:remotebranchname</code> which lets us have a different name on the remote server for our local branch</li>
+</ul></li>
+<li>We can delete remote branch <code>git push origin --delete branchname</code></li>
+</ul>
+<div class="cell" data-execution_count="108">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>remotes<span class="op">/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>../../.git/refs/remotes/
+└── origin
+    ├── HEAD
+    └── master
+
+1 directory, 2 files</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="109">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>cat ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>remotes<span class="op">/</span>origin<span class="op">/*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>ref: refs/remotes/origin/master
+e1d95ecb4c02e0c30a8635a37631c523d2041299</code></pre>
+</div>
+</div>
+</section>
+<section id="tags" class="level2">
+<h2 class="anchored" data-anchor-id="tags">Tags</h2>
+<ul>
+<li><strong>Tags</strong> are like branches, they too point to a commit and stored under <code>.git/refs</code> dir in <code>tags</code> dir. They are basically files that have the commits they are pointing to.</li>
+<li>Tags can be created simply by <code>git tag version_no</code>. We can also create more complex tags by adding annotations, PGP signature, and other metadata. In this case, they will be stored in <code>refs/objects</code> dir and the tag will simply be the hash value of the tag object (which will also contain the hash of the commit that was tagged).
+<ul>
+<li>Annotated tags, however, are stored as full objects in the Git database. They’re checksummed; contain the tagger name, email, and date; have a tagging message; and can be signed and verified with GNU Privacy Guard (GPG). It’s generally recommended that you create annotated tags so you can have all this information.</li>
+</ul></li>
+<li>We can also tag previous commits by specifying their hash abbreviation: <code>git tag -a v1.0 ca21323</code></li>
+<li><code>git push</code> doesn’t transfer tags to remote server, we have to explicityly push tags: <code>git push origin v1.0</code></li>
+<li><code>git tag</code> to list all tags</li>
+<li><code>git tag -l pattern</code> to look for tags that match specific patters</li>
+<li>We can checkout tags to inspect files from that version: <code>git checkout tagname</code>. Any changes that are made and committed wouldn’t belong to any branch and be unreachable unless we use exact commit hash. Therefore, to fix issues, create new branch from tag and do the changes.</li>
+<li>The <strong>difference</strong> between tags and branches is that branches evolve over time; however, tags point to fixed commit in repo’s history.</li>
+<li>We can delete tags:
+<ul>
+<li>locally: <code>git tag -d tagname</code></li>
+<li>remote: <code>git push remote_name -d tagname</code> OR <code>git push remote_name :refs/tags/tagname</code></li>
+</ul></li>
+</ul>
+<div class="cell" data-execution_count="96">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C <span class="op">/</span>Users<span class="op">/</span>imad<span class="op">/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>/Users/imad/Desktop/git-repo/.git/refs/
+├── heads
+│&nbsp;&nbsp; ├── feature
+│&nbsp;&nbsp; ├── master
+│&nbsp;&nbsp; └── test
+└── tags
+    └── v.0.1
+
+2 directories, 4 files</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="97">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>cat <span class="op">/</span>Users<span class="op">/</span>imad<span class="op">/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>tags<span class="op">/*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>6e9c6886a2180fdfde291a130aa9e10a52bac679</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="100">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>cd <span class="op">~/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>git graph2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>* 6e9c688    (HEAD -&gt; master, tag: v.0.1, test) Renaming (Imad)
+* ff9e667    Add test1 dir (Imad)
+* e503b6e    Add test dir (Imad)
+* 8610c78    Add copied file (Imad)
+* ed738c9    (feature) Rebased all commits (Imad)
+* 2050b90    Add host to file (Imad)
+* 91eacf5    Add host (Imad)
+* ed27259    patch commit (Imad)
+* ff2d260    third commit (Imad)
+* 6dd0c14    Change second commit (Imad)
+* c2b7166    first commit (Imad)</code></pre>
+</div>
+</div>
 </section>
 <section id="cloning-repository" class="level2">
 <h2 class="anchored" data-anchor-id="cloning-repository">Cloning Repository</h2>
@@ -930,110 +1058,6 @@ HEAD is now at 8610c78 Add copied file</code></pre>
 <h2 class="anchored" data-anchor-id="packfiles">Packfiles</h2>
 <p>These are files that <em>Git</em> uses to combine files into single file to save space instead of having different versions of the same file taking all the space and only saves the original version with deltas where pack index file will have offsets that point to the object in the pack file. <em>Git</em> automatically runs this when we have too many loose files or when run <code>git gc</code> command or when we push to remote server.</p>
 </section>
-<section id="tags" class="level2">
-<h2 class="anchored" data-anchor-id="tags">Tags</h2>
-<ul>
-<li><strong>Tags</strong> are like branches, they too point to a commit and stored under <code>.git/refs</code> dir in <code>tags</code> dir. They are basically files that have the commits they are pointing to.</li>
-<li>Tags can be created simply by <code>git tag version_no</code>. We can also create more complex tags by adding annotations, PGP signature, and other metadata. In this case, they will be stored in <code>refs/objects</code> dir and the tag will simply be the hash value of the tag object (which will also contain the hash of the commit that was tagged).
-<ul>
-<li>Annotated tags, however, are stored as full objects in the Git database. They’re checksummed; contain the tagger name, email, and date; have a tagging message; and can be signed and verified with GNU Privacy Guard (GPG). It’s generally recommended that you create annotated tags so you can have all this information.</li>
-</ul></li>
-<li>We can also tag previous commits by specifying their hash abbreviation: <code>git tag -a v1.0 ca21323</code></li>
-<li><code>git push</code> doesn’t transfer tags to remote server, we have to explicityly push tags: <code>git push origin v1.0</code></li>
-<li><code>git tag</code> to list all tags</li>
-<li><code>git tag -l pattern</code> to look for tags that match specific patters</li>
-<li>We can checkout tags to inspect files from that version: <code>git checkout tagname</code>. Any changes that are made and committed wouldn’t belong to any branch and be unreachable unless we use exact commit hash. Therefore, to fix issues, create new branch from tag and do the changes.</li>
-<li>The <strong>difference</strong> between tags and branches is that branches evolve over time; however, tags point to fixed commit in repo’s history.</li>
-<li>We can delete tags:
-<ul>
-<li>locally: <code>git tag -d tagname</code></li>
-<li>remote: <code>git push remote_name -d tagname</code> OR <code>git push remote_name :refs/tags/tagname</code></li>
-</ul></li>
-</ul>
-<div class="cell" data-execution_count="96">
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C <span class="op">/</span>Users<span class="op">/</span>imad<span class="op">/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>/Users/imad/Desktop/git-repo/.git/refs/
-├── heads
-│&nbsp;&nbsp; ├── feature
-│&nbsp;&nbsp; ├── master
-│&nbsp;&nbsp; └── test
-└── tags
-    └── v.0.1
-
-2 directories, 4 files</code></pre>
-</div>
-</div>
-<div class="cell" data-execution_count="97">
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>cat <span class="op">/</span>Users<span class="op">/</span>imad<span class="op">/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>tags<span class="op">/*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>6e9c6886a2180fdfde291a130aa9e10a52bac679</code></pre>
-</div>
-</div>
-<div class="cell" data-execution_count="100">
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
-<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>cd <span class="op">~/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span></span>
-<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>git graph2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>* 6e9c688    (HEAD -&gt; master, tag: v.0.1, test) Renaming (Imad)
-* ff9e667    Add test1 dir (Imad)
-* e503b6e    Add test dir (Imad)
-* 8610c78    Add copied file (Imad)
-* ed738c9    (feature) Rebased all commits (Imad)
-* 2050b90    Add host to file (Imad)
-* 91eacf5    Add host (Imad)
-* ed27259    patch commit (Imad)
-* ff2d260    third commit (Imad)
-* 6dd0c14    Change second commit (Imad)
-* c2b7166    first commit (Imad)</code></pre>
-</div>
-</div>
-</section>
-<section id="remote-branches" class="level2">
-<h2 class="anchored" data-anchor-id="remote-branches">Remote Branches</h2>
-<p><strong>Remote Branches</strong> are the same as local branches. They are again files that point to commits.</p>
-<ul>
-<li>We can have multiple remotes where each one has its own branches. <code>origin</code> is the (default) main one typically used for the upstream (we can change it to other names when cloning a repo such as <code>git clone URL -o anothername</code>. <code>git remote -v</code> would list all the remotes for the repository. We can add remotes <code>git remote add remote_name remote_url</code></li>
-<li>All the remote branches under <code>remotes/origin/</code> will be updated ONLY when communicating with the remote server. Such branches act more as bookmarks and can’t be changed by any Git commands to point to different commits directly.</li>
-<li>Local branch is called <strong>Tracking Branch</strong> if it trackds a remote branche (called <strong>Upstream Branches</strong>)
-<ul>
-<li><code>git checkout branchname</code> would create tracking branch that tracks default remote remotename/branchname if branchname doesn’t exist and exactly matches one upstream branch names.</li>
-<li>We can have local branches track branches from different remotes: <code>git checkout -b remotename/remotebranch</code> which would create local branch branchname that tracks branchname on remotename server. We can have different name for our local branch as <code>git checkout -b localbranchname remotename/remotebranch</code>.</li>
-<li>If we already have a local branch, we can use <code>git branch --set-upstream-to=remotename/remotebranch</code> to make current branch trask remotebranch on remotename server</li>
-<li>If I am on a tracking branch and run <code>git pull</code>, it knows which server to fetch from and which branch to merge in</li>
-</ul></li>
-<li><code>git fetch</code> download the changes from all branches from remote to local repository without merging them. We should do the merge ourselves such as <code>git merge origin/branchname</code></li>
-<li><code>git pull</code> download and merge the changes from remote to local branches.</li>
-<li><code>git remote show remote_name</code> will show everything in details about the <code>remote_name</code> such as URL, local/remote branches, etc.</li>
-<li>We can rename/delete remotes as <code>git remote rename/remove remote_name</code>. If we delete remote, it deletes all config/settings related to the deleted remote. Renaming would rename branches.</li>
-<li>Remote references are read-only, which means we will never update them using <code>git commit</code> but <em>Git</em> manages them as bookmarks.</li>
-<li>By default, <em>Git</em> fetches all references from remote to heads -&gt; All branches. We can change this behavior on the command line when running <code>git fetch remote_name remote_branch:refs/remotes/remote_name/branch_name</code></li>
-<li>Pushing local branch to remote can be done in different forms:
-<ul>
-<li><code>git push origin branchname</code></li>
-<li><code>git push origin localbranchname:remotebranchname</code> which lets us have a different name on the remote server for our local branch</li>
-</ul></li>
-<li>We can delete remote branch <code>git push origin --delete branchname</code></li>
-</ul>
-<div class="cell" data-execution_count="108">
-<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>remotes<span class="op">/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>../../.git/refs/remotes/
-└── origin
-    ├── HEAD
-    └── master
-
-1 directory, 2 files</code></pre>
-</div>
-</div>
-<div class="cell" data-execution_count="109">
-<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>cat ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>remotes<span class="op">/</span>origin<span class="op">/*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>ref: refs/remotes/origin/master
-e1d95ecb4c02e0c30a8635a37631c523d2041299</code></pre>
-</div>
-</div>
-</section>
 <section id="operations" class="level2">
 <h2 class="anchored" data-anchor-id="operations">Operations</h2>
 <ul>
@@ -1137,8 +1161,8 @@ e1d95ecb4c02e0c30a8635a37631c523d2041299</code></pre>
 <ul>
 <li>The config file is split into sections such as <em>color, alias, core, push, etc.</em> For example:</li>
 </ul>
-<div class="sourceCode" id="cb61"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="ex">[push]</span></span>
-<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>    <span class="ex">default</span> = upstream</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb58"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="ex">[push]</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>    <span class="ex">default</span> = upstream</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>is the same as git config –global push.default upstream. - Few useful configurations: - <code>push.default upstream</code> this instructs Git how to respond when you run git push with no arguments. With the upstream configuration, it will push the configured upstream tracking branch (set up with git push -u). - <code>merge.ff only</code> this configuration tells Git to reject merges that are non-fastforward. With fast-forward merges, no new commits are created, but instead the merging branch (typically master) is only moved to point at the commits on the target branch (typically our feature branch). - <code>fetch.prune true</code> this instructs Git to clear local references to remote branches which have been deleted when you pull. - By default, we can only execute one git command when aliasing. To execute more than one command, we can start the command with <code>!</code> and then we can execute multiple shell commands using pipes, &amp;&amp;, and ||. For example, <code>!git checkout master &amp;&amp; git pull &amp;&amp; git checkout -</code>. - <strong>Git subcommands</strong>: This would allow us to write scripts in any language we want; not necessarily bash, and make Git executes it. The script subcommand has to be: - On our $PATH - Marked as executable - The file name has to be prefixed with git and then dash and then the name of the command. For example, <code>git-subcommand-name</code>. Actually, all git commands are files that share all those criteria such as <code>git-add</code>. Below is an example of subcommand: ``<code>bash     #!/bin/bash     #     # Small wrapper around git commit. Bare 'cm' will enter normal git commit     # editor, but with args it will do a direct</code>commit -m`</p>
 <pre><code>if [[ $# &gt; 0 ]]; then
     git commit -m "$@"
