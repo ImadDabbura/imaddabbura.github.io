@@ -303,9 +303,7 @@ ga('send', {
   <li><a href="#tags" id="toc-tags" class="nav-link" data-scroll-target="#tags">Tags</a></li>
   <li><a href="#cloning-repository" id="toc-cloning-repository" class="nav-link" data-scroll-target="#cloning-repository">Cloning Repository</a></li>
   <li><a href="#ignoring-files" id="toc-ignoring-files" class="nav-link" data-scroll-target="#ignoring-files">Ignoring Files</a></li>
-  <li><a href="#removing-files" id="toc-removing-files" class="nav-link" data-scroll-target="#removing-files">Removing Files</a></li>
   <li><a href="#general" id="toc-general" class="nav-link" data-scroll-target="#general">General</a></li>
-  <li><a href="#interactive-staging" id="toc-interactive-staging" class="nav-link" data-scroll-target="#interactive-staging">Interactive Staging</a></li>
   <li><a href="#stashing" id="toc-stashing" class="nav-link" data-scroll-target="#stashing">Stashing</a></li>
   <li><a href="#managing-history" id="toc-managing-history" class="nav-link" data-scroll-target="#managing-history">Managing History</a></li>
   <li><a href="#bisect" id="toc-bisect" class="nav-link" data-scroll-target="#bisect">Bisect</a></li>
@@ -317,10 +315,7 @@ ga('send', {
   <li><a href="#undoing" id="toc-undoing" class="nav-link" data-scroll-target="#undoing">Undoing</a></li>
   <li><a href="#rebasing-history" id="toc-rebasing-history" class="nav-link" data-scroll-target="#rebasing-history">Rebasing History</a></li>
   <li><a href="#packfiles" id="toc-packfiles" class="nav-link" data-scroll-target="#packfiles">Packfiles</a></li>
-  <li><a href="#operations" id="toc-operations" class="nav-link" data-scroll-target="#operations">Operations</a></li>
-  <li><a href="#git-customization" id="toc-git-customization" class="nav-link" data-scroll-target="#git-customization">Git Customization</a></li>
   <li><a href="#github-and-remotes" id="toc-github-and-remotes" class="nav-link" data-scroll-target="#github-and-remotes">Github and Remotes</a></li>
-  <li><a href="#vim-and-git-integration" id="toc-vim-and-git-integration" class="nav-link" data-scroll-target="#vim-and-git-integration">Vim and Git Integration</a></li>
   <li><a href="#typical-workflow" id="toc-typical-workflow" class="nav-link" data-scroll-target="#typical-workflow">Typical Workflow</a></li>
   <li><a href="#configuration" id="toc-configuration" class="nav-link" data-scroll-target="#configuration">Configuration</a></li>
   <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources">Resources</a></li>
@@ -752,10 +747,10 @@ HEAD is now at 8610c78 Add copied file</code></pre>
 <p><strong>Remote Branches</strong> are the same as local branches. They are again files that point to commits.</p>
 <ul>
 <li>We can have multiple remotes where each one has its own branches. <code>origin</code> is the (default) main one typically used for the upstream (we can change it to other names when cloning a repo such as <code>git clone URL -o anothername</code>. <code>git remote -v</code> would list all the remotes for the repository. We can add remotes <code>git remote add remote_name remote_url</code></li>
-<li>All the remote branches under <code>remotes/origin/</code> will be updated ONLY when communicating with the remote server. Such branches act more as bookmarks and can’t be changed by any Git commands to point to different commits directly.</li>
-<li>Local branch is called <strong>Tracking Branch</strong> if it trackds a remote branche (called <strong>Upstream Branches</strong>)
+<li>All the remote branches under <code>remotes/origin/</code> will be updated <strong>ONLY</strong> when communicating with the remote server. Such branches act more as bookmarks and can’t be changed by any Git commands to point to different commits directly.</li>
+<li>Local branch is called <strong>Tracking Branch</strong> if it tracks a remote branch (called <strong>Upstream Branch</strong>)
 <ul>
-<li><code>git checkout branchname</code> would create tracking branch that tracks default remote remotename/branchname if branchname doesn’t exist and exactly matches one upstream branch names.</li>
+<li><code>git checkout branchname</code> would create tracking branch that tracks default remotename/branchname if branchname doesn’t exist and exactly matches one upstream branch names.</li>
 <li>We can have local branches track branches from different remotes: <code>git checkout -b remotename/remotebranch</code> which would create local branch named remotebranch that tracks remotebranch on remotename server. We can have different name for our local branch as <code>git checkout -b localbranchname remotename/remotebranch</code>.</li>
 <li>If we already have a local branch, we can use <code>git branch --set-upstream-to=remotename/remotebranch</code> to make current branch track remotebranch on remotename server</li>
 <li>If I am on a tracking branch and run <code>git pull</code>, it knows which server to fetch from and which branch to merge in</li>
@@ -879,42 +874,33 @@ e1d95ecb4c02e0c30a8635a37631c523d2041299</code></pre>
 <li>You can negate a pattern by starting it with an exclamation point (!). Example: <code>!test.log</code> tracks <code>test.log</code></li>
 </ul>
 </section>
-<section id="removing-files" class="level2">
-<h2 class="anchored" data-anchor-id="removing-files">Removing Files</h2>
-<p><code>git rm</code> would remove a file from working tree and stage it. If we ever staged files by mistake, we could run <code>git rm --cached filename</code> to remove it from staging area and keep it on hard drive especially if we don’t want Git to track it.</p>
-</section>
 <section id="general" class="level2">
 <h2 class="anchored" data-anchor-id="general">General</h2>
 <ul>
-<li><code>git stash</code> does not by default save untracked files, it only saves untracked changes to tracked files. It will be stored under <code>.git/refs</code>
-<ul>
-<li><code>git stash -u</code> will save everything</li>
-<li><code>git stash drop</code> will delete the saved changes</li>
-<li><code>git stash pop</code> will bring back the saved changes</li>
-</ul></li>
-<li><code>git reflog</code> remember all actions taken in a repository (even intermediate steps such as creating branches, clone, pull, etc.) and not just commits. It is local to your copy of the respository and others who have the same copy of the repoository would have their own version of reflog. It also starts empty after we clone the repository. Therefore, it is more like <code>shell</code> history. We can always get back to some state.
+<li><p><code>git rm</code> would remove a file from working tree and stage it. If we ever staged files by mistake, we could run <code>git rm --cached filename</code> to remove it from staging area and keep it on hard drive especially if we don’t want Git to track it.</p></li>
+<li><p><code>git mv</code> both change the file name and stage it</p></li>
+<li><p><code>git reflog</code> remember all actions taken in a repository (even intermediate steps such as creating branches, clone, pull, etc.) and not just commits. It is local to your copy of the respository and others who have the same copy of the repoository would have their own version of reflog. It also starts empty after we clone the repository. Therefore, it is more like <code>shell</code> history. We can always get back to some state.</p>
 <ul>
 <li><code>git reflog show hash_value</code> will show all the actions happened for the hash.</li>
 </ul></li>
-<li><code>git diff</code> to see the changes in the working tree compared to the index</li>
-<li><code>git diff --cached</code> to see the changes we changed compared to the last commit</li>
-<li><code>git difftool</code> shoes the changes in external tools such as <em>vimdiff</em></li>
+<li><p><code>git diff</code> to see the changes in the working tree compared to the index</p></li>
+<li><p><code>git diff --cached</code> to see the changes compared to the last commit</p></li>
+<li><p><code>git difftool</code> shows the changes in external tools such as <em>vimdiff</em></p></li>
+<li><p><code>git add -i</code> for interactive staging to control which files to stage and which parts of the files (patches) to stage all interactively. This is very helpful if we have done a lot of work on many files without staging anything. We can <code>add/checkout/restore/stash</code> patches (parts of files) by adding <code>--patch</code> or <code>-p</code> flag to their corresponding git command.</p></li>
+<li><p><code>git commit -m "test"</code> When we commit, It involves at least a change to one blob. This will lead to a creation of new tree with current state of the code that reflect the changes. Git then creates commit object that will point to the new tree. Finally, it will update the current branch to point to the newly created branch.</p></li>
+<li><p><code>git merge --ff-only branch-name</code> This kind of merge creates no objects, It just updates the current branch to a different commit.</p></li>
+<li><p><code>git merge branch-name</code> In contrast to the fast forward merge, Git creates a new tree by trying its best to combine two divergent branches. It then creates a new commit that point to the newly created tree and the parent would be the two commits; latest commit from each branch. This is what <em>merging using pull requests</em> does on Github. It may not be preferable because the actual code changes during merge when Git tries to combine all of them and we may end up with conflict.</p></li>
 </ul>
-</section>
-<section id="interactive-staging" class="level2">
-<h2 class="anchored" data-anchor-id="interactive-staging">Interactive Staging</h2>
-<p>We can use interactive staging to control which files to stage and which parts of the files (patches) to stage all interactively. This is very helpful if we have done a lot of work on many files without staging anything. <code>git add -i</code> would put us in the interactive window.</p>
-<p>We can add/checkout/restore/stash patches (parts of files) by adding <code>--patch</code> or <code>-p</code> flag to their corresponding git command.</p>
 </section>
 <section id="stashing" class="level2">
 <h2 class="anchored" data-anchor-id="stashing">Stashing</h2>
-<p>It is very helpful when we staged some work and have modified tracked files and want to jump to different branch to work on something else. By default, Git stashes only modified and staged tracked files but not untracked files. We can add <code>-u</code> to add also untracked files.</p>
+<p>It is very helpful when we staged some work and/or have modified tracked files and want to jump to different branch to work on something else. By default, Git stashes only modified and staged tracked files but not untracked files. We can add <code>-u</code> to add also untracked files.</p>
 <ul>
-<li>We can run <code>git stash</code> to stash the work.</li>
-<li><code>git stash list</code> to list all the stashes.</li>
-<li><code>git stash apply</code> to apply last stash OR <code>git stash apply stashname</code>. This keeps the stash on the stack.</li>
-<li><code>git stash drop</code> to remove a stash.</li>
-<li><code>git stash pop</code> to apply and remove last stash in one command.</li>
+<li>We can run <code>git stash</code> to stash the work</li>
+<li><code>git stash list</code> to list all the stashes</li>
+<li><code>git stash apply</code> to apply last stash OR <code>git stash apply stashname</code>. This keeps the stash on the stack</li>
+<li><code>git stash drop</code> to remove a stash</li>
+<li><code>git stash pop</code> to apply and remove last stash in one command</li>
 </ul>
 <p>We can apply stashes from one branch on another branches.</p>
 <p>To avoid issues/merge conflicts when trying to apply stashes, it may be helpful to create new branch and apply stash in the new branch. This can be done by <code>git stash branch newbranchname</code>. This will create new branch, checkout last commit you were on, apply stash, and then drop the stash.</p>
@@ -1031,7 +1017,7 @@ e1d95ecb4c02e0c30a8635a37631c523d2041299</code></pre>
 </ul></li>
 <li><code>git reset HEAD file</code> OR <code>git restore --staged file</code> will undo the staging of the file. This is helpful if we staged a file and then we need to change some things before committing.</li>
 <li><code>get checkout -- file</code> OR <code>git restore file</code> will delete all the changes made to a file. We will never be able to get back the deleted changes.</li>
-<li><code>get reset --soft HEAD~2</code> This will remove the commit from the history and point HEAD to its grand parent. <code>--soft</code> here means to keep the changes in the current working directory and index file. Therefore, running <code>git commit</code> would commit the latest changes and make grand parent as the parent of changes (<strong>Squashing Commits</strong>).</li>
+<li><code>get reset --soft HEAD~2</code> This will remove the commits from the history and point HEAD to its grand parent. <code>--soft</code> here means to keep the changes in the current working directory and index file. Therefore, running <code>git commit</code> would commit the latest changes and make grand parent as the parent of changes (<strong>Squashing Commits</strong>).</li>
 <li>To cancel the commit while writing the message, we can exit vim with <code>:cquit</code> which exits vim with error and git will get that error -&gt; won’t proceed in creating the commit.</li>
 </ul>
 </section>
@@ -1058,22 +1044,6 @@ e1d95ecb4c02e0c30a8635a37631c523d2041299</code></pre>
 <h2 class="anchored" data-anchor-id="packfiles">Packfiles</h2>
 <p>These are files that <em>Git</em> uses to combine files into single file to save space instead of having different versions of the same file taking all the space and only saves the original version with deltas where pack index file will have offsets that point to the object in the pack file. <em>Git</em> automatically runs this when we have too many loose files or when run <code>git gc</code> command or when we push to remote server.</p>
 </section>
-<section id="operations" class="level2">
-<h2 class="anchored" data-anchor-id="operations">Operations</h2>
-<ul>
-<li><strong>Checkout</strong>: <code>git checkout -b new-branch</code> First Git will follow from the HEAD to the current branch to determine what commit hash that branch points at. With that info, Git creates a new file in .git/refs/heads with our new branch name as the file name, and the commit hash as the contents. Lastly, it updates HEAD to point at this new ref.</li>
-<li><strong>Verbose Checkout</strong>: <code>git checkout -b new-branch master</code> It is almost the same as the previous checkout, but instead of starting from <code>HEAD</code>, it starts from the base branch we provided which is <code>master</code> in this case.</li>
-<li><strong>Checkout a File</strong>: <code>git checkout commit/refs -- file_name</code> This will look at the tree that the commit is pointing at (in the case of refs, it looks first for the commit that the refs is pointing at), then walking down the tree to get to the blob for the file and restore that version of that file. This will update the working directory and the index file with the version we checked out.</li>
-<li><strong>Committing</strong>: <code>git commit -m "test"</code> When we commit, It involves at least a change to one blob. This will lead to a creation of new tree with current state of the code that reflect the changes. Git then creates commit object that will point to the new tree. Finally, it will update the current branch to point to the newly created branch.</li>
-<li><strong>Fast-Forward Merge</strong>: <code>git merge --ff-only branch-name</code> This kind of merge creates no objects, It just updates the current branch to a different commit.</li>
-<li><strong>Merge</strong>: <code>git merge branch-name</code> In contrast to the fast forward merge, Git creates a new tree by trying its best to combine two divergent branches. It then creates a new commit that point to the newly created tree and the parent would be the two commits; latest commit from each branch. This is what <em>merging using pull requests</em> does on Github. It may not be preferable because the actual code changes during merge when Git tries to combine all of them and we may end up with conflict.</li>
-<li><strong>Rebase</strong>: <code>git rebase master</code> Rebase can be performed when we have new commits on both our feature branch, and our “upstream” branch (typically master). We want to update the commits on our branch so they include the changes on master. When we rebase, we essentially replay our work on the current version of the upstream branch. Git does this by calculating each of the diffs for the commits unique to our branch, then applies them onto the upstream branch one by one. Each application of a diff creates a new commit, reusing the associated commit message and author details. Note that the old commits still exist, but they are now orphaned. No refs point to them any longer and so they are essentially unreachable, although we could easily restore them by checking the reflog. Once all the new commits have been created, our branch is updated to point at the tip commit of our rebased group. From here, we could now fast-forward merge the master branch into ours, as we are now in line with its history. The key difference between this and a traditional merge is that all of the commits here were created by us, and we get to interact with them and test them as needed before merging them into master.</li>
-<li><strong>Interactive Rebase</strong>: <code>git rebase -i master</code> This mainly happens when we are on a feature branch that is ahead of master and we want to combine both branches w/o incorporating all the commits from feature branch. In this case, we want to squash all the commits in the feature branch into one commit that will be later part of the master branch and not pollute the logs on master branch with a lot small incremental commits from the feature branch. Note that interactive rebase doesn’t change any code, it only cleans up history.</li>
-</ul>
-</section>
-<section id="git-customization" class="level2">
-<h2 class="anchored" data-anchor-id="git-customization">Git Customization</h2>
-</section>
 <section id="github-and-remotes" class="level2">
 <h2 class="anchored" data-anchor-id="github-and-remotes">Github and Remotes</h2>
 <ul>
@@ -1093,23 +1063,14 @@ e1d95ecb4c02e0c30a8635a37631c523d2041299</code></pre>
 <li>We can force to push local branch to another existing upstream branch. This is risky and we may not need to use it <code>git push --force origin local-branch:upstream-branch</code></li>
 </ul>
 </section>
-<section id="vim-and-git-integration" class="level2">
-<h2 class="anchored" data-anchor-id="vim-and-git-integration">Vim and Git Integration</h2>
-<ul>
-<li>Add this to Vim <code>autocmd Filetype gitcommit setlocal spell textwidth=72</code></li>
-<li><a href="https://github.com/tpope/vim-fugitive">Fugitive Plugin</a>
-<ul>
-<li><a href="http://vimcasts.org/blog/2011/05/the-fugitive-series/">five part Fugitive series on Vimcasts</a></li>
-</ul></li>
-<li><a href="https://github.com/christoomey/vim-conflicted">Conflicted</a> Optimizing Fugitive for merge and rebase conflicts</li>
-</ul>
-</section>
 <section id="typical-workflow" class="level2">
 <h2 class="anchored" data-anchor-id="typical-workflow">Typical Workflow</h2>
 <ul>
 <li>Always start by creating new branch for new features. Almost always strive to not commit directly to master branch even for small changes. The workflow is:</li>
 </ul>
+<blockquote class="blockquote">
 <p>create new branch <strong>-&gt;</strong> make small changes <strong>-&gt;</strong> create pull request <strong>-&gt;</strong> pass code reviews and other stuff like CI/CD <strong>-&gt;</strong> Rebase master into feature branch <strong>-&gt;</strong> Interactive rebase to squash all commits from feature branch into one commit message <strong>-&gt;</strong> Fast forward merge with master <strong>-&gt;</strong> push master <strong>-&gt;</strong> delete feature branch locally and on upstream.</p>
+</blockquote>
 <ul>
 <li>Always commit small changes and don’t wait for large changes to commit. It will be harder to figure out what changes have been made and make it difficult for code reviewers to understand. We can always refine commits with interactive rebase.</li>
 <li><strong>Pull Requests:</strong>
@@ -1163,13 +1124,30 @@ e1d95ecb4c02e0c30a8635a37631c523d2041299</code></pre>
 </ul>
 <div class="sourceCode" id="cb58"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="ex">[push]</span></span>
 <span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>    <span class="ex">default</span> = upstream</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>is the same as git config –global push.default upstream. - Few useful configurations: - <code>push.default upstream</code> this instructs Git how to respond when you run git push with no arguments. With the upstream configuration, it will push the configured upstream tracking branch (set up with git push -u). - <code>merge.ff only</code> this configuration tells Git to reject merges that are non-fastforward. With fast-forward merges, no new commits are created, but instead the merging branch (typically master) is only moved to point at the commits on the target branch (typically our feature branch). - <code>fetch.prune true</code> this instructs Git to clear local references to remote branches which have been deleted when you pull. - By default, we can only execute one git command when aliasing. To execute more than one command, we can start the command with <code>!</code> and then we can execute multiple shell commands using pipes, &amp;&amp;, and ||. For example, <code>!git checkout master &amp;&amp; git pull &amp;&amp; git checkout -</code>. - <strong>Git subcommands</strong>: This would allow us to write scripts in any language we want; not necessarily bash, and make Git executes it. The script subcommand has to be: - On our $PATH - Marked as executable - The file name has to be prefixed with git and then dash and then the name of the command. For example, <code>git-subcommand-name</code>. Actually, all git commands are files that share all those criteria such as <code>git-add</code>. Below is an example of subcommand: ``<code>bash     #!/bin/bash     #     # Small wrapper around git commit. Bare 'cm' will enter normal git commit     # editor, but with args it will do a direct</code>commit -m`</p>
-<pre><code>if [[ $# &gt; 0 ]]; then
-    git commit -m "$@"
-else
-    git commit -v
-fi
-```</code></pre>
+<p>is the same as <code>git config --global push.default upstream</code>.</p>
+<p>Few useful configurations:</p>
+<ul>
+<li><code>push.default upstream</code> this instructs Git how to respond when you run git push with no arguments. With the upstream configuration, it will push the configured upstream tracking branch (set up with <code>git push -u</code>).</li>
+<li><code>merge.ff only</code> this configuration tells Git to reject merges that are non-fastforward. With fast-forward merges, no new commits are created, but instead the merging branch (typically master) is only moved to point at the commits on the target branch (typically our feature branch).</li>
+<li><code>fetch.prune true</code> this instructs Git to clear local references to remote branches which have been deleted when you pull.</li>
+</ul>
+<p>By default, we can only execute one git command when aliasing. To execute more than one command, we can start the command with <code>!</code> and then we can execute multiple shell commands using pipes, &amp;&amp;, and ||. For example, <code>!git checkout master &amp;&amp; git pull &amp;&amp; git checkout -</code>.</p>
+<p><strong>Git subcommands</strong> allow us to write scripts in any language we want; not necessarily bash, and make Git executes it. The script subcommand has to be:</p>
+<ul>
+<li>On our <code>$PATH</code></li>
+<li>Marked as executable</li>
+<li>The file name has to be prefixed with git and then dash and then the name of the command. For example, <code>git-subcommand-name</code>. Actually, all git commands are files that share all those criteria such as <code>git-add</code>. Below is an example of subcommand:</li>
+</ul>
+<div class="sourceCode" id="cb59"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Small wrapper around git commit. Bare 'cm' will enter normal git commit</span></span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a><span class="co"># editor, but with args it will do a direct `commit -m`</span></span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">[[</span> <span class="va">$#</span> <span class="ot">&gt;</span> 0 <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"</span><span class="va">$@</span><span class="st">"</span></span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">git</span> commit <span class="at">-v</span></span>
+<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="resources" class="level2">
 <h2 class="anchored" data-anchor-id="resources">Resources</h2>
@@ -1179,6 +1157,12 @@ fi
 <li><a href="https://github.com/pluralsight/git-internals-pdf">Git Internals</a>: A deep dive into the Git object model, with more detail and nuance than we could cover in the this course’s video on the topic</li>
 <li><a href="https://github.com/thoughtbot/guides/tree/main/">Thoughtbot Guides</a></li>
 <li><a href="https://cli.github.com/">Github CLI</a></li>
+<li>Add this to Vim <code>autocmd Filetype gitcommit setlocal spell textwidth=72</code></li>
+<li><a href="https://github.com/tpope/vim-fugitive">Fugitive Plugin</a>
+<ul>
+<li><a href="http://vimcasts.org/blog/2011/05/the-fugitive-series/">five part Fugitive series on Vimcasts</a></li>
+</ul></li>
+<li><a href="https://github.com/christoomey/vim-conflicted">Conflicted</a> Optimizing Fugitive for merge and rebase conflicts</li>
 </ul>
 
 
