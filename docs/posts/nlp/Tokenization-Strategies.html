@@ -361,12 +361,13 @@ ga('send', {
 <li><strong>Advantages</strong>:
 <ul>
 <li>Helps us avoid misspellings and rare words</li>
-<li>Very small vocabulary</li>
+<li>Very small vocabulary. Therefore, embedding and output layer would be small which means less computation</li>
 </ul></li>
 <li><strong>Drawbacks</strong>:
 <ul>
 <li>Sequences length will be very long</li>
 <li>Linguistic structures such as words now need to be learned from data. This requires much more data, memory, and computation</li>
+<li>Because we have fixed context length for most LLM and the sequence would be very long, we would lose the ability to attend the important tokens from before</li>
 </ul></li>
 </ul>
 </section>
@@ -405,6 +406,7 @@ ga('send', {
 <li>We can work around this issue by including top n most frequent words. For example, if we include top 100,000 words -&gt; the first embedding layer would be ~ 0.5 million parameters. However, because all other words will be mapped to the <code>UNK</code> token, the model has no idea about the words associated with the <code>UNK</code> token and we may lose some important information</li>
 </ul></li>
 <li>Some languages don’t have well-defined idea of what constitute a word</li>
+<li>Because we have so many tokens that are either rare or never happened in the training data, these tokens would either never been activated or maybe fe passes activated them which is not good to get good embedding vector for them. Therefore, they are occupying memory w/o being that useful</li>
 </ul></li>
 </ul>
 </section>
@@ -468,7 +470,7 @@ ga('send', {
 <li>Replace instances of the character pair with the new subword</li>
 <li>Goto step2 until desired vocab size</li>
 </ol>
-<p>Let’s again use 🤗 transformers library to see tokenize the same text.</p>
+<p>Let’s again use 🤗 transformers library to tokenize the same text.</p>
 <div class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> XLMRobertaTokenizer</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
