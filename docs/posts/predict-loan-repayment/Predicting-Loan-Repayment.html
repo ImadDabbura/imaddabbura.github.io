@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.4.553">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -24,7 +24,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -59,7 +59,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -85,7 +85,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
   "algolia": {
     "application-id": "PVDXB8B7OS",
     "search-only-api-key": "eb3007c200831c30465f8a5172690cf0",
@@ -94,6 +94,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "show-logo": true,
     "libDir": "site_libs"
   },
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -102,6 +107,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
@@ -136,17 +142,44 @@ ga('send', {
 });
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
 <link rel="stylesheet" href="../../styles.css">
 <meta property="og:title" content="Imad Dabbura - Predicting Loan Repayment">
 <meta property="og:description" content="Trying different modeling techniques to deal with imbalanced data, missing values, and ensemble models.">
 <meta property="og:image" content="https://imaddabbura.github.io/posts/predict-loan-repayment/feature.jpg">
-<meta property="og:site-name" content="Imad Dabbura">
+<meta property="og:site_name" content="Imad Dabbura">
 <meta name="twitter:title" content="Imad Dabbura - Predicting Loan Repayment">
 <meta name="twitter:description" content="Trying different modeling techniques to deal with imbalanced data, missing values, and ensemble models.">
 <meta name="twitter:image" content="https://imaddabbura.github.io/posts/predict-loan-repayment/feature.jpg">
@@ -157,10 +190,10 @@ ga('send', {
 <body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a href="../../index.html" class="navbar-brand navbar-brand-logo">
     <img src="../../images/palestine-flag.png" alt="" class="navbar-logo">
     </a>
@@ -175,56 +208,56 @@ ga('send', {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../about.html" rel="" target="">
- <span class="menu-text">About</span></a>
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html" rel="" target="">
- <span class="menu-text">Posts</span></a>
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Posts</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../projects-index.html" rel="" target="">
- <span class="menu-text">Projects</span></a>
+    <a class="nav-link" href="../../projects-index.html"> 
+<span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../mlops.html" rel="" target="">
- <span class="menu-text">MLOps</span></a>
+    <a class="nav-link" href="../../mlops.html"> 
+<span class="menu-text">MLOps</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../til.html" rel="" target="">
- <span class="menu-text">Today I Learned</span></a>
+    <a class="nav-link" href="../../til.html"> 
+<span class="menu-text">Today I Learned</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../dl-tips-tricks.html" rel="" target="">
- <span class="menu-text">DL Tips &amp; Tricks</span></a>
+    <a class="nav-link" href="../../dl-tips-tricks.html"> 
+<span class="menu-text">DL Tips &amp; Tricks</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../cmn-ai.html" rel="" target="">
- <span class="menu-text">cmn_ai</span></a>
+    <a class="nav-link" href="../../cmn-ai.html"> 
+<span class="menu-text">cmn_ai</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../tiny-pytorch.html" rel="" target="">
- <span class="menu-text">Tiny-PyTorch</span></a>
+    <a class="nav-link" href="../../tiny-pytorch.html"> 
+<span class="menu-text">Tiny-PyTorch</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-more" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-more" role="button" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">More</span>
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-more">    
         <li>
-    <a class="dropdown-item" href="../../books-summaries.html" rel="" target="">
+    <a class="dropdown-item" href="../../books-summaries.html">
  <span class="dropdown-text">Books Summaries</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../misc-notes.html" rel="" target="">
+    <a class="dropdown-item" href="../../misc-notes.html">
  <span class="dropdown-text">Misc. Notes</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../reading-list.html" rel="" target="">
+    <a class="dropdown-item" href="../../reading-list.html">
  <span class="dropdown-text">Reading List</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../resume.html" rel="" target="">
+    <a class="dropdown-item" href="../../resume.html">
  <span class="dropdown-text">Resume</span></a>
   </li>  
     </ul>
@@ -232,17 +265,18 @@ ga('send', {
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/imaddabbura" rel="" target=""><i class="bi bi-github" role="img">
+    <a class="nav-link" href="https://github.com/imaddabbura"> <i class="bi bi-github" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://twitter.com/imadphd" rel="" target=""><i class="bi bi-twitter" role="img">
+    <a class="nav-link" href="https://twitter.com/imadphd"> <i class="bi bi-twitter" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
 </ul>
-            <div class="quarto-navbar-tools">
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
   <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
   <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
   <div class="quarto-reader-toggle-btn">
@@ -250,7 +284,6 @@ ga('send', {
   </div>
 </a>
 </div>
-          </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
 </header>
@@ -311,10 +344,11 @@ ga('send', {
   </ul></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
+
 
 
 
@@ -353,8 +387,8 @@ ga('send', {
 <li>If we have missing values</li>
 <li>If we have imbalanced data</li>
 </ul>
-<div class="cell" data-execution_count="1">
-<details>
+<div id="cell-5" class="cell" data-execution_count="1">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -391,8 +425,8 @@ ga('send', {
 <span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>sns.set_context(<span class="st">"notebook"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div class="cell" data-code_folding="[0]" data-execution_count="2">
-<details>
+<div id="cell-6" class="cell" data-code_folding="[0]" data-execution_count="2">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the data</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"../data/loans.csv"</span>)</span>
@@ -442,6 +476,7 @@ not_fully_paid        0
 dtype: int64</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="2">
+<div>
 <div>
 
 
@@ -557,8 +592,9 @@ dtype: int64</code></pre>
 </div>
 </div>
 </div>
-<div class="cell" data-code_folding="[0]" data-execution_count="3">
-<details>
+</div>
+<div id="cell-7" class="cell" data-code_folding="[0]" data-execution_count="3">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get number of positve and negative examples</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>pos <span class="op">=</span> df[df[<span class="st">"not_fully_paid"</span>] <span class="op">==</span> <span class="dv">1</span>].shape[<span class="dv">0</span>]</span>
@@ -579,7 +615,11 @@ Negative examples = 8045
 Proportion of positive to negative examples = 19.06%</code></pre>
 </div>
 <div class="cell-output cell-output-display">
-<p><img src="Predicting-Loan-Repayment_files/figure-html/cell-5-output-2.png" class="img-fluid"></p>
+<div>
+<figure class="figure">
+<p><img src="Predicting-Loan-Repayment_files/figure-html/cell-5-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>It looks like we have only one categorical feature (“purpose”). Also, six features have missing values (no missing values in labels). Moreover, the data set is pretty imbalanced as expected where positive examples (“not paid fully”) are only 19%. We’ll explain in the next section how to handle all of them after giving an overview of ensemble methods.</p>
@@ -610,14 +650,15 @@ Proportion of positive to negative examples = 19.06%</code></pre>
 <li>Split the data into training set (70%), and test set (30%). Training set will be used to fit the model, and test set will be to evaluate the best model to get an estimation of generalization error. Instead of having validation set to tune hyperparameters and evaluate different models, we’ll use 10-folds cross validation because it’s more reliable estimate of generalization error.</li>
 <li>Standardize the data. We’ll be using <code>RobustScaler</code> so that the standarization will be less influenced by the outliers, i.e.&nbsp;more robust. It centers the data around the median and scale it using <em>interquartile range (IQR)</em>. This step will be included in the pipelines for each model as a transformer so we will not do it separately.</li>
 </ol>
-<div class="cell" data-code_folding="[]" data-execution_count="4">
-<details>
+<div id="cell-11" class="cell" data-code_folding="[]" data-execution_count="4">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create dummy variables from the feature purpose</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.get_dummies(df, columns<span class="op">=</span>[<span class="st">"purpose"</span>], drop_first<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="4">
+<div>
 <div>
 
 
@@ -763,6 +804,7 @@ Proportion of positive to negative examples = 19.06%</code></pre>
 </div>
 </div>
 </div>
+</div>
 <section id="strategies-to-deal-with-missing-value" class="level3">
 <h3 class="anchored" data-anchor-id="strategies-to-deal-with-missing-value">Strategies to deal with missing value</h3>
 <p>Almost always real world data sets have missing values. This can be due, for example, users didn’t fill some part of the forms or some transformations happened while collecting and cleaning the data before they send it to you. Sometimes missing values are informative and weren’t generated randomly. Therefore, it’s a good practice to add binary features to check if there is missing values in each row for each feature that has missing values. In our case, six features have missing values so we would add six binary features one for each feature. For example, “log_annual_inc” feature has missing values, so we would add a feature “is_log_annual_inc_missing” that takes the values <span class="math inline">\(\in \{0, 1\}\)</span>. Good thing is that the missing values are in the predictors only and not the labels. Below are some of the most common strategies for dealing with missing values:</p>
@@ -780,8 +822,8 @@ Proportion of positive to negative examples = 19.06%</code></pre>
 </ul>
 <p>To evaluate each strategy, we’ll use <em>Random Forest</em> classifier with hyperparameters’ values guided by <a href="https://arxiv.org/pdf/1708.05070.pdf">Data-driven Advice for Applying Machine Learning to Bioinformatics Problems</a> as a starting point.</p>
 <p>Let’s first create binary features for missing values and then prepare the data for each strategy discussed above. Next, we’ll compute the 10-folds cross validation <em>AUC</em> score for all the models using training data.</p>
-<div class="cell" data-execution_count="5">
-<details>
+<div id="cell-14" class="cell" data-execution_count="5">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create binary features to check if the example is has missing values for all features that have missing values</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> feature <span class="kw">in</span> df.columns:</span>
@@ -791,6 +833,7 @@ Proportion of positive to negative examples = 19.06%</code></pre>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="5">
+<div>
 <div>
 
 
@@ -949,8 +992,9 @@ Proportion of positive to negative examples = 19.06%</code></pre>
 </div>
 </div>
 </div>
-<div class="cell" data-code_folding="[]" data-execution_count="6">
-<details>
+</div>
+<div id="cell-15" class="cell" data-code_folding="[]" data-execution_count="6">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Original Data</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df.loc[:, df.columns <span class="op">!=</span> <span class="st">"not_fully_paid"</span>].values</span>
@@ -979,8 +1023,8 @@ After dropping NAs: ((7611, 18), (1905, 18))
 MICE data shapes: ((7662, 24), (1916, 24))</code></pre>
 </div>
 </div>
-<div class="cell" data-code_folding="[]" data-execution_count="7">
-<details>
+<div id="cell-16" class="cell" data-code_folding="[]" data-execution_count="7">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build random forest classifier</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>rf_clf <span class="op">=</span> RandomForestClassifier(n_estimators<span class="op">=</span><span class="dv">500</span>,</span>
@@ -1025,8 +1069,8 @@ MICE imputation model's average AUC: 0.656</code></pre>
 </div>
 </div>
 <p>Let’s plot the feature importances to check if the added binary features added anything to the model.</p>
-<div class="cell" data-code_folding="[]" data-execution_count="8">
-<details>
+<div id="cell-18" class="cell" data-code_folding="[]" data-execution_count="8">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit RF to plot feature importances</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>rf_clf.fit(RobustScaler().fit_transform(Imputer(strategy<span class="op">=</span><span class="st">"median"</span>).fit_transform(X_train)), y_train)</span>
@@ -1040,12 +1084,16 @@ MICE imputation model's average AUC: 0.656</code></pre>
 <span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Feature Importance"</span>, {<span class="st">"fontsize"</span>: <span class="dv">16</span>})<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<p><img src="Predicting-Loan-Repayment_files/figure-html/cell-10-output-1.png" class="img-fluid"></p>
+<div>
+<figure class="figure">
+<p><img src="Predicting-Loan-Repayment_files/figure-html/cell-10-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Guided by the 10-fold cross validation <em>AUC</em> scores, it looks like all strategies have comparable results and missing values were generated randomly. Also, the added six binary features showed no importance when plotting feature importances from <em>Random Forest</em> classifier. Therefore, it’s safe to drop those features and use <em>Median Imputation</em> method as a transformer later on in the pipeline.</p>
-<div class="cell" data-execution_count="9">
-<details>
+<div id="cell-20" class="cell" data-execution_count="9">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop generated binary features</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> X_train[:, :<span class="op">-</span><span class="dv">6</span>]</span>
@@ -1076,8 +1124,8 @@ MICE imputation model's average AUC: 0.656</code></pre>
 <p>There are other methods such as <code>EditedNearestNeighbors</code> and <code>CondensedNearestNeighbors</code> that we will not cover in this notebook and are rarely used in practice.</p>
 <p>In most applications, misclassifying the minority class (false negative) is a lot more expensive than misclassifying the majority class (false positive). In the context of lending, loosing money by lending to a risky borrower who is more likely to not fully pay the loan back is a lot more costly than missing the opportunity of lending to trust-worthy borrower (less risky). As a result, we can use <code>class_weight</code> that changes the weight of misclassifying positive example in the loss function. Also, we can use different cut-offs assign examples to classes. By default, 0.5 is the cut-off; however, we see more often in applications such as lending that the cut-off is less than 0.5. Note that changing the cut-off from the default 0.5 reduce the overall accuracy but may improve the accuracy of predicting positive/negative examples.</p>
 <p>We’ll evaluate all the above methods plus the original model without resampling as a baseline model using the same <em>Random Forest</em> classifier we used in the missing values section.</p>
-<div class="cell" data-code_folding="[]" data-execution_count="10">
-<details>
+<div id="cell-23" class="cell" data-code_folding="[]" data-execution_count="10">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build random forest classifier (same config)</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>rf_clf <span class="op">=</span> RandomForestClassifier(n_estimators<span class="op">=</span><span class="dv">500</span>,</span>
@@ -1147,8 +1195,8 @@ SMOTE model's average AUC: 0.641</code></pre>
 <p>We’ll build ensemble models using three different models as base learners: - Extra Gradient Boosting - Support Vector Classifier - Random Forest</p>
 <p>The ensemble models will be built using two different methods: - Blending (average) ensemble model. Fits the base learners to the training data and then, at test time, average the predictions generated by all the base learners. - Use VotingClassifier from sklearn that: - fit all the base learners on the training data - at test time, use all base learners to predict test data and then take the average of all predictions. - Stacked ensemble model: Fits the base learners to the training data. Next, use those trained base learners to generate predictions (meta-features) used by the meta-learner (assuming we have only one layer of base learners). There are few different ways of training stacked ensemble model: - Fitting the base learners to all training data and then generate predictions using the same training data it was used to fit those learners. This method is more prune to overfitting because the meta learner will give more weights to the base learner who memorized the training data better, i.e.&nbsp;meta-learner won’t generate well and would overfit. - Split the training data into 2 to 3 different parts that will be used for training, validation, and generate predictions. It’s a suboptimal method because held out sets usually have higher variance and different splits give different results as well as learning algorithms would have fewer data to train. - Use k-folds cross validation where we split the data into k-folds. We fit the base learners to the (k - 1) folds and use the fitted models to generate predictions of the held out fold. We repeat the process until we generate the predictions for all the k-folds. When done, refit the base learners to the full training data. This method is more reliable and will give models that memorize the data less weight. Therefore, it generalizes better on future data.</p>
 <p>We’ll use logistic regression as the meta-learner for the stacked model. Note that we can use k-folds cross validation to validate and tune the hyperparameters of the meta learner. We will not tune the hyperparameters of any of the base learners or the meta-learner; however, we will use some of the values recommended by the <a href="https://arxiv.org/pdf/1708.05070.pdf">Pennsylvania Benchmarking Paper</a>. Additionally, we won’t use EasyEnsemble in training because, after some experimentation, it didn’t improve the AUC of the ensemble model more than 2% on average and it was computationally very expensive. In practice, we sometimes are willing to give up small improvements if the model would become a lot more complex computationally. Therefore, we will use <code>RandomUnderSampler</code>. Also, we’ll impute the missing values and standardize the data beforehand so that it would shorten the code of the ensemble models and allows use to avoid using <code>Pipeline</code>. Additionally, we will plot ROC and PR curves using test data and evaluate the performance of all models.</p>
-<div class="cell" data-execution_count="11">
-<details>
+<div id="cell-27" class="cell" data-execution_count="11">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Impute the missing data using features means</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>imp <span class="op">=</span> Imputer()</span>
@@ -1175,8 +1223,8 @@ SMOTE model's average AUC: 0.641</code></pre>
 <pre><code>((2452, 18), (2452,))</code></pre>
 </div>
 </div>
-<div class="cell" data-execution_count="12">
-<details>
+<div id="cell-28" class="cell" data-execution_count="12">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define base learners</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>xgb_clf <span class="op">=</span> xgb.XGBClassifier(objective<span class="op">=</span><span class="st">"binary:logistic"</span>,</span>
@@ -1254,24 +1302,32 @@ SMOTE model's average AUC: 0.641</code></pre>
 <span id="cb18-74"><a href="#cb18-74" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<p><img src="Predicting-Loan-Repayment_files/figure-html/cell-14-output-1.png" class="img-fluid"></p>
+<div>
+<figure class="figure">
+<p><img src="Predicting-Loan-Repayment_files/figure-html/cell-14-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>As we can see from the chart above, stacked ensemble model didn’t improve the performance. One of the major reasons are that the base learners are considerably highly correlated especially <em>Random Forest</em> and <em>Gradient Boosting</em> (see the correlation matrix below).</p>
-<div class="cell" data-execution_count="17">
-<details>
+<div id="cell-30" class="cell" data-execution_count="17">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the correlation between base learners</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>probs_df <span class="op">=</span> pd.DataFrame(meta_features, columns<span class="op">=</span>[<span class="st">"xgb"</span>, <span class="st">"svm"</span>, <span class="st">"rf"</span>])</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>corrmat(probs_df.corr(), inflate<span class="op">=</span><span class="va">True</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<p><img src="Predicting-Loan-Repayment_files/figure-html/cell-15-output-1.png" class="img-fluid"></p>
+<div>
+<figure class="figure">
+<p><img src="Predicting-Loan-Repayment_files/figure-html/cell-15-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>In addition, with classification problems where False Negatives are a lot more expensive than False Positives, we may want to have a model with a high precision rather than high recall, i.e.&nbsp;the probability of the model to identify positive examples from randomly selected examples. Below is the confusion matrix:</p>
-<div class="cell" data-execution_count="78">
-<details>
+<div id="cell-32" class="cell" data-execution_count="78">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>second_stack_probs <span class="op">=</span> second_stack.predict_proba(first_stack.transform(X_test))</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>second_stack_preds <span class="op">=</span> second_stack.predict(first_stack.transform(X_test))</span>
@@ -1290,12 +1346,16 @@ SMOTE model's average AUC: 0.641</code></pre>
 <pre><code>&lt;matplotlib.figure.Figure at 0x12eb8e320&gt;</code></pre>
 </div>
 <div class="cell-output cell-output-display">
-<p><img src="Predicting-Loan-Repayment_files/figure-html/cell-16-output-2.png" class="img-fluid"></p>
+<div>
+<figure class="figure">
+<p><img src="Predicting-Loan-Repayment_files/figure-html/cell-16-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Let’s finally check the partial dependence plots to see what are the most important features and their relationships with whether the borrower will most likely pay the loan in full before mature data. we will plot only the top 8 features to make it easier to read.</p>
-<div class="cell" data-execution_count="24">
-<details>
+<div id="cell-34" class="cell" data-execution_count="24">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot partial dependence plots</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>gbrt <span class="op">=</span> GradientBoostingClassifier(loss<span class="op">=</span><span class="st">"deviance"</span>,</span>
@@ -1316,7 +1376,11 @@ SMOTE model's average AUC: 0.641</code></pre>
 <span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ax <span class="kw">in</span> [axes[<span class="dv">0</span>], axes[<span class="dv">4</span>]]: ax.set_ylabel(<span class="st">"Partial dependence"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<p><img src="Predicting-Loan-Repayment_files/figure-html/cell-17-output-1.png" class="img-fluid"></p>
+<div>
+<figure class="figure">
+<p><img src="Predicting-Loan-Repayment_files/figure-html/cell-17-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>As we might expected, borrowers with lower annual income and less FICO scores are less likely to pay the loan fully; however, borrowers with lower interest rates (riskier) and smaller installments are more likely to pay the loan fully.</p>
@@ -1379,6 +1443,33 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       } else {
         el.classList.add('notransition');
       }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
     }
   }
   const toggleColorMode = (alternate) => {
@@ -1447,13 +1538,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return localAlternateSentinel;
     }
   }
-  let localAlternateSentinel = 'default';
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
   // Dark / light mode switch
   window.quartoToggleColorScheme = () => {
     // Read the current dark / light value 
     let toAlternate = !hasAlternateSentinel();
     toggleColorMode(toAlternate);
     setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
   };
   // Ensure there is a toggle, if there isn't float one in the top right
   if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
@@ -1583,10 +1676,27 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   if (showAllCode) {
     showAllCode.addEventListener("click", toggleCodeHandler(true));
   }
-  function tippyHover(el, contentFn) {
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/imaddabbura\.github\.io\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1596,8 +1706,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1609,7 +1728,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -1653,6 +1895,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1678,6 +1921,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1739,13 +2008,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <script src="https://giscus.app/client.js" data-repo="imaddabbura/imaddabbura.github.io" data-repo-id="R_kgDOIEwRMg" data-category="General" data-category-id="DIC_kwDOIEwRMs4CRprP" data-mapping="title" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
 </script>
+<input type="hidden" id="giscus-base-theme" value="light">
+<input type="hidden" id="giscus-alt-theme" value="dark">
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
-    <div class="nav-footer-left">Blog made with Quarto, by Imad Dabbura</div>   
+    <div class="nav-footer-left">
+<p>Blog made with Quarto, by Imad Dabbura</p>
+</div>   
     <div class="nav-footer-center">
       &nbsp;
-    </div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
     <li class="nav-item compact">
@@ -1776,6 +2049,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
+
 
 
 
