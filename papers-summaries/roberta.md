@@ -6,6 +6,7 @@ categories:
   - NLP
   - DL
 ---
+
 **[RoBERTa: A Robustly Optimized BERT Pretraining Approach](http://arxiv.org/abs/1907.11692)**
 
 - **Thesis**: Better hyperparameter/design decisions is all you need to improve BERT's performance to be on-par or better than all other pretraining models/objectives. BERT was significantly undertrained and not much time was spent to optimize hyperparameters. RoBERTa basically is just a reimplementation of BERT with some minor changes to tokenizer, hyperparameters, datasets, etc.
@@ -38,10 +39,8 @@ categories:
 - **Takeaways**: RoBERTa proved that MLM is still a good training objective that can lead to a model that matches or exceeds other models on many benchmarks.
 - **Improvements**:
   - It isn't clear what is the effect of different % for MLM
-  - I am not convinced we need NSP to achieve better performance
   - In this setup, if we have multiple masked tokens in one sentence, the
     prediction of the each masked token doesn't take into account the
     prediction of other masked tokens.
-- **Notes**:
 
 #nlp #llm
