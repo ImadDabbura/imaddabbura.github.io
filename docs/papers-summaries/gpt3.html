@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Imad Dabbura">
+<meta name="dcterms.date" content="2022-02-03">
 
-<title>Imad Dabbura - Papers’ Summaries</title>
+<title>Imad Dabbura - GPT3: Language Models are Few-Shot Learners</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,28 +25,26 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<script src="site_libs/quarto-search/autocomplete-preset-algolia.umd.js"></script>
-<meta name="quarto:offset" content="./">
-<link href="./images/profile.jpg" rel="icon" type="image/jpeg">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<script src="../site_libs/quarto-search/autocomplete-preset-algolia.umd.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../images/profile.jpg" rel="icon" type="image/jpeg">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -93,35 +93,6 @@ i.async=1,i.src=n,c.parentNode.insertBefore(i,c)
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-plugin-algolia-insights">
 
 </script>
-<script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-title-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
 
 <script type="text/javascript">
 
@@ -167,25 +138,27 @@ window.Quarto = {
 };
 </script>
 
-<link rel="stylesheet" href="styles.css">
-<meta property="og:title" content="Imad Dabbura - Papers’ Summaries">
+<link rel="stylesheet" href="../styles.css">
+<meta property="og:title" content="Imad Dabbura - GPT3: Language Models are Few-Shot Learners">
+<meta property="og:description" content="">
 <meta property="og:site_name" content="Imad Dabbura">
-<meta name="twitter:title" content="Imad Dabbura - Papers’ Summaries">
+<meta name="twitter:title" content="Imad Dabbura - GPT3: Language Models are Few-Shot Learners">
+<meta name="twitter:description" content="">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="./index.html" class="navbar-brand navbar-brand-logo">
-    <img src="./images/palestine-flag.png" alt="" class="navbar-logo">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../images/palestine-flag.png" alt="" class="navbar-logo">
     </a>
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Imad Dabbura</span>
     </a>
   </div>
@@ -196,35 +169,35 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="../about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./index.html"> 
+    <a class="nav-link" href="../index.html"> 
 <span class="menu-text">Posts</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./papers-summaries.html" aria-current="page"> 
+    <a class="nav-link" href="../papers-summaries.html"> 
 <span class="menu-text">Papers’ Summaries</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./til.html"> 
+    <a class="nav-link" href="../til.html"> 
 <span class="menu-text">Today I Learned</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./mlops.html"> 
+    <a class="nav-link" href="../mlops.html"> 
 <span class="menu-text">MLOps</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./dl-tips-tricks.html"> 
+    <a class="nav-link" href="../dl-tips-tricks.html"> 
 <span class="menu-text">DL Tips &amp; Tricks</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./cmn-ai.html"> 
+    <a class="nav-link" href="../cmn-ai.html"> 
 <span class="menu-text">cmn_ai</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./tiny-pytorch.html"> 
+    <a class="nav-link" href="../tiny-pytorch.html"> 
 <span class="menu-text">Tiny-PyTorch</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -233,23 +206,23 @@ window.Quarto = {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-more">    
         <li>
-    <a class="dropdown-item" href="./projects-index.html">
+    <a class="dropdown-item" href="../projects-index.html">
  <span class="dropdown-text">Projects</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./books-summaries.html">
+    <a class="dropdown-item" href="../books-summaries.html">
  <span class="dropdown-text">Books’ Summaries</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./misc-notes.html">
+    <a class="dropdown-item" href="../misc-notes.html">
  <span class="dropdown-text">Misc. Notes</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./reading-list.html">
+    <a class="dropdown-item" href="../reading-list.html">
  <span class="dropdown-text">Reading List</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./resume.html">
+    <a class="dropdown-item" href="../resume.html">
  <span class="dropdown-text">Resume</span></a>
   </li>  
     </ul>
@@ -282,137 +255,131 @@ window.Quarto = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
-      <h1 class="title">Papers’ Summaries</h1>
-                      </div>
+    <div class="quarto-title column-body">
+      <h1 class="title">GPT3: Language Models are Few-Shot Learners</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">LLM</div>
+                <div class="quarto-category">NLP</div>
+                <div class="quarto-category">DL</div>
+              </div>
+                  </div>
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Imad Dabbura </p>
+            </div>
+    </div>
       
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">February 3, 2022</p>
+      </div>
+    </div>
     
       
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
 
 
+<p><strong><a href="https://arxiv.org/abs/2005.14165">GPT3: Language Models are Few-Shot Learners</a></strong></p>
+<ul>
+<li><strong>Thesis</strong>: Move from architecture agnostic to task agnostic paradigm where we pre-train a very large language model on sufficiently large and diverse data that would result in a model that learned a wide variety of skills and absorbed patterns, which would allow the model to recognize or learn tasks at inference time on the fly w/o any training. Few-shot is what you need to perform non-trivial tasks, but zero-shot and one-shot are a good-start.</li>
+<li><strong>Methods</strong>:
+<ul>
+<li>Model:
+<ul>
+<li>Context window size = 2048</li>
+<li>Model architecture follows [[gpt2]]</li>
+<li><span class="math inline">\(175B\)</span> parameters</li>
+<li>96 layers</li>
+<li>embedding dimension is <span class="math inline">\(12,288\)</span></li>
+<li>96 heads</li>
+</ul></li>
+</ul></li>
+<li><strong>Contribution</strong>:
+<ul>
+<li>175B LLM that learned variety of tasks</li>
+<li>Illustrations of in-context learning potential and the differences between zero-, one-, and few-shot.</li>
+</ul></li>
+<li><strong>Takeaways</strong>:
+<ul>
+<li>Model size follows power-law with validation logloss which correlates with performance of downstream tasks</li>
+<li>Few-shot leads to almost comparable results as fine-tuned models for some NLP tasks</li>
+</ul></li>
+<li><strong>Improvements/Limitations</strong>:
+<ul>
+<li>Scale of the model is prohibitively expensive to run inference -&gt; we may need to use some form of model distillation because GPT3 have wide variety of skills that may not be needed in specific domains</li>
+<li>It’s autoregressive nature doesn’t allow to look at surrounding context in both directions, which is needed to perform some tasks such as fill in the blanks</li>
+<li>The model doesn’t seem to have basic understanding of the physical world</li>
+<li>The model lacks the context from video and other real-world physical interactions</li>
+<li>Model has poor sample efficiency as it sees a lot of text during pre-training that human doesn’t see during its lifetime</li>
+<li>Self-supervised training objective is approaching its limits and we may need to change the objective by using something like reinforcement learning or add different modalities such as videos to provide better grounding</li>
+<li>The model sometimes generate repetitive text, suffers from coherence in long-range dependencies of sequence, generate contradictory sequences, etc.</li>
+<li>We don’t know if the model actually learns new tasks from scratch at inference time or simply recognizing patterns</li>
+<li>Tokens are all weighted equally during prediction, which is not right because there are more important tokens that others</li>
+<li>The model is not interpretable</li>
+</ul></li>
+<li><strong>Importance</strong>:
+<ul>
+<li>The largest LLM so far that helps us to use it is a wide variety of tasks w/o fine-tuning. For complex tasks, few-shot is very useful and leads to great results in some settings.</li>
+</ul></li>
+<li><strong>Notes</strong>:
+<ul>
+<li>Larger models show steeper improvement for in-context learning through better performance with few-shot demonstrations</li>
+<li>Create language systems that are able to perform any language tasks on the fly w/o the need for fine-tuning to adapt to domain-specific tasks. Therefore, move from architecture agnostic paradigm where we first pre-train models in semi-supervised fashion then fine-tune it on task-specific data to task agnostic paradigm where we only pre-train very large LMs on very large and diverse datasets and use only text to specify task with few examples and the model would learn (with no gradients -&gt; in-context learning) what it is supposed to do</li>
+<li>The reason to have task-agnostic models are:
+<ul>
+<li>Not all language tasks have large enough supervised training data to fine-tune the model on</li>
+<li>Large models are meant to have large capacity to absorb general language understanding. When fine-tuned on narrow domain where training distribution is narrow, such models tend to pick up spurious correlations -&gt; model’s generalization suffers outside training distribution</li>
+<li>Humans don’t need thousand of examples to perform any new task. They need just task specification or at most few examples</li>
+<li>Finally, we want the model to have the same flexibility as humans to be able to switch between different tasks smoothly such as doing arithmetic in a dialogue</li>
+</ul></li>
+<li>We don’t know whether LM recognizes task from skills and patterns learned during training or learns the task at inference time from the examples provided
+<ul>
+<li>Larger models demonstrate stronger ability to recognize tasks</li>
+</ul></li>
+<li>Log loss is correlated with downstream tasks performance</li>
+<li>Meta-learning in LM means the model learns a set of broad skills and pattern recognition abilities at training time that allows it to recognize or adapt to the new task at inference time</li>
+<li>Performance of GPT3 improves with:
+<ul>
+<li>Increasing model size</li>
+<li>Increasing dataset size and diversity</li>
+<li>Description of the task in natural language</li>
+<li>More demonstrative examples</li>
+</ul></li>
+<li>The larger the model size -&gt; the bigger the gap between zero-shot, one-shot, and few-shot examples. Therefore, LLMs suggest they are meta-learners</li>
+<li>Disadvantages of fine-tuning:
+<ul>
+<li>Requires large labeled dataset for every task</li>
+<li>Doesn’t generalize well for out-of-distribution</li>
+<li>Exploit spurious correlations/features in the training data</li>
+</ul></li>
+<li>Zero-shot: Gives the model natural description of the task we want to solve. It is the most convenient and mimic how humans solve most of the tasks. Also, it is more robust and avoid spurious correlations. The main disadvantage is that the task may be not clear and LLM may not be able to figure out what is actually needed.</li>
+<li>One-shot: Gives the model natural description of the task we want to solve plus and 1 demonstration of task and answer. Humans also use something like this in settings where it is not clear how the output should be presented.</li>
+<li>Few-shot: Gives the model natural description of the task we want to solve plus few demonstrations. This approach still requires some kind of labeled data as we need more examples for tasks and their outputs. The number of examples are determined based on the difficulty of the task and the context window size.</li>
+</ul></li>
+</ul>
+<p>#nlp #llm</p>
 
 
 
-
-<div class="quarto-listing quarto-listing-container-table" id="listing-listing">
-<div class="listing-actions-group">
-   <div class="input-group input-group-sm quarto-listing-sort">
-     <span class="input-group-text"><i class="bi bi-sort-down"></i></span>
-     <select id="listing-listing-sort" class="form-select" aria-label="Order By" onchange="window['quarto-listings']['listing-listing'].sort(this.options[this.selectedIndex].value, { order: this.options[this.selectedIndex].getAttribute('data-direction')})">
-       <option value="" disabled="" selected="" hidden="">Order By</option>
-       <option value="index" data-direction="asc">Default</option>
-         <option value="listing-date-sort" data-direction="asc">
-          Date - Oldest
-        </option>
-         <option value="listing-date-sort" data-direction="desc">
-          Date - Newest
-        </option>
-         <option value="listing-title-sort" data-direction="asc">
-          Title
-        </option>
-         <option value="listing-author" data-direction="asc">
-          Author
-        </option>
-     </select>
-  </div>
-    <div class="input-group input-group-sm quarto-listing-filter">
-      <span class="input-group-text"><i class="bi bi-search"></i></span>
-      <input type="text" class="search form-control" placeholder="Filter">
-    </div>
-</div>
-<table class="quarto-listing-table table">
-<thead>
-<tr>
-<th>
-<a class="sort" data-sort="listing-date-sort" onclick="if (this.classList.contains('sort-asc')) { this.classList.add('sort-desc'); this.classList.remove('sort-asc') } else { this.classList.add('sort-asc'); this.classList.remove('sort-desc')} return false;">Date</a>
-</th>
-<th>
-<a class="sort" data-sort="listing-title-sort" onclick="if (this.classList.contains('sort-asc')) { this.classList.add('sort-desc'); this.classList.remove('sort-asc') } else { this.classList.add('sort-asc'); this.classList.remove('sort-desc')} return false;">Title</a>
-</th>
-<th>
-<a class="sort" data-sort="listing-author" onclick="if (this.classList.contains('sort-asc')) { this.classList.add('sort-desc'); this.classList.remove('sort-asc') } else { this.classList.add('sort-asc'); this.classList.remove('sort-desc')} return false;">Author</a>
-</th>
-</tr>
-</thead>
-<tbody class="list">
-<tr data-index="0" data-categories="LLM,NLP,DL" data-listing-date-sort="1643868000000" data-listing-file-modified-sort="1717455953957" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1021" data-listing-title-sort="GPT3: Language Models are Few-Shot Learners" data-listing-filename-sort="gpt3.md">
-<td>
-<span class="listing-date">Feb 3, 2022</span>
-</td>
-<td>
-<a href="./papers-summaries/gpt3.html" class="title listing-title">GPT3: Language Models are Few-Shot Learners</a>
-</td>
-<td>
-<span class="listing-author">Imad Dabbura</span>
-</td>
-</tr>
-<tr data-index="1" data-categories="LLM,NLP,DL" data-listing-date-sort="1636524000000" data-listing-file-modified-sort="1717453499703" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="584" data-listing-title-sort="RoBERTa: A Robustly Optimized BERT Pretraining Approach" data-listing-filename-sort="roberta.md">
-<td>
-<span class="listing-date">Nov 10, 2021</span>
-</td>
-<td>
-<a href="./papers-summaries/roberta.html" class="title listing-title">RoBERTa: A Robustly Optimized BERT Pretraining Approach</a>
-</td>
-<td>
-<span class="listing-author">Imad Dabbura</span>
-</td>
-</tr>
-<tr data-index="2" data-categories="LLM,NLP,DL" data-listing-date-sort="1634792400000" data-listing-file-modified-sort="1717455375258" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1108" data-listing-title-sort="BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding" data-listing-filename-sort="bert.md">
-<td>
-<span class="listing-date">Oct 21, 2021</span>
-</td>
-<td>
-<a href="./papers-summaries/bert.html" class="title listing-title">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</a>
-</td>
-<td>
-<span class="listing-author">Imad Dabbura</span>
-</td>
-</tr>
-<tr data-index="3" data-categories="LLM,NLP,DL" data-listing-date-sort="1618117200000" data-listing-file-modified-sort="1717455633453" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="266" data-listing-title-sort="GPT2: Language Models are Unsupervised Multitask Learners" data-listing-filename-sort="gpt2.md">
-<td>
-<span class="listing-date">Apr 11, 2021</span>
-</td>
-<td>
-<a href="./papers-summaries/gpt2.html" class="title listing-title">GPT2: Language Models are Unsupervised Multitask Learners</a>
-</td>
-<td>
-<span class="listing-author">Imad Dabbura</span>
-</td>
-</tr>
-<tr data-index="4" data-categories="LLM,NLP,DL" data-listing-date-sort="1610776800000" data-listing-file-modified-sort="1717455656814" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="417" data-listing-title-sort="GPT: Improving Language Understanding by Generative Pre-Training" data-listing-filename-sort="gpt.md">
-<td>
-<span class="listing-date">Jan 16, 2021</span>
-</td>
-<td>
-<a href="./papers-summaries/gpt.html" class="title listing-title">GPT: Improving Language Understanding by Generative Pre-Training</a>
-</td>
-<td>
-<span class="listing-author">Imad Dabbura</span>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
