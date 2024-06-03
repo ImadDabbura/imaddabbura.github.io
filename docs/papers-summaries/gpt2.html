@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Imad Dabbura">
+<meta name="dcterms.date" content="2021-04-11">
 
-<title>Imad Dabbura - Papers’ Summaries</title>
+<title>Imad Dabbura - GPT2: Language Models are Unsupervised Multitask Learners</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,28 +25,26 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<script src="site_libs/quarto-search/autocomplete-preset-algolia.umd.js"></script>
-<meta name="quarto:offset" content="./">
-<link href="./images/profile.jpg" rel="icon" type="image/jpeg">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<script src="../site_libs/quarto-search/autocomplete-preset-algolia.umd.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../images/profile.jpg" rel="icon" type="image/jpeg">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -93,35 +93,6 @@ i.async=1,i.src=n,c.parentNode.insertBefore(i,c)
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-plugin-algolia-insights">
 
 </script>
-<script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-title-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
 
 <script type="text/javascript">
 
@@ -167,25 +138,27 @@ window.Quarto = {
 };
 </script>
 
-<link rel="stylesheet" href="styles.css">
-<meta property="og:title" content="Imad Dabbura - Papers’ Summaries">
+<link rel="stylesheet" href="../styles.css">
+<meta property="og:title" content="Imad Dabbura - GPT2: Language Models are Unsupervised Multitask Learners">
+<meta property="og:description" content="">
 <meta property="og:site_name" content="Imad Dabbura">
-<meta name="twitter:title" content="Imad Dabbura - Papers’ Summaries">
+<meta name="twitter:title" content="Imad Dabbura - GPT2: Language Models are Unsupervised Multitask Learners">
+<meta name="twitter:description" content="">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="./index.html" class="navbar-brand navbar-brand-logo">
-    <img src="./images/palestine-flag.png" alt="" class="navbar-logo">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../images/palestine-flag.png" alt="" class="navbar-logo">
     </a>
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Imad Dabbura</span>
     </a>
   </div>
@@ -196,35 +169,35 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="../about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./index.html"> 
+    <a class="nav-link" href="../index.html"> 
 <span class="menu-text">Posts</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./papers-summaries.html" aria-current="page"> 
+    <a class="nav-link" href="../papers-summaries.html"> 
 <span class="menu-text">Papers’ Summaries</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./til.html"> 
+    <a class="nav-link" href="../til.html"> 
 <span class="menu-text">Today I Learned</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./mlops.html"> 
+    <a class="nav-link" href="../mlops.html"> 
 <span class="menu-text">MLOps</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./dl-tips-tricks.html"> 
+    <a class="nav-link" href="../dl-tips-tricks.html"> 
 <span class="menu-text">DL Tips &amp; Tricks</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./cmn-ai.html"> 
+    <a class="nav-link" href="../cmn-ai.html"> 
 <span class="menu-text">cmn_ai</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./tiny-pytorch.html"> 
+    <a class="nav-link" href="../tiny-pytorch.html"> 
 <span class="menu-text">Tiny-PyTorch</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -233,23 +206,23 @@ window.Quarto = {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-more">    
         <li>
-    <a class="dropdown-item" href="./projects-index.html">
+    <a class="dropdown-item" href="../projects-index.html">
  <span class="dropdown-text">Projects</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./books-summaries.html">
+    <a class="dropdown-item" href="../books-summaries.html">
  <span class="dropdown-text">Books’ Summaries</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./misc-notes.html">
+    <a class="dropdown-item" href="../misc-notes.html">
  <span class="dropdown-text">Misc. Notes</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./reading-list.html">
+    <a class="dropdown-item" href="../reading-list.html">
  <span class="dropdown-text">Reading List</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./resume.html">
+    <a class="dropdown-item" href="../resume.html">
  <span class="dropdown-text">Resume</span></a>
   </li>  
     </ul>
@@ -282,126 +255,77 @@ window.Quarto = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
-      <h1 class="title">Papers’ Summaries</h1>
-                      </div>
+    <div class="quarto-title column-body">
+      <h1 class="title">GPT2: Language Models are Unsupervised Multitask Learners</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">LLM</div>
+                <div class="quarto-category">NLP</div>
+                <div class="quarto-category">DL</div>
+              </div>
+                  </div>
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Imad Dabbura </p>
+            </div>
+    </div>
       
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">April 11, 2021</p>
+      </div>
+    </div>
     
       
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
 
 
+<p><strong><a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf">GPT2: Language Models are Unsupervised Multitask Learners</a></strong></p>
+<ul>
+<li><p><strong>Thesis</strong>: Train large models that generalize well to any downstream tasks w/o any fine-tuning or training needed. The main motivation is to have competent generalist model instead of narrow experts that are trained on specific dataset for specific domains. Zero-shot framework allows us to just use pre-trained large language models to perform any task. This is possible because the LM would need to predict the task before being able to predict the next tokens or string.</p></li>
+<li><p><strong>Methods</strong>:</p>
+<ul>
+<li>Use BPE build on utf-8 bytes to get middle ground between word-level and character-level LM</li>
+<li>Model:
+<ul>
+<li>Very similar of GPT except:
+<ul>
+<li>Context window size increased from 512 to 1024</li>
+<li>Batch size increased from 64 to 512</li>
+<li>Layer normalization is added to input -&gt; pre-activation</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p><strong>Contribution</strong>: WebText dataset with sufficiently large and diverse data as well as zero-shot demonstrations and larger version of GPT with largest model having <span class="math inline">\(1.5B\)</span> parameters</p></li>
+<li><p><strong>Takeaways</strong>: Training high capacity LLMs on very large and diverse datasets such as WebText will force the model to learn how to perform different tasks indirectly in order to predict next token from different domains and tasks. This allows us to use such models in zero-shot setup to perform different downstream tasks</p></li>
+<li><p><strong>Importance</strong>: Major step to move towards training-free LLMs adaptation to downstream tasks with zero-shot.</p></li>
+<li><p><strong>Notes</strong>:</p>
+<ul>
+<li>LLMs store information in their parameters as is shown from answering questions which require factoid answers (closed-book)</li>
+</ul></li>
+</ul>
+<p>#nlp #llm</p>
 
 
 
-
-<div class="quarto-listing quarto-listing-container-table" id="listing-listing">
-<div class="listing-actions-group">
-   <div class="input-group input-group-sm quarto-listing-sort">
-     <span class="input-group-text"><i class="bi bi-sort-down"></i></span>
-     <select id="listing-listing-sort" class="form-select" aria-label="Order By" onchange="window['quarto-listings']['listing-listing'].sort(this.options[this.selectedIndex].value, { order: this.options[this.selectedIndex].getAttribute('data-direction')})">
-       <option value="" disabled="" selected="" hidden="">Order By</option>
-       <option value="index" data-direction="asc">Default</option>
-         <option value="listing-date-sort" data-direction="asc">
-          Date - Oldest
-        </option>
-         <option value="listing-date-sort" data-direction="desc">
-          Date - Newest
-        </option>
-         <option value="listing-title-sort" data-direction="asc">
-          Title
-        </option>
-         <option value="listing-author" data-direction="asc">
-          Author
-        </option>
-     </select>
-  </div>
-    <div class="input-group input-group-sm quarto-listing-filter">
-      <span class="input-group-text"><i class="bi bi-search"></i></span>
-      <input type="text" class="search form-control" placeholder="Filter">
-    </div>
-</div>
-<table class="quarto-listing-table table">
-<thead>
-<tr>
-<th>
-<a class="sort" data-sort="listing-date-sort" onclick="if (this.classList.contains('sort-asc')) { this.classList.add('sort-desc'); this.classList.remove('sort-asc') } else { this.classList.add('sort-asc'); this.classList.remove('sort-desc')} return false;">Date</a>
-</th>
-<th>
-<a class="sort" data-sort="listing-title-sort" onclick="if (this.classList.contains('sort-asc')) { this.classList.add('sort-desc'); this.classList.remove('sort-asc') } else { this.classList.add('sort-asc'); this.classList.remove('sort-desc')} return false;">Title</a>
-</th>
-<th>
-<a class="sort" data-sort="listing-author" onclick="if (this.classList.contains('sort-asc')) { this.classList.add('sort-desc'); this.classList.remove('sort-asc') } else { this.classList.add('sort-asc'); this.classList.remove('sort-desc')} return false;">Author</a>
-</th>
-</tr>
-</thead>
-<tbody class="list">
-<tr data-index="0" data-categories="LLM,NLP,DL" data-listing-date-sort="1636524000000" data-listing-file-modified-sort="1717453499703" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="584" data-listing-title-sort="RoBERTa: A Robustly Optimized BERT Pretraining Approach" data-listing-filename-sort="roberta.md">
-<td>
-<span class="listing-date">Nov 10, 2021</span>
-</td>
-<td>
-<a href="./papers-summaries/roberta.html" class="title listing-title">RoBERTa: A Robustly Optimized BERT Pretraining Approach</a>
-</td>
-<td>
-<span class="listing-author">Imad Dabbura</span>
-</td>
-</tr>
-<tr data-index="1" data-categories="LLM,NLP,DL" data-listing-date-sort="1634792400000" data-listing-file-modified-sort="1717455375258" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1108" data-listing-title-sort="BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding" data-listing-filename-sort="bert.md">
-<td>
-<span class="listing-date">Oct 21, 2021</span>
-</td>
-<td>
-<a href="./papers-summaries/bert.html" class="title listing-title">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</a>
-</td>
-<td>
-<span class="listing-author">Imad Dabbura</span>
-</td>
-</tr>
-<tr data-index="2" data-categories="LLM,NLP,DL" data-listing-date-sort="1618117200000" data-listing-file-modified-sort="1717455633453" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="266" data-listing-title-sort="GPT2: Language Models are Unsupervised Multitask Learners" data-listing-filename-sort="gpt2.md">
-<td>
-<span class="listing-date">Apr 11, 2021</span>
-</td>
-<td>
-<a href="./papers-summaries/gpt2.html" class="title listing-title">GPT2: Language Models are Unsupervised Multitask Learners</a>
-</td>
-<td>
-<span class="listing-author">Imad Dabbura</span>
-</td>
-</tr>
-<tr data-index="3" data-categories="LLM,NLP,DL" data-listing-date-sort="1610776800000" data-listing-file-modified-sort="1717455656814" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="417" data-listing-title-sort="GPT: Improving Language Understanding by Generative Pre-Training" data-listing-filename-sort="gpt.md">
-<td>
-<span class="listing-date">Jan 16, 2021</span>
-</td>
-<td>
-<a href="./papers-summaries/gpt.html" class="title listing-title">GPT: Improving Language Understanding by Generative Pre-Training</a>
-</td>
-<td>
-<span class="listing-author">Imad Dabbura</span>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
