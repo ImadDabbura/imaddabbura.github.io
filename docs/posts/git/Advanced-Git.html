@@ -213,8 +213,12 @@ ga('send', {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-more">    
         <li>
+    <a class="dropdown-item" href="../../papers-summaries.html">
+ <span class="dropdown-text">Papers’ Summaries</span></a>
+  </li>  
+        <li>
     <a class="dropdown-item" href="../../books-summaries.html">
- <span class="dropdown-text">Books Summaries</span></a>
+ <span class="dropdown-text">Books’ Summaries</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../../misc-notes.html">
@@ -1103,14 +1107,14 @@ e1d95ecb4c02e0c30a8635a37631c523d2041299</code></pre>
 <li><a href="https://github.com/thoughtbot/guides/tree/master/code-review">thoughtbot guide to code review</a></li>
 </ul></li>
 <li>After getting the feedback from the team on the code reviews as well as the CI comments, we can incorporate the changes that team recommended. Then push the new commits to the feature branch and those will automatically be included in the PR.</li>
-<li>We prefer a clean history built using fast-forward merges. In order to ensure this, before merging our PR we always pull master and rebase our feature branch onto master to ensure that our commits are ahead of master. One nice helper for this is the mup alias which checks out master, pulls, then checks back out our feature branch: <code>mup = !git checkout master &amp;&amp; git pull &amp;&amp; git checkout -</code></li>
+<li>We prefer a clean history built using fast-forward merges. In order to ensure this, before merging our PR we always pull master and rebase our feature branch onto master to ensure that our commits are ahead of master. One nice helper for this is the mup alias which checks out master, pulls, then checks back out our feature branch: <code>mup = !git checkout master &amp;&amp; git pull &amp;&amp; git checkout -</code>. Finally, <code>git rebase master</code>. If we’ve done any rebase, we need to force push changes to remote <code>git push -f</code></li>
 <li>Once we’re ahead of master, we can perform an interactive rebase to revise our commits and craft our history. In particular, we can use this time to squash down cleanup and WIP commits, ensuring that each commit we keep is useful and has a solid commit message.</li>
 <li>This is the time to ensure that we’ve captured as much context as possible in our commit message to describe the “why” of the change. Two great resources on this topic are:
 <ul>
 <li><a href="https://robots.thoughtbot.com/5-useful-tips-for-a-better-commit-message">Five Rules for A Good Git Commit Message</a></li>
 <li><a href="http://rakeroutes.com/blog/deliberate-git">Stephen Ball’s Deliberate Git talk</a></li>
 </ul></li>
-<li>If we’ve performed any form of rebase, then we’ll have created new commits and will want to push those up to GitHub in order to get everything in sync. To do this we can force push (git push -f) our branch.</li>
+<li>If we’ve performed any form of rebase, then we’ll have created new commits and will want to push those up to GitHub in order to get everything in sync. To do this we can force push (<code>git push -f</code>) our branch.</li>
 <li>Final steps:
 <ul>
 <li>If we’ve force pushed after rebasing as described above, we should be all set, but never hurts to give one last git push just to confirm that our local and remote feature branches are in sync.</li>

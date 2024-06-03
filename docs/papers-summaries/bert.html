@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2022-01-26">
+<meta name="dcterms.date" content="2021-10-21">
 
-<title>Imad Dabbura - The Science of Setting and Achieving Goals</title>
+<title>Imad Dabbura - BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -108,12 +108,41 @@ ga('send', {
 });
 </script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../styles.css">
-<meta property="og:title" content="Imad Dabbura - The Science of Setting and Achieving Goals">
+<meta property="og:title" content="Imad Dabbura - BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding">
 <meta property="og:description" content="">
 <meta property="og:site_name" content="Imad Dabbura">
-<meta name="twitter:title" content="Imad Dabbura - The Science of Setting and Achieving Goals">
+<meta name="twitter:title" content="Imad Dabbura - BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding">
 <meta name="twitter:description" content="">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
@@ -227,9 +256,11 @@ ga('send', {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">The Science of Setting and Achieving Goals</h1>
+      <h1 class="title">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">Personal Growth</div>
+                <div class="quarto-category">LLM</div>
+                <div class="quarto-category">NLP</div>
+                <div class="quarto-category">DL</div>
               </div>
                   </div>
   </div>
@@ -247,7 +278,7 @@ ga('send', {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">January 26, 2022</p>
+        <p class="date">October 21, 2021</p>
       </div>
     </div>
     
@@ -266,141 +297,98 @@ ga('send', {
 
 
 
-<section id="introduction" class="level2">
-<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>Most people struggle in setting/executing/achieving goals due to many reasons that we are not going to cover in this post. I tried in this post to cover notes I’ve taken so far about the whole process of setting and achieving goals from a neuroscience perspective. The psychological aspects are already covered in a lot of books about this topic, but rarely the neuroscience aspect is mentioned. I will keep updating this post in the event of learning/reading something new or from my own experience going through a process over the years. Please feel free to send your feedback with new resources/corrections so we can all benefit from it.</p>
-</section>
-<section id="goals" class="level2">
-<h2 class="anchored" data-anchor-id="goals">Goals</h2>
-<p>Humans are particularly good at orienting the brain towards goals with different time trajectories: immediate goals, short-term goals, and long-term/lifetime goals. Also, humans are good at executing multiple goals at the same time.</p>
-<p><strong>Neural circuit</strong> is the brain areas that work together in concert when something happens. These areas work in sequence, each area is necessary in making action happen but not sufficient. Therefore, all areas work together to lead to the occurrence of an action.</p>
-<p>Brain circuits involved in all phases of goals (setting/executing/achieving) regardless of the kind of goals (small/big or short-term/long-term) are:</p>
-<ol type="1">
-<li><strong>Amygdala</strong>: this area is responsible for fear and anxiety.</li>
-<li><strong>Basal Ganglia</strong>: it is responsible for action and it has two parts (circuits):
+<p><strong><a href="https://arxiv.org/abs/1810.04805">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</a></strong></p>
 <ul>
-<li>One that generates <strong>GO</strong> (initiation of action)</li>
-<li>One that generates the <strong>NO GO</strong> (prevention of action).</li>
+<li><strong>Thesis</strong>: Build architecture agnostic model that learns rich contextualized representations of tokens from attending to both right and left contexts. Having access to surrounding context from both directions is critical to build such representations which are critical for token and sentence level tasks such as classification and QA.</li>
+<li><strong>Methods</strong>:
+<ul>
+<li>Model:
+<ul>
+<li>Encoder-only transformer</li>
+<li>There are two models:
+<ul>
+<li>Base: L = 12, hidden_dim = 768, n_heads = 12 -&gt; total_params = 110M</li>
+<li>Large: L = 24, hidden_dim = 1024, n_heads = 16 -&gt; total_params = 340M</li>
 </ul></li>
-<li><strong>Lateral Prefrontal Cortex</strong>: it is involved with planning and thinking across different time scales.</li>
-<li><strong>Orbito Prefrontal Cortex</strong>: it is responsible for meshing some emotionality with the current state of progress and comparing that emotionality with what it might be when we achieve the goal. Therefore, it is responsible for how we feel at present compared to how we would feel when reaching some predefined goal.</li>
-</ol>
-<p>One part of the circuits will be involved in placing a value on the goal to determine whether it is worth pursuing. The other part is involved in taking the action; whether to do something or not do something, given the value of the goal.</p>
-<p><strong>The Value of the goal is so critical in achieving the goal</strong>. The reason behind this is that we have neuro-modulater system that governs setting/executing/achieving goals which are <strong>Dopamine</strong>. Dopamine is the currency by which we assess particular progress towards particular things of particular value. It is the way we use to assess the value of our pursuit.</p>
-</section>
-<section id="peripersonal-space-vs.-extrapersonal-space" class="level2">
-<h2 class="anchored" data-anchor-id="peripersonal-space-vs.-extrapersonal-space">Peripersonal Space vs.&nbsp;Extrapersonal Space</h2>
-<p><strong>Peripersonal Space</strong> is the space within our body, the surface of our skin, and in our immediate environment. There are particular neurochemicals (such as ceretonine) and particular neuro-circuits that are responsible for consummatory behaviors such as using and consuming stuff with our immediate reach. Things like drinking from the cup next to us or feeling our internal body/breathing. We don’t have to do much to consume/use stuff that is in our peripersonal space.</p>
-<p><strong>Extrapersonal Space</strong> is the space beyond the confinement of our reach in both <em>time</em> and <em>space</em> such as things in a different room or another building or something in the future. The molecule that is most concerned with this is <em>dopamine</em>.</p>
-<p>It is very important to understand both spaces to be efficient in setting/assessing/achieving our goals and be able to keep transitioning back and forth between those spaces:</p>
-<ol type="1">
-<li>We need to be able to understand our peripersonal space so that we can assess how feel and the progress we made towards goal(s) even if the goal has not been started yet or the stuff we’re evaluating is in the future. Therefore, we use our peripersonal space to assess current feelings/state.</li>
-<li>We need to be able to move to the extrapersonal space to move towards any goal.</li>
-</ol>
-</section>
-<section id="visually-focusing-on-a-goal-line-improves-performance" class="level2">
-<h2 class="anchored" data-anchor-id="visually-focusing-on-a-goal-line-improves-performance">Visually Focusing on a Goal Line Improves Performance</h2>
+<li>512 context window size
 <ul>
-<li>Multitasking is not good while doing goal-seeking activities that require focus and a high level of cognition. However, it is good to do some form of multitasking before starting goal-seeking activities because it helps us be in action mode which leads us to focus faster on the next task (due to adrenaline).</li>
-</ul>
-<p><strong>Blood pressure:</strong></p>
-<ol type="1">
-<li>Systolic blood pressure (top number) which is what is measured when the heart contracts (beats).</li>
-<li>Diastolic blood pressure (bottom number) which is what is measured between beats.</li>
-</ol>
-<p><strong>There are two visual pathways:</strong></p>
-<ol type="1">
-<li>When we focus on something such as an object or simply a line regardless of how far it is. This helps with focus and increases attention/stress levels. This would raise systolic blood pressure which also releases <em>adrenaline</em> by a small amount as well as other stuff such as more Oxygen and fuel which in turn helps us get ready for action. As a result, visually focusing on one object helps prepare the body and brain to move and be ready to take action.</li>
-<li>When we are not focusing and just collecting a wider view of the scene without necessarily focusing on any specific thing. This would reduce systolic blood pressure and any goal-seeking behaviors which also helps with relaxation.</li>
-</ol>
+<li>Due to computational cost, train <span class="math inline">\(90\%\)</span> of the steps with sequence length of 128 and last <span class="math inline">\(10\%\)</span> steps with sequence length of 512 tokens</li>
+</ul></li>
+<li>Training loss is the sum of the mean MLM likelihoods and the mean of the NSP likelihood</li>
+</ul></li>
+<li>“Sentence” in BERT refers to contiguous span of text and not necessarily a linguistic sentence</li>
+<li>Tokenizer: WordPiece with 30,000 vocabulary</li>
+<li><code>[CLS]</code> is prepended to every sequence as the first token. The final hidden vector of this token is used the consolidated representation for the full sequence in classification tasks where an output layer would typically be added to project it to output needed to classification tasks such as vocabulary or number of classes</li>
+<li>“Sequence” input consists of 2 sentences separated by <code>[SEP]</code> token during pre-training. Therefore, we have two sentences: <em>A</em> &amp; <em>B</em>.
 <ul>
-<li>Visually forcing ourselves to focus on a line or a dot (narrowing visual focus) on a wall or desk for 30-60 seconds will help us increase our level of cognitive attention and our ability to focus and stay focused. This is because most of our cognition follows our visual perception.</li>
-<li>Also, visually focusing on the goal line will help us achieve the goal faster with less work (with the help of moving to the extrapersonal space).</li>
-</ul>
-</section>
-<section id="tools" class="level2">
-<h2 class="anchored" data-anchor-id="tools">Tools</h2>
-<section id="tool-1-learn-faster-with-the-85-rule" class="level3">
-<h3 class="anchored" data-anchor-id="tool-1-learn-faster-with-the-85-rule">Tool 1: Learn Faster with the 85% Rule</h3>
-<p>Neuroplasticity is how the brain changes the connection between neurons that reflects new learnings. Mainly, it changes based on the errors we make while learning. If we don’t make mistakes, there is nothing to learn and the brain wouldn’t change anything since everything is working perfectly fine. Therefore, part of learning is making mistakes and learning from them. The brain would be in a much better position after errors in terms of focus and ability to learn faster and absorb new material. As a result, we should pursue errors, not as end goals but to make the brain more plastic.</p>
-<p>But the big question is: What is the rate of errors we should look for to get the best learnings/plasticity?</p>
+<li>We would have token embedding for each sentence</li>
+<li>We would add token embedding <code>E[A]</code> for each token in sentence <em>A</em> and token embedding <code>E[B]</code> for each token in sentence <em>B</em></li>
+<li>Therefore, input token embedding would be the sum of token embedding, position embedding, and segment embedding</li>
+</ul></li>
+<li>The final hidden vector of each token is the contextualized token embedding <span class="math inline">\(T_i\in{R^H}\)</span></li>
+<li><em>Masked language model (MLM)</em>: predict the masked word
 <ul>
-<li>Too few errors don’t result in learning because the brain is performing everything correctly.</li>
-<li>Too many errors result in frustration and not making progress because the task is much harder that the level we are at.</li>
-</ul>
-<p>According to a recent paper, it uses the 85% rule: we should target about a <strong>15% error rate</strong> to get the best of plasticity/learning and progress. The target should be <em>around 15%</em> since it is hard to measure the precise error rate; however, make sure to <em>not exceed 20%</em> or <em>be below 10%</em>.</p>
-</section>
-<section id="tool-2-use-focal-vision-to-initiate-goal-pursuit" class="level3">
-<h3 class="anchored" data-anchor-id="tool-2-use-focal-vision-to-initiate-goal-pursuit">Tool 2: Use Focal Vision to Initiate Goal Pursuit</h3>
-<p>Given the importance of visually focusing on narrow/specific objects, it is highly recommended to do it <strong>30-60 seconds</strong> right before starting the goal-seeking focused task. It is okay to blink while focusing on the object.</p>
-</section>
-<section id="tool-3-use-aged-self-images-to-self-motivate" class="level3">
-<h3 class="anchored" data-anchor-id="tool-3-use-aged-self-images-to-self-motivate">Tool 3: Use Aged Self-Images to Self-Motivate</h3>
-<p>There is a phenomenon called <strong>delayed discounting</strong>. In short, delayed discounting entails how we perceive future rewards for our immediate action. For example, most people struggle to save because; even though they acknowledge the importance of saving for retirement, they discount the rewards since they will be further in the future and tend to prefer immediate short-term rewards over long-term rewards. As a result, the future rewards need to be much bigger (or at least convince ourselves that it is much bigger) for our brain to be motivated to do it compared to other activities that have immediate/shorter-term rewards.</p>
-<p>Due to the importance of the visual system, labs at CMU did a study on two groups regarding the tendency of saving for retirement by showing one group an actual image of themselves after 30-40 years and the other group just told about the need to save for retirement. They found that the group that saw their future images saved much higher than the others. As a result, it is good to use self-images before pursuing goals and always affirm the value of the goal and stay motivated.</p>
-</section>
-<section id="tool-4-visualizing-goals" class="level3">
-<h3 class="anchored" data-anchor-id="tool-4-visualizing-goals">Tool 4: Visualizing Goals</h3>
-<p>It appears, according to multiple studies, that visualizing the goal and how it feels after achieving the goal has effect at the start of the goal ONLY. After that, the effect starts to diminish until it becomes negligible. Therefore, it is only helpful in the process of setting the goals but not necessarily during execution or assessment.</p>
-</section>
-<section id="tool-5-visualizing-failure" class="level3">
-<h3 class="anchored" data-anchor-id="tool-5-visualizing-failure">Tool 5: Visualizing Failure</h3>
-<p>Multiple studies showed that thinking about how things can fail and what would be the outcome of failing makes us twice more likely to achieve the goal. When we imagine failure, there would be an increase in the systolic blood pressure and readiness to perform actions which leads us to stay motivated and push extra hard to achieve those goals. The brain and body are much better at moving away from fearful things than moving towards things we like.</p>
-</section>
-<section id="tool-6-make-goals-moderately-lofty" class="level3">
-<h3 class="anchored" data-anchor-id="tool-6-make-goals-moderately-lofty">Tool 6: Make Goals Moderately Lofty</h3>
-<p>If we classify goals into 3 categories: easy, moderate (hard but achievable), and very hard (impossible):</p>
+<li>For every sequence, <span class="math inline">\(15\%\)</span> of the token positions will be masked at random. Out of the <span class="math inline">\(15\%\)</span> token positions:
 <ul>
-<li>Easy goals are too easy that they don’t engage brain circuits and the body and don’t change systolic blood pressure. So people are more likely to drop those goals</li>
-<li>Hard (impossible) goals also get dropped due to the same reasons the easy goals get dropped but in the opposite direction (crash systolic blood pressure)</li>
-<li>Moderate goals; goals that are hard enough but reachable, are much more likely to be achieved and engage brain circuits and the body. Studies have shown that such goals are at least twice as likely to be pursued and achieved than other goals.</li>
-</ul>
-<p>Therefore, set goals that are moderate to hard to increase the likelihood of achieving them. Not too easy and not too hard goals.</p>
-</section>
-<section id="tool-7-avoid-goal-distraction-focus-on-1-2-major-goals-per-year" class="level3">
-<h3 class="anchored" data-anchor-id="tool-7-avoid-goal-distraction-focus-on-1-2-major-goals-per-year">Tool 7: Avoid Goal Distraction; Focus on 1-2 Major Goals Per Year</h3>
-<p>When our visual system has so many things in the environment to look at, this will drift our attention from what we planned to do and end up doing completely different things that may even contradict what we had in mind and planned to do. Department stores figured this out by stocking their shelves with so many things and varieties that make people much more likely to buy stuff that never thought about or even needed. Therefore, having sparse space helps our brain and visual system stay focused and do what we planned to do. Therefore, 2 (or max 3) major goals per year are more than enough for most people.</p>
-</section>
-<section id="tool-8-ensure-specificity-of-goals-weekly-assessment" class="level3">
-<h3 class="anchored" data-anchor-id="tool-8-ensure-specificity-of-goals-weekly-assessment">Tool 8: Ensure Specificity of Goals, Weekly Assessment</h3>
-<p>We need to be specific about what success would look like and have an action plan of what it takes to achieve the goal. In other words, there need to be specific steps that have to be performed to achieve the goal so it makes it easier for the brain to know what to do next and reduces the amount of willpower needed to start goal-seeking activities. It also helps us in measuring progress and update action plans.</p>
-<p>It is highly recommended to have a weekly assessment to measure what has been done in the previous week and what should be done in the coming week by updating the action plan. The assessment should be written and advisable to have a specific day/time every week dedicated to this exercise where the focus will be only on the assessment and revisiting goals/action plans.</p>
-</section>
-<section id="tool-9-space-time-bridging" class="level3">
-<h3 class="anchored" data-anchor-id="tool-9-space-time-bridging">Tool 9: Space-Time Bridging</h3>
-<ol type="1">
-<li>Close your eyes for 3 short breaths and focus on what is happening inside your body and avoid any external distraction</li>
-<li>Open your eyes and look at something on the skin of your body for short breaths. The attention should be 90% on the internal body and 10% on the visual cognition of the skin part we’re looking at.</li>
-<li>Look at something 5-15 ft away for 3 short breaths. The focus would be 90% on the object we’re looking at and 10% on our internal body.</li>
-<li>Look at something very far for 3 short breaths. The focus should be around 99% on the object we’re looking at and 1% on our internal body.</li>
-<li>Expand the visual horizon to include everything in the horizon for 3 short breaths. The focus should be 100% on the external (extrapersonal) space.</li>
-</ol>
-<p>Repeat the above steps 2-3 times once daily. This should teach our brain system related to goal setting/assessment/execution to adjust and move between different time-frames and allow us to conceive the pursuit of different goals over different periods.</p>
-</section>
-</section>
-<section id="dopamine" class="level2">
-<h2 class="anchored" data-anchor-id="dopamine">Dopamine</h2>
-<p><strong>Dopamine</strong> is thought of as the molecule for pleasure and reward. However, it is actually for motivation. Therefore, it affects the motivation of performing the actual steps that lead to pleasure/rewards.</p>
-<p>Dopamine reward prediction error:</p>
+<li><span class="math inline">\(80\%\)</span> will be replaced with the <code>[MASK]</code> token</li>
+<li><span class="math inline">\(10\%\)</span> will be replaced with random token. This doesn’t harm the language understanding because it happens only <span class="math inline">\(1.5\%\)</span> (<span class="math inline">\(10\%\)</span> x <span class="math inline">\(15\%\)</span>)</li>
+<li><span class="math inline">\(10\%\)</span> will keep the same token to bias the representation towards the actual observed token</li>
+</ul></li>
+<li>This would force the model to keep contextualized token representation as the model can’t predict which token will be masked</li>
+<li>For masked tokens, use their final hidden representations as input to softmax layer over the vocabulary to get the prediction (probability distribution). Cross entropy loss is used over these masked tokens</li>
+</ul></li>
+<li><em>Next sentence prediction (NSP)</em>: Predict whether sentence <em>B</em> is the next sentence to <em>A</em>. This objective helps understand the relationships between sentences, which is needed for tasks such as QA.
 <ul>
-<li>If something positive happens that we didn’t expect -&gt; A lot of dopamine is released</li>
-<li>If we anticipate something positive to happen -&gt; Dopamine is released during the anticipation period (before receiving the reward) and small release happens after receiving the reward. The releases are not as much as if something positive was not expected.</li>
-<li>If we anticipate something positive to happen but it didn’t happen -&gt; Dopamine is released during the waiting (anticipation) period but then dropped below the initial level when it doesn’t happen.</li>
-</ul>
-<p>Our brain can change the nature of the same behavior from positive to negative and vice versa. For example, if you voluntarily exercise versus someone forcing you to exercise. It is the same action but, according to multiple studies, people (or rats) who were forced to exercise generated negative results including blood pressure and other health metrics while others who exercised voluntarily generated positive metrics.</p>
-<p>As a result, we should pick a milestone (assessment) that we can maintain consistency with the reward schedule (cognitive rewards). Weekly assessment is perfect: it is not too granular neither it is too infrequent. The reward can be as simple as checking a box that certain tasks have been achieved and acknowledging that we did it and we are on the right track. This helps us stay motivated and ready to pursue the goal.</p>
-<p>Some things help increase the release of dopamine such as a cold shower or cold water exposure which has been shown to increase the release of dopamine by 2.5x or consumption of caffeine which increases the dopamine receptors and makes dopamine float around more effectively in activating the motivational state.</p>
-</section>
-<section id="resources" class="level2">
-<h2 class="anchored" data-anchor-id="resources">Resources</h2>
+<li>Every sentence <em>A</em> would be followed by:
 <ul>
-<li><a href="https://www.nature.com/articles/s41467-019-12552-4">The 85% Rule for Optimal Learning</a></li>
-<li><a href="https://journals.sagepub.com/doi/10.1177/0146167219861438">Effects of Narrowing Visual Attention on Goal Pursuit Behavior</a></li>
-<li><a href="https://www.youtube.com/c/AndrewHubermanLab/videos">Huberman Lab Podcast</a>—</li>
+<li><span class="math inline">\(50\%\)</span> of the time with actual next sentence from corpus</li>
+<li><span class="math inline">\(50\%\)</span> of the time with random sentence from corpus</li>
+</ul></li>
+<li>The <code>[CLS]</code> final hidden vector would be an input to softmax layer as binarized classifier to predict whether sentence <em>B</em> is next sentence.</li>
+</ul></li>
+<li>Fine-tuning:
+<ul>
+<li>Change input/output based on the downstream task.
+<ul>
+<li>For classification, input has <code>[CLS]</code> followed by the sentence (full text). The <code>[CLS]</code> final hidden vector would be fed to softmax layer to get the prediction -&gt; newly added parameters are <span class="math inline">\(W \in R^{K x H}\)</span> where <span class="math inline">\(K\)</span> is number of classes</li>
+<li>For QA, input has <code>[CLS]</code> followed by question tokens (sentence <em>A</em>) followed by separator <code>[SEP]</code> followed by answer tokens (sentence <em>B</em>). Two new tokens are introduced: <code>S</code> <span class="math inline">\(\in{R^H}\)</span> for start span token and <code>E</code> <span class="math inline">\(\in{R^H}\)</span> for end span token. Each token of the paragraph (sentence <em>B</em>) final hidden vector is dot-product with <code>S</code> followed by softmax over all tokens in sentence <em>B</em> to get the start span. The token with highest probability would be the start token. The same is done for end token <code>E</code>. The objective is the sum of the likelihoods of both the start and the end tokens.</li>
+</ul></li>
+<li>Each task would almost have the same model (except the output layer) and initialized with the same pre-trained model -&gt; Each task would have its own fine-tuned model</li>
+</ul></li>
+</ul></li>
+<li><strong>Contribution</strong>:
+<ul>
+<li>Importance of contextualized token representations using deep bidirectional transformer</li>
+</ul></li>
+<li><strong>Importance</strong>: This the first transformer-based architecture that uses deep bidirectional transformer (encoder-only) to create rich representations for tokens. Different downstream tasks can use the same model but may add output layer specific to the task and obtains better performance than auto-regressive or LMs or left-to-right models in general</li>
+<li><strong>Takeaways</strong>:
+<ul>
+<li>Fine-tuning outperforms feature-based approaches even if we use representations from BERT from different layers.</li>
+<li>Model size leads to improve performance on downstream tasks</li>
+</ul></li>
+<li><strong>Improvements</strong>:
+<ul>
+<li>It isn’t clear what is the effect of different % for MLM</li>
+<li>I am not convinced we need NSP to achieve better performance</li>
+<li>In this setup, if we have multiple masked tokens in one sentence, the prediction of the each masked token doesn’t take into account the prediction of other masked tokens.</li>
+</ul></li>
+<li><strong>Notes</strong>:
+<ul>
+<li>Pre-trained language representations usage approaches:
+<ul>
+<li><em>Feature-based</em> approach: Use pre-trained token representations in task-specific architectures as embeddings and train the architecture. ELMO is an example of this approach</li>
+<li><em>Fine-tuning</em> approach: Fine-tune all parameters of the model to the downstream task such as GPT/BERT</li>
+</ul></li>
+<li>ELMO word embeddings, which are concatenated word embeddings from bidirectional LSTMs (training LSTM from left to right and right to left), are contextualized word embeddings. However, previous approaches to ELMO such as word2vec and GloVe were contextless word embeddings.
+<ul>
+<li><em>Contextualized word embeddings</em>: We know that the same word could have different meanings depending on its context. Therefore, the same word would have different embeddings in different context.</li>
+<li><em>Contextless word embeddings</em>: Each word would have the same embedding obtained from pre-training regardless of its context</li>
+</ul></li>
+</ul></li>
 </ul>
+<p>#nlp #llm</p>
 
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
