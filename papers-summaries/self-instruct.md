@@ -1,5 +1,5 @@
 ---
-title: "InstructGPT: Training language models to follow instructions with human feedback"
+title: "Self-Instruct: Aligning Language Models with Self-Generated Instructions"
 date: 2024-03-21
 categories:
   - LLM
@@ -50,4 +50,3 @@ categories:
 - **Takeaways**:
   - More data (instructions) leads to better performance but it plateaus after certain dataset size. This is largely dependent on the evaluations data and its diversity
   - Data quality plays a critical role in improving performance. It led to $10\%$ increase in performance when output of each instruction is rewritten by $InstructGPT_{003}$
-
