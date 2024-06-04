@@ -65,3 +65,5 @@ categories:
   - Model still hallucinates and make up facts as well as generate toxic/biased
     responses
 
+#nlp #llm #fine-tuning
+

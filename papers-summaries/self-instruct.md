@@ -50,3 +50,5 @@ categories:
 - **Takeaways**:
   - More data (instructions) leads to better performance but it plateaus after certain dataset size. This is largely dependent on the evaluations data and its diversity
   - Data quality plays a critical role in improving performance. It led to $10\%$ increase in performance when output of each instruction is rewritten by $InstructGPT_{003}$
+
+#nlp #fine-tuning 
