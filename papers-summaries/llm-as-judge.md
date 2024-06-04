@@ -1,0 +1,40 @@
+---
+title: "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena"
+date: 2024-05-30
+categories:
+  - LLM
+  - NLP
+  - DL
+---
+
+[**Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena**](10.48550/arXiv.2306.05685)
+
+- **Thesis**: Provide scalable, interpretable, automated method to evaluate
+  LLM alignment with human preference. There is discrepancy between LLM
+  benchmarks and human preferences, especially when it comes to chatbot
+  assistants and we need to have hybrid benchmarks that cover both core
+  capabilities and instruction following in a multi-turn conversations
+- **Methods**:
+  - Types of LLM-as-a-Judge:
+    - Pairwise comparison: Presented with a question and two answers, the LLM judge is asked to determine which answer is better or if they tie
+    - Single answer grading: LLM judge is asked to grade an answer given its question
+    - Reference-guided answer grading: LLM judge is asked to score the answer according to grading criteria based on the referenced answer
+  - Multi-turn questions are presented in one prompt and the LLM judge is asked to focus on the answers of the second question from each model
+  - Agreement is measured with 58 human experts on the MT-bench and thousands or crowd-users on the Chatbot Arena
+- **Contribution**:
+  - Two benchmarks:
+    - Multi-turn questions set (MT-bench): Evaluate chatbot's ability to follow
+      instructions in multi-turn conversations. It includes 80 high quality
+      multi-turn open-ended questions, 10 questions per use case categories
+    - Chatbot Arena: Crowdsourced platform that anonymous users use to chat
+      between two chatbots at the same time and rank the responses according to their personal preferences. It has 30K votes for users who interacted with the models. It covers wider use cases than MT-bench as there is no restrictions of what the user should ask
+  - Systematic study of LLM-as-a-judge to approximate human preferences
+- **Importance**: Provides a scalable and alternative to human annotators to align LLMs to human preferences
+- **Takeaways**: Strong LLMs can be used as a judge to approximate human preferences to score answer(s) of questions with more than 80% agreement rate. This maybe due to the fact that strong LLMs have been trained using RLHF. Single answer grading agreement is on par with human agreement (> 80%)
+- **Improvements**:
+  - Position bias: Most LLMs suffer from position bias where they give higher score for the first answer even when we flip the answers or the answers are very similar and are indistinguishable. This can be addressed by calling LLM judge twice and swap the positions of the answers and only declare it a win if the LLM is consistent
+  - Verbosity bias: LLMs tend to prefer longer answers even if they are less accurate and low quality
+  - Self-enhancement bias: LLMs tend to favor their answers
+  - Limited reasoning: LLMs may not know the correct answer. This can be addressed by chain-of-thought (CoT) OR reference-guided answers which tend to work much better. We basically provide reference answer in the prompt.
+
+#nlp #fine-tuning #eval
