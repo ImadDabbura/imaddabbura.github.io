@@ -18,7 +18,8 @@ categories:
     that performs very close to InstructGPT
   - Because generated instructions are more creative/diverse than human-created
     instructions, LLMs fine-tuned on data using self-instruct outperforms the
-    ones fine-tuned on public instruction data.
+    ones fine-tuned on public instruction data
+- 52K synthetic instructions dataset and a set of manually written novel tasks for building and evaluating future instruction-following models 
 - **Method(s)**:
   - Vanilla GPT3 is used as the LM in all the steps of the generation pipeline
   - The authors started with $175$ pool of task seed that was written by them

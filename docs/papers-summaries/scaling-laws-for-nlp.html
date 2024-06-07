@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Imad Dabbura">
+<meta name="dcterms.date" content="2024-01-05">
 
-<title>Imad Dabbura - Deep Learning Tips &amp; Tricks</title>
+<title>Imad Dabbura - Scaling Laws for Neural Language Models</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,26 +25,26 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<script src="site_libs/quarto-search/autocomplete-preset-algolia.umd.js"></script>
-<meta name="quarto:offset" content="./">
-<link href="./images/profile.jpg" rel="icon" type="image/jpeg">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<script src="../site_libs/quarto-search/autocomplete-preset-algolia.umd.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../images/profile.jpg" rel="icon" type="image/jpeg">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -106,32 +108,57 @@ ga('send', {
 });
 </script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<link rel="stylesheet" href="styles.css">
-<meta property="og:title" content="Imad Dabbura - Deep Learning Tips &amp; Tricks">
-<meta property="og:image" content="https://imaddabbura.github.io/images/dl-tips-and-tricks-image.png">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
+<meta property="og:title" content="Imad Dabbura - Scaling Laws for Neural Language Models">
+<meta property="og:description" content="">
 <meta property="og:site_name" content="Imad Dabbura">
-<meta property="og:image:height" content="229">
-<meta property="og:image:width" content="220">
-<meta name="twitter:title" content="Imad Dabbura - Deep Learning Tips &amp; Tricks">
-<meta name="twitter:image" content="https://imaddabbura.github.io/images/dl-tips-and-tricks-image.png">
+<meta name="twitter:title" content="Imad Dabbura - Scaling Laws for Neural Language Models">
+<meta name="twitter:description" content="">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image-height" content="229">
-<meta name="twitter:image-width" content="220">
 </head>
 
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="./index.html" class="navbar-brand navbar-brand-logo">
-    <img src="./images/palestine-flag.png" alt="" class="navbar-logo">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../images/palestine-flag.png" alt="" class="navbar-logo">
     </a>
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Imad Dabbura</span>
     </a>
   </div>
@@ -142,35 +169,35 @@ ga('send', {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="../about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./index.html"> 
+    <a class="nav-link" href="../index.html"> 
 <span class="menu-text">Posts</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./papers-summaries.html"> 
+    <a class="nav-link" href="../papers-summaries.html"> 
 <span class="menu-text">Papers’ Summaries</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./til.html"> 
+    <a class="nav-link" href="../til.html"> 
 <span class="menu-text">Today I Learned</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./mlops.html"> 
+    <a class="nav-link" href="../mlops.html"> 
 <span class="menu-text">MLOps</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./dl-tips-tricks.html" aria-current="page"> 
+    <a class="nav-link" href="../dl-tips-tricks.html"> 
 <span class="menu-text">DL Tips &amp; Tricks</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./cmn-ai.html"> 
+    <a class="nav-link" href="../cmn-ai.html"> 
 <span class="menu-text">cmn_ai</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./tiny-pytorch.html"> 
+    <a class="nav-link" href="../tiny-pytorch.html"> 
 <span class="menu-text">Tiny-PyTorch</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -179,23 +206,23 @@ ga('send', {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-more">    
         <li>
-    <a class="dropdown-item" href="./projects-index.html">
+    <a class="dropdown-item" href="../projects-index.html">
  <span class="dropdown-text">Projects</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./books-summaries.html">
+    <a class="dropdown-item" href="../books-summaries.html">
  <span class="dropdown-text">Books’ Summaries</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./misc-notes.html">
+    <a class="dropdown-item" href="../misc-notes.html">
  <span class="dropdown-text">Misc. Notes</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./reading-list.html">
+    <a class="dropdown-item" href="../reading-list.html">
  <span class="dropdown-text">Reading List</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./resume.html">
+    <a class="dropdown-item" href="../resume.html">
  <span class="dropdown-text">Resume</span></a>
   </li>  
     </ul>
@@ -228,52 +255,87 @@ ga('send', {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
-      <h1 class="title">Deep Learning Tips &amp; Tricks</h1>
-                      </div>
+    <div class="quarto-title column-body">
+      <h1 class="title">Scaling Laws for Neural Language Models</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">LLM</div>
+                <div class="quarto-category">NLP</div>
+                <div class="quarto-category">DL</div>
+              </div>
+                  </div>
   </div>
     
   
-  <div class="quarto-title-meta column-page">
+  <div class="quarto-title-meta">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Imad Dabbura </p>
+            </div>
+    </div>
       
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">January 5, 2024</p>
+      </div>
+    </div>
     
       
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
 
 
-<section id="general" class="level2">
-<h2 class="anchored" data-anchor-id="general">General</h2>
+<p><strong><a href="http://arxiv.org/abs/2001.08361">Scaling Laws for Neural Language Models</a></strong></p>
 <ul>
-<li><p>Gradient accumulation: to avoid out-of-memory errors (OOM) while training on GPUs, break larger batches into smaller batches and accumulate gradients by back-propagating after every batch to gather gradients before running optimization step. It should give identical results as if we train with larger batches unless we have layers that kind of depending on the batch size in the forward pass such as BatchNorm.</p>
+<li><strong>Thesis</strong>: Provide empirical analysis and equations of how to go about the relationship between performance (measured in cross-entropy loss) for LLM and may factors such as model size, dataset size, compute budget, etc.</li>
+<li><strong>Methods</strong>:
 <ul>
-<li>For example, in pytorch, instead of calling <code>optimizer.step()</code> for every batch, we call it every few batches.</li>
+<li>Trained mainly decoder-only transformers with different variations and hyper-parameters plus LSTMs with context size of 1024 tokens.</li>
+<li>Compute budget = <span class="math inline">\(6NBS\)</span> where <span class="math inline">\(N\)</span> is number of parameters excluding embedding parameters, <span class="math inline">\(B\)</span> is batch size, <span class="math inline">\(S\)</span> is number of steps (optimization update), and <span class="math inline">\(6\)</span> to account for forward and backward passes</li>
 </ul></li>
-<li><p>When using mixed precision, it is better to increase batch size to utilize the GPU since every batch will occupy much smaller memory. As a result, there will be less updates for each epoch because the model will see less number of batches in every epoch. This means that 1) we need to increase the number of epochs and 2) increase the learning rate.</p></li>
-<li><p>Mixup: linear combination of 2 random examples from training dataset using lambda parameter that is drawn from <code>Beta</code> distribution (<code>α</code>, <code>α</code>). The output vector will also be linear combination of two examples labels. This will force model to be more robust and learn linear combination of examples instead of memorizing them. As a result, model becomes less sensitive to corrupted labels and noise in the training data. This method can also be applied to tabular data. However, because it is harder for the model to learn to differentiate between the two examples and the weight of each, we need to train for much longer to get good results.</p></li>
-</ul>
-</section>
-<section id="nlp" class="level2">
-<h2 class="anchored" data-anchor-id="nlp">NLP</h2>
+<li><strong>Contribution</strong>: Simple equations and power-law relationships that we can use as a reference when allocating our compute budget.</li>
+<li><strong>Takeaways</strong>: The main factors that affect LLMs performance are 1) model size, 2) dataset size, 3) compute budget. Other factors such as architectural hyper-parameters such at best weak effect on the model’s performance</li>
+<li><strong>Notes</strong>:
 <ul>
-<li>With LLM, generally the more compute the better the results. We can define compute, roughly, as the number of parameters x number of tokens. Therefore, we can make the model bigger and keep the number of tokens fixed OR keep the model size the same and increase the number of tokens which means that we have to train for longer. There is a trade-off that depends on the task.</li>
-<li>Improving logloss for LLMs is correlated with improved performance on downstream tasks</li>
-<li>Even though loss scales smoothly with compute, individual downstream tasks may scale in an emergent fashion. This means some tasks’ loss may be flat, others maybe inversely scaled, etc.</li>
+<li>There is negative relationship between model size, dataset size, and compute time with cross entropy loss. As we increase one of them -&gt; loss improves. This relationship can be described by power-laws equations.</li>
+<li>Larger models are sample-efficient -&gt; needs much less compute time to get to the same loss as smaller models <span class="math inline">\(\therefore\)</span> use less data points and less optimization steps.</li>
+<li>For a fixed compute budget, large models can stop long before convergence and still performs better than small models</li>
+<li>If we have more compute budget, allocating most of it to larger models yield the most improvement (we may need to increase dataset size to avoid iterating over the same data multiple times). Followed by larger batches to utilize parallelism. Finally, increase training steps (epochs).</li>
+<li>When including embeddings parameters, performance is strongly dependent on number of layers and the number of parameters. However, w/o including embedding parameters, any combination of layer/paramaters_size converge to the same trend</li>
+<li>Transformer outperforms LSTM. LSTM plateaus after &lt; 100 tokens while transformer improves through whole context. For the early tokens, LSTM performs similar to Transformer, but for tokens that are later in the context LSTM suffers. As Transformer model size increases -&gt; improves its ability to recognize patters and have lower loss for later tokens</li>
+<li>Performance improves with model size regardless of what test data is used; however, for a given model size, there is narrow gap between losses for different test data. WebText2 has the lowest loss
+<ul>
+<li>There is a constant penalty between test loss and validation loss regardless of training and test data. In other words, when testing the model on a different distribution, the test loss is a constant factor more than the validation loss. So we can predictably predict test loss from validation loss</li>
+</ul></li>
+<li>Test loss keeps improving as we increase model size and dataset size in almost perfect power law in model size. For smaller datasets, larger models stop improving early and starts to overfit</li>
+<li>For a fixed compute budget, we have optimal model size that would yield the best test loss</li>
+<li>Larger models require less steps to train compared with smaller models</li>
+<li>There is very weak dependence on architecture and optimizer hyper-parameters such as number of attention heads or width/depth of the model</li>
+<li>LLM performance depends largely on three factors:
+<ul>
+<li>Model size (excluding embedding)</li>
+<li>Dataset size</li>
+<li>Compute budget</li>
+<li>When not bottlenecked by other two factors, model’s performance follows power-law relationship with these factors. For example, Increasing model size would improve performance in a power-law relationship assuming we’re not bottlenecked by dataset size or compute budget</li>
+</ul></li>
+<li>Model size and dataset size must be changed together to avoid overfitting. If we hold one of them context we hit diminishing returns and enter overfitting. For each <span class="math inline">\(8x\)</span> increase in model size, we need to increase the dataset size by <span class="math inline">\(5x\)</span></li>
+</ul></li>
 </ul>
+<p>#nlp #llm</p>
 
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
