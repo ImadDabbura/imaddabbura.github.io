@@ -13,7 +13,7 @@ categories:
 	- Trained mainly decoder-only transformers with different variations and hyper-parameters plus LSTMs with context size of 1024 tokens.
 	- Compute budget = $6NBS$ where $N$ is number of parameters excluding embedding parameters, $B$ is batch size, $S$ is number of steps (optimization update), and $6$ to account for forward and backward passes
 - **Contribution**: Simple equations and power-law relationships that we can use as a reference when allocating our compute budget.
-- **Takeaways**: The main factors that affect LLMs performance are 1) model size, 2) dataset size, 3) compute budget. Other factors such as architectural hyper-parameters such at best weak effect on the model's performance
+- **Takeaways**: The main factors that affect LLMs performance are 1) model size, 2) dataset size, 3) compute budget. Other factors such as architectural hyper-parameters such at best weak effect on the model's performance. The test loss would continue to decrease as we increase compute in a log-linear fashion.
 - **Notes**:
 	- There is negative relationship between model size, dataset size, and compute time with cross entropy loss. As we increase one of them -> loss improves. This relationship can be described by power-laws equations.
 	- Larger models are sample-efficient -> needs much less compute time to get to the same loss as smaller models $\therefore$ use less data points and less optimization steps. 
