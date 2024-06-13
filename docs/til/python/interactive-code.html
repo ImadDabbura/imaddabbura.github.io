@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2023-01-26">
+<meta name="dcterms.date" content="2024-06-12">
 
-<title>Imad Dabbura - Attribute Access</title>
+<title>Imad Dabbura - Interactive Code Interpreter</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -110,10 +110,10 @@ ga('send', {
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Imad Dabbura - Attribute Access">
+<meta property="og:title" content="Imad Dabbura - Interactive Code Interpreter">
 <meta property="og:description" content="">
 <meta property="og:site_name" content="Imad Dabbura">
-<meta name="twitter:title" content="Imad Dabbura - Attribute Access">
+<meta name="twitter:title" content="Imad Dabbura - Interactive Code Interpreter">
 <meta name="twitter:description" content="">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
@@ -227,7 +227,7 @@ ga('send', {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Attribute Access</h1>
+      <h1 class="title">Interactive Code Interpreter</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">Python</div>
               </div>
@@ -247,7 +247,7 @@ ga('send', {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">January 26, 2023</p>
+        <p class="date">June 12, 2024</p>
       </div>
     </div>
     
@@ -266,13 +266,7 @@ ga('send', {
 
 
 
-<p>Python follows more or less the following steps when looking up an attribute inside of an object:</p>
-<ul>
-<li>First looks at <code>obj.__dict__[attribute]</code>. If it is not found,</li>
-<li>Then looks at <code>type(obj).__dict__[attribute]</code>. If it is not found,</li>
-<li>Check <code>__dict__</code> of all the superclasses.</li>
-</ul>
-<p>However, if Python sees that the attribute is implemented using a descriptor, it uses the descriptor methods (<code>__get__</code>).</p>
+<p>Python standard library has <code>code</code> library that allows us to run <code>REPL</code> in the middle of our script to experiment with the environment. You can run <code>import code; code.interact(local())</code>. It is very useful for debugging</p>
 
 
 
