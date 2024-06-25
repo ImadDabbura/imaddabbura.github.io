@@ -7,7 +7,7 @@ categories:
   - DL
 ---
 
-[**Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena**](10.48550/arXiv.2306.05685)
+[**Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena**](http://arxiv.org/abs/2306.05685)
 
 - **Thesis**: Provide scalable, interpretable, automated method to evaluate
   LLM alignment with human preference. There is discrepancy between LLM
