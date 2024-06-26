@@ -1,6 +1,6 @@
 ---
 title: "Pythia: A Suite for Analyzing Large Language Models Across Training and Scaling"
-date: 2024-12-09
+date: 2023-12-09
 categories:
   - LLM
   - NLP
