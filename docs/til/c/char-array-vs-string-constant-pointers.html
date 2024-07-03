@@ -312,7 +312,11 @@ ga('send', {
 <li>Or define it as a pointer to string constant such as:</li>
 </ol>
 <div class="sourceCode" id="cb2"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span> <span class="op">*</span>pname <span class="op">=</span> <span class="st">"Imad"</span><span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>They are almost identical except for 1 <strong>subtle difference</strong>: - <code>aname</code> will always point to the same storage and can’t be changed to point to something else. The characters themselves can be changed. - <code>pname</code> is a pointer so it can be changed to point to something else. If we try to modify the underlying characters, the result is undefined.</p>
+<p>They are almost identical except for 1 <strong>subtle difference</strong>:</p>
+<ul>
+<li><code>aname</code> will always point to the same storage and can’t be changed to point to something else. The characters themselves can be changed.</li>
+<li><code>pname</code> is a pointer so it can be changed to point to something else. If we try to modify the underlying characters, we get an error because the string is stored in <code>.rodata</code> which can’t be modified at runtime.</li>
+</ul>
 
 
 
