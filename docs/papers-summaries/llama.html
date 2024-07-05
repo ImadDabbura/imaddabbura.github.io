@@ -317,11 +317,15 @@ window.Quarto = {
 <li>Number of heads goes from 32 for 7B model to 64 for 65B model</li>
 <li>Hidden dimension goes from 4096 for 7B model to 8192 for 65B model</li>
 <li>Number of layers goes from 32 for 7B model to 80 for 65B model</li>
-<li>Use RMSNorm which proves to be much more efficient than LayerNorm and is more stable - RMSNorm paper shows that we only need re-scaling invariance to achieve decoupling of layer’s neuron from weight and input (avoid internal covariate shift) and we don’t need re-centering invariance. Therefore, we don’t need to calculate the mean <span class="math display">\[
+<li>Use RMSNorm which proves to be much more efficient than LayerNorm and is more stable
+<ul>
+<li>RMSNorm paper shows that we only need re-scaling invariance to achieve decoupling of layer’s neuron from weight and input (avoid internal covariate shift) and we don’t need re-centering invariance. Therefore, we don’t need to calculate the mean <span class="math display">\[
 \begin{align}
 \begin{split} &amp; \bar{a}_i = \frac{a_i}{\text{RMS}(\mathbf{a})} g_i, \quad \text{where}~~ \text{RMS}(\mathbf{a}) = \sqrt{\frac{1}{n} \sum_{i=1}^{n} a_i^2}. \end{split}\nonumber
 \end{align}
-\]</span> - Also RMSNorm is cheaper to compute because we don’t to calculate the mean</li>
+\]</span></li>
+<li>Also RMSNorm is cheaper to compute because we don’t need to calculate the mean</li>
+</ul></li>
 <li>Pre-layer normalization -&gt; normalize the input of multihead attention block and MLP instead of the output. Also, normalize the out of the last transformer block before feeding it into output linear layer (classifier)</li>
 <li>Use SwiGLU instead of ReLU for non-linearity. It was shown that it leads to better performance in LLMs, but no intuition why :)</li>
 <li>Replace absolute positional embedding with rotary embeddings (RoPE), which is a hybrid of absolute and relative positional embeddings.
