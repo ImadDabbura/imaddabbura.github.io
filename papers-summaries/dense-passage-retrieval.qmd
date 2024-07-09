@@ -1,0 +1,30 @@
+---
+title: "Dense Passage Retrieval for Open-Domain Question Answering"
+date: 2024-04-25
+categories:
+  - LLM
+  - NLP
+  - RAG
+---
+[Dense Passage Retrieval for Open-Domain Question Answering](http://arxiv.org/abs/2004.04906)
+
+- **Thesis**: use dense retrieval as opposed to sparse retrieval used in methods 
+such as BM25/TF-IDF to retrieve relevant passages from provided context. The 
+dense representation is learned using dual encoders (BERT) with questions and passages dataset
+- **Methodology**:
+    - Train using in-batch question/answers where negative passages are simply all the answers for different questions in the batch
+	- Similarity function is just inner product of the dense vectors from question and passage encoders
+	- BERT-base-uncased is used as the encoder for both question and passage
+- **Contributions**: Finetuning the retrieval on question/answer pairs outperform the best BM25 
+on ODQA datasets. Also, having high precision retrieval trained using DPR results in higher 
+end-to-end QA systems training (only training the reader).
+- **Improvements**:
+	- There is no interaction between question and passage(s)
+	- Training retrieval and reader is independent; can be seen as both positive and negative
+- **Notes**:
+	- Large sparse representations obtained from models such as BM25 suffers from 
+    having difficulties of mapping question to passages if the words have similar 
+    meanings but are completely different. The learned representation is obtained 
+    from fine-tuning dual encoders (BERT) using small dataset (1000 of pairs of questions/answers)
+
+#nlp #rag 
