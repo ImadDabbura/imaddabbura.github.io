@@ -1,0 +1,64 @@
+---
+title: "ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT"
+date: 2024-04-29
+categories:
+  - LLM
+  - NLP
+  - RAG
+---
+
+[ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT](https://arxiv.org/abs/2004.12832)
+
+- **Thesis**: ColBERT is a middle ground approach that tries to combine the 
+    expressiveness of query-document interaction at less computational cost. 
+    It does this through its delayed interactions between query and document. 
+    Instead of doing interaction across all documents, we retrieve top-k 
+    documents and then do interaction using maximum cosine similarity.
+- **Method(s)**:
+	- ColBERT inner workings:
+		- Embed query using query encoder (BERT). This will result in contextualized embedding for each token
+		- Embed documents using document encoder (BERT) offline and index them
+		- Get `top-k` documents using query serving subsystem
+		- Use **Maximum Similarity** between query and document embeddings:
+		  - For each token in query:
+			- Compare its embeddings with all the tokens' embeddings from the document using cosine similarity
+			- Pick the maximum cosine similarity
+		  - At the end we would have `n` (number of query tokens) maximum cosine similarity scores. 
+          Sum them up to get the relevance of this document to the query
+	- Query and Document encoders share the same BERT model
+	- Query is prepended with [CLS] and [Q] tokens.
+		- If query is longer that $N_q$, it is truncated
+		- If shorter, append [mask] tokens up to $N_q$. The padded masked 
+        tokens are called `query augmentation`, which allows BERT to 
+        expand queries with new terms or re-weigh existing terms.
+	- Document is prepended with [CLS]  and [D] tokens. No truncation or 
+    appending [mask] token to document. The embeddings for punctuation 
+    symbols are filtered out
+	- There is linear layer w/o activations on top of BERT embedding 
+    to reduce hidden dimension of embeddings. This reduces the cost 
+    of transferring the embedding from CPU to GPU during reranking.
+	- Embeddings are normalized using L2 norm so inner products between 
+    query and documents would produce score [-1, 1] which is equivalent to cosine similarity.
+	- Indexing of documents happen offline. To maximize the throughput, indexer 
+    split documents into groups and within each group, documents are sorted 
+    based on their length. For each batch (such as `b=128`), document length 
+    is capped to the longest document and pad the shorter documents
+	- ColBERT as reranker:
+		- Retrieve `top-k` documents using query serving subsystem retriever. 
+        The output would be tensor $D$ of dimension k x $N_d$ x h where $N_d$ 
+        is number of tokens which is the number of tokens for the longest document in the top-k documents
+		- Multiply $D$ by $Q$ which has dimension $N_q$ x h. Therefore, $D\ @\ Q.T$  would have k x $N_d$ x $N_q$ dimension.
+		- We then take maximum for each token for all tokens in each document 
+        then sum the maximums to get the relevancy score for each document
+	- ColBERT end-to-end:
+		- FAISS is used to index embeddings of documents
+		- For each token in the query, run vector search to get $k'$ < $k$ documents. 
+        Therefore, we would end up with $N_q$ x $k'$ documents. Finally, filter out duplicate documents to get $k <= N_q$ x $k'$ documents
+		- Rerank the k-documents as we did in ColBERT reranker
+- **Takeaway**: ColBERT kind of gives us the best of two worlds: the expressiveness 
+from the interaction of query and documents and the efficiency due to late 
+interactions because reranking happens on `top-k` documents that were already 
+precomputed offline. ColBERT showed its effectiveness as both reranker and end-to-end.
+- **Contributions**: Late interactions of query and documents to improve relevancy w/o increasing computational cost
+
+#nlp #rag 
