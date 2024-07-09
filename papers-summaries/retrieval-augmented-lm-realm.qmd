@@ -1,0 +1,25 @@
+---
+title: "REALM: Retrieval-Augmented Language Model Pre-Training"
+date: 2024-04-01
+categories:
+  - LLM
+  - NLP
+  - RAG
+---
+[REALM: Retrieval-Augmented Language Model Pre-Training](https://arxiv.org/abs/2002.08909)
+
+- **Thesis**: Pretrain end-to-end retriever and generator and then fine-tune on 
+downstream tasks. The external knowledge would augment the LM and increase 
+its performance. This will lead to back propagate through the retriever.
+- **Contribution**: End-to-end training of both retriever and LM.
+- **Method(s)**:
+    - Pretraining:
+        - [CLS] question masked some tokens [SEP] document
+        - The retriever retrieves the document that is most similar to the question. 
+        Embedding is obtained from BERT encoder.
+        - The LM encoder (BERT) predicts the masked token given the question and the answer
+    - Fine-tune
+        - [CLS] question [SEP] answer
+        - LM encoder predicts the start and end of answer
+
+#nlp #rag 
