@@ -5,18 +5,125 @@ categories:
   - LLM
   - NLP
   - RAG
-draft: true
 ---
 
 [Searching for Best Practices in Retrieval-Augmented Generation](https://export.arxiv.org/abs/2407.01219)
 
-- **Thesis**:
+- **Thesis**: RAG workflows have various processing steps and modules where
+  each step/module affect other module(s). In order to determine the best
+  combinations, we have to test all possible combinations which is not feasible.
+  The paper provides systematic process and recommendations of how to approach RAG workflow
+  optimizations and how to pick the mix of modules to get the best possible
+  performance with an acceptable latency.
 - **Methods**:
+  - For each module/processing step:
+    - Evaluate all methods and pick at most top 3 most performant
+      methods
+    - Evaluate the impact of each method on the overall RAG performance
+    - Pick the best method and use it in further experiments
+  - Experiments were evaluated on the following:
+    - NLP task:
+      - Accuracy score for Commonsense Reasoning, Fact Checking, and Medical QA
+      - F1-score and Exact-Match scores for Open-Domain QA and Multihop QA
+  - RAG capabilities:
+    - Average of the following scores:
+      - faithfulness, context relevancy, answer relevancy, and answer correctness.
+    - Also, cosine similarity between retrieved documents and gold documents
 - **Contribution**:
-- **Importance**:
-- **Takeaways**:
+  - Evaluation framework and datasets. This includes metrics that are more
+    general to LLMs, specific to some domains, and RAG-related capabilities
+  - Evaluating different RAG approaches to provide recommended combinations
+    - _Query Classification Module_: Whether query needs to pas through retrieval
+      process or go to LLM directly. This helps reduce latency
+    - _Retrieval Module_: Hybrid search is key. HyDE plus Hybrid search
+      perform yielded best performance at a huge latency increase
+    - _Reranking Module_: MonoT5 achieved the highest average score, affirming its efficacy in augmenting the relevance of retrieved documents.
+    - _Repacking Module_: Putting retrieved documents in reverse order of their
+      scores yielded the best results
+    - _Summarization Module_: Didn't provide enough performance boost
+- **Importance**: Provides a set of recommendations for different RAG modules
+  and processing steps that can be used as a starting point when building
+  RAG-based applications.
+- **Takeaways**: The paper recommends the following after thorough
+  experimentations even though I would still suggest to take such
+  recommendations with a grain of salt and still experiment with use-case
+  specific datasets to evaluate and iterate over all RAG components quickly:
+  - **Query Classification**: Classifies if retrieval is necessary for a given query.
+  - **Chunking**: Advanced techniques Sliding window chunking or small2big improve relevancy and faithfulness.
+  - **Retrieval**: Hybrid with HyDE achieves the highest retrieval performance.
+  - **Reranking**: MonoT5 (LLM) provides the best relevance improvement.
+  - **Repacking**: Reverse (most relevant at the end) shows best performance.
+  - **Summarization**: Recomp method balances performance and latency effectively.
+  - **Generator Fine-tuning**: Mixed contexts (relevant and random documents) enhance robustness and accuracy.
 - **Improvements**:
-- **Questions**:
+  - Experiments were done on academic datasets, which are completely different
+    than real production data and user queries are messier
+  - Encoders (retriever) were not Fine-tuned along with generator
+  - Metadata wasn't part of the study
 - **Notes**:
+  - Query and retrieval transformation:
+    - Decompose query into sub-queries and aggregate the documents retrieved
+    - Generate pseudo-queries for retrieved documents
+    - Train embedding model through contrastive loss using triplet of query and
+      positive and negative documents. This helps bring the query and document
+      embeddings to be closer in semantic space
+    - Use abstractive and extractive summarization of retrieved documents to
+      remove redundancy
+  - Retrieval:
+    - Reranker to remove irrelevant retrieved documents
+    - Chunk size
+  - Query classification: Not all queries need to go through retrieval process
+    and can just be answered using the generator. Train a classifier to
+    determine if the query needs retrieval or not
+  - Chunking:
+    - Sentence-level chunking is a middle ground between token-level
+      chunking that suffers from splitting sentences and context and semantic-level
+      chunking that suffers from long latencies
+    - Chunk size is key to get good quality retrieved documents. Large chunk
+      size provides more context but slower and may lead to `lost in the middle`
+      issue that generator faces with long contexts. Small chunk size is faster
+      but may not provide the full context
+    - Chunk techniques such as small2big and sliding window leads to better
+      retrieval of documents
+      - small2big is a technique used to split documents into small/child
+        chunks that would refer to parent/bigger chunks. For retrieving, we use
+        smaller chunks. Once we identify relevant small chunks, we use the
+        longer chunks that are the parent of the small chunks which will be
+        used as the context for the generator
+      - sliding window refers to embed sentences instead of larger chunks. For
+        retrieved sentences, we fetch `n` sentences around the retrieved
+        sentences. For example, retrieve 5 sentences left and right of the
+        relevant sentences to provide more context to the generator
+    - Add metadata to chunks
+  - Retrival methods:
+    - Query rewriting to improve ambiguity of user queries
+    - Query decomposition by retrieving documents based on sub-questions
+      derived from original user query
+    - Pseudo-documents generation involves generating hypothetical documents
+      from user queries and use them to compare with retrieved documents using
+      their embeddings
+    - Hybrid search of sparse and dense retrievals such as BM25
+  - Hybrid search and Pseudo-documents generation with HyDE yielded the best
+    results while query rewriting and query decomposition didn't improve
+    results. Single hypothetical document is a good trade-off between
+    performance and latency for HyDE. For Hybrid search, $\alpha$, which
+    measures the weighting factor for sparse score, of $0.3$ yields the best
+    performance
+  - Reranking retrieved documents is key to get good performance. The paper
+    experimented with two approaches:
+    - Use deep-learning-based methods, mainly transformer architecture, to rank
+      documents based on user query.
+    - TILDE Reranking which calculates the likelihood of each query term
+      independently by predicting the next token in the vocabulary and sum all
+      log probabilities. It is very fast compared to deep-learning-based
+      methods but not performant
+  - Document repacking involves rearranging reranked documents before passing
+    them to the generator. We can arrange them in ascending order of their scores
+    (_forward_), or descending order (_backward_).
+  - Summarizing retrieved documents is key to avoid redundant and unnecessary
+    information and long contexts that may lead to problems such as lost in the
+    middle that LLMs suffer from. Abstractive summarization is important
+  - Fine-tuning generators with mix of relevant and random documents yields the
+    best performance
 
 #nlp #rag

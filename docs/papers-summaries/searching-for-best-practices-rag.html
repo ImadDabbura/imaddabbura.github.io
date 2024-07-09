@@ -108,6 +108,35 @@ ga('send', {
 });
 </script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../styles.css">
 <meta property="og:title" content="Imad Dabbura - Searching for Best Practices in Retrieval-Augmented Generation">
@@ -270,14 +299,104 @@ ga('send', {
 
 <p><a href="https://export.arxiv.org/abs/2407.01219">Searching for Best Practices in Retrieval-Augmented Generation</a></p>
 <ul>
-<li><strong>Thesis</strong>:</li>
-<li><strong>Methods</strong>:</li>
-<li><strong>Contribution</strong>:</li>
-<li><strong>Importance</strong>:</li>
-<li><strong>Takeaways</strong>:</li>
-<li><strong>Improvements</strong>:</li>
-<li><strong>Questions</strong>:</li>
-<li><strong>Notes</strong>:</li>
+<li><strong>Thesis</strong>: RAG workflows have various processing steps and modules where each step/module affect other module(s). In order to determine the best combinations, we have to test all possible combinations which is not feasible. The paper provides systematic process and recommendations of how to approach RAG workflow optimizations and how to pick the mix of modules to get the best possible performance with an acceptable latency.</li>
+<li><strong>Methods</strong>:
+<ul>
+<li>For each module/processing step:
+<ul>
+<li>Evaluate all methods and pick at most top 3 most performant methods</li>
+<li>Evaluate the impact of each method on the overall RAG performance</li>
+<li>Pick the best method and use it in further experiments</li>
+</ul></li>
+<li>Experiments were evaluated on the following:
+<ul>
+<li>NLP task:
+<ul>
+<li>Accuracy score for Commonsense Reasoning, Fact Checking, and Medical QA</li>
+<li>F1-score and Exact-Match scores for Open-Domain QA and Multihop QA</li>
+</ul></li>
+</ul></li>
+<li>RAG capabilities:
+<ul>
+<li>Average of the following scores:
+<ul>
+<li>faithfulness, context relevancy, answer relevancy, and answer correctness.</li>
+</ul></li>
+<li>Also, cosine similarity between retrieved documents and gold documents</li>
+</ul></li>
+</ul></li>
+<li><strong>Contribution</strong>:
+<ul>
+<li>Evaluation framework and datasets. This includes metrics that are more general to LLMs, specific to some domains, and RAG-related capabilities</li>
+<li>Evaluating different RAG approaches to provide recommended combinations
+<ul>
+<li><em>Query Classification Module</em>: Whether query needs to pas through retrieval process or go to LLM directly. This helps reduce latency</li>
+<li><em>Retrieval Module</em>: Hybrid search is key. HyDE plus Hybrid search perform yielded best performance at a huge latency increase</li>
+<li><em>Reranking Module</em>: MonoT5 achieved the highest average score, affirming its efficacy in augmenting the relevance of retrieved documents.</li>
+<li><em>Repacking Module</em>: Putting retrieved documents in reverse order of their scores yielded the best results</li>
+<li><em>Summarization Module</em>: Didn’t provide enough performance boost</li>
+</ul></li>
+</ul></li>
+<li><strong>Importance</strong>: Provides a set of recommendations for different RAG modules and processing steps that can be used as a starting point when building RAG-based applications.</li>
+<li><strong>Takeaways</strong>: The paper recommends the following after thorough experimentations even though I would still suggest to take such recommendations with a grain of salt and still experiment with use-case specific datasets to evaluate and iterate over all RAG components quickly:
+<ul>
+<li><strong>Query Classification</strong>: Classifies if retrieval is necessary for a given query.</li>
+<li><strong>Chunking</strong>: Advanced techniques Sliding window chunking or small2big improve relevancy and faithfulness.</li>
+<li><strong>Retrieval</strong>: Hybrid with HyDE achieves the highest retrieval performance.</li>
+<li><strong>Reranking</strong>: MonoT5 (LLM) provides the best relevance improvement.</li>
+<li><strong>Repacking</strong>: Reverse (most relevant at the end) shows best performance.</li>
+<li><strong>Summarization</strong>: Recomp method balances performance and latency effectively.</li>
+<li><strong>Generator Fine-tuning</strong>: Mixed contexts (relevant and random documents) enhance robustness and accuracy.</li>
+</ul></li>
+<li><strong>Improvements</strong>:
+<ul>
+<li>Experiments were done on academic datasets, which are completely different than real production data and user queries are messier</li>
+<li>Encoders (retriever) were not Fine-tuned along with generator</li>
+<li>Metadata wasn’t part of the study</li>
+</ul></li>
+<li><strong>Notes</strong>:
+<ul>
+<li>Query and retrieval transformation:
+<ul>
+<li>Decompose query into sub-queries and aggregate the documents retrieved</li>
+<li>Generate pseudo-queries for retrieved documents</li>
+<li>Train embedding model through contrastive loss using triplet of query and positive and negative documents. This helps bring the query and document embeddings to be closer in semantic space</li>
+<li>Use abstractive and extractive summarization of retrieved documents to remove redundancy</li>
+</ul></li>
+<li>Retrieval:
+<ul>
+<li>Reranker to remove irrelevant retrieved documents</li>
+<li>Chunk size</li>
+</ul></li>
+<li>Query classification: Not all queries need to go through retrieval process and can just be answered using the generator. Train a classifier to determine if the query needs retrieval or not</li>
+<li>Chunking:
+<ul>
+<li>Sentence-level chunking is a middle ground between token-level chunking that suffers from splitting sentences and context and semantic-level chunking that suffers from long latencies</li>
+<li>Chunk size is key to get good quality retrieved documents. Large chunk size provides more context but slower and may lead to <code>lost in the middle</code> issue that generator faces with long contexts. Small chunk size is faster but may not provide the full context</li>
+<li>Chunk techniques such as small2big and sliding window leads to better retrieval of documents
+<ul>
+<li>small2big is a technique used to split documents into small/child chunks that would refer to parent/bigger chunks. For retrieving, we use smaller chunks. Once we identify relevant small chunks, we use the longer chunks that are the parent of the small chunks which will be used as the context for the generator</li>
+<li>sliding window refers to embed sentences instead of larger chunks. For retrieved sentences, we fetch <code>n</code> sentences around the retrieved sentences. For example, retrieve 5 sentences left and right of the relevant sentences to provide more context to the generator</li>
+</ul></li>
+<li>Add metadata to chunks</li>
+</ul></li>
+<li>Retrival methods:
+<ul>
+<li>Query rewriting to improve ambiguity of user queries</li>
+<li>Query decomposition by retrieving documents based on sub-questions derived from original user query</li>
+<li>Pseudo-documents generation involves generating hypothetical documents from user queries and use them to compare with retrieved documents using their embeddings</li>
+<li>Hybrid search of sparse and dense retrievals such as BM25</li>
+</ul></li>
+<li>Hybrid search and Pseudo-documents generation with HyDE yielded the best results while query rewriting and query decomposition didn’t improve results. Single hypothetical document is a good trade-off between performance and latency for HyDE. For Hybrid search, <span class="math inline">\(\alpha\)</span>, which measures the weighting factor for sparse score, of <span class="math inline">\(0.3\)</span> yields the best performance</li>
+<li>Reranking retrieved documents is key to get good performance. The paper experimented with two approaches:
+<ul>
+<li>Use deep-learning-based methods, mainly transformer architecture, to rank documents based on user query.</li>
+<li>TILDE Reranking which calculates the likelihood of each query term independently by predicting the next token in the vocabulary and sum all log probabilities. It is very fast compared to deep-learning-based methods but not performant</li>
+</ul></li>
+<li>Document repacking involves rearranging reranked documents before passing them to the generator. We can arrange them in ascending order of their scores (<em>forward</em>), or descending order (<em>backward</em>).</li>
+<li>Summarizing retrieved documents is key to avoid redundant and unnecessary information and long contexts that may lead to problems such as lost in the middle that LLMs suffer from. Abstractive summarization is important</li>
+<li>Fine-tuning generators with mix of relevant and random documents yields the best performance</li>
+</ul></li>
 </ul>
 <p>#nlp #rag</p>
 
@@ -837,7 +956,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<script src="https://giscus.app/client.js" data-repo="imaddabbura/imaddabbura.github.io" data-repo-id="" data-category="General" data-category-id="" data-mapping="title" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
+<script src="https://giscus.app/client.js" data-repo="imaddabbura/imaddabbura.github.io" data-repo-id="R_kgDOIEwRMg" data-category="General" data-category-id="DIC_kwDOIEwRMs4CRprP" data-mapping="title" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
 </script>
 <input type="hidden" id="giscus-base-theme" value="light">
 <input type="hidden" id="giscus-alt-theme" value="dark">
