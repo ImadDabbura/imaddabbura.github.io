@@ -318,14 +318,14 @@ window.Quarto = {
 </ul></li>
 </ul></li>
 <li>Query and Document encoders share the same BERT model</li>
-<li>Query is prepended with [CLS] and [Q] tokens.
+<li>Query is prepended with <code>[CLS]</code> and <code>[Q]</code> tokens.
 <ul>
 <li>If query is longer that <span class="math inline">\(N_q\)</span>, it is truncated</li>
-<li>If shorter, append [mask] tokens up to <span class="math inline">\(N_q\)</span>. The padded masked tokens are called <code>query augmentation</code>, which allows BERT to expand queries with new terms or re-weigh existing terms.</li>
+<li>If shorter, append <code>[mask]</code> tokens up to <span class="math inline">\(N_q\)</span>. The padded masked tokens are called <code>query augmentation</code>, which allows BERT to expand queries with new terms or re-weigh existing terms.</li>
 </ul></li>
-<li>Document is prepended with [CLS] and [D] tokens. No truncation or appending [mask] token to document. The embeddings for punctuation symbols are filtered out</li>
+<li>Document is prepended with <code>[CLS]</code> and <code>[D]</code> tokens. No truncation or appending <code>[mask]</code> token to document. The embeddings for punctuation symbols are filtered out</li>
 <li>There is linear layer w/o activations on top of BERT embedding to reduce hidden dimension of embeddings. This reduces the cost of transferring the embedding from CPU to GPU during reranking.</li>
-<li>Embeddings are normalized using L2 norm so inner products between query and documents would produce score [-1, 1] which is equivalent to cosine similarity.</li>
+<li>Embeddings are normalized using <span class="math inline">\(L_2\)</span> norm so inner products between query and documents would produce score <code>[-1, 1]</code> which is equivalent to cosine similarity.</li>
 <li>Indexing of documents happen offline. To maximize the throughput, indexer split documents into groups and within each group, documents are sorted based on their length. For each batch (such as <code>b=128</code>), document length is capped to the longest document and pad the shorter documents</li>
 <li>ColBERT as reranker:
 <ul>

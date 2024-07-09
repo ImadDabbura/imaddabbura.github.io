@@ -26,19 +26,19 @@ categories:
 		  - At the end we would have `n` (number of query tokens) maximum cosine similarity scores. 
           Sum them up to get the relevance of this document to the query
 	- Query and Document encoders share the same BERT model
-	- Query is prepended with [CLS] and [Q] tokens.
+	- Query is prepended with `[CLS]` and `[Q]` tokens.
 		- If query is longer that $N_q$, it is truncated
-		- If shorter, append [mask] tokens up to $N_q$. The padded masked 
+		- If shorter, append `[mask]` tokens up to $N_q$. The padded masked 
         tokens are called `query augmentation`, which allows BERT to 
         expand queries with new terms or re-weigh existing terms.
-	- Document is prepended with [CLS]  and [D] tokens. No truncation or 
-    appending [mask] token to document. The embeddings for punctuation 
+	- Document is prepended with `[CLS]`  and `[D]` tokens. No truncation or 
+    appending `[mask]` token to document. The embeddings for punctuation 
     symbols are filtered out
 	- There is linear layer w/o activations on top of BERT embedding 
     to reduce hidden dimension of embeddings. This reduces the cost 
     of transferring the embedding from CPU to GPU during reranking.
-	- Embeddings are normalized using L2 norm so inner products between 
-    query and documents would produce score [-1, 1] which is equivalent to cosine similarity.
+	- Embeddings are normalized using $L_2$ norm so inner products between 
+    query and documents would produce score `[-1, 1]` which is equivalent to cosine similarity.
 	- Indexing of documents happen offline. To maximize the throughput, indexer 
     split documents into groups and within each group, documents are sorted 
     based on their length. For each batch (such as `b=128`), document length 
