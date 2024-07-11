@@ -1,0 +1,59 @@
+---
+title: "Ideas to Improve RAG Applications"
+date: "2024-03-05"
+modified-date: "2024-06-30"
+image: "rag.jpeg"
+categories:
+    - NLP
+    - RAG
+---
+# Introduction
+
+RAG-based applications have so many components and moving parts that seems
+impossible to optimize or know where to start. Add to that the fact that the
+field changes so fast, which makes it super hard to keep up. So I've gathered few ideas over time to improve RAG-based
+applications from reading research papers and implementations I've deployed in the past. 
+
+::: {.callout-note}
+The list will keep changing as I learn/implement new things
+:::
+
+# Ideas
+
+- Metadata filtering is key for good RAG apps
+- For an MVP, it is a good idea to use both bi-encoders and full-text search such as Tf-Idf and BM25 and combine them
+- ColBERT reranker is great and less sensitive to chunking
+- Have at least 50 chars overlapping in chunks when splitting to not cut-off context
+- If you have data and compute, always fine-tune both encoders if you can
+- Use `sentence-transformer` to fine-tune embedding models
+    - We typically use triplet loss where for each query we would have positive and negative examples. We want the negative examples to be hard negatives -> very close to positive examples so the model can learn to differentiate between them
+- Large/New LLM not necessarily are good embedding models and mayn't be worth the latency. LLMs with ~1B is enough for most cases
+- Challenges with embedding models:
+    - Mayn't transfer to your domain
+    - Fixed vocabulary used when model was trained
+    - Because chunk/doc is represented in one vector which is combination of all tokens in the chunk/doc, the output vector may dilute the meaning especially for long texts -> Be careful about chunking strategy
+- Always start with a baseline such as BM25 (Best Match 25)
+- Build your own gold dataset and check its correlation with synthetic dataset generated from LLMs
+- Chunking beyond 256 tokens will affect high precision search because it will dilute the vector representation because embedding models were not trained on long contexts such as BERT-based encoders
+- Feedback of how users are liking the app is key to guide us where we should focus our efforts to improve the app
+    - Satisfaction ratings such as "How did we do today" or "Did we answer your question"
+- Monitor `cosine` similarity between embeddings of query and retrieved docs and reranking scores that come from reranker (cohere)
+- Use clustering of questions using tools such as LDA or BERT-Topic to cluster questions into topics and focus on largest topics (by count) that have lowest means of cosine and feedback
+- We have two kinds of topics:
+    - Content topics: Topics that we don't have inventory of documents about such topics
+    - Capability topics: Topics that reader will never be able to generate if we don't capture them in our docs and docs metadata and include them in the prompt. For example, "Who last updated the pricing document" is asking about last modified date/person
+- Build classifier to classify questions real-time for better observability and better react to sudden changes in usage
+- Generate synthetic data (questions) for topics we're not doing great job at and evaluate new improvements on the generated questions
+    - This can be done by providing random chunk from docs that belong to topics we're trying to improve to decent LLM and ask to generate questions
+- We can use LLM to get metadata about docs/objects
+- Lancedb is a good vector database to use for small/scale workloads
+- BM25 (full text search) outperforms similarity search when questions are just searching for file names. They may have similar performance with similarity search baseline.
+    - It is always helpful to include BM25
+- We can do citation through prompting and attaching IDs to chunks
+- Fine-tune embedding model is key for domain-specific RAGs
+    - With recent increase in context window sizes, chunk size of 800 and 30% overlap is recommended
+
+# Resources
+
+- [Large language models can accurately predict searcher preferences](https://arxiv.org/abs/2309.10621)
+- [UMBRELA: UMbrela is the (Open-Source Reproduction of the) Bing RELevance Assessor](https://arxiv.org/abs/2406.06519)
