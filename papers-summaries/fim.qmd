@@ -1,0 +1,76 @@
+---
+title: "Efficient Training of Language Models to Fill in the Middle"
+date: 2024-02-20
+categories:
+  - LLM
+  - NLP
+  - DL
+---
+**[Efficient Training of Language Models to Fill in the Middle](https://arxiv.org/abs/2207.14255)**
+
+- **Thesis**: The paper demonstates that training AR LLMs with infilling
+capabilities using Fill-in-the-middle methods improve code infilling w/o
+compromising on the traditional left-to-right AR loss for natural language
+generation.
+- **Methods**:
+    - Models:
+        - 8 model sizes from 50M to ~7B trained
+    - Dataset(s):
+        - Each model is trained on 100B token of code with/without FIM -> two
+        versions
+        - Each model is trained on 100B token of language with/without FIM -> two
+        versions
+        - Splitting documents happen at the character-level before tokenization
+        - For the prefix-suffix-middle (PSM):
+            - Training:
+                - <PRE> ◦ Enc(prefix) ◦ <SUF> ◦ Enc(suffix) ◦ <MID> ◦ Enc(middle)
+            - Inference
+                - <PRE> ◦ Enc(prefix) ◦ <SUF> ◦ Enc(suffix) ◦ <MID>
+        - For the suffix-prefix-middle (SPM):
+            - Training:
+                - <PRE> ◦ Enc(suffix) ◦ <SUF> ◦ Enc(prefix) ◦ <MID> ◦ Enc(middle)
+            - Inference
+                - <PRE> ◦ Enc(suffix) ◦ <SUF> ◦ Enc(prefix) ◦ <MID>
+        - <EOT> is appended to the end of documents and included in
+        training so the model can learn to communicate when the
+        infilling/connection of prefix and suffix is done
+        - Generation continues until the <EOT>. If the model didn't
+        generate <EOT> after a predefined number of tokens, we return
+        best of n-samples
+    - SPM proved to be slightly better than PSM probably because prefix and
+    middle and naturally contiguous chunk of tokens and model doesn't need to
+    pay attention to sentinel tokens to figure out of changes in continuation
+    - FIM rate used during training was 50%
+    - Experiments showed that higher FIM rates don't cause a degradation in
+    performance except for 100% FIM rate
+- **Contribution**:
+    - Show how different variants of large scale LLMs trained with FIM learned
+      Infilling capability w/o compromising their left-to-right generation
+    abilities
+    - Best hyperparameters for FIM transformation such as FIM rate and
+    different FIM transformations such as prefix-suffix-middle or 
+    - Illustrate how FIM fine-tuning is computationally much less efficent than
+      FIM pretraining
+    - Two new benchmark datasets:
+        - Random span infilling
+        - Random span infilling light
+- **Takeaways**:
+    - Fill-in-the-middle (FIM): Model trained with 50% FIM were shown that they 
+    don't incur any performance penalty yet they learn new capability even 
+    though they only see the the original sequences 50% of the time
+    - FIM Fine-tuning pretrained models that were trained originally 
+    left-to-right isn't sample efficent and won't help models acquire infilling
+    capabilities relative to its size -> Train with FIM from scratch to achieve
+    good performance on infilling tasks
+    - Apply FIM at the character-level before tokenization 
+    - Use PSM and SPM jointly during training
+- **Notes**:
+    - Traditional causal decoder LLMs are not capable of conditioning on the
+    prefix context
+    - Encoder-only and Encoder-Decoder architectures can condition on both
+    prefixes and suffixes; however, context window is typically much shorter at
+    training time than it is useful at inference in real-world applications
+    such as coding assistant that may require the current file and other files
+    in the current directory to generate an accurate code
+
+#nlp #llm
