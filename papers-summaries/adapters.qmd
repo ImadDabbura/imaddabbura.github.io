@@ -1,0 +1,32 @@
+---
+title: "Parameter-Efficient Transfer Learning for NLP"
+date: 2020-08-07
+categories:
+  - LLM
+  - NLP
+  - Fine-tuning
+---
+[Parameter-Efficient Transfer Learning for NLP](http://arxiv.org/abs/1902.00751)
+
+- **Thesis**: To support continual/online learning w/o incurring too much cost
+for fine-tuning task-specific model, the proposed solution keep the pre-trained 
+weights frozen and adds two adapter layers for each transformer layer. This 
+reduces the number of trainable parameters to 3-8% of the original model. With 
+this setup, each downstream task would have its own weights in the adapter 
+layers but all of the tasks share the pre-trained weights. The performance is 
+almost similar to the full fine-tuning.
+- **Method(s)**:
+	- Each transformer layer has two adapter layers:
+		- One after projection layer of multi-head attention but before skip connection
+		- One after feedforward layer but before skip connection
+	- Each adapter layer has:
+		- Feedforward layer to down-project input -> creates bottleneck. The 
+        smaller the bottleneck -> less parameters at cost of less performance
+		- Followed by non-linearity
+		- Feedforward layer to up-project input to original size
+		- Skip connection of input and output of Feedforward up-project
+	- Training:
+		- Weights in adapter layers
+		- Layernorms in each transformer layer
+
+#nlp #llm #fine-tuning
