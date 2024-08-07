@@ -1,0 +1,30 @@
+---
+title: "Prefix-Tuning: Optimizing Continuous Prompts for Generation"
+date: 2021-10-17
+categories:
+  - LLM
+  - NLP
+  - Fine-tuning
+---
+[Prefix-Tuning: Optimizing Continuous Prompts for Generation](http://arxiv.org/abs/2101.00190)
+
+- **Thesis**: Train continuous task-specific context vectors that will steer 
+the LM based on the task. This is very efficient because only the continuous 
+vectors for the prefix that will be trained and all other pre-trained weights 
+are kept frozen. This approach is driven from the success of prompting and 
+in-context learning that steered the LM to generate tokens based on the 
+examples provided in the prompt. The drawback of in-context learning is that 
+LLMs have limited context window so including examples and other instructions 
+would reduce the number of tokens for the task we want the LLM to perform.
+- **Method(s)**:
+	- Train continuous task-specific vectors on upstream tasks that will steer 
+    the LM for different tasks
+	- Such prefix is kind of considered as "virtual tokens" and subsequent 
+    (actual) tokens would attend to them
+	- Training: Each transformer block will have its own continuous 
+    task-specific tensor which is obtained by two linear layers with 
+    nonlinearity in-between. Then the output will be concatenated with the 
+    input embedding. For inference: we have to supply prefix prompt for the 
+    task we're performing
+
+#nlp #llm #fine-tuning
