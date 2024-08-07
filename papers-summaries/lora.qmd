@@ -1,0 +1,66 @@
+---
+title: "LoRA: Low-Rank Adaptation of Large Language Models"
+date: 2022-06-11
+categories:
+  - LLM
+  - NLP
+  - Fine-tuning
+---
+[LoRA: Low-Rank Adaptation of Large Language Models](https://arxiv.org/abs/2106.09685)
+
+
+- **Thesis**: To reduce the hardware requirement for a full-fine-tuning (storage 
+and memory), low rank decomposition matrices will be trained for every 
+transformer layer (only attention weights). It is based on the fact that 
+$\Delta{W}$ matrices have low intrinsic dimension, which means they can be 
+represented using much lower-ranked matrices. In other words, they have 
+redundant information and a lot columns/rows can be obtained by linear 
+combination of other columns/rows in the matrix (weight matrices are 
+**rank-deficient** i.e. they have much lower rank than their actual dimensions).
+The proposed solution doesn't add inference latency overhead as other 
+adaptation methods do, can be combined with other adaptation methods because 
+LoRA is orthogonal to other adaptation methods, and allows to have one shared 
+instance of LLM between different downstream tasks. Switching between different 
+tasks is very efficient as we just need to swap out the low rank matrices for 
+attention weights which are much smaller than LLM pre-trained weights.
+
+- **Notes**: 
+    - Low Rank Adaptation (LoRA) is a fine-tuning method that uses rank decomposition 
+    matrices to fine-tune LLMs by training rank decomposition matrices for every 
+    Transformer layer (inject two matrices for each layer) and freeze all pre-trained 
+    parameters. It reduces trainable parameters by **10,000x** and reduces GPU memory 
+    requirement by **3x**. The performance is on-par or better than full fine-tuning to 
+    adapt to downstream tasks PLUS it doesn't introduce latency penalty as other 
+    adaptation methods do (add more modules per layer or reduce usable sequence length).
+    - LoRA optimizes rank decomposition matrices of dense layers change during 
+    adaptation. The rank can be as low as $r = 1$ or $r = 2$ for matrices that 
+    have high dimension as high as $r = 12,288$.
+    - Advantages of LoRA:
+        - Lets us have one pre-trained frozen LLM that is shared between different 
+        downstream tasks. Each task has its own A & B rank decomposition matrices for 
+        each dense layer. Therefore, switching tasks is simply switching those low rank 
+        decomposition matrices. Therefore, reduces storage/memory requirement as well 
+        as switching costs.
+        - Since pre-trained model weights are trained, we don't need to keep state for 
+        such parameters and only update the newly introduced low rank matrices
+        - Incorporating the newly trained low rank matrices with pre-trained parameters 
+        adds no latency overhead because they can easily be merged due to linear design 
+        (as simple as addition for some cases)
+        - Can be combined with other adaptation methods such as prefix tuning
+            - $W_0 + \Delta{W} = W_0 + BA$  where $W_0 \in R^{dxk}$, $A \in R^{rxk}$, $B \in R^{dxr}$
+                - $A$ is initialized with random Gaussian
+                - $B$ is initialized with 0
+                - Therefore, $BA$ is zero at the beginning and the first batch would only use original weights
+            - $h = W_0x + \Delta{Wx} = W_0x + BAx$
+                - $\Delta{W}$ is scaled with $\alpha/r$
+            - We can store $W_0 + BA$ and load them for different tasks. Or we can 
+            just store $BA$ and when switching between tasks, we perform $W_0 - BA + (BA)'$  
+            where $(BA)'$ are the low rank matrices for the new task
+    - Adapter layers run sequentially and can't be parallelized. This adds latency overhead 
+    even though adapter layers have < 1% of original model parameters
+    - The adaptation happens for attention weights only in this paper: $W_q, W_v$
+        - Given a parameter budget, adapting $W_q, W_v$ Or $W_q, W_k, W_v, W_o$ 
+        yield the best results. The more weight matrices we adapt -> lower rank 
+        to stay within parameter budget
+
+#nlp #llm #fine-tuning
