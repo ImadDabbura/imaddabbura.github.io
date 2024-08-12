@@ -13,14 +13,14 @@ categories:
   LLM alignment with human preference. There is discrepancy between LLM
   benchmarks and human preferences, especially when it comes to chatbot
   assistants and we need to have hybrid benchmarks that cover both core
-  capabilities and instruction following in a multi-turn conversations
+  capabilities and instruction following in a multi-turn conversations.
 - **Methods**:
   - Types of LLM-as-a-Judge:
     - Pairwise comparison: Presented with a question and two answers, the LLM judge is asked to determine which answer is better or if they tie
     - Single answer grading: LLM judge is asked to grade an answer given its question
     - Reference-guided answer grading: LLM judge is asked to score the answer according to grading criteria based on the referenced answer
   - Multi-turn questions are presented in one prompt and the LLM judge is asked to focus on the answers of the second question from each model
-  - Agreement is measured with 58 human experts on the MT-bench and thousands or crowd-users on the Chatbot Arena
+  - Agreement is measured with 58 human experts on the MT-bench and thousands of crowd-users on the Chatbot Arena
 - **Contribution**:
   - Two benchmarks:
     - Multi-turn questions set (MT-bench): Evaluate chatbot's ability to follow
@@ -35,6 +35,6 @@ categories:
   - Position bias: Most LLMs suffer from position bias where they give higher score for the first answer even when we flip the answers or the answers are very similar and are indistinguishable. This can be addressed by calling LLM judge twice and swap the positions of the answers and only declare it a win if the LLM is consistent
   - Verbosity bias: LLMs tend to prefer longer answers even if they are less accurate and low quality
   - Self-enhancement bias: LLMs tend to favor their answers
-  - Limited reasoning: LLMs may not know the correct answer. This can be addressed by chain-of-thought (CoT) OR reference-guided answers which tend to work much better. We basically provide reference answer in the prompt.
+  - Limited reasoning: LLMs may not know the correct answer. This can be addressed by chain-of-thought (CoT) OR reference-guided answers which tend to work much better. Paper basically provides reference answer in the prompt.
 
 #nlp #fine-tuning #eval
