@@ -270,7 +270,7 @@ ga('send', {
 
 <p><strong><a href="https://arxiv.org/abs/2207.14255">Efficient Training of Language Models to Fill in the Middle</a></strong></p>
 <ul>
-<li><strong>Thesis</strong>: The paper demonstates that training AR LLMs with infilling capabilities using Fill-in-the-middle methods improve code infilling w/o compromising on the traditional left-to-right AR loss for natural language generation.</li>
+<li><strong>Thesis</strong>: The paper demonstrates that training Autoregressive (AR) LLMs with infilling capabilities using Fill-in-the-middle methods improve code infilling w/o compromising on the traditional left-to-right AR loss for natural language generation.</li>
 <li><strong>Methods</strong>:
 <ul>
 <li>Models:
@@ -286,36 +286,36 @@ ga('send', {
 <ul>
 <li>Training:
 <ul>
-<li><pre>◦ Enc(prefix) ◦ <suf> ◦ Enc(suffix) ◦ <mid> ◦ Enc(middle)</mid></suf></pre></li>
-</ul></li>
+<li><code>&lt;PRE&gt; ◦ Enc(prefix) ◦ &lt;SUF&gt; ◦ Enc(suffix) ◦ &lt;MID&gt; ◦ Enc(middle)</code></li>
 <li>Inference
 <ul>
-<li><pre>◦ Enc(prefix) ◦ <suf> ◦ Enc(suffix) ◦ <mid></mid></suf></pre></li>
+<li><code>&lt;PRE&gt; ◦ Enc(prefix) ◦ &lt;SUF&gt; ◦ Enc(suffix) ◦ &lt;MID&gt;</code></li>
+</ul></li>
 </ul></li>
 </ul></li>
 <li>For the suffix-prefix-middle (SPM):
 <ul>
 <li>Training:
 <ul>
-<li><pre>◦ Enc(suffix) ◦ <suf> ◦ Enc(prefix) ◦ <mid> ◦ Enc(middle)</mid></suf></pre></li>
+<li><code>&lt;PRE&gt; ◦ Enc(suffix) ◦ &lt;SUF&gt; ◦ Enc(prefix) ◦ &lt;MID&gt; ◦ Enc(middle)</code></li>
 </ul></li>
 <li>Inference
 <ul>
-<li><pre>◦ Enc(suffix) ◦ <suf> ◦ Enc(prefix) ◦ <mid></mid></suf></pre></li>
+<li><code>&lt;PRE&gt; ◦ Enc(suffix) ◦ &lt;SUF&gt; ◦ Enc(prefix) ◦ &lt;MID&gt;</code></li>
 </ul></li>
 </ul></li>
-<li><eot> is appended to the end of documents and included in training so the model can learn to communicate when the infilling/connection of prefix and suffix is done</eot></li>
-<li>Generation continues until the <eot>. If the model didn’t generate <eot> after a predefined number of tokens, we return best of n-samples</eot></eot></li>
+<li><code>&lt;EOT&gt;</code> is appended to the end of documents and included in training so the model can learn to communicate when the infilling/connection of prefix and suffix is done</li>
+<li>Generation continues until the <code>&lt;EOT&gt;</code>. If the model didn’t generate <code>&lt;EOT&gt;</code> after a predefined number of tokens, we return best of n-samples</li>
 </ul></li>
-<li>SPM proved to be slightly better than PSM probably because prefix and middle and naturally contiguous chunk of tokens and model doesn’t need to pay attention to sentinel tokens to figure out of changes in continuation</li>
+<li>SPM proved to be slightly better than PSM probably because prefix and middle are naturally contiguous chunk of tokens and model doesn’t need to pay attention to sentinel tokens to figure out of changes in continuation</li>
 <li>FIM rate used during training was 50%</li>
 <li>Experiments showed that higher FIM rates don’t cause a degradation in performance except for 100% FIM rate</li>
 </ul></li>
 <li><strong>Contribution</strong>:
 <ul>
 <li>Show how different variants of large scale LLMs trained with FIM learned Infilling capability w/o compromising their left-to-right generation abilities</li>
-<li>Best hyperparameters for FIM transformation such as FIM rate and different FIM transformations such as prefix-suffix-middle or</li>
-<li>Illustrate how FIM fine-tuning is computationally much less efficent than FIM pretraining</li>
+<li>Best hyperparameters for FIM transformation such as FIM rate and different FIM transformations such as prefix-suffix-middle or suffix-prefix-middle</li>
+<li>Illustrate how FIM fine-tuning is computationally much less efficient than FIM pretraining</li>
 <li>Two new benchmark datasets:
 <ul>
 <li>Random span infilling</li>
@@ -325,7 +325,7 @@ ga('send', {
 <li><strong>Takeaways</strong>:
 <ul>
 <li>Fill-in-the-middle (FIM): Model trained with 50% FIM were shown that they don’t incur any performance penalty yet they learn new capability even though they only see the the original sequences 50% of the time</li>
-<li>FIM Fine-tuning pretrained models that were trained originally left-to-right isn’t sample efficent and won’t help models acquire infilling capabilities relative to its size -&gt; Train with FIM from scratch to achieve good performance on infilling tasks</li>
+<li>FIM Fine-tuning pretrained models that were trained originally left-to-right isn’t sample efficient and won’t help models acquire infilling capabilities relative to its size -&gt; Train with FIM from scratch to achieve good performance on infilling tasks</li>
 <li>Apply FIM at the character-level before tokenization</li>
 <li>Use PSM and SPM jointly during training</li>
 </ul></li>
