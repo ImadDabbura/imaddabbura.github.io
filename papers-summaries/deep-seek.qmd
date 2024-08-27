@@ -1,0 +1,68 @@
+---
+title: "DeepSeek-Coder: When the Large Language Model Meets Programming - The Rise of Code Intelligence"
+date: 2024-04-26
+categories:
+  - LLM
+  - NLP
+  - DL
+  - Code-LLM
+---
+**[DeepSeek-Coder: When the Large Language Model Meets Programming - The Rise of Code Intelligence](http://arxiv.org/abs/2401.14196)**
+
+- **Thesis**:
+- **Methods**:
+    - Model sizes: 1.3B, 6.7B, 33B
+    - 2T tokens of project-level code data from 87 programming languages
+        - Enhance understanding across files
+    - 16K context window
+    - Next token prediction and [[fim]]
+    - Use repository-level data to improve generation across files
+    - Data:
+        - 87% source code
+        - 10% english code-related natural language corpus
+        - 3% chinese code-unrelated natural language corpus
+    - BPE tokenizer
+    - FIM rate is 50% (PSM)
+    - RoPE embedding
+    - Group Query Attention
+    - Flash Attention v2
+- **Contribution**:
+    - DeepSeek-Coder Base and DeepSeek-Coder Instruct models
+    - LeetCode contest data benchmark
+- **Takeaways**: Effective Code LLMs must have a deep understanding of natural
+  language to be able to interpret and execute programming tasks. Also, high
+quality training data is key to achieve great performance. Finally, continued
+pre-training on methematical and natural language data improves performance on
+natural language tasks and tasks that require reasoning but may slightly reduce
+the accuracy on coding benchmarks such as HumanEval
+- **Improvements**: 
+    - 16K context is still not enough for real-world code
+completion tasks that require context across files in the repo.
+    - SPM wasn't tried but [[fim]] showed it yields better performance
+- **Notes**:
+    - Base models are fine-tuned using high quality instruction data to augment
+      the zero-shot capabilities of base models
+    - Base models are also fine-tuned on 2B high quality code, natural
+    language, and mathematical data to improve their NLU capabilities. This
+    result with DeepSeek-Coder-v1.5
+    - DeepSeek-Coder Instruct outperforms GPT-3.5-Turbo and very close to GPT-4
+    - DeepSeek-Coder Base outperforms all open-sourced code LLMs
+    - Dependency parsing helps sort files in the order they are needed. This
+    means placing dependencies before files that use them which simulate
+    real-world applications where completion/generation happens at the project-level
+    - Deduplication at the repo level by concatenating files then perform near-deduplication
+    - Filter out low quality source files based on some heuristics
+    - Adding Chain-of-thought to the prompt is shown to significantly improve DeepSeek-Coder
+      Instruct models
+    - DeepSeek-Coder 7B is recommended to use for completion tasks as it
+    balances efficiency and accuracy. The bigger model (33B) is slightly better
+    but has much more memory footprint and huge computation
+    - cross-file code completion utilizes keyword search (BM25) to provide
+    contexts from other files in the repo
+    - DeepSeek-Coder v1.5 uses 7B model to continue pre-training on 2T tokens
+    using next token prediction task. Data includes source code (70%) and other
+    natural language code related corpus. This model is slightly less accurate
+    on coding tasks but is much better at reasonong and natural language
+    understanding
+
+#nlp #llm #code-llm
