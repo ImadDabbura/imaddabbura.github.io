@@ -1,0 +1,57 @@
+---
+title: "StarCoder 2 and The Stack v2: The Next Generation"
+date: 2024-05-16
+categories:
+  - LLM
+  - NLP
+  - DL
+  - Code-LLM
+---
+**[StarCoder 2 and The Stack v2: The Next Generation](https://arxiv.org/abs/2402.19173)**
+
+- **Thesis**:
+- **Methods**:
+    - Models: 3B, 7B, 15B
+    - Two-stage training:
+        - First base models are trained with 4K context windows
+        - Then fine-tuned with 16K context windows
+    - At most 5 epochs over the dataset during training, why?
+    - BPE tokenizer
+    - RoPE
+    - GQA
+    - Data:
+        - GH pull requests, Kaggle notebooks, code documentation
+        - Stack v2, which includes 619 programming languages
+        - Intermediate representations (LLVM). This is useful for low-resource
+        languages
+        - Math and coding datasets
+        - Tailor training dataset composition of programming languages to model
+          size as smaller models have less capacity and languages compete for
+        model capacity. Therefore, 17 most widely used programming languages
+        are used to train the 3B and 7B models while the full dataset is used
+        to train the 15B model
+        - Models were trained with repository context, but files within the
+        same repository are in random order
+        - Code is prepended with some metadata with 50% probability.
+            - Metadata example: `<repo_name>reponame`<file_sep>filepath1\ncode1<file_sep>filepath2\ncode2 ... <|endoftext|>`
+            - No metadata example: `<file_sep>code1<file_sep>code2 ... <|endoftext|>`
+        - FIM 50% at the repo-context file level. So each repository is
+        subjected to be FIM transformed with 50% probability.
+            - Example: `<repo_name>reponame<file_sep>filepath0\ncode0<file_sep><fim_prefix>filepath1\n 
+            code1_pre<fim_suffix>code1_suf<fim_middle>code1_mid<file_sep> ...<|endoftext|>`
+- **Contribution**:
+    - The Stack v2
+    - Detailed description and source code of preparing and processing training
+      data
+    - Detailed description and source code for training
+- **Takeaways**:
+- **Improvements**:
+- **Notes**:
+    - StarCoder2-15B outperforms DeepSeekCoder-33B on math and code reasoning
+    but DeepSeekCoder-33B is still the best for code completion on high
+    resource languages
+    - StarCoder2 beats any open code LLMs of similar size
+    - StarCoder2-7B doesn't perform well compared with other open code LLMs of
+      its size. So pick StarCoder2-15B or StarCoder2-3B for deployment
+	
+#nlp #llm #code-llm

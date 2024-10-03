@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2023-10-05">
+<meta name="dcterms.date" content="2024-04-01">
 
-<title>Imad Dabbura - Llama 2: Open Foundation and Fine-Tuned Chat Models</title>
+<title>Imad Dabbura - REALM: Retrieval-Augmented Language Model Pre-Training</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -108,41 +108,12 @@ ga('send', {
 });
 </script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="../styles.css">
-<meta property="og:title" content="Imad Dabbura - Llama 2: Open Foundation and Fine-Tuned Chat Models">
+<meta property="og:title" content="Imad Dabbura - REALM: Retrieval-Augmented Language Model Pre-Training">
 <meta property="og:description" content="">
 <meta property="og:site_name" content="Imad Dabbura">
-<meta name="twitter:title" content="Imad Dabbura - Llama 2: Open Foundation and Fine-Tuned Chat Models">
+<meta name="twitter:title" content="Imad Dabbura - REALM: Retrieval-Augmented Language Model Pre-Training">
 <meta name="twitter:description" content="">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
@@ -256,11 +227,11 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Llama 2: Open Foundation and Fine-Tuned Chat Models</h1>
+      <h1 class="title">REALM: Retrieval-Augmented Language Model Pre-Training</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">LLM</div>
                 <div class="quarto-category">NLP</div>
-                <div class="quarto-category">DL</div>
+                <div class="quarto-category">RAG</div>
               </div>
                   </div>
   </div>
@@ -278,7 +249,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">October 5, 2023</p>
+        <p class="date">April 1, 2024</p>
       </div>
     </div>
     
@@ -297,87 +268,26 @@ window.Quarto = {
 
 
 
-<p><strong><a href="http://arxiv.org/abs/2307.09288">Llama 2: Open Foundation and Fine-Tuned Chat Models</a></strong></p>
+<p><a href="https://arxiv.org/abs/2002.08909">REALM: Retrieval-Augmented Language Model Pre-Training</a></p>
 <ul>
-<li><strong>Thesis</strong>: With clever algorithmic tweaking and focus on helpfulness/safety the new chat models are great for dialogue use cases.</li>
-<li><strong>Methods</strong>:
+<li><strong>Thesis</strong>: Pretrain end-to-end retriever and generator and then fine-tune on downstream tasks. The external knowledge would augment the LM and increase its performance. This will lead to back propagate through the retriever.</li>
+<li><strong>Contribution</strong>: End-to-end training of both retriever and LM.</li>
+<li><strong>Method(s)</strong>:
 <ul>
-<li>Models:
+<li>Pretraining:
 <ul>
-<li>Base LLMs: 7B, 13B, 34B, 70B</li>
-<li>Chat LLMs: 7B, 13B, 34B, 70B</li>
-<li>Use <code>KV</code> cache during inference. The task of LLM is <strong>next token prediction</strong>. At each step we’re only interested in the prediction of the last token but we still need to give the previous tokens (context) that were already computed from before. So at step 10, we would’ve already computed the attention scores for token1 9 times and token2 8 times. Also, we’re not interested in the attention scores for future tokens for causal inference since the attention score matrix is lower triangular. To summarize:
-<ul>
-<li>Can we cache the dot-products of tokens from previous steps?</li>
-<li>Can we not compute attention scores for successor tokens?</li>
-<li>Can we not compute prediction for previous tokens since we already have them?</li>
+<li>[CLS] question masked some tokens [SEP] document</li>
+<li>The retriever retrieves the document that is most similar to the question. Embedding is obtained from BERT encoder.</li>
+<li>The LM encoder (BERT) predicts the masked token given the question and the answer</li>
 </ul></li>
-<li><code>KV</code> achieves this by appending the key and query vectors at each time step and compute hidden vector for the current word. So at time step 10, we would have 10 tokens’ vectors in <code>K</code> and <code>V</code> caches and we would compute dot-product of only token 10 and all previous tokens to get attention score vector which is then applied to vector cache that will yield hidden vector that will be fed to classifier head to predict next token</li>
-<li>Without <code>KV</code> cache, memory wasn’t the bottleneck; however, <code>KV</code> memory access becomes the bottleneck.
+<li>Fine-tune
 <ul>
-<li>To remedy this issue, multi-query attention is used where only query has multi-heads but keys and values don’t have multiple heads -&gt; Different query heads would share the same keys and values. The drawback of this approach is slight degradation in performance.</li>
-<li>As a middle ground solution between multi-head query (as in vanilla transformer) and multi-query attention, <em>Group Multi-Query</em> attention is introduced where we would have multiple query heads in which query heads in the same group share the same keys and values</li>
+<li>[CLS] question [SEP] answer</li>
+<li>LM encoder predicts the start and end of answer</li>
 </ul></li>
-</ul></li>
-<li>Data:
-<ul>
-<li>Only publicly available data that is compatible with open source</li>
-<li>Increased size from [[llama]] by <span class="math inline">\(40\%\)</span>
-<ul>
-<li>Trained on 2 trillion tokens for all models</li>
-</ul></li>
-</ul></li>
-<li>Chat models:
-<ul>
-<li>~28k high quality instructions dataset for SFT + public available datasets -&gt; ~100k dataset size</li>
-<li>Reward model:
-<ul>
-<li>Human annotators are presented with an instruction and two sample responses from different variants of the model (with maybe different temperature) to pick which one they prefer and why according to safety and helpfulness guidelines.
-<ul>
-<li>Also, they would assign label for the difference between the chosen response and the other response as follows:
-<ul>
-<li><em>significantly better, better, slightly better, or negligibly better/unsure</em></li>
-<li>Each category would have fixed value so that reward model would learn to assign large gaps between responses of different preferences</li>
-</ul></li>
-</ul></li>
-</ul></li>
-</ul></li>
-<li>Tokenizer: BPE algorithm using implementation from Sentence-Piece</li>
-<li>Model:
-<ul>
-<li>Similar architecture to [[llama]]</li>
-<li>Doubled the context length to 4k</li>
-<li>Used group-query attention for 34B and 70B models</li>
-<li>Reward model:
-<ul>
-<li>Trained progressively as new batch of data is available.</li>
-<li>The model is the same as pre-trained chat model</li>
-<li>Classification head was replaced with linear layer to generate a score for the response. Given a prompt and model response, model scores the response</li>
-<li>Binary ranking loss is used to <span class="math display">\[\mathcal{L}_{ranking} = -log(\sigma(r_\theta(x,y_{c}) - r_\theta(x,y_{r}) - m(r)))\]</span>where <span class="math inline">\(r_\theta(x, y)\)</span> is the scalar score output for prompt <span class="math inline">\(x\)</span> and completion <span class="math inline">\(y\)</span> with model weights <span class="math inline">\(\theta\)</span>. <span class="math inline">\(y_{c}\)</span> is the preferred response that annotators choose and <span class="math inline">\(y_{r}\)</span> is the rejected counterpart, and the margin <span class="math inline">\(m(r)\)</span> is a discrete function of the preference rating</li>
-</ul></li>
-<li>Two reward models were trained: Helpfulness reward model and safety reward model. The reason for two models instead of 1 is that some response can be helpful and not safe and vice versa.</li>
-</ul></li>
-<li>Chat model is further fine-tuned using RLHF
-<ul>
-<li>Through PPO</li>
-<li>Rejection sampling: The largest model (70B) is used to score k samples for each prompt. Create dataset that has the prompt and the response with the highest score to further fine-tune the smaller models</li>
-</ul></li>
-<li>GhostAttention method is proposed so chat model(s) adhere to the role it is given in the beginning in all responses in multi-turn conversations (dialogue). For example, if the model is asked to always respond with emojis, then responses to any question should include only emojis. The rationale behind it is that Chat models tend to forget their role after few responses. Synthetic dataset created:
-<ul>
-<li>Samples an instruction that should be followed in a conversation</li>
-<li>Concatenates this instruction to every user message within the conversation</li>
-<li>Samples responses to each message using the model from the latest round of RLHF</li>
-<li>Finally, such dataset can be used for further fine-tuning models for follow instructions over long conversations</li>
-</ul></li>
-</ul></li>
-<li><strong>Contribution</strong>: The first highly competitive open-source LLMs. More specifically, the chat models and the efforts spent in fine-tuning them through data collection and different techniques such as <code>rejection sampling</code> and <code>GhostAttn</code>.</li>
-<li><strong>Takeaways</strong>:
-<ul>
-<li>Quality instructions dataset is all you need to get a good chat model that follows user’s instructions and engage in helpful dialogue</li>
-<li>Time spent on aligning LLM to be helpful and safety yielded a high quality chat models</li>
 </ul></li>
 </ul>
-<p>#nlp #llm</p>
+<p>#nlp #rag</p>
 
 
 
