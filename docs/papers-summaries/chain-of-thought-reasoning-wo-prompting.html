@@ -300,7 +300,7 @@ window.Quarto = {
 
 <p><strong><a href="https://arxiv.org/abs/2402.10200">Chain-of-Thought Reasoning without Prompting</a></strong></p>
 <ul>
-<li><strong>Thesis</strong>: Provide unsupervised method to elicit reasoning capabilities of LLMs in the decoding space. Instead of relying on CoT prompting that is task-specific and requires humans to keep iterating and optimizing the prompt to yield the intended results, CoT-decoding uses top-k alternative tokens to get the best CoT path.</li>
+<li><strong>Thesis</strong>: Provide unsupervised method to elicit reasoning capabilities of LLMs in the decoding space. Instead of relying on CoT prompting that is task-specific and requires humans to keep iterating and optimizing the prompt to yield the intended results, CoT-decoding uses top-k alternative tokens to get the best CoT path. For each token of the top-k tokens in the decoding step 1, we continue with greedy decoding algorithm.</li>
 <li><strong>Methods</strong>:
 <ul>
 <li>Models: PaLM2, Mistral-7B, and Gemma-7B</li>
@@ -321,20 +321,20 @@ window.Quarto = {
 </ul></li>
 <li><strong>Notes</strong>:
 <ul>
-<li>LLM reasoning are typically elicited by prompting the comes in various forms:
+<li>LLM reasoning are typically elicited by prompting that comes in various forms:
 <ul>
 <li>CoT with few-shot examples</li>
 <li>Zero-shot with detailed instructions of how to perform the task and showing the steps of how the LLM came up with the answer</li>
 <li>Training of instruction fine-tuning with CoT data</li>
 </ul></li>
 <li>LLMs struggle with reasoning when greedy decoding is used</li>
-<li>The difference between the top two tokens at the <span class="math inline">\(t^{th}\)</span> decoding step for the <span class="math inline">\(k^{th}\)</span> decoding path is very high, which means the confidence of the LLM in the answer in very high
+<li>The difference between the top two tokens at the <span class="math inline">\(t^{th}\)</span> decoding step for the <span class="math inline">\(k^{th}\)</span> decoding path is very high, which means the confidence of the LLM in the answer is very high
 <ul>
-<li>The answer’s confidence is the average between top two tokens probability</li>
+<li>The answer’s confidence is the average of the difference of the top two tokens probability for each each time step</li>
 <li>The model’s own probability is not a reliable indicator for the confidence/correctness of the answer</li>
 </ul></li>
 <li>LLMs typically rush directly into problem solving when asked math/commonsense reasoning questions, which results in the wrong answer most of the times. This can be partially fixed with prompting but don’t yield results as good as CoT-decoding</li>
-<li>Branching at the first-token leads to more divers paths as opposed to branching at later stages of the decoding process</li>
+<li>Branching at the first-token leads to more diverse paths as opposed to branching at later stages of the decoding process</li>
 <li>It is recommended to aggregate the top-k paths to get stable results</li>
 <li>There is a very high correlation between the answer confidence and the existence of CoT paths in the answer</li>
 <li>Model’s inherent reasoning varies according to the task difficulty. Models show less reasoning abilities with harder tasks</li>
@@ -344,7 +344,7 @@ window.Quarto = {
 <li>Even thought instruction-tuned models have used a lot of CoT examples during instruction fine-tuning, these models still try to directly jump to problem solving. Therefore, CoT-decoding helped boost performance tremendously</li>
 </ul></li>
 <li>CoT-decoding closes the gap between pre-trained models and Instruction-tuned models in terms of reasoning capabilities</li>
-<li><code>k</code> has significant effect on pre-trained models but has negligible effect for instruction-tuned models after <code>k = 2</code>. For pre-trained models, the best paths may be start at lower <code>k</code>, but for instruction-tuned models they are already trained to bring the best paths to the top</li>
+<li><code>k</code> has significant effect on pre-trained models but has negligible effect for instruction-tuned models after <code>k = 2</code>. For pre-trained models, the best paths may start at a lower <code>k</code>, but for instruction-tuned models they are already trained to bring the best paths to the top</li>
 <li>Combining CoT prompting with CoT-decoding yields even better performance from eliciting more reasoning capabilities</li>
 </ul></li>
 </ul>

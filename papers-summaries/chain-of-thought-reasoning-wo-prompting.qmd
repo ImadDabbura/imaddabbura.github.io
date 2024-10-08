@@ -13,7 +13,7 @@ categories:
 LLMs in the decoding space. Instead of relying on CoT prompting that is
 task-specific and requires humans to keep iterating and optimizing the prompt
 to yield the intended results, CoT-decoding uses top-k alternative tokens to
-get the best CoT path.
+get the best CoT path. For each token of the top-k tokens in the decoding step 1, we continue with greedy decoding algorithm.
 - **Methods**:
     - Models: PaLM2, Mistral-7B, and Gemma-7B
 - **Contribution**:
@@ -35,7 +35,7 @@ models for reasoning intensive tasks
     possibility for this behavior is that pre-training data distribution is
     mostly simple-to-medium difficulty tasks
 - **Notes**:
-    - LLM reasoning are typically elicited by prompting the comes in various
+    - LLM reasoning are typically elicited by prompting that comes in various
     forms:
         - CoT with few-shot examples
         - Zero-shot with detailed instructions of how to perform the task and
@@ -44,16 +44,16 @@ models for reasoning intensive tasks
     - LLMs struggle with reasoning when greedy decoding is used
     - The difference between the top two tokens at the $t^{th}$ decoding step
     for the $k^{th}$ decoding path is very high, which means the confidence of
-    the LLM in the answer in very high
-        - The answer's confidence is the average between top two tokens
-        probability
+    the LLM in the answer is very high
+        - The answer's confidence is the average of the difference of the top two tokens
+        probability for each each time step
         - The model's own probability is not a reliable indicator for the
         confidence/correctness of the answer
     - LLMs typically rush directly into problem solving when asked
     math/commonsense reasoning questions, which results in the wrong answer
     most of the times. This can be partially fixed with prompting but don't
     yield results as good as CoT-decoding
-    - Branching at the first-token leads to more divers paths as opposed to
+    - Branching at the first-token leads to more diverse paths as opposed to
     branching at later stages of the decoding process
     - It is recommended to aggregate the top-k paths to get stable results
     - There is a very high correlation between the answer confidence and the
@@ -72,7 +72,7 @@ models for reasoning intensive tasks
     Instruction-tuned models in terms of reasoning capabilities
     - `k` has significant effect on pre-trained models but has negligible
     effect for instruction-tuned models after `k = 2`. For pre-trained models,
-    the best paths may be start at lower `k`, but for instruction-tuned models
+    the best paths may start at a lower `k`, but for instruction-tuned models
     they are already trained to bring the best paths to the top
     - Combining CoT prompting with CoT-decoding yields even better performance
       from eliciting more reasoning capabilities
