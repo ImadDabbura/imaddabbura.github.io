@@ -1,0 +1,47 @@
+---
+title: "Tree of Thoughts: Deliberate Problem Solving with Large Language Models"
+date: 2024-07-10
+categories:
+  - LLM
+  - NLP
+  - DL
+  - Agents
+---
+**[Tree of Thoughts: Deliberate Problem Solving with Large Language Models](https://arxiv.org/abs/2305.10601v2)**
+
+- **Thesis**: Inspired by cognitive science and AI in terms of how humans and
+animals approach problem solving, *Tree of Thoughts (ToT)* make use of system 1
+& 2 by using LM to generate different possible paths (thoughts) and evaluate
+each path in making progress towards solving the problem in the form of of
+tree. The search for the best possible answer is done through either
+breadth-first search (BFS) or depth-first search (DFS), which helps in
+lookahead and backtracking
+- **Methods**:
+    - **Thought decomposition**: Decompose intermediate thought steps.
+    Each step must be big enough and coherent
+    - **Thought generator**: Use CoT prompt to generate `k` samples and then
+    propose thoughts sequentially using *propose prompt*
+    - **State evaluator**: Value each state (node in a tree) independently using
+    *value prompt* via lookahead simulations and commonsense. Finally vote across
+    states which one would lead to the most promising solution using *vote
+    prompt*
+    - **Search**: Use any of the search algorithms depending on the nature of the
+    tree: BFS or DFS
+- **Contribution**:
+    - ToT framework
+- **Importance**: ToT framework has many benefits such as 1) generality to any
+  problem solving, 2) modularity where each stage of the framework can be
+changed independently, 3) interpretability/debugging, 4) no need to fine-tuning
+for different tasks
+- **Takeaways**: ToT significantly improves performance of LLMs over CoT or
+self-consistency with CoT due to the fast that it mimics how problem-solving is
+carried in humans/animals using insights from cognitive science. Utilizing
+exploration and lookahead, ToT can generate and evaluate different paths at any
+given step.
+- **Improvements**:
+    - It is tested on three simple tasks, so we need more diverse set of tasks
+      to check for applicability and generalizability
+    - It is not needed and an overkill for tasks that current LLMs excel at
+    - It is much more compute intensive than other sampling approaches
+
+#nlp #llm #agents
