@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2022-03-14">
+<meta name="dcterms.date" content="2022-02-07">
 
-<title>Imad Dabbura - Airflow Part 7 - Triggering Workflows</title>
+<title>Imad Dabbura - Airflow Part 4 - Task Context &amp; Jinja Templating</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -144,13 +144,13 @@ ga('send', {
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Imad Dabbura - Airflow Part 7 - Triggering Workflows">
-<meta property="og:image" content="https://imaddabbura.github.io/mlops/airflow/feature.png">
+<meta property="og:title" content="Imad Dabbura - Airflow Part 4 - Task Context &amp; Jinja Templating">
+<meta property="og:image" content="https://imaddabbura.github.io/posts/airflow/feature.png">
 <meta property="og:site_name" content="Imad Dabbura">
 <meta property="og:image:height" content="146">
 <meta property="og:image:width" content="345">
-<meta name="twitter:title" content="Imad Dabbura - Airflow Part 7 - Triggering Workflows">
-<meta name="twitter:image" content="https://imaddabbura.github.io/mlops/airflow/feature.png">
+<meta name="twitter:title" content="Imad Dabbura - Airflow Part 4 - Task Context &amp; Jinja Templating">
+<meta name="twitter:image" content="https://imaddabbura.github.io/posts/airflow/feature.png">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image-height" content="146">
@@ -193,10 +193,6 @@ ga('send', {
     <a class="nav-link" href="../../til.html"> <i class="bi bi-lightbulb" role="img">
 </i> 
 <span class="menu-text">TIL</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../../mlops.html"> 
-<span class="menu-text">MLOps</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../dl-tips-tricks.html"> 
@@ -266,7 +262,7 @@ ga('send', {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Airflow Part 7 - Triggering Workflows</h1>
+      <h1 class="title">Airflow Part 4 - Task Context &amp; Jinja Templating</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">Data Engineering</div>
                 <div class="quarto-category">MLOps</div>
@@ -288,7 +284,7 @@ ga('send', {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">March 14, 2022</p>
+        <p class="date">February 7, 2022</p>
       </div>
     </div>
     
@@ -328,182 +324,83 @@ Note
 </div>
 </div>
 <ul>
-<li>Workflows are most commonly triggered based on schedule intervals provided using <code>start_date</code>, <code>end_date</code> , <code>schedule_interval</code>. Airflow would calculate when the next schedule would be and start the first task(s) to run at the next data/time.</li>
-<li>However, sometimes we want the workflow to run based on the occurance of external events such as a file is available in specific location OR code is changed on git repo etc.</li>
-<li>One way to execute workflows based on the occurance of external exents is using Airflow’s <strong>sensors</strong>. Sensor is a subclass of operators that checks if certain condition is true. If true, execute the step (workflow). If false, wait for a given period (default 60 seconds) and tries again. It keeps doing so for <em>timeout</em> period. This is a form of <strong>Poking</strong>, which is checking for the existence of file in the case of FileSensor.</li>
-</ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> airflow.sensors.filesystem <span class="im">import</span> FileSensor</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>wait_for_file_1 <span class="op">=</span> FileSensor(</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    task_id<span class="op">=</span><span class="st">"wait_for_file_1"</span>, filepath<span class="op">=</span><span class="st">"/data/file_1.csv"</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<li>Airflow uses <code>Pendulum</code> library for datetimes. It is a drop-in replacement to the Python standard library datetime but with much nicer API and more features.</li>
+<li>Not all arguments can be templates. By default, all arguments are not made into templates and <code>{name}</code> will be read as a literal string <code>name</code> unless it is included in <code>template_fields</code> in the list of attributes that can be templated in the Operator.
 <ul>
-<li>We can also use <strong>globbing</strong> with FileSensors by using wildcards to check for the existence of file(s)</li>
-<li>We can also use PythonSensor which checks for certain condition and must return a Boolean. It is more flexible and easier to read than using globbing within FileSensor. It is the same as PythonOperator in terms of taking a Python callable</li>
-</ul>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> airflow.sensors.python <span class="im">import</span> PythonSensor</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check whether there is any data for a given supermarker</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># and there is _SUCCESS path which indicates whether the </span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># data for the given supermarket is all uploaded</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _wait_for_supermarket(supermarket):</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    supermarket_path <span class="op">=</span> Path(<span class="st">"/data"</span>) <span class="op">/</span> supermarket</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    success_path <span class="op">=</span> Path(<span class="st">"/data"</span>) <span class="op">/</span> <span class="st">"_SUCCESS"</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    data_files <span class="op">=</span> supermarketpath.glob(<span class="st">"*.csv"</span>)</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> data_files <span class="kw">and</span> success_path.exists()</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>wait_for_supermarket_1 <span class="op">=</span> PythonSensor(</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    task_id<span class="op">=</span><span class="st">"wait_for_supermarket_1"</span>,</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    python_callable<span class="op">=</span>_wait_for_supermarket,</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    op_kwargs<span class="op">=</span>{<span class="st">"supermarket"</span>: <span class="st">"supermarket_1"</span>},</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    dag<span class="op">=</span>dag</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><img src="images/python-sensor.png" class="img-fluid"></p>
+<li>Elements in the <code>template_fields</code> are names for class attributes. The arguments passed to the <code>__init__</code> match the class attributes.</li>
+</ul></li>
+<li>All operators; such as BashOperator, take their argument as string except PythonOperator. It takes its argument as <code>python_callable</code>, which is any callable object in Python. The context and parameters will be available to this callable.
 <ul>
-<li>All sensors take a <code>timeout</code> arguments, which has default value of 7 days</li>
-<li>There is also a limit on the number of tasks Airflow can run concurrently per DAG (default is 16). DAG takes <code>concurrency</code> argument that can change this number. There is also a limit on the number of tasks per global Airflow and the number DAG runs per DAG</li>
-</ul>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>wait_for_supermarket_1 <span class="op">=</span> PythonSensor(</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    task_id<span class="op">=</span><span class="st">"wait_for_supermarket_1"</span>,</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    python_callable<span class="op">=</span>_wait_for_supermarket,</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    op_kwargs<span class="op">=</span>{<span class="st">"supermarket"</span>: <span class="st">"supermarket_1"</span>},</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    concurreny<span class="op">=</span><span class="dv">20</span>, <span class="co"># Default is 16</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    dag<span class="op">=</span>dag</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<li>The context variable is a dictionary that has all the instance variables for this task.
 <ul>
-<li>There is snowball effect when sensors don’t succeed. The occupy slots that DAG has (which is determined by the concurrency argument. From the above figure, if only task 1 succeeds and the rest keeps polling and the DAG is scheduled daily with default concurrency of 16 slots and default timeout of 7 days, this is what will happen (sensor deadlock):
+<li>we can use default <code>**kwargs</code> or make it easier to read using <code>**context</code></li>
+</ul></li>
+<li>If we specify argument name in the python_callable, then Airflow will call the python_callable with all the variables in the context.
 <ul>
-<li>Day 1: Supermarket 1 succeeded; supermarkets 2, 3, and 4 are polling, occupying 3 tasks.</li>
-<li>Day 2: Supermarket 1 succeeded; supermarkets 2, 3, and 4 are polling, occupying 6 tasks.</li>
-<li>Day 3: Supermarket 1 succeeded; supermarkets 2, 3, and 4 are polling, occupying 9 tasks.</li>
-<li>Day 4: Supermarket 1 succeeded; supermarkets 2, 3, and 4 are polling, occupying 12 tasks.</li>
-<li>Day 5: Supermarket 1 succeeded; supermarkets 2, 3, and 4 are polling, occupying 15 tasks.</li>
-<li>Day 6: Supermarket 1 succeeded; supermarkets 2, 3, and 4 are polling, occupying 16 tasks; two new tasks cannot run, and any other task trying to run is blocked.</li>
+<li>If a variable is specified as argument by the callable, then it is passed to the callabe</li>
+<li>Otherwise, it is added to the context dictionary. If we don’t have context dictionary as an argument for the callable, then all other variables in the context that are not specified as arguments will be discarded.</li>
+</ul></li>
 </ul></li>
 </ul>
-<p><img src="images/python-sensor-deadlock.png" class="img-fluid"></p>
+<div id="ede4686f-e66c-431d-9155-6e89a7031544" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> airflow</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> airflow <span class="im">import</span> DAG</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> airflow.operators.python <span class="im">import</span> PythonOperator</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>dag <span class="op">=</span> DAG(dag_id<span class="op">=</span><span class="st">"python-operator-context"</span>, start_date<span class="op">=</span>airflow.utils.dates.days_ago(<span class="dv">1</span>))</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _print_context(<span class="op">**</span>kwargs):</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(kwargs)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>print_context <span class="op">=</span> PythonOperator(task_id<span class="op">=</span><span class="st">"print-context"</span>, python_callable<span class="op">=</span>_print_context, dag<span class="op">=</span>dag)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>print_context</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <ul>
-<li>This also affect the global Airflow limit of maximum number of tasks that can run concurrently, which may lead to whole system get stalled.</li>
-<li>For sensor task, it pokes to check the condition and block if it is false. So it would run for a little bit and wait for the most part. It keeps poking untel the timeout period is completed, which means it keeps occupying the slot until the condition becomes true or timeout is reached</li>
-<li><code>mode</code> argument which has two values: {<code>poking</code>, <code>reschedule</code>}. The default is poking. Reschedule can solve the sensor deadlock and snowball effect because it releases the slot the sensor task is occupying after the slot has finished poking. In other words, sensor task would poke, if condition if false, the system will reschedule it and take its slot and make it available to other tasks. It is the same concept as <strong>process scheduling</strong> that the OS does when a process does a blocking system call.</li>
+<li>Some arguments of operators can be templated</li>
+<li>Templating happens at run time</li>
+<li>We can provide arguments to PythonOperator using:
+<ul>
+<li><code>op_args</code>: list of positional arguments that are passed to the callable</li>
+<li><code>op_kwargs</code>: dictionary of keyword arguments</li>
+</ul></li>
+<li>We can inspect the templated arguments either on the UI or using the CLI:
+<ul>
+<li>CLI: <code>airflow tasks render [dag id] [task id] [desired execution date]</code></li>
+</ul></li>
+<li>There are two ways to pass data between tasks:
+<ol type="1">
+<li>read/write to the metastore. It is called <code>XCom</code>
+<ul>
+<li>This is done by pickling the objects we want to share and write it to metastore. After that, tasks can read the pickled objects (and unpickle them)</li>
+<li>This is only recommended for small objects because the object are stored as blobs in the metastore. Don’t use it for large objects</li>
+</ul></li>
+<li>read/write to persistent storage such as disk or database</li>
+</ol></li>
+<li>Tasks are independent and may run on completely different machines -&gt; Can’t share memory -&gt; Sharing has to be through persistent storage.</li>
+<li>Most operators are installed via separate pip install. For example, PostgresOperator allows us to work with PostgreSQL database.
+<ul>
+<li>We can install operators like <code>pip install apache-airflow-providers-*</code></li>
+<li>We can import the operator as <code>from airflow.providers.pogstres.operators.postgres import PostgresOperator</code></li>
+<li>We can add connections using UI or CLI, which Airflow store them encrypted in metastore, such as:</li>
 </ul>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>wait_for_supermarket_1 <span class="op">=</span> PythonSensor(</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    task_id<span class="op">=</span><span class="st">"wait_for_supermarket_1"</span>,</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    python_callable<span class="op">=</span>_wait_for_supermarket,</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    op_kwargs<span class="op">=</span>{<span class="st">"supermarket"</span>: <span class="st">"supermarket_1"</span>},</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    mode<span class="op">=</span><span class="st">"reschedule"</span>,</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    dag<span class="op">=</span>dag</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">airflow</span> connections add <span class="dt">\</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>--conn-type postgres <span class="dt">\</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>--conn-host localhost <span class="dt">\</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>--conn-login postgres <span class="dt">\</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>--conn-password mysecretpassword <span class="dt">\</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>my_postgres</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>  - We can later refer to those credentions by name when connecting to any database</code></pre>
 <ul>
-<li>We can trigger another DAG to run from inside another DAG using <code>TriggerDagRunOperator</code>. This will cause another DAG to run once the trigger_operator runs which is useful if we want to split DAGs and make some DAGs available to other DAGs instead of repearing functionality. See below for both approaches: <img src="images/complicated-dag-logic.png" class="img-fluid"> <img src="images/triggered-dag.png" class="img-fluid"></li>
-</ul>
-<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> airflow.utils.dates</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> airflow <span class="im">import</span> DAG</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> airflow.operators.dummy <span class="im">import</span> DummyOperator</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> airflow.operators.trigger_dagrun <span class="im">import</span> TriggerDagRunOperator</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> airflow.sensors.python <span class="im">import</span> PythonSensor</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>dag1 <span class="op">=</span> DAG(</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    dag_id<span class="op">=</span><span class="st">"ingest_supermarket_data"</span>,</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    start_date<span class="op">=</span>airflow.utils.dates.days_ago(<span class="dv">3</span>),</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    schedule_interval<span class="op">=</span><span class="st">"0 16 * * *"</span>,</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>dag2 <span class="op">=</span> DAG(</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    dag_id<span class="op">=</span><span class="st">"create_metrics"</span>,</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    start_date<span class="op">=</span>airflow.utils.dates.days_ago(<span class="dv">3</span>),</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    schedule_interval<span class="op">=</span><span class="va">None</span>, <span class="co"># Since it will be triggered</span></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _wait_for_supermarket(supermarket_id_):</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    supermarket_path <span class="op">=</span> Path(<span class="st">"/data/"</span> <span class="op">+</span> supermarket_id_)</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    data_files <span class="op">=</span> supermarket_path.glob(<span class="st">"data-*.csv"</span>)</span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    success_file <span class="op">=</span> supermarket_path <span class="op">/</span> <span class="st">"_SUCCESS"</span></span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> data_files <span class="kw">and</span> success_file.exists()</span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> supermarket_id <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">5</span>):</span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    wait <span class="op">=</span> PythonSensor(</span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>        task_id<span class="op">=</span><span class="ss">f"wait_for_supermarket_</span><span class="sc">{</span>supermarket_id<span class="sc">}</span><span class="ss">"</span>,</span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>        python_callable<span class="op">=</span>_wait_for_supermarket,</span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>        op_kwargs<span class="op">=</span>{<span class="st">"supermarket_id_"</span>: <span class="ss">f"supermarket</span><span class="sc">{</span>supermarket_id<span class="sc">}</span><span class="ss">"</span>},</span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>        dag<span class="op">=</span>dag1,</span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>    copy <span class="op">=</span> DummyOperator(task_id<span class="op">=</span><span class="ss">f"copy_to_raw_supermarket_</span><span class="sc">{</span>supermarket_id<span class="sc">}</span><span class="ss">"</span>, dag<span class="op">=</span>dag1)</span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>    process <span class="op">=</span> DummyOperator(task_id<span class="op">=</span><span class="ss">f"process_supermarket_</span><span class="sc">{</span>supermarket_id<span class="sc">}</span><span class="ss">"</span>, dag<span class="op">=</span>dag1)</span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>    trigger_create_metrics_dag <span class="op">=</span> TriggerDagRunOperator(</span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>        task_id<span class="op">=</span><span class="ss">f"trigger_create_metrics_dag_supermarket_</span><span class="sc">{</span>supermarket_id<span class="sc">}</span><span class="ss">"</span>,</span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>        trigger_dag_id<span class="op">=</span><span class="st">"create_metrics"</span>, <span class="co"># Has to be the same dag_id as dag2</span></span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>        dag<span class="op">=</span>dag1,</span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>    wait <span class="op">&gt;&gt;</span> copy <span class="op">&gt;&gt;</span> process <span class="op">&gt;&gt;</span> trigger_create_metrics_dag</span>
-<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>compute_differences <span class="op">=</span> DummyOperator(task_id<span class="op">=</span><span class="st">"compute_differences"</span>, dag<span class="op">=</span>dag2)</span>
-<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>update_dashboard <span class="op">=</span> DummyOperator(task_id<span class="op">=</span><span class="st">"update_dashboard"</span>, dag<span class="op">=</span>dag2)</span>
-<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>notify_new_data <span class="op">=</span> DummyOperator(task_id<span class="op">=</span><span class="st">"notify_new_data"</span>, dag<span class="op">=</span>dag2)</span>
-<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>compute_differences <span class="op">&gt;&gt;</span> update_dashboard</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li>Each DAG run has a run_id that starts with one of the following:
-<ul>
-<li><code>scheduled__</code> to indicate the DAG run started because of its schedule</li>
-<li><code>backfill__</code> to indicate the DAG run started by a backfill job</li>
-<li><code>manual__</code> to indicate the DAG run started by a manual action (e.g., pressing the Trigger Dag button, or triggered by a TriggerDagRunOperator)</li>
+<li>Airflow takes care of setting up the connection and close it once done</li>
 </ul></li>
-<li>From the UI, scheduled DAGs have their task instance in black border while Triggered DAGs don’t</li>
-<li>Clearing a task in a DAG will clear the task and all its downstream tasks and trigger a run (backfill)
+<li>Postgres is an external system and Airflow supports connecting to a wide range of external systems with the help of many operators in its ecosystem. This does have an implication: connecting to an external system often requires specific dependencies to be installed, which allow connecting and communicating with the external system. This also holds for Postgres; we must install the package apache-airflow-providers- postgres to install additional Postgres dependencies in our Airflow installation.
 <ul>
-<li>It only clears tasks within the same DAG, NOT downstream tasks in another DAG of TriggerDagRunOperator</li>
+<li>Upon execution of the PostgresOperator, a number of things happen. The PostgresOperator will instantiate a so-called hook to communicate with Postgres. The hook deals with creating a connection, sending queries to Postgres and closing the connection afterward. The operator is merely passing through the request from the user to the hook in this situation.</li>
+<li>An operator determines what has to be done; a hook determines how to do something. When building pipelines like these, you will only deal with operators and have no notion of any hooks, because hooks are used internally in operators.</li>
 </ul></li>
-<li>If the triggered DAG has dependency on multiple triggering DAGs to be completed before it can run, then we can use <code>ExternalTaskSensor</code> that checks whether the task has been completed successfully (sensor poking the state of tasks in another DAGs). Each <code>ExternalTaskSensor</code> checks for only 1 task by querying the metastore database
+<li>There’s a number of things to point out in this last step. The DAG has an additional argument: template_searchpath. Besides a string INSERT INTO …, the content of files can also be templated. Each operator can read and template files with specific extensions by providing the file path to the operator. In the case of the Postgres- Operator, the argument SQL can be templated and thus a path to a file holding a SQL query can also be provided. Any filepath ending in .sql will be read, templates in the file will be rendered, and the queries in the file will be executed by the PostgresOperator. Again, refer to the documentation of the operators and check the field template_ext, which holds the file extensions that can be templated by the operator.
 <ul>
-<li>By default, it uses the same execution_date as itself</li>
-<li>If the task runs on different schedule, we then need to provide timedelta object to <code>execution_delta</code> argument to get what would be the execution_date of the task it tries to sense</li>
-</ul></li>
-</ul>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> datetime</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> airflow.utils.dates</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> airflow <span class="im">import</span> DAG</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> airflow.operators.dummy <span class="im">import</span> DummyOperator</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> airflow.sensors.external_task <span class="im">import</span> ExternalTaskSensor</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>dag1 <span class="op">=</span> DAG(</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    dag_id<span class="op">=</span><span class="st">"ingest_supermarket_data"</span>,</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    start_date<span class="op">=</span>airflow.utils.dates.days_ago(<span class="dv">3</span>),</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    schedule_interval<span class="op">=</span><span class="st">"0 16 * * *"</span>,</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>dag2 <span class="op">=</span> DAG(</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    dag_id<span class="op">=</span><span class="st">"create_metrics"</span>,</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    start_date<span class="op">=</span>airflow.utils.dates.days_ago(<span class="dv">3</span>),</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    schedule_interval<span class="op">=</span><span class="st">"0 18 * * *"</span>,</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>DummyOperator(task_id<span class="op">=</span><span class="st">"copy_to_raw"</span>, dag<span class="op">=</span>dag1) <span class="op">&gt;&gt;</span> DummyOperator(</span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    task_id<span class="op">=</span><span class="st">"process_supermarket"</span>, dag<span class="op">=</span>dag1</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>wait <span class="op">=</span> ExternalTaskSensor(</span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    task_id<span class="op">=</span><span class="st">"wait_for_process_supermarket"</span>,</span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    external_dag_id<span class="op">=</span><span class="st">"figure_6_20_dag_1"</span>,</span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    external_task_id<span class="op">=</span><span class="st">"process_supermarket"</span>,</span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># positive # will be subtracted from the execution_date of task sensor</span></span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    <span class="co"># to get the execution_date of the task it is trying to sense</span></span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    execution_delta<span class="op">=</span>datetime.timedelta(hours<span class="op">=</span><span class="dv">6</span>),  </span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    dag<span class="op">=</span>dag2,</span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>report <span class="op">=</span> DummyOperator(task_id<span class="op">=</span><span class="st">"report"</span>, dag<span class="op">=</span>dag2)</span>
-<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>wait <span class="op">&gt;&gt;</span> report</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li>We can also trigger DAGs from CLI which will have execution_date of the current data and time
-<ul>
-<li><code>airflow dags trigger dag1</code></li>
-<li>With configuration; which will be available in the context of each task using context[“dag_run”].conf:
-<ul>
-<li><code>airflow dags trigger -c '{"supermarket_id": 1}' dag1</code></li>
-<li><code>airflow dags trigger --conf '{"supermarket_id": 1}' dag1</code></li>
-</ul></li>
+<li>Jinja requires you to provide the path to search for files that can be templated. By default, only the path of the DAG file is searched for, but since we’ve stored it in /tmp, Jinja won’t find it. To add paths for Jinja to search, set the argument template_searchpath on the DAG and Jinja will traverse the default path plus additional provided paths to search for.</li>
 </ul></li>
 </ul>
 

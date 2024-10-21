@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2022-02-07">
+<meta name="dcterms.date" content="2022-02-14">
 
-<title>Imad Dabbura - Airflow Part 4 - Task Context &amp; Jinja Templating</title>
+<title>Imad Dabbura - Airflow Part 5 - Dependencies Between Tasks</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -144,13 +144,13 @@ ga('send', {
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Imad Dabbura - Airflow Part 4 - Task Context &amp; Jinja Templating">
-<meta property="og:image" content="https://imaddabbura.github.io/mlops/airflow/feature.png">
+<meta property="og:title" content="Imad Dabbura - Airflow Part 5 - Dependencies Between Tasks">
+<meta property="og:image" content="https://imaddabbura.github.io/posts/airflow/feature.png">
 <meta property="og:site_name" content="Imad Dabbura">
 <meta property="og:image:height" content="146">
 <meta property="og:image:width" content="345">
-<meta name="twitter:title" content="Imad Dabbura - Airflow Part 4 - Task Context &amp; Jinja Templating">
-<meta name="twitter:image" content="https://imaddabbura.github.io/mlops/airflow/feature.png">
+<meta name="twitter:title" content="Imad Dabbura - Airflow Part 5 - Dependencies Between Tasks">
+<meta name="twitter:image" content="https://imaddabbura.github.io/posts/airflow/feature.png">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image-height" content="146">
@@ -193,10 +193,6 @@ ga('send', {
     <a class="nav-link" href="../../til.html"> <i class="bi bi-lightbulb" role="img">
 </i> 
 <span class="menu-text">TIL</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../../mlops.html"> 
-<span class="menu-text">MLOps</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../dl-tips-tricks.html"> 
@@ -266,7 +262,7 @@ ga('send', {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Airflow Part 4 - Task Context &amp; Jinja Templating</h1>
+      <h1 class="title">Airflow Part 5 - Dependencies Between Tasks</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">Data Engineering</div>
                 <div class="quarto-category">MLOps</div>
@@ -288,7 +284,7 @@ ga('send', {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">February 7, 2022</p>
+        <p class="date">February 14, 2022</p>
       </div>
     </div>
     
@@ -328,84 +324,99 @@ Note
 </div>
 </div>
 <ul>
-<li>Airflow uses <code>Pendulum</code> library for datetimes. It is a drop-in replacement to the Python standard library datetime but with much nicer API and more features.</li>
-<li>Not all arguments can be templates. By default, all arguments are not made into templates and <code>{name}</code> will be read as a literal string <code>name</code> unless it is included in <code>template_fields</code> in the list of attributes that can be templated in the Operator.
-<ul>
-<li>Elements in the <code>template_fields</code> are names for class attributes. The arguments passed to the <code>__init__</code> match the class attributes.</li>
-</ul></li>
-<li>All operators; such as BashOperator, take their argument as string except PythonOperator. It takes its argument as <code>python_callable</code>, which is any callable object in Python. The context and parameters will be available to this callable.
-<ul>
-<li>The context variable is a dictionary that has all the instance variables for this task.
-<ul>
-<li>we can use default <code>**kwargs</code> or make it easier to read using <code>**context</code></li>
-</ul></li>
-<li>If we specify argument name in the python_callable, then Airflow will call the python_callable with all the variables in the context.
-<ul>
-<li>If a variable is specified as argument by the callable, then it is passed to the callabe</li>
-<li>Otherwise, it is added to the context dictionary. If we don’t have context dictionary as an argument for the callable, then all other variables in the context that are not specified as arguments will be discarded.</li>
-</ul></li>
-</ul></li>
-</ul>
-<div id="ede4686f-e66c-431d-9155-6e89a7031544" class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> airflow</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> airflow <span class="im">import</span> DAG</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> airflow.operators.python <span class="im">import</span> PythonOperator</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>dag <span class="op">=</span> DAG(dag_id<span class="op">=</span><span class="st">"python-operator-context"</span>, start_date<span class="op">=</span>airflow.utils.dates.days_ago(<span class="dv">1</span>))</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _print_context(<span class="op">**</span>kwargs):</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(kwargs)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>print_context <span class="op">=</span> PythonOperator(task_id<span class="op">=</span><span class="st">"print-context"</span>, python_callable<span class="op">=</span>_print_context, dag<span class="op">=</span>dag)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>print_context</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<ul>
-<li>Some arguments of operators can be templated</li>
-<li>Templating happens at run time</li>
-<li>We can provide arguments to PythonOperator using:
-<ul>
-<li><code>op_args</code>: list of positional arguments that are passed to the callable</li>
-<li><code>op_kwargs</code>: dictionary of keyword arguments</li>
-</ul></li>
-<li>We can inspect the templated arguments either on the UI or using the CLI:
-<ul>
-<li>CLI: <code>airflow tasks render [dag id] [task id] [desired execution date]</code></li>
-</ul></li>
-<li>There are two ways to pass data between tasks:
+<li>Dependencies in airflow is specified using the right shift symbol <code>&gt;&gt;</code>. It tells Airflow which tasks should be run first before running other tasks.</li>
+<li>Basic Dependenices:
 <ol type="1">
-<li>read/write to the metastore. It is called <code>XCom</code>
+<li><strong>Linear dependenies</strong>: <code>a &gt;&gt; b &gt;&gt; c</code>. This means that <code>a</code> has to run before <code>b</code> which should run before <code>c</code>. If any task fails, the downstream task won’t run and the errors are propagated to them from preceding tasks. They can only run after the errors are fixed for that interval.</li>
+<li><strong>Fan-in/Fan-out dependencies</strong>: <img src="images/fan-in-out.png">
 <ul>
-<li>This is done by pickling the objects we want to share and write it to metastore. After that, tasks can read the pickled objects (and unpickle them)</li>
-<li>This is only recommended for small objects because the object are stored as blobs in the metastore. Don’t use it for large objects</li>
-</ul></li>
-<li>read/write to persistent storage such as disk or database</li>
-</ol></li>
-<li>Tasks are independent and may run on completely different machines -&gt; Can’t share memory -&gt; Sharing has to be through persistent storage.</li>
-<li>Most operators are installed via separate pip install. For example, PostgresOperator allows us to work with PostgreSQL database.
-<ul>
-<li>We can install operators like <code>pip install apache-airflow-providers-*</code></li>
-<li>We can import the operator as <code>from airflow.providers.pogstres.operators.postgres import PostgresOperator</code></li>
-<li>We can add connections using UI or CLI, which Airflow store them encrypted in metastore, such as:</li>
+<li>Fan-in: When 1 task is dependent on &gt;= 2 tasks to run. <em>join_datasets</em> is fan-in task. Fan-in tasks can be specified as: <code>[clean_sales, clean_weather] &gt;&gt; join_datasets</code></li>
+<li>Fan-out: When &gt;= 2 tasks are dependent on 1 task to run. <em>start</em> is a fan-out task. Fan-out tasks can be specified as: <code>start &gt;&gt; [fetch_sales, fetch_weather]</code></li>
+<li>This is how we can specify dependencies for the DAG in the above picture:</li>
 </ul>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">airflow</span> connections add <span class="dt">\</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>--conn-type postgres <span class="dt">\</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>--conn-host localhost <span class="dt">\</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>--conn-login postgres <span class="dt">\</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>--conn-password mysecretpassword <span class="dt">\</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>my_postgres</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<pre><code>  - We can later refer to those credentions by name when connecting to any database</code></pre>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>start <span class="op">&gt;&gt;</span> [fetch_sales, fetch_weather]</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>fetch_sales <span class="op">&gt;&gt;</span> clean_sales</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>fetch_weather <span class="op">&gt;&gt;</span> clean_weather</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>[clean_sales, clean_weather] <span class="op">&gt;&gt;</span> join_datasets</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>join_datasets <span class="op">&gt;&gt;</span> train_model</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>train_model <span class="op">&gt;&gt;</span> deploy_model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+</ol></li>
+<li>Branching:
+<ol type="1">
+<li>We can take care of conditional execution of code paths inside the task, i.e.&nbsp;inside Python script in the case of PythonOperator. Depending on some condition during execution, different code paths and logic will be followed. The main disadvantages of this approach is that 1) it is hard to figure out with code path is being executed on each run from tree/graph view unless we have logging enabled, 2) Adds more complexity to the code structure, 3) May not let us use specialized operators that abstract aways a lot of the boilerplate code such as PostgresOperator. For example, if we have fetch data from either CSV or SQL database depending on condition at execution.</li>
+<li>We can add <code>BrachPythonOperator</code>task that takes a Python callable to determine which tasks to execute next. The Python callable has to return the task_id of the task (or list of task_id) that Airflow should execute next. Example: <img src="images/branching-v1.png" class="img-fluid"></li>
+</ol>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _pick_erp_system(<span class="op">**</span>context):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> context[<span class="st">"execution_date"</span>] <span class="op">&lt;</span> ERP_SWITCH_DATE:</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>       <span class="cf">return</span> <span class="st">"fetch_sales_old"</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>       <span class="cf">return</span> <span class="st">"fetch_sales_new"</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>pick_erp_system <span class="op">=</span> BranchPythonOperator(</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    task_id<span class="op">=</span><span class="st">"pick_erp_system"</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    python_callable<span class="op">=</span>_pick_erp_system,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>start <span class="op">&gt;&gt;</span> [pick_erp_system, fetch_weather]</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>pick_erp_system <span class="op">&gt;&gt;</span> [fetch_sales_old, fetch_sales_new]</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>fetch_sales_old <span class="op">&gt;&gt;</span> clean_sales_old</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>fetch_sales_new <span class="op">&gt;&gt;</span> clean_sales_new</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>fetch_weather <span class="op">&gt;&gt;</span> clean_weather</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>[clean_sales_old, clean_sales_new, clean_weather] <span class="op">&gt;&gt;</span> join_datasets</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>join_datasets <span class="op">&gt;&gt;</span> train_model</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>train_model <span class="op">&gt;&gt;</span> deploy_model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
-<li>Airflow takes care of setting up the connection and close it once done</li>
-</ul></li>
-<li>Postgres is an external system and Airflow supports connecting to a wide range of external systems with the help of many operators in its ecosystem. This does have an implication: connecting to an external system often requires specific dependencies to be installed, which allow connecting and communicating with the external system. This also holds for Postgres; we must install the package apache-airflow-providers- postgres to install additional Postgres dependencies in our Airflow installation.
+<li>Since downstream tasks only get scheduled &amp; executed if all thier downstream tasks finished successfully, <code>jon_datasets</code> task will never success because with the above dependency either <code>clean_sales_old</code> or <code>clean_sales_new</code> would execute BUT NOT BOTH. We can adjust this using <code>trigger_rule</code> argument (default is <code>"all_success"</code> in the operatror by specifying <code>"non_failed"</code>. This will run downstream task if all downstream tasks haven’t failed even if they never executed. Therefore, we can change trigger_rule for <code>join_datasest</code> task.</li>
+<li>A better approach is to create DummyOperator that does nothing but join both branches and become the upstream task before <code>join_datasets</code> such as below: <img src="images/branching-v2.png" class="img-fluid"></li>
+</ul>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>join_branch <span class="op">=</span> DummyOperator(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>   task_id<span class="op">=</span><span class="st">"join_erp_branch"</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>   trigger_rule<span class="op">=</span><span class="st">"none_failed"</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>start <span class="op">&gt;&gt;</span> [pick_erp_system, fetch_weather]</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>pick_erp_system <span class="op">&gt;&gt;</span> [fetch_sales_old, fetch_sales_new]</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>fetch_sales_old <span class="op">&gt;&gt;</span> clean_sales_old</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>fetch_sales_new <span class="op">&gt;&gt;</span> clean_sales_new</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>[clean_sales_old, clean_sales_new] <span class="op">&gt;&gt;</span> join_branch</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>fetch_weather <span class="op">&gt;&gt;</span> clean_weather</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>[joen_erp_branch, clean_weather] <span class="op">&gt;&gt;</span> join_datasets</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>join_datasets <span class="op">&gt;&gt;</span> train_model</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>train_model <span class="op">&gt;&gt;</span> deploy_model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><strong>Conditional tasks</strong>. Sometimes we only want to execute a task if a condition is true, otherwise, the task should be skipped. For example, if we want to only deploy the model on the most recent data and we don’t want <code>deploy_model</code> to always execute if we are doing <strong>backfilling</strong> -&gt; Create a conditional upstream task that checks the condition and raise Exception if the condition is False so <code>deploy_model</code> will be skipped. <img src="images/conditional-task.png" class="img-fluid"></li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> airflow.exceptions <span class="im">import</span> AirflowSkipException</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> airflow.operators.python <span class="im">import</span> PythonOperator</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _latest_only(<span class="op">**</span>context):</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># execution_time is the first time in the schedule interval</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># So following_schedule is the next execution_date</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    left_window <span class="op">=</span> context[<span class="st">"dag"</span>].following_schedule(context[<span class="st">"execution_date"</span>])</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    right_window <span class="op">=</span> context[<span class="st">"dag"</span>].following_schedule(left_window)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    now <span class="op">=</span> pendulum.now(<span class="st">"utc"</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Since execution of DAG starts after last time point passed of the </span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># schedule interval -&gt; </span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> left_window <span class="op">&lt;</span> now <span class="op">&lt;=</span> right_window:</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> AirflowSkipException(<span class="st">"Not the most recent run!"</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>latest_only <span class="op">=</span> PythonOperator(task_id<span class="op">=</span><span class="st">"latest_only"</span>, python_callable<span class="op">=</span>_latest_only, dag<span class="op">=</span>dag)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>latest_only <span class="op">&gt;&gt;</span> deplpy_model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
-<li>Upon execution of the PostgresOperator, a number of things happen. The PostgresOperator will instantiate a so-called hook to communicate with Postgres. The hook deals with creating a connection, sending queries to Postgres and closing the connection afterward. The operator is merely passing through the request from the user to the hook in this situation.</li>
-<li>An operator determines what has to be done; a hook determines how to do something. When building pipelines like these, you will only deal with operators and have no notion of any hooks, because hooks are used internally in operators.</li>
-</ul></li>
-<li>There’s a number of things to point out in this last step. The DAG has an additional argument: template_searchpath. Besides a string INSERT INTO …, the content of files can also be templated. Each operator can read and template files with specific extensions by providing the file path to the operator. In the case of the Postgres- Operator, the argument SQL can be templated and thus a path to a file holding a SQL query can also be provided. Any filepath ending in .sql will be read, templates in the file will be rendered, and the queries in the file will be executed by the PostgresOperator. Again, refer to the documentation of the operators and check the field template_ext, which holds the file extensions that can be templated by the operator.
+<li><strong>Trigger rules</strong>: The triggering of Airflow tasks is controlled by the trigger rules which define the behavior of tasks and allow us to configure each task to respond to different situations.
+<ol type="1">
+<li>Be default, scheduler picks tasks ready to be executed when all its upstreams tasks were executed successfully and put it in the execute queue. The scheduler always checks downstream tasks if they are ready by checking all their downstream task completion state. Once there is a slot/worker, it will be executed. If any of the upstream tasks failed, it would have failed state and the upstream task won’t be scheduled and have <strong>state=upstream_failed</strong>. This is called <strong>progagation</strong> because the error is propagated from upstream to downstream tasks. This is the default trigger_rule which is <strong>all_success</strong>. If any of the down</li>
+<li>If any of the upstream task is skipped -&gt; downstream task will be skipped as well (propagation).</li>
+<li>Trigger rules:
 <ul>
-<li>Jinja requires you to provide the path to search for files that can be templated. By default, only the path of the DAG file is searched for, but since we’ve stored it in /tmp, Jinja won’t find it. To add paths for Jinja to search, set the argument template_searchpath on the DAG and Jinja will traverse the default path plus additional provided paths to search for.</li>
+<li><code>all_success</code>: Triggers when all parent tasks have executed successfully</li>
+<li><code>all_failed</code>: Triggers when all parent tasks have failed or due to failure in their parents</li>
+<li><code>all_done</code>: Triggers when all parent tasks finished executing regardless of their state. Good to cleanup and shutdown resources regardless of the execution state of the workflow</li>
+<li><code>one_failed</code>: Triggers when at least 1 parent task failed and doesn’t wait for other parent tasks to finish</li>
+<li><code>one_success</code>: Triggers when at least 1 parent task succeeded and doesn’t wait for other parent tasks to finish</li>
+<li><code>none_failed</code>: Triggers if no parent task has failed but either completed successfully or skipped</li>
+<li><code>none_skipped</code>: Triggers if no parent task has skipped but either completed successfully or failed</li>
+<li><code>dummy</code>: Triggers regardless of the parent tasks state. Useful for testing</li>
 </ul></li>
+</ol></li>
 </ul>
 
 

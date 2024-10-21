@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2022-01-10">
+<meta name="dcterms.date" content="2022-03-28">
 
-<title>Imad Dabbura - Airflow Part 1 - What is Airflow?</title>
+<title>Imad Dabbura - Airflow Part 8 - Best Practices</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,6 +21,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -110,15 +144,13 @@ ga('send', {
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Imad Dabbura - Airflow Part 1 - What is Airflow?">
-<meta property="og:description" content="">
-<meta property="og:image" content="https://imaddabbura.github.io/mlops/airflow/feature.png">
+<meta property="og:title" content="Imad Dabbura - Airflow Part 8 - Best Practices">
+<meta property="og:image" content="https://imaddabbura.github.io/posts/airflow/feature.png">
 <meta property="og:site_name" content="Imad Dabbura">
 <meta property="og:image:height" content="146">
 <meta property="og:image:width" content="345">
-<meta name="twitter:title" content="Imad Dabbura - Airflow Part 1 - What is Airflow?">
-<meta name="twitter:description" content="">
-<meta name="twitter:image" content="https://imaddabbura.github.io/mlops/airflow/feature.png">
+<meta name="twitter:title" content="Imad Dabbura - Airflow Part 8 - Best Practices">
+<meta name="twitter:image" content="https://imaddabbura.github.io/posts/airflow/feature.png">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image-height" content="146">
@@ -161,10 +193,6 @@ ga('send', {
     <a class="nav-link" href="../../til.html"> <i class="bi bi-lightbulb" role="img">
 </i> 
 <span class="menu-text">TIL</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../../mlops.html"> 
-<span class="menu-text">MLOps</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../dl-tips-tricks.html"> 
@@ -234,7 +262,7 @@ ga('send', {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Airflow Part 1 - What is Airflow?</h1>
+      <h1 class="title">Airflow Part 8 - Best Practices</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">Data Engineering</div>
                 <div class="quarto-category">MLOps</div>
@@ -256,7 +284,7 @@ ga('send', {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">January 10, 2022</p>
+        <p class="date">March 28, 2022</p>
       </div>
     </div>
     
@@ -295,48 +323,87 @@ Note
 <p>Other than my experience and the documentation, the main resource behind this post and figures is the fantastic book: <a href="https://www.manning.com/books/data-pipelines-with-apache-airflow">Data Pipelines with Apache. Airflow</a>.</p>
 </div>
 </div>
-<p><strong>Airflow</strong> is workflow orchestration tool that is written in Python at Airbnb. The workflow is also written in Python. It defines the workflow as a <strong>DAG</strong> so it is easy to determine the dependencies between tasks. If any task failed, we don’t need to rerun the workflow again, we can just run the failed task and all the tasks that depend on it. We can also do <em>backfilling</em> by running the pipeline/tasks for time intervals in the past.</p>
-<p>Airflow consists of mainly three components:</p>
 <ul>
-<li><strong>The Airflow scheduler</strong>: Parses DAGs, checks their schedule interval, and (if the DAGs’ schedule has passed) starts scheduling the DAGs’ tasks for execution by passing them to the Airflow workers.</li>
-<li><strong>The Airflow workers</strong>: Pick up tasks that are scheduled for execution and execute them. As such, the workers are responsible for actually “doing the work.”</li>
-<li><strong>The Airflow webserver</strong>: Visualizes the DAGs parsed by the scheduler and provides the main interface for users to monitor DAG runs and their results. It uses the metadata database which has all the logs and other metadata about tasks and workflows.</li>
+<li>Stick to coding style conventions by using tools like flake8, pylint, black</li>
+<li>There are two ways to define DAGs. Stick to one of them:
+<ol type="1">
+<li>With context manager:</li>
+</ol>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> DAG(...) <span class="im">as</span> dag:</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  task1 <span class="op">=</span> PythonOperator(...)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  task2 <span class="op">=</span> PythonOperator(...)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ol start="2" type="1">
+<li>Traditional:</li>
+</ol>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dag <span class="op">=</span> DAG(...)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>task1 <span class="op">=</span> PythonOperator(..., dag<span class="op">=</span>dag)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>task2 <span class="op">=</span> PythonOperator(..., dag<span class="op">=</span>dag)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li>There are also multiple ways to define dependencies. Stick to one of them:</li>
 </ul>
-<p>Conceptually, the scheduling algorithm follows the following steps:</p>
-<ol type="1">
-<li>For each open (= uncompleted) task in the graph, do the following: – For each edge pointing toward the task, check if the “upstream” task on the other end of the edge has been completed. – If all upstream tasks have been completed, add the task under consideration to a queue of tasks to be executed.</li>
-<li>Execute the tasks in the execution queue, marking them completed once they finish performing their work.</li>
-<li>Jump back to step 1 and repeat until all tasks in the graph have been completed.</li>
-</ol>
-<p>The scheduler in Airflow runs roughly through the following steps:</p>
-<ol type="1">
-<li>Once users have written their workflows as DAGs, the files containing these DAGs are read by the scheduler to extract the corresponding tasks, dependen- cies, and schedule interval of each DAG.</li>
-<li>For each DAG, the scheduler then checks whether the schedule interval for the DAG has passed since the last time it was read. If so, the tasks in the DAG are scheduled for execution.</li>
-<li>For each scheduled task, the scheduler then checks whether the dependencies (= upstream tasks) of the task have been completed. If so, the task is added to the execution queue.</li>
-<li>The scheduler waits for several moments before starting a new loop by jumping back to step 1.</li>
-</ol>
-<p><img src="images/scheduler-overview.png"></p>
-<p>Airflow can be run:</p>
-<ol type="1">
-<li>In python virtual environment</li>
-<li>Inside Docker containers. In this case, Airflow scheduler, webserver, and metastore would run each in separate containers</li>
-</ol>
-<p>The main disadvantages of Airflow are:</p>
-<ol type="1">
-<li>It can get very messy and hard to understand for complex workflows</li>
-<li>It is best used for batch/recurring jobs NOT streaming jobs</li>
-<li>Mainly support static DAGs and hard to implement dynamic DAGs. Imagine you’re reading from a database and you want to create a step to process each record in the database (e.g.&nbsp;to make a prediction), but you don’t know in advance how many records there are in the database, Airflow won’t be able to handle that.</li>
-<li>It is monolithic, which means it packages the entire workflow into one container. If two different steps in your workflow have different requirements, you can, in theory, create different containers for them using Airflow’s DockerOperator, but it’s not that easy to do so.</li>
-<li>Airflow’s DAGs are not parameterized, which means you can’t pass parameters into your workflows. So if you want to run the same model with different learning rates, you’ll have to create different workflows.</li>
-</ol>
-<p>To setup Airflow locally inside Python virtual env:</p>
-<ol type="1">
-<li>pip install apache-airflow</li>
-<li>airflow init db # Initialize metastore locally using SQLite; not recommended for production</li>
-<li>airflow users create –username admin –password admin –firstname Anonymous –lastname Admin –role Admin –email admin@example.org # Create user</li>
-<li>airflow webserver # Start web server to use web UI</li>
-<li>airflow scheduler # Start scheduler, don’t use sequential in production</li>
-</ol>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>task1 <span class="op">&gt;&gt;</span> task2</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>task1 <span class="op">&lt;&lt;</span> task2</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>[task1] <span class="op">&gt;&gt;</span> task2</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>task1.set_downstream(task2)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>task2.set_upstream(task1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>When loading config files, make sure to understand where the loading happens:
+<ul>
+<li>At the top level on the scheduler</li>
+<li>At the DAG level when it is parsed</li>
+<li>Or when the DAG is executing -&gt; in the worker</li>
+</ul></li>
+<li>Avoid doing any computation in DAG definition:
+<ul>
+<li>At the top level, it will be computed every time the DAG is loaded</li>
+<li>In the DAG definition, it will be executed every time the DAG is parsed by the scheduler</li>
+<li>In the task, it will be computed when the task is executed on the worker machine</li>
+</ul></li>
+<li>Fetch credentials within the task, so they are only fetched once the task is executed</li>
+<li>Use factory methods to generate DAGs or set of tasks that are almost typical with few minor changes. Example:</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generate_tasks(dataset_name, raw_dir, processed_dir, preprocess_script, output_dir, dag):</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    raw_path <span class="op">=</span> os.path.join(raw_dir, dataset_name, <span class="st">"</span><span class="sc">{ds_nodash}</span><span class="st">.json"</span>) </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    processed_path <span class="op">=</span> os.path.join(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    processed_dir, dataset_name, <span class="st">"</span><span class="sc">{ds_nodash}</span><span class="st">.json"</span> )</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    output_path <span class="op">=</span> os.path.join(output_dir, dataset_name, <span class="st">"</span><span class="sc">{ds_nodash}</span><span class="st">.json"</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    fetch_task <span class="op">=</span> BashOperator(</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        task_id<span class="op">=</span><span class="ss">f"fetch_</span><span class="sc">{</span>dataset_name<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        bash_command<span class="op">=</span><span class="ss">f"echo 'curl http://example.com/</span><span class="sc">{</span>dataset_name<span class="sc">}</span><span class="ss">.json</span><span class="sc">{</span>raw_path<span class="sc">}</span><span class="ss">.json'"</span>, dag<span class="op">=</span>dag,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    preprocess_task <span class="op">=</span> BashOperator(</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        task_id<span class="op">=</span><span class="ss">f"preprocess_</span><span class="sc">{</span>dataset_name<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        bash_command<span class="op">=</span><span class="ss">f"echo '</span><span class="sc">{</span>preprocess_script<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>raw_path<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>processed_path<span class="sc">}</span><span class="ss">'"</span>, dag<span class="op">=</span>dag,</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    export_task <span class="op">=</span> BashOperator(</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        task_id<span class="op">=</span><span class="ss">f"export_</span><span class="sc">{</span>dataset_name<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        bash_command<span class="op">=</span><span class="ss">f"echo 'cp </span><span class="sc">{</span>processed_path<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>output_path<span class="sc">}</span><span class="ss">'"</span>, dag<span class="op">=</span>dag,</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>       )</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        fetch_task <span class="op">&gt;&gt;</span> preprocess_task <span class="op">&gt;&gt;</span> export_task</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> fetch_task, export_task</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> DAG(</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    dag_id<span class="op">=</span><span class="st">"01_task_factory"</span>,</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    start_date<span class="op">=</span>airflow.utils.dates.days_ago(<span class="dv">5</span>),</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    schedule_interval<span class="op">=</span><span class="st">"@daily"</span>,</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>) <span class="im">as</span> dag:</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> dataset <span class="kw">in</span> [<span class="st">"sales"</span>, <span class="st">"customers"</span>]:</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>        generate_tasks(</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>            dataset_name<span class="op">=</span>dataset,</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>            raw_dir<span class="op">=</span><span class="st">"/data/raw"</span>, </span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>            processed_dir<span class="op">=</span><span class="st">"/data/processed"</span>, </span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>            output_dir<span class="op">=</span><span class="st">"/data/output"</span>,</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>            preprocess_script<span class="op">=</span><span class="ss">f"preprocess_</span><span class="sc">{</span>dataset<span class="sc">}</span><span class="ss">.py"</span>, dag<span class="op">=</span>dag</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>        )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>We can use <code>TaskGroup</code> to group related tasks into groups that will help us navigating the DAG in the UI. This is very helpful when DAGs become very complicated</li>
+<li>Create new DAGs for big changes such as renaming/removing tasks or changing the schedule_date/interval so we can keep the historical info about old DAGs and not confuse the scheduler. Scheduler database has instances of the runs of each DAG</li>
+<li>Make sure that tasks are idempotenet -&gt; Regardless when they run, If given the same input the should produce the same output. Therefore, be careful when writing data. We may want to overwrite or upsert to avoid appending the same data
+<ul>
+<li>Also, tasks should not have side effects</li>
+</ul></li>
+<li>Avoid writing intermediate results on local filesystem because each task runs independently (and mostly on different machines) -&gt; Use cloud shared storage such as Amazon’s S3 bucket where all workers can access it</li>
+<li>We can use SLAs on each DAG/task where Airflow will notify if they don’t finish within SLA. DAG takes <code>sla</code> argument</li>
+</ul>
 
 
 

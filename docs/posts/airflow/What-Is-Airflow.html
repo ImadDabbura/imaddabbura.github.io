@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2022-01-24">
+<meta name="dcterms.date" content="2022-01-10">
 
-<title>Imad Dabbura - Airflow Part 3 - DAG Scheduling</title>
+<title>Imad Dabbura - Airflow Part 1 - What is Airflow?</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,40 +21,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -144,15 +110,15 @@ ga('send', {
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Imad Dabbura - Airflow Part 3 - DAG Scheduling">
+<meta property="og:title" content="Imad Dabbura - Airflow Part 1 - What is Airflow?">
 <meta property="og:description" content="">
-<meta property="og:image" content="https://imaddabbura.github.io/mlops/airflow/feature.png">
+<meta property="og:image" content="https://imaddabbura.github.io/posts/airflow/feature.png">
 <meta property="og:site_name" content="Imad Dabbura">
 <meta property="og:image:height" content="146">
 <meta property="og:image:width" content="345">
-<meta name="twitter:title" content="Imad Dabbura - Airflow Part 3 - DAG Scheduling">
+<meta name="twitter:title" content="Imad Dabbura - Airflow Part 1 - What is Airflow?">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="https://imaddabbura.github.io/mlops/airflow/feature.png">
+<meta name="twitter:image" content="https://imaddabbura.github.io/posts/airflow/feature.png">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image-height" content="146">
@@ -195,10 +161,6 @@ ga('send', {
     <a class="nav-link" href="../../til.html"> <i class="bi bi-lightbulb" role="img">
 </i> 
 <span class="menu-text">TIL</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../../mlops.html"> 
-<span class="menu-text">MLOps</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../dl-tips-tricks.html"> 
@@ -268,7 +230,7 @@ ga('send', {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Airflow Part 3 - DAG Scheduling</h1>
+      <h1 class="title">Airflow Part 1 - What is Airflow?</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">Data Engineering</div>
                 <div class="quarto-category">MLOps</div>
@@ -290,7 +252,7 @@ ga('send', {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">January 24, 2022</p>
+        <p class="date">January 10, 2022</p>
       </div>
     </div>
     
@@ -329,108 +291,48 @@ Note
 <p>Other than my experience and the documentation, the main resource behind this post and figures is the fantastic book: <a href="https://www.manning.com/books/data-pipelines-with-apache-airflow">Data Pipelines with Apache. Airflow</a>.</p>
 </div>
 </div>
-<ol class="example" type="1">
-<li>Airflow will schedule the first execution of DAG at the end of the interval; which means after the last time point in the interval has passed. For example, if we schedule it to run <code>@daily</code>, it will run t midnight of each day starting from the <code>start_date</code> until (optionally) <code>end_date</code>. In other words, as soon as <code>23:59:59</code> has passed which means any time after <code>00:00:00</code>.
+<p><strong>Airflow</strong> is workflow orchestration tool that is written in Python at Airbnb. The workflow is also written in Python. It defines the workflow as a <strong>DAG</strong> so it is easy to determine the dependencies between tasks. If any task failed, we don’t need to rerun the workflow again, we can just run the failed task and all the tasks that depend on it. We can also do <em>backfilling</em> by running the pipeline/tasks for time intervals in the past.</p>
+<p>Airflow consists of mainly three components:</p>
 <ul>
-<li>Example: if start_date=“2022-01-01” and schedule_interval=“<span class="citation" data-cites="daily">@daily</span>” -&gt; The first time it runs is any time soon after “2022-01-02 00:00” which is midnight of January second.</li>
-</ul></li>
-<li>We can use convenience string (such as <code>@daily</code>), timedetla objects (such as timedelta(days=3), or cron expressions (such as <code>0 0 * * 0</code> which means weekly on Sunday 00:00)</li>
-<li>Frequency scheduling intervals (shorthands):
-<ul>
-<li><code>@once</code>: Schedule once and only once.</li>
-<li><code>@hourly</code>: Run once an hour at the beginning of the hour.</li>
-<li><code>@daily</code>: Run once a day at midnight.</li>
-<li><code>@weekly</code>: Run once a week at midnight on Sunday morning.</li>
-<li><code>@monthly</code>: Run once a month at midnight on the first day of the month. Run once a year at midnight on January 1.</li>
-</ul></li>
-<li>Cron-based intervals:</li>
-</ol>
-<pre><code># ┌─────── minute (0 - 59)
-# │ ┌────── hour (0 - 23)
-# │ │ ┌───── dayofthemonth(1-31)
-# │ │ │ ┌───── month(1-12)
-# │ │ │ │ ┌──── dayoftheweek(0-6)(SundaytoSaturday; 
-# │ │ │ │ │ 7 is also Sunday on some systems) 
-# * * * * *</code></pre>
-<pre><code>- "*" means don't care values.
-- Examples:
-    1. 0**** means hourly
-    2. 00*** means daily at midnight
-    3. 00**0 means weekly at midnight on Sunday
-- Useful link to check meaning of cron-based intervals: https://crontab.guru/</code></pre>
-<ol start="5" class="example" type="1">
-<li>Cron expressions have limitations when trying to specify frequency-based intervals such as every three days. The reason for this behavior is that cron expressions are stateless and don’t look at previous runs to determine next run, they only look at the current time to see if it matches the expression.</li>
-<li>Airflow allows us to use frequency-based intervals using <code>timedelta</code> from datetime library. This way we can use previous run to determine the next run.
-<ul>
-<li>Example: schedule_interval=“timedelta(days=3)” means to run every 3 days after start_date.</li>
-</ul></li>
-<li>We can use dynamic time reference that uses execution dates which allows us to do the work incrementally. Airflow will pass those dates to the tasks to determine which schedule interval is being executed.
-<ul>
-<li><code>execution_date</code> is a timestamp of the start time of the schedule interval</li>
-<li><code>next_execution_date</code> is a timestamp of the end time of the schedule interval</li>
-<li><code>previous_execution_date</code> is a timestamp of the start time of the previous schedule interval</li>
-<li>Airflow uses Jinja-based templating such as {{variable_name}}:</li>
-</ul></li>
-</ol>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">fetch_events</span> = BashOperator<span class="er">(</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="va">task_id</span><span class="op">=</span><span class="st">"fetch_events"</span>,</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="va">bash_command</span><span class="op">=</span><span class="va">(</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"mkdir -p /data &amp;&amp; "</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"curl -o /data/events.json "</span> <span class="st">"http://localhost:5000/events?"</span> </span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"start_date={{execution_date.strftime('%Y-%m-%d')}}"</span> </span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"&amp;end_date={{next_execution_date.strftime('%Y-%m-%d')}}"</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="va">)</span>,</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="va">dag</span><span class="op">=</span>dag,</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="kw">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<pre><code>- Or we can use shorthands:</code></pre>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">fetch_events</span> = BashOperator<span class="er">(</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="va">task_id</span><span class="op">=</span><span class="st">"fetch_events"</span>,</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="va">bash_command</span><span class="op">=</span><span class="va">(</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"mkdir -p /data &amp;&amp; "</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"curl -o /data/events.json "</span> <span class="st">"http://localhost:5000/events?"</span> </span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"start_date={{ds}}"</span> </span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"&amp;end_date={{next_ds}}"</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="va">)</span>,</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="va">dag</span><span class="op">=</span>dag,</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="kw">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<pre><code>- `ds` has `YYYY-MM-DD` format while `ds_nodash` has `YYYYMMDD` format
-- Shorthands: ds, ds_nodash, next_ds, next_ds_nodash, ps, ps_nodash execution date of the next interval.</code></pre>
-<ol start="8" class="example" type="1">
-<li>We can also use dates or any dynamic parameters to Python function using <code>templates_dict</code> argument and the python callable will be passed the context that has the <code>templates_dict</code> For example:</li>
-</ol>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>    <span class="ex">calculate_stats</span> = PythonOperator<span class="er">(</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>       <span class="va">task_id</span><span class="op">=</span><span class="st">"calculate_stats"</span>,</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>       <span class="va">python_callable</span><span class="op">=</span>_calculate_stats,</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>       <span class="va">templates_dict</span><span class="op">=</span>{</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>            <span class="st">"input_path"</span><span class="ex">:</span> <span class="st">"/data/events/{{ds}}.json"</span>,</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>           <span class="st">"output_path"</span><span class="ex">:</span> <span class="st">"/data/stats/{{ds}}.csv"</span>,</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="er">}</span><span class="ex">,</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="va">dag</span><span class="op">=</span>dag</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _calculate_stats(<span class="op">**</span>context):</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Calculates event statistics."""</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>            input_path <span class="op">=</span> context[<span class="st">"templates_dict"</span>][<span class="st">"input_path"</span>] </span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>            output_path <span class="op">=</span> context[<span class="st">"templates_dict"</span>][<span class="st">"output_path"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ol start="9" class="example" type="1">
-<li>Because Airlfow follows <strong>Interval-Based Scheduling</strong>, that means DAGs run only after the last time point of schedule interval passed. If we run the DAG daily starting from <code>2022-01-01</code>, the first time it runs is soon after <code>2022-01-02 00:00:00</code> has passed and the <code>execution_date</code> would be <code>2022-01-01</code> even though it is running in <code>2022-01-02</code>. This is because it is running for the corresponding interval.
-<ul>
-<li>The end of the previous interval is <code>execution_date</code></li>
-<li><strong>One caveat for this is that <code>previous_execution_date</code> and <code>next_execution_date</code> are only defined for DAGs that run on schedule interval. This means that those values are undefined when the DAGs are run from the UI or CLI</strong></li>
-</ul></li>
-<li>Airflow allows us to have <code>start_date</code> in the past. This will help us in backfilling. By default, Airflow will run all the schedule intervals from the past until current time once the DAG is activated. We can control this behavior using <code>catchup</code> parameter to the <code>DAG()</code> class. If we set it to <code>False</code>, it won’t run previous schedule intervals.
-<ul>
-<li>Backfilling is also helpful if we change the code for the DAG. It would run all previous schedules after we clear them.</li>
-</ul></li>
-</ol>
-<p><strong>Best Practices</strong>:</p>
-<ul>
-<li>Task needs to be <strong>atomic</strong> which means a single coherent unit of work. This allows us to split work into smaller units where if one fails we know exactly what is it and recover easily.</li>
-<li>Task needs to be <strong>idempotent</strong> which means it has no side effects on the system when it reruns. If the task is given the same input, it should produce the same output.
-<ul>
-<li>In database systems, we can use upsert, which allows us to overwrite existing row.</li>
-<li>When writing to files, make sure that rerunning the same task for the same interval don’t write data again. <em>Append</em> doesn’t let us make the task idempotent.</li>
-</ul></li>
+<li><strong>The Airflow scheduler</strong>: Parses DAGs, checks their schedule interval, and (if the DAGs’ schedule has passed) starts scheduling the DAGs’ tasks for execution by passing them to the Airflow workers.</li>
+<li><strong>The Airflow workers</strong>: Pick up tasks that are scheduled for execution and execute them. As such, the workers are responsible for actually “doing the work.”</li>
+<li><strong>The Airflow webserver</strong>: Visualizes the DAGs parsed by the scheduler and provides the main interface for users to monitor DAG runs and their results. It uses the metadata database which has all the logs and other metadata about tasks and workflows.</li>
 </ul>
+<p>Conceptually, the scheduling algorithm follows the following steps:</p>
+<ol type="1">
+<li>For each open (= uncompleted) task in the graph, do the following: – For each edge pointing toward the task, check if the “upstream” task on the other end of the edge has been completed. – If all upstream tasks have been completed, add the task under consideration to a queue of tasks to be executed.</li>
+<li>Execute the tasks in the execution queue, marking them completed once they finish performing their work.</li>
+<li>Jump back to step 1 and repeat until all tasks in the graph have been completed.</li>
+</ol>
+<p>The scheduler in Airflow runs roughly through the following steps:</p>
+<ol type="1">
+<li>Once users have written their workflows as DAGs, the files containing these DAGs are read by the scheduler to extract the corresponding tasks, dependen- cies, and schedule interval of each DAG.</li>
+<li>For each DAG, the scheduler then checks whether the schedule interval for the DAG has passed since the last time it was read. If so, the tasks in the DAG are scheduled for execution.</li>
+<li>For each scheduled task, the scheduler then checks whether the dependencies (= upstream tasks) of the task have been completed. If so, the task is added to the execution queue.</li>
+<li>The scheduler waits for several moments before starting a new loop by jumping back to step 1.</li>
+</ol>
+<p><img src="images/scheduler-overview.png"></p>
+<p>Airflow can be run:</p>
+<ol type="1">
+<li>In python virtual environment</li>
+<li>Inside Docker containers. In this case, Airflow scheduler, webserver, and metastore would run each in separate containers</li>
+</ol>
+<p>The main disadvantages of Airflow are:</p>
+<ol type="1">
+<li>It can get very messy and hard to understand for complex workflows</li>
+<li>It is best used for batch/recurring jobs NOT streaming jobs</li>
+<li>Mainly support static DAGs and hard to implement dynamic DAGs. Imagine you’re reading from a database and you want to create a step to process each record in the database (e.g.&nbsp;to make a prediction), but you don’t know in advance how many records there are in the database, Airflow won’t be able to handle that.</li>
+<li>It is monolithic, which means it packages the entire workflow into one container. If two different steps in your workflow have different requirements, you can, in theory, create different containers for them using Airflow’s DockerOperator, but it’s not that easy to do so.</li>
+<li>Airflow’s DAGs are not parameterized, which means you can’t pass parameters into your workflows. So if you want to run the same model with different learning rates, you’ll have to create different workflows.</li>
+</ol>
+<p>To setup Airflow locally inside Python virtual env:</p>
+<ol type="1">
+<li>pip install apache-airflow</li>
+<li>airflow init db # Initialize metastore locally using SQLite; not recommended for production</li>
+<li>airflow users create –username admin –password admin –firstname Anonymous –lastname Admin –role Admin –email admin@example.org # Create user</li>
+<li>airflow webserver # Start web server to use web UI</li>
+<li>airflow scheduler # Start scheduler, don’t use sequential in production</li>
+</ol>
 
 
 

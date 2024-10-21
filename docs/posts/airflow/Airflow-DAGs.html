@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2022-02-28">
+<meta name="dcterms.date" content="2022-01-17">
 
-<title>Imad Dabbura - Airflow Part 6 - Sharing Data Between Tasks</title>
+<title>Imad Dabbura - Airflow Part 2 - DAGs</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -144,13 +144,13 @@ ga('send', {
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Imad Dabbura - Airflow Part 6 - Sharing Data Between Tasks">
-<meta property="og:image" content="https://imaddabbura.github.io/mlops/airflow/feature.png">
+<meta property="og:title" content="Imad Dabbura - Airflow Part 2 - DAGs">
+<meta property="og:image" content="https://imaddabbura.github.io/posts/airflow/feature.png">
 <meta property="og:site_name" content="Imad Dabbura">
 <meta property="og:image:height" content="146">
 <meta property="og:image:width" content="345">
-<meta name="twitter:title" content="Imad Dabbura - Airflow Part 6 - Sharing Data Between Tasks">
-<meta name="twitter:image" content="https://imaddabbura.github.io/mlops/airflow/feature.png">
+<meta name="twitter:title" content="Imad Dabbura - Airflow Part 2 - DAGs">
+<meta name="twitter:image" content="https://imaddabbura.github.io/posts/airflow/feature.png">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image-height" content="146">
@@ -193,10 +193,6 @@ ga('send', {
     <a class="nav-link" href="../../til.html"> <i class="bi bi-lightbulb" role="img">
 </i> 
 <span class="menu-text">TIL</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../../mlops.html"> 
-<span class="menu-text">MLOps</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../dl-tips-tricks.html"> 
@@ -266,7 +262,7 @@ ga('send', {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Airflow Part 6 - Sharing Data Between Tasks</h1>
+      <h1 class="title">Airflow Part 2 - DAGs</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">Data Engineering</div>
                 <div class="quarto-category">MLOps</div>
@@ -288,7 +284,7 @@ ga('send', {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">February 28, 2022</p>
+        <p class="date">January 17, 2022</p>
       </div>
     </div>
     
@@ -328,78 +324,57 @@ Note
 </div>
 </div>
 <ul>
-<li>It is meant to exchange messages between tasks, which is some form of shared state</li>
-<li>We can use dag instance to push/pull data between tasks:
+<li><p><code>DAG()</code> class is needed to instantiate a <strong>DAG</strong> which will be the starting point of any workflow.</p>
 <ul>
-<li><code>conext["dag_instance"].xcom_push(key="data_name", value="value")</code> to push data to metastore. It also store the <code>dag_id</code>, <code>task_id</code>, &amp; <code>execution_date</code>.</li>
-<li><code>conext["dag_instance"].xcom_pull(key="data_name")</code> which pull the shared data. We can also specify <code>dag_id</code> and <code>execution_date</code>.</li>
-<li>We can also access push/pull methods in templates using <code>task_instance.xcom_push()</code> or <code>task_instance.xcom_pull()</code></li>
-<li>We can view the shared data on the UI by going to Admin -&gt; XComs</li>
+<li>The required arguments are: <code>dag_id</code> which is the name Airflow web UI uses to display workflow. <code>start_date</code> which is when to start running the workflow, it can be in the past</li>
+<li>There are other arguments such as <code>schedule_interval</code> which determines the schedule to rerun the DAG</li>
 </ul></li>
-<li><strong>Limitations</strong>:
+<li><p><code>Operator</code> is responsible for a piece of work and almost represents a task.</p>
 <ul>
-<li>XComs data will be pickled and stored in the database -&gt; The objects have to be serializable</li>
-<li>Size limitations:
-<ul>
-<li>SQLite—Stored as BLOB type, 2GB limit</li>
-<li>PostgreSQL—Stored as BYTEA type, 1 GB limit</li>
-<li>MySQL—Stored as BLOB type, 64 KB limit</li>
+<li>It has <code>task_id</code> which is the name web UI uses to display the task</li>
+<li>There are many operators such as <code>BashOperator</code>, <code>PythonOperator</code> … All of them inherits from <code>BaseOperator</code></li>
+<li>Some operators are generic such as <code>BashOperator</code> and some are specific such as <code>EmailOperator</code></li>
 </ul></li>
-<li>It create hidden dependency between tasks because now the task the pushes the shared state has to push the data before the task that pulls the data. Airflow won’t manage/respect this dependency the developer has to document this and make sure this is not an issue based on the tasks’ order</li>
+<li><p><code>Task</code> is a wrapper/manager over operator that makes sure the operator gets executed</p></li>
+<li><p><code>&gt;&gt;</code> represents the dependencies between tasks</p>
+<ul>
+<li><code>a</code> &gt;&gt; <code>b</code> means <code>a</code> should run before <code>b</code></li>
 </ul></li>
-<li>Due to its limitations in terms of size, we can create custom backends for XComs by defining a class that inherits from <code>BaseXCom</code> and implements two static methods. Airflow will use this class. It can be added to <code>xcom_backend</code> parameter in the Airflow configWe can use cheap/large storage services on the cloud such as Amazon S3, Azure Blob Storage, or Google GCS.</li>
-</ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Any</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> airflow.models.xcom <span class="im">import</span> BaseXCom</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> CustomXComBackend(BaseXCom):</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">@staticmethod</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> serialize(value: Any):</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        ...</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">@staticmethod</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> deserialize(result):</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        ...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<li><p>Airflow UI offers two views:</p>
 <ul>
-<li>If most of tasks are PythonOperators, we can use <code>Taskflow</code> API that takes care of passing state between tasks and avoid the boilerplate code that we have to write with regular API. We need to just decorate the function that we use in the PythonOperator with <code>@task</code> and Airflow will take care of the rest by passed XCom data between tasks. Example:</li>
-</ul>
-<p><img src="images/taskflow-example.png" class="img-fluid"></p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> airflow.decorators <span class="im">import</span> task</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> DAG(...) <span class="im">as</span> dag:</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    start <span class="op">=</span> DummyOperator(task_id<span class="op">=</span><span class="st">"start"</span>)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    start <span class="op">&gt;&gt;</span> fetch_sales</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    start <span class="op">&gt;&gt;</span> fetch_weather</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    fetch_sales <span class="op">&gt;&gt;</span> clean_sales</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    fetch_weather <span class="op">&gt;&gt;</span> clean_weather</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    [clean_sales, clean_weather] <span class="op">&gt;&gt;</span> join_datasets</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">@task</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> train_model():</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        model_id <span class="op">=</span> <span class="bu">str</span>(uuid.uuid4())</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Airflow will figure out that the return value is XCom</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="co"># and would take care of pushing it</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> model_id</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">@task</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> deploy_model(model_id: <span class="bu">str</span>):</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Airflow would realize that this task uses XCom so it passes</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>        <span class="co"># it from XCom</span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Deploying model </span><span class="sc">{</span>model_id<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>model_id <span class="op">=</span> train_model()</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>deploy_model(model_id)</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Now train_model and deploy_model will be new tasks</span></span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="co"># with explicit dependeny. </span></span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="co"># The task type is PythonDecoratedOperator</span></span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>join_datasets <span class="op">&gt;&gt;</span> model_id</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<li><strong>tree view</strong> that shows the DAG runs over time. Each column is one run. Each row is a task. So we can inspect status of tasks over time</li>
+<li><strong>graph view</strong> that shows the DAG as a graph which helps showing the dependencies of tasks in the workflow</li>
+</ul></li>
+<li><p>If any task failed, all successive tasks that depend on it don’t run</p>
 <ul>
-<li>Any data passed between Taskflow-style tasks will be stored as XComs and subject to the same limitations of XCom</li>
-<li>The main limitation of Taskflow API is that it is still only for PythonOperators</li>
+<li>We can rerun the failed tasks (which also would cause successive tasks to rerun) w/o having to rerun the workflow from scratch</li>
+<li>We can inspect the logs to see what was the reason for the errors</li>
+</ul></li>
+<li><p>Tasks can run in parallel depending on their dependencies</p></li>
+<li><p>To setup Airflow locally inside Python virtual env:</p>
+<ul>
+<li>pip install apache-airflow</li>
+<li>airflow init db # Initialize metastore locally using SQLite; not recommended for production</li>
+<li>airflow users create –username admin –password admin –firstname Anonymous –lastname Admin –role Admin –email admin@example.org # Create user</li>
+<li>airflow webserver # Start web server to use web UI</li>
+<li>airflow scheduler # Start scheduler, don’t use sequential in production</li>
+</ul></li>
 </ul>
+<div id="135db21e-c3ef-4364-9499-af045aa09635" class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> airflow</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> airflow <span class="im">import</span> DAG</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> airflow.operators.bash <span class="im">import</span> BashOperator</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> airflow.operators.python <span class="im">import</span> PythonOperator</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> <span class="kw">lambda</span>: <span class="bu">print</span>(<span class="dv">1</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>dag <span class="op">=</span> DAG(dag_id<span class="op">=</span><span class="st">"simple-workflow"</span>, start_date<span class="op">=</span>airflow.utils.dates.days_ago(<span class="dv">10</span>))</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> BashOperator(task_id<span class="op">=</span><span class="st">"bash"</span>, bash_command<span class="op">=</span><span class="st">"echo 'a'"</span>, dag<span class="op">=</span>dag)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> PythonOperator(task_id<span class="op">=</span><span class="st">"python"</span>, python_callable<span class="op">=</span>f, dag<span class="op">=</span>dag)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>a <span class="op">&gt;&gt;</span> b</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>&lt;Task(PythonOperator): python&gt;</code></pre>
+</div>
+</div>
 
 
 
