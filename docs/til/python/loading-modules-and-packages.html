@@ -336,6 +336,7 @@ ga('send', {
 <span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># We return the cached one in case there is some patching inside the module</span></span>
 <span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> sys.modules[modname]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Finally, Python puts a lock when importing a module until it is done so that we don’t have multiple threads trying to import the same module at the same time.</p>
+<p>As a result, if a module is imported in different modules in the sample application, it would be imported ONLY once. This is very useful for config files that sets up application’s configuration such as loggers. Importing the configuration module in many places would only lead to executing the module once.</p>
 
 
 
