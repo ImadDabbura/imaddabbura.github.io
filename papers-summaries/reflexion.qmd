@@ -1,0 +1,41 @@
+---
+title: "Reflexion: Language Agents with Verbal Reinforcement Learning"
+date: 2024-07-10
+categories:
+  - LLM
+  - NLP
+  - Agents
+---
+**[Reflexion: Language Agents with Verbal Reinforcement Learning](https://arxiv.org/abs/2303.11366v4)**
+
+- **Thesis**: Improve reasoning skills through dynamic memory and
+self-reflection. At each step, the actor model generates a trajectory that is
+passed to the evaluator to score. Both trajectory, environment observation, and
+score is fed to the self-reflection model to write verbal feedback, which will
+be stored in the dynamic memory and used as a contect for the Actor so it
+learns from previous errors and correct trajectory
+- **Methods**:
+    - Actor: LLM that generates actions and text. It uses frameworks such as
+    CoT or ReAct and the model is prompted to generate actions/text based on
+    the state observation. There is also memory that adds context to the Actor
+    model
+    - Evaluator: LLM that scores the outputs of the Actor
+    - Self-Reflection: LLM that writes verbal reinforcement to help the Actor
+    self-improve
+- **Contribution**:
+    - Reflexion paradigm that uses verbal reinforcement from previous
+    trial/error and generates summary (self-reflection) that would be part of
+    the LLM context in episodic memory
+- **Takeaways**: Self-reflection is key to improve reasoning skills of agents
+and is much cheaper computationally than traditional RL
+- **Improvements**:
+    - Relies the on the capabilities of the LLMs and heuristics to evaluation
+    actions, which is not guaranteed to be successful
+- **Notes**:
+    - Verbally learn from past mistakes and maintain an episodic memory that
+    has the previous feedback signals. The feedback from previous action is
+    converted to textual summary, which is then stored in the episodic memory
+    - It can incorporate any data type (source or natural language) and any
+    source (internal or external)
+
+#nlp #llm #agents
