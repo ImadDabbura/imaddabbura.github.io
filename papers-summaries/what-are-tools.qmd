@@ -1,0 +1,42 @@
+---
+title: "What Are Tools Anyway? A Survey from the Language Model Perspective"
+date: 2024-07-30
+categories:
+  - LLM
+  - NLP
+  - Agents
+---
+**[What Are Tools Anyway? A Survey from the Language Model Perspective](http://arxiv.org/abs/2403.15452)**
+
+- **Thesis**: The paper does a survey regarding tool usage that helps us
+understand:
+    - What is the definition of a tool?
+    - What are the main categories of tools?
+    - How to use the tools?
+    - When to use tools?
+    - When and how to make tools?
+- **Notes**:
+    - Categories of tools:
+        - Perception: Collect information about the environment such as getting
+          the current date or checking the weather
+        - Action: Performs actions in the environment that will change state
+        such as positing content on a website or writing to a table in a
+        database
+        - Computation: Use programs to perform computation such as mathematical
+        computation
+    - A tool can belong to multiple categories such as SQL queries that can
+    perform computation, retrieve data, and update/write to tables
+    - Usage of tooling:
+        - Inference-time prompting: Incorporate instructions inside the prompt
+          that shows few examples of pairs of queries and tools or use tool
+        documentation
+        - Learning by training: Fine-tune LM through annotated data that
+        illustrates the tool usage (self-supervised)
+    - Tool-usage may not be useful in all scenarios such as for summarization
+    or sentiment analysis since the base LM most likely is able to do the job
+    just fine or even outperform specialized smaller models
+    - Complex tool usage. If we have small fixed tools, we can use them
+    in-context in the prompt; otherwise, we may need to use retrievers to get
+    the top related tools and feed them to the LM
+
+#nlp #llm #agents
