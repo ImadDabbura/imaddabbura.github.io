@@ -1,0 +1,15 @@
+---
+title: Class Evaluation Steps
+date: 2024-11-27
+categories: Python
+---
+Python follows roughly the following steps when evaluating a class definition:
+
+- Reads the body of the class from top to bottom
+- Create instances of the descriptors (if any) and bound them to the class
+attributes
+- Calls `type.__new__` to create the new object
+- Calls `__set_name__` on each descriptor (if any)
+- Calls `__init_subclass__` for all superclasses
+- Applies class descorators (if any)
+
