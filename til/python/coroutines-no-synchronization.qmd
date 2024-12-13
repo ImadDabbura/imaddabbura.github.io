@@ -1,0 +1,15 @@
+---
+title: Coroutines Don't Need Synchronization
+date: 2024-10-2
+categories: Python
+---
+Coroutines don't need synchronization in contrary to threads because:
+
+- There can only be one coroutine running since the event loop and all
+coroutines run in single thread
+- Coroutines don't get interrupted by the OS while executing and have to
+explicitly yield control back to the event loop with `await` keyword
+- Coroutines can only be cancelled when they are suspended at `await`
+statement. This means cancelled coroutine can do cleanup when they receive
+`CancelledError` exception because they will be scheduled to run again and do
+whatever cleanup steps before returning if they catch the exception
