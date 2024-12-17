@@ -1,0 +1,13 @@
+---
+title: Similarities and Differences between Threads and Coroutine Tasks
+date: 2024-10-25
+categories: Python
+---
+- `Task` is very similar to `Thread`
+- `Task` drives a coroutine object while `Thread` invokes a callabel
+- Coroutine yield control explicitly to other tasks/event loop (cooperative
+multitasking while `Thread` is scheduled by the OS (preemptive multitasking)
+- `Task` gets scheduled automatically after creation while `Thread` must be
+started explicitly
+- `Task` can be cancelled (`task.cancel`, which would generate `CancelledError`)
+but thread can't be terminated from outside except using signals
