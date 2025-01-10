@@ -106,6 +106,35 @@ ga('send', {
 });
 </script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 <meta property="og:title" content="Imad Dabbura - Deep Learning Tips &amp; Tricks">
@@ -253,7 +282,11 @@ ga('send', {
 <section id="general" class="level2">
 <h2 class="anchored" data-anchor-id="general">General</h2>
 <ul>
-<li><p>Gradient accumulation: to avoid out-of-memory errors (OOM) while training on GPUs, break larger batches into smaller batches and accumulate gradients by back-propagating after every batch to gather gradients before running optimization step. It should give identical results as if we train with larger batches unless we have layers that kind of depending on the batch size in the forward pass such as BatchNorm.</p>
+<li><p>Check if your model can overfit <code>1</code> example then few examples. The model should easily be able to overfit few examples. If not, there would be something wrong with the optimization or other parts of the training code.</p></li>
+<li><p>Check the worst mistakes that the model make. In the case of binary classification, check the positive examples that were misprected with probabilities close to <code>0</code> or negative example that were misprected with probabilities close to <code>1</code>. Also the check the examples that model is least confident about such as examples with probabilities close to <code>0.5</code>. This would highlight issues with data preprocessing and labeling mistakes.</p></li>
+<li><p>Monitor histogram of activations and gradients at each layer. This would shed some light on whether some activations are saturated and their gradients may be close to <code>0</code> and not learning anything.</p></li>
+<li><p>Monitor the magnitude of the parameter updates relative to the parameters. Ideally, we want the ratio to be close to 1%, not <span class="math inline">\(0.001%\)</span> (no learning) or <span class="math inline">\(50%\)</span> (changes super fast and may overshoot).</p></li>
+<li><p>Gradient accumulation: to avoid out-of-memory errors (OOM) while training on GPUs, break larger batches into smaller batches and accumulate gradients by back-propagating after every batch to gather gradients before running optimization step. It should give identical results as if we train with larger batches unless we have layers that kind of depending on the batch size in the forward pass such as <code>BatchNorm</code>.</p>
 <ul>
 <li>For example, in pytorch, instead of calling <code>optimizer.step()</code> for every batch, we call it every few batches.</li>
 </ul></li>
@@ -264,9 +297,9 @@ ga('send', {
 <section id="nlp" class="level2">
 <h2 class="anchored" data-anchor-id="nlp">NLP</h2>
 <ul>
-<li>With LLM, generally the more compute the better the results. We can define compute, roughly, as the number of parameters x number of tokens. Therefore, we can make the model bigger and keep the number of tokens fixed OR keep the model size the same and increase the number of tokens which means that we have to train for longer. There is a trade-off that depends on the task.</li>
-<li>Improving logloss for LLMs is correlated with improved performance on downstream tasks</li>
-<li>Even though loss scales smoothly with compute, individual downstream tasks may scale in an emergent fashion. This means some tasks’ loss may be flat, others maybe inversely scaled, etc.</li>
+<li><p>With LLM, generally the more compute the better the results. We can define compute, roughly, as the number of parameters x number of tokens. Therefore, we can make the model bigger and keep the number of tokens fixed OR keep the model size the same and increase the number of tokens which means that we have to train for longer. There is a trade-off that depends on the task.</p></li>
+<li><p>Improving logloss for LLMs is correlated with improved performance on downstream tasks</p></li>
+<li><p>Even though loss scales smoothly with compute, individual downstream tasks may scale in an emergent fashion. This means some tasks’ loss may be flat, others maybe inversely scaled, etc.</p></li>
 </ul>
 
 
