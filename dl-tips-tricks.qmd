@@ -13,11 +13,29 @@ image: images/dl-tips-and-tricks-image.png
 wrong with the optimization or other parts of the training code.
 
 - Check the worst mistakes that the model make. In the case of binary
-classification, check the positive examples that were misprected with
-probabilities close to `0` or negative example that were misprected with
+classification, check the positive examples that were mispredicted with
+probabilities close to `0` or negative example that were mispredicted with
 probabilities close to `1`. Also the check the examples that model is least
 confident about such as examples with probabilities close to `0.5`. This would
 highlight issues with data preprocessing and labeling mistakes.
+
+- Look at the output of all transformations before you plug them into the 
+pipeline because you may loose a lot of the characteristics of the input in 
+some transformations.
+
+- `32x32` Images have very different characteristics than large images. Once 
+you get below `96x96` they behave differently. This means what works well; for 
+example on CIFAR 10, most likely will not work well on Imagenet. 128 x 128 
+pixel images do generalize well to bigger images, and conclusions made on such 
+images hold well to large images and much faster to train.
+
+- A big part of a getting good at using deep learning in your domain is knowing 
+how to create small, workable, useful datasets… Try to come up with a toy 
+problem or two that will give you insight into your full problem.
+
+- Augmentation can be done on all kind of data as long as the label would 
+almost not change after the augmentations. Therefore, we need to make sure 
+that the output of augmented data first makes sense and second doesn't change the label.
 
 - Monitor histogram of activations and gradients at each layer. This would shed
   some light on whether some activations are saturated and their gradients may
