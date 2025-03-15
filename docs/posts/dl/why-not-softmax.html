@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2023-01-03">
+<meta name="dcterms.date" content="2024-06-09">
 
-<title>Imad Dabbura - Notes on Learning</title>
+<title>Imad Dabbura - Why Having the Last Layer in a Neural Network as Raw Logits is Better Than Softmax</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -25,26 +25,26 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../site_libs/quarto-search/quarto-search.js"></script>
-<script src="../site_libs/quarto-search/autocomplete-preset-algolia.umd.js"></script>
-<meta name="quarto:offset" content="../">
-<link href="../images/profile.jpg" rel="icon" type="image/jpeg">
-<script src="../site_libs/quarto-html/quarto.js"></script>
-<script src="../site_libs/quarto-html/popper.min.js"></script>
-<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete-preset-algolia.umd.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../images/profile.jpg" rel="icon" type="image/jpeg">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -108,28 +108,59 @@ ga('send', {
 });
 </script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<link rel="stylesheet" href="../styles.css">
-<meta property="og:title" content="Imad Dabbura - Notes on Learning">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+<meta property="og:title" content="Imad Dabbura - Why Having the Last Layer in a Neural Network as Raw Logits is Better Than Softmax">
 <meta property="og:description" content="">
+<meta property="og:image" content="https://imaddabbura.github.io/posts/dl/softmax-img.jpeg">
 <meta property="og:site_name" content="Imad Dabbura">
-<meta name="twitter:title" content="Imad Dabbura - Notes on Learning">
+<meta name="twitter:title" content="Imad Dabbura - Why Having the Last Layer in a Neural Network as Raw Logits is Better Than Softmax">
 <meta name="twitter:description" content="">
+<meta name="twitter:image" content="https://imaddabbura.github.io/posts/dl/softmax-img.jpeg">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="../index.html" class="navbar-brand navbar-brand-logo">
-    <img src="../images/profile.jpg" alt="" class="navbar-logo">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../images/profile.jpg" alt="" class="navbar-logo">
     </a>
-    <a class="navbar-brand" href="../index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Imad Dabbura</span>
     </a>
   </div>
@@ -140,32 +171,32 @@ ga('send', {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../about.html"> 
+    <a class="nav-link" href="../../about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../index.html"> 
+    <a class="nav-link" href="../../index.html"> 
 <span class="menu-text">Posts</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../til.html"> <i class="bi bi-lightbulb" role="img">
+    <a class="nav-link" href="../../til.html"> <i class="bi bi-lightbulb" role="img">
 </i> 
 <span class="menu-text">TIL</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../papers-summaries.html"> 
+    <a class="nav-link" href="../../papers-summaries.html"> 
 <span class="menu-text">Papers’ Summaries</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../dl-tips-tricks.html"> 
+    <a class="nav-link" href="../../dl-tips-tricks.html"> 
 <span class="menu-text">DL Tips &amp; Tricks</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../cmn-ai.html"> 
+    <a class="nav-link" href="../../cmn-ai.html"> 
 <span class="menu-text">cmn_ai</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../tiny-pytorch.html"> 
+    <a class="nav-link" href="../../tiny-pytorch.html"> 
 <span class="menu-text">Tiny-PyTorch</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -174,23 +205,23 @@ ga('send', {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-more">    
         <li>
-    <a class="dropdown-item" href="../projects-index.html">
+    <a class="dropdown-item" href="../../projects-index.html">
  <span class="dropdown-text">Projects</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../books-summaries.html">
+    <a class="dropdown-item" href="../../books-summaries.html">
  <span class="dropdown-text">Books’ Summaries</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../misc-notes.html">
+    <a class="dropdown-item" href="../../misc-notes.html">
  <span class="dropdown-text">Misc. Notes</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../reading-list.html">
+    <a class="dropdown-item" href="../../reading-list.html">
  <span class="dropdown-text">Reading List</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../resume.html">
+    <a class="dropdown-item" href="../../resume.html">
  <span class="dropdown-text">Resume</span></a>
   </li>  
     </ul>
@@ -224,9 +255,9 @@ ga('send', {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Notes on Learning</h1>
+      <h1 class="title">Why Having the Last Layer in a Neural Network as Raw Logits is Better Than Softmax</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">Personal Growth</div>
+                <div class="quarto-category">Deep Learning</div>
               </div>
                   </div>
   </div>
@@ -244,7 +275,7 @@ ga('send', {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">January 3, 2023</p>
+        <p class="date">June 9, 2024</p>
       </div>
     </div>
     
@@ -255,7 +286,25 @@ ga('send', {
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#what-is-softmax" id="toc-what-is-softmax" class="nav-link active" data-scroll-target="#what-is-softmax">What Is Softmax?</a></li>
+  <li><a href="#cons-of-using-softmax-in-the-final-layer" id="toc-cons-of-using-softmax-in-the-final-layer" class="nav-link" data-scroll-target="#cons-of-using-softmax-in-the-final-layer">Cons of Using Softmax in the Final Layer</a>
+  <ul class="collapse">
+  <li><a href="#redundancy-with-loss-functions" id="toc-redundancy-with-loss-functions" class="nav-link" data-scroll-target="#redundancy-with-loss-functions">Redundancy with Loss Functions</a></li>
+  <li><a href="#numerical-instability" id="toc-numerical-instability" class="nav-link" data-scroll-target="#numerical-instability">Numerical Instability</a></li>
+  <li><a href="#training-instability" id="toc-training-instability" class="nav-link" data-scroll-target="#training-instability">Training Instability</a></li>
+  <li><a href="#loss-of-interpretability-for-certain-tasks" id="toc-loss-of-interpretability-for-certain-tasks" class="nav-link" data-scroll-target="#loss-of-interpretability-for-certain-tasks">Loss of Interpretability for Certain Tasks</a></li>
+  <li><a href="#encourages-overconfidence-in-predictions" id="toc-encourages-overconfidence-in-predictions" class="nav-link" data-scroll-target="#encourages-overconfidence-in-predictions">Encourages Overconfidence in Predictions</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources">Resources</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
 
@@ -263,58 +312,97 @@ ga('send', {
 
 
 
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="softmax-img.jpeg" class="quarto-figure quarto-figure-center figure-img" width="600" height="500"></p>
+</figure>
+</div>
+<p>When designing a neural network, particularly for classification tasks, the choice of the final layer is a crucial design decision. Many practitioners instinctively apply a <strong>softmax activation</strong> to the logits (the raw, unnormalized outputs of the final layer) to produce a probability distribution over the classes. While softmax has its uses, there are several drawbacks to applying it directly in the final layer, making it preferable to leave the final layer as raw logits in many cases. This article explores <strong>why using raw logits is often better</strong>, focusing on the <strong>cons of softmax activation</strong> and providing resources for further understanding.</p>
+<section id="what-is-softmax" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-softmax">What Is Softmax?</h2>
+<p>The softmax function transforms a vector of raw logits into a probability distribution. For a vector of logits ( z ), the softmax function is defined as:</p>
+<p><span class="math display">\[\text{softmax}(z_i) = \frac{\exp(z_i)}{\sum_{j} \exp(z_j)}\]</span></p>
+<p>This ensures the output values are in the range ([0, 1]) and sum to 1, representing probabilities for each class.</p>
+<p>While this sounds appealing, there are several drawbacks to applying softmax directly in the output layer of a neural network.</p>
+</section>
+<section id="cons-of-using-softmax-in-the-final-layer" class="level2">
+<h2 class="anchored" data-anchor-id="cons-of-using-softmax-in-the-final-layer">Cons of Using Softmax in the Final Layer</h2>
+<section id="redundancy-with-loss-functions" class="level3">
+<h3 class="anchored" data-anchor-id="redundancy-with-loss-functions">Redundancy with Loss Functions</h3>
+<p>Many popular loss functions, such as the <strong>categorical cross-entropy loss</strong>, already include the softmax operation internally. For instance:</p>
 <ul>
-<li>Effective instructions should match the content not the learning styles. For example, cooking instruction should use hands-on practices even if the student is a visual learner.</li>
-<li>Learning means that a change made to long-term memory.</li>
-<li>Human memory is not as precise/reliable as computer memory. It has <code>read-and-update</code>. Reading memory will lead to strengthen and modify the fetched information especially if the information is recently learned.</li>
-<li>Stored information is stored in interconnected neural pathways. If we try to access targeted information, we activate a pathway of neurons to access the information which leads to spread the activation to other connected pathways that may not be related to the target information. This spreading activation leave related pathways primed for activation for hours . As a result:
-<ul>
-<li>Spreading activation leads to related but imprecise information to be conflated with target information, which leads to unreliable recall of information.</li>
-<li>Because pathways stay primed for hours, it helps us with problem solving when we step away to work on something else, go for a walk, or take a shower, and the two unrelated areas connect in the middle.</li>
-</ul></li>
-<li>There are two types of memory:
-<ul>
-<li>Long-term memory where information is permanently stored and is unlimited. It is analogous to disk storage.</li>
-<li>Working (short-term) memory is used to solve problems. It is analogous to CPU’s registers. The bigger the working memory, the faster we can learn. It is roughly fixed at birth.</li>
-</ul></li>
-<li>Chunking is when we relate information together as one piece. The more we combine information as one piece (chunk), the easier it is to reason about and solve problems related to it. This is due to the fact that we can store pointers to such chunks in the working memory and access such chunks in long-term memory if needed. Therefore, it is critical to decompose difficult tasks into smaller pieces (chunks) when learning, which later will be chunked together as we practice.</li>
-<li>The difference between experts and beginners is that experts remember and recognize patterns to help them solve problems. However, beginners read code line by line to understand what it is doing or how to approach solving problems. Therefore, to achieve proficiency in programming, you need to read/write and work with a lot of code to be exposed to more patterns as well as programming using different programming paradigms/languages.</li>
-<li>To understand a concept, we may need to go from abstract to diverse set of concrete examples and back to abstract. This helps us with chunking and treating all the concrete examples as different views of the abstract concept. Once we understand the concrete examples, we can connect it back to the abstract concept.</li>
-<li>Spacing and Repetition are keys for learning. We learn problem-solving concepts best by spacing out their practice across multiple sessions, multiple days, and ideally, multiple weeks. Practice helps us connect the text in the problem to the concept and applying the concept to solve the problem.</li>
-<li>Concentration after 90 minutes is hard due to neuro-chemical balance in the brain. It is recommended to rest/sleep/walk after the 90 minutes so the information gets consolidated. Don’t work on other tasks, talk to others, or browse the internet.</li>
-<li>Even if we can access information on the internet, it is advisable to understand concepts we deal with frequently so the brain can form connections and help us understand deeper concepts. Also, it is much better to try to recall information from long-term memory than search for it on the internet especially if we are not experts.</li>
-<li>Problem-solving is not a generic skill. It is domain-specific skill. This means that a good chess player may not be a good problem-solver in programming or other domains. As a result, to get better at programming problem-solving, learn to solve programming problems.</li>
-<li>There is no clear predictor in programming ability other than experience.</li>
-<li>Growth mindset, learning to overcome setbacks and failures, and practice is all you need to be successful in your career. You will have to always evaluate your learning strategies to get the best outcome.</li>
-<li>Recommendations.
-<ul>
-<li>For recruiting:
-<ul>
-<li>There are no good proxies for programming ability, look at their previous work or test them on authentic programming tasks.</li>
-<li>At least among young developers, years of experience may not be a very reliable measure of ability.</li>
-</ul></li>
-<li>For learning and training:
-<ul>
-<li>Reading a lot of code will help become a more efficient programmer.</li>
-<li>Experts are not always the best at training beginners.</li>
-<li>Learning takes time, including time between learning sessions. Intense cramming is not effective, but spaced repetition is.</li>
-<li>Similarly, spending time away from a problem can help to solve it.</li>
-<li>Just because you can find it through an Internet search or generative AI tool does not mean learning has become obsolete.</li>
-<li>Use examples to go between abstract concepts and concrete learnable facts.</li>
-<li>Seeking to succeed (rather than avoid failure) and believing that ability is changeable are important factors in resilience and learning.</li>
-</ul></li>
-</ul></li>
-<li>Further reading:
-<ul>
-<li><em>Why Don’t Students Like School?</em> by Daniel T. Willingham provides a short and readable explanation of many of the principles of memory and how the brain works.</li>
-<li><em>The Programmer’s Brain</em> by Felienne Hermans et al.c relates these concepts to programming and describes how techniques for learning and revision that are used at school can still apply to professional development.</li>
-<li><em>How Learning Happens: Seminal Works in Educational Psychology and What They Mean in Practice</em> by Paul A. Kirschner and Carl Hendrick provides a tour through influential papers, explaining them in plain language and the implications and linkages between them.</li>
-<li><a href="https://cacm.acm.org/magazines/2024/1/278891-10-things-software-developers-should-learn-about-learning/fulltext"><em>10 Things Software Developers Should Learn about Learning</em></a> by Neil C. C. Brown, Felienne F. J. Hermans, and Lauren E. Margulieux.</li>
-</ul></li>
+<li>In frameworks like TensorFlow and PyTorch, the <code>CrossEntropyLoss</code> function expects raw logits as input and applies the softmax internally during the calculation.</li>
+<li>If you pre-apply softmax in the final layer and then pass the results to the cross-entropy loss, you introduce <strong>numerical instability</strong> and redundancy.</li>
 </ul>
-<p>#personal-growth #career-advice</p>
+<p>This redundancy can lead to issues such as:</p>
+<ul>
+<li><strong>Reduced numerical precision</strong> due to the compounding of exponents in the softmax calculation.</li>
+<li><strong>Higher computational cost</strong>, as softmax is unnecessarily computed twice.</li>
+</ul>
+</section>
+<section id="numerical-instability" class="level3">
+<h3 class="anchored" data-anchor-id="numerical-instability">Numerical Instability</h3>
+<p>Softmax involves exponentiating the logits, which can lead to <strong>overflow or underflow</strong> issues, particularly when working with large or small logits. For example:</p>
+<ul>
+<li>If logits are extremely large (e.g., ( z_i = 1000 )), the exponential term ( (z_i) ) can result in infinity, causing numerical instability.</li>
+<li>Similarly, if logits are very small (e.g., ( z_i = -1000 )), the exponential term becomes close to zero, leading to loss of precision.</li>
+</ul>
+<p>By keeping the logits raw, you avoid these issues because modern loss functions (like cross-entropy) are designed to handle raw logits more effectively.</p>
+</section>
+<section id="training-instability" class="level3">
+<h3 class="anchored" data-anchor-id="training-instability">Training Instability</h3>
+<p>Using softmax in the final layer can lead to <strong>training instability</strong>, especially when the model produces logits with large magnitudes or when the dataset has imbalanced classes. Here’s why:</p>
+<ul>
+<li><strong>Exploding Gradients:</strong> The softmax function uses exponential terms, which can grow very large when the logits are large. This can cause gradients to explode, leading to unstable updates during backpropagation.</li>
+<li><strong>Vanishing Gradients:</strong> If one logit is much larger than the others, the softmax output will assign nearly all the probability to that class, causing the gradients for other classes to approach zero. This can slow down training or make it harder for the model to learn meaningful updates for underrepresented classes.</li>
+<li><strong>Imbalance Sensitivity:</strong> In the case of class imbalance, softmax can exacerbate the problem by driving the model to overfit to the majority class, as the softmax probabilities heavily favor the dominant logits. Raw logits give the loss function more room to handle such imbalances effectively.</li>
+</ul>
+<p>By leaving the final layer as raw logits, you mitigate these risks, as the loss function can better manage the relationship between logits and gradients without the constraints imposed by softmax.</p>
+</section>
+<section id="loss-of-interpretability-for-certain-tasks" class="level3">
+<h3 class="anchored" data-anchor-id="loss-of-interpretability-for-certain-tasks">Loss of Interpretability for Certain Tasks</h3>
+<p>Softmax enforces a <strong>probability distribution</strong> on the output, which may not always be desirable. For example:</p>
+<ul>
+<li>In multi-label classification tasks, where multiple classes can be “true” simultaneously, softmax forces the outputs to compete against each other, which can lead to incorrect predictions. In such cases, <strong>sigmoid activation</strong> is often used instead, or raw logits are left for downstream processing.</li>
+<li>In some advanced machine learning tasks, raw logits provide more flexibility for interpretation or post-processing, which is lost when softmax is applied.</li>
+</ul>
+</section>
+<section id="encourages-overconfidence-in-predictions" class="level3">
+<h3 class="anchored" data-anchor-id="encourages-overconfidence-in-predictions">Encourages Overconfidence in Predictions</h3>
+<p>Softmax tends to amplify the confidence of predictions by exaggerating the differences between logits. For example:</p>
+<ul>
+<li>If two logits are close in value, the softmax output will still assign a disproportionately high probability to the larger logit.</li>
+<li>This can lead to <strong>overconfident predictions</strong>, even when the model is unsure (i.e., the logits are close in value). Overconfidence can make it harder to assess the true uncertainty of the model.</li>
+</ul>
+<p>By keeping raw logits, you retain the original scale of the outputs, which can be useful for understanding the model’s confidence and uncertainty.</p>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>While softmax is a widely used activation function, its application as the final layer in a neural network is not always the best choice. Its <strong>redundancy with loss functions</strong>, <strong>numerical instability</strong>, <strong>training instability</strong>, <strong>loss of interpretability</strong>, <strong>lack of flexibility for post-processing</strong>, and <strong>tendency to encourage overconfidence</strong> are significant drawbacks. By keeping the final layer as raw logits, you maintain numerical stability, computational efficiency, and flexibility for downstream tasks.</p>
+<p>In modern machine learning workflows, it is often better to leave the last layer as raw logits and let the loss function or downstream processing handle the conversion to probabilities when needed. This approach not only avoids the pitfalls of softmax but also aligns better with best practices in many frameworks.</p>
+<p>For a deeper dive into this topic, check out the resources provided above to enhance your understanding of raw logits and softmax!</p>
+</section>
+<section id="resources" class="level2">
+<h2 class="anchored" data-anchor-id="resources">Resources</h2>
+<p>If you want to dive deeper into this topic, here are some resources to help you learn more about raw logits, softmax, and their implications in neural networks:</p>
+<ol type="1">
+<li><a href="https://www.deeplearningbook.org/"><strong>Deep Learning Book by Ian Goodfellow et al.</strong></a>
+<ul>
+<li>Chapter 6 on “Feedforward Networks” provides a detailed explanation of softmax and alternatives for output layers.</li>
+</ul></li>
+<li><a href="https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html"><strong>PyTorch Documentation on CrossEntropyLoss</strong></a>
+<ul>
+<li>Explains why you should use raw logits with <code>CrossEntropyLoss</code> and how the loss function integrates softmax internally.</li>
+</ul></li>
+<li><strong><a href="https://arxiv.org/abs/1706.04599">On Calibration of Modern Neural Networks</a></strong>
+<ul>
+<li>Discusses softmax’s tendency to produce overconfident predictions and explores techniques for improving calibration.</li>
+</ul></li>
+</ol>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -882,7 +970,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
     <li class="nav-item compact">

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2024-07-01">
+<meta name="dcterms.date" content="2024-07-05">
 
 <title>Imad Dabbura - Chain-of-Thought Prompting Elicits Reasoning in Large Language Models</title>
 <style>
@@ -108,35 +108,6 @@ ga('send', {
 });
 </script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="../styles.css">
 <meta property="og:title" content="Imad Dabbura - Chain-of-Thought Prompting Elicits Reasoning in Large Language Models">
@@ -253,7 +224,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Chain-of-Thought Reasoning without Prompting</h1>
+      <h1 class="title">Chain-of-Thought Prompting Elicits Reasoning in Large Language Models</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">LLM</div>
                 <div class="quarto-category">NLP</div>
@@ -275,7 +246,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">2024-07-01</p>
+        <p class="date">July 5, 2024</p>
       </div>
     </div>
     
@@ -329,57 +300,6 @@ window.Quarto = {
 <p>#nlp #llm #agents</p>
 
 
-<p><strong><a href="https://arxiv.org/abs/2402.10200">Chain-of-Thought Reasoning without Prompting</a></strong></p>
-<ul>
-<li><strong>Thesis</strong>: Provide unsupervised method to elicit reasoning capabilities of LLMs in the decoding space. Instead of relying on CoT prompting that is task-specific and requires humans to keep iterating and optimizing the prompt to yield the intended results, CoT-decoding uses top-k alternative tokens to get the best CoT path. For each token of the top-k tokens in the decoding step 1, we continue with greedy decoding algorithm.</li>
-<li><strong>Methods</strong>:
-<ul>
-<li>Models: PaLM2, Mistral-7B, and Gemma-7B</li>
-</ul></li>
-<li><strong>Contribution</strong>:
-<ul>
-<li>Elicit LLMs inherent reasoning capabilities w/o the need to use prompting by simply changing the decoding process</li>
-<li>Avoid using human priors that are task-specific with prompting to force the LLM how to solve a task through few-shot CoT prompting</li>
-<li>Improve the model’s confidence by traversing top-k alternative paths</li>
-</ul></li>
-<li><strong>Takeaways</strong>: We can utilize reasoning capabilities of LLMs; both pre-trained and instruction-tuned, by operating in the decoding space that doesn’t require any human intervention or extensive resources to tune such models for reasoning intensive tasks</li>
-<li><strong>Improvements</strong>:
-<ul>
-<li>CoT-decoding adds computational complexity to the inference</li>
-<li>The paper only branches out of the first token to explore possible paths</li>
-<li>It is harder to use CoT-decoding in the case of open-ended answers</li>
-<li>The gains from CoT-decoding starts to drop as the tasks gets harder. LLMs still struggle with tasks that require <span class="math inline">\(&gt;= 3\)</span> manipulation steps. One possibility for this behavior is that pre-training data distribution is mostly simple-to-medium difficulty tasks</li>
-</ul></li>
-<li><strong>Notes</strong>:
-<ul>
-<li>LLM reasoning are typically elicited by prompting that comes in various forms:
-<ul>
-<li>CoT with few-shot examples</li>
-<li>Zero-shot with detailed instructions of how to perform the task and showing the steps of how the LLM came up with the answer</li>
-<li>Training of instruction fine-tuning with CoT data</li>
-</ul></li>
-<li>LLMs struggle with reasoning when greedy decoding is used</li>
-<li>The difference between the top two tokens at the <span class="math inline">\(t^{th}\)</span> decoding step for the <span class="math inline">\(k^{th}\)</span> decoding path is very high, which means the confidence of the LLM in the answer is very high
-<ul>
-<li>The answer’s confidence is the average of the difference of the top two tokens probability for each each time step</li>
-<li>The model’s own probability is not a reliable indicator for the confidence/correctness of the answer</li>
-</ul></li>
-<li>LLMs typically rush directly into problem solving when asked math/commonsense reasoning questions, which results in the wrong answer most of the times. This can be partially fixed with prompting but don’t yield results as good as CoT-decoding</li>
-<li>Branching at the first-token leads to more diverse paths as opposed to branching at later stages of the decoding process</li>
-<li>It is recommended to aggregate the top-k paths to get stable results</li>
-<li>There is a very high correlation between the answer confidence and the existence of CoT paths in the answer</li>
-<li>Model’s inherent reasoning varies according to the task difficulty. Models show less reasoning abilities with harder tasks</li>
-<li>top-k alternative tokens decoding reveals the existence of CoT reasoning paths which correlates with the model’s confidence in the final answer</li>
-<li>Both pre-trained models and Instruction-tuned models showed Improvements in accuracy from CoT-decoding
-<ul>
-<li>Even thought instruction-tuned models have used a lot of CoT examples during instruction fine-tuning, these models still try to directly jump to problem solving. Therefore, CoT-decoding helped boost performance tremendously</li>
-</ul></li>
-<li>CoT-decoding closes the gap between pre-trained models and Instruction-tuned models in terms of reasoning capabilities</li>
-<li><code>k</code> has significant effect on pre-trained models but has negligible effect for instruction-tuned models after <code>k = 2</code>. For pre-trained models, the best paths may start at a lower <code>k</code>, but for instruction-tuned models they are already trained to bring the best paths to the top</li>
-<li>Combining CoT prompting with CoT-decoding yields even better performance from eliciting more reasoning capabilities</li>
-</ul></li>
-</ul>
-<p>#nlp #llm #agents</p>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

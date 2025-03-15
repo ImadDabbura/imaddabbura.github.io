@@ -1,0 +1,83 @@
+---
+title: "Why Having the Last Layer in a Neural Network as Raw Logits is Better Than Softmax"
+date: "2024-06-09"
+image: "softmax-img.jpeg"
+categories:
+    - Deep Learning
+---
+
+![](softmax-img.jpeg){height="500" width="600" fig-align="center"}
+
+When designing a neural network, particularly for classification tasks, the choice of the final layer is a crucial design decision. Many practitioners instinctively apply a **softmax activation** to the logits (the raw, unnormalized outputs of the final layer) to produce a probability distribution over the classes. While softmax has its uses, there are several drawbacks to applying it directly in the final layer, making it preferable to leave the final layer as raw logits in many cases. This article explores **why using raw logits is often better**, focusing on the **cons of softmax activation** and providing resources for further understanding.
+
+## What Is Softmax?
+The softmax function transforms a vector of raw logits into a probability distribution. For a vector of logits \( z \), the softmax function is defined as:
+
+$$\text{softmax}(z_i) = \frac{\exp(z_i)}{\sum_{j} \exp(z_j)}$$
+
+This ensures the output values are in the range \([0, 1]\) and sum to 1, representing probabilities for each class.
+
+While this sounds appealing, there are several drawbacks to applying softmax directly in the output layer of a neural network.
+
+## Cons of Using Softmax in the Final Layer
+
+### Redundancy with Loss Functions
+Many popular loss functions, such as the **categorical cross-entropy loss**, already include the softmax operation internally. For instance:
+
+- In frameworks like TensorFlow and PyTorch, the `CrossEntropyLoss` function expects raw logits as input and applies the softmax internally during the calculation.
+- If you pre-apply softmax in the final layer and then pass the results to the cross-entropy loss, you introduce **numerical instability** and redundancy.
+
+This redundancy can lead to issues such as:
+
+- **Reduced numerical precision** due to the compounding of exponents in the softmax calculation.
+- **Higher computational cost**, as softmax is unnecessarily computed twice.
+
+### Numerical Instability
+Softmax involves exponentiating the logits, which can lead to **overflow or underflow** issues, particularly when working with large or small logits. For example:
+
+- If logits are extremely large (e.g., \( z_i = 1000 \)), the exponential term \( \exp(z_i) \) can result in infinity, causing numerical instability.
+- Similarly, if logits are very small (e.g., \( z_i = -1000 \)), the exponential term becomes close to zero, leading to loss of precision.
+
+By keeping the logits raw, you avoid these issues because modern loss functions (like cross-entropy) are designed to handle raw logits more effectively.
+
+### Training Instability
+Using softmax in the final layer can lead to **training instability**, especially when the model produces logits with large magnitudes or when the dataset has imbalanced classes. Here's why:
+
+- **Exploding Gradients:** The softmax function uses exponential terms, which can grow very large when the logits are large. This can cause gradients to explode, leading to unstable updates during backpropagation.
+- **Vanishing Gradients:** If one logit is much larger than the others, the softmax output will assign nearly all the probability to that class, causing the gradients for other classes to approach zero. This can slow down training or make it harder for the model to learn meaningful updates for underrepresented classes.
+- **Imbalance Sensitivity:** In the case of class imbalance, softmax can exacerbate the problem by driving the model to overfit to the majority class, as the softmax probabilities heavily favor the dominant logits. Raw logits give the loss function more room to handle such imbalances effectively.
+
+By leaving the final layer as raw logits, you mitigate these risks, as the loss function can better manage the relationship between logits and gradients without the constraints imposed by softmax.
+
+### Loss of Interpretability for Certain Tasks
+Softmax enforces a **probability distribution** on the output, which may not always be desirable. For example:
+
+- In multi-label classification tasks, where multiple classes can be "true" simultaneously, softmax forces the outputs to compete against each other, which can lead to incorrect predictions. In such cases, **sigmoid activation** is often used instead, or raw logits are left for downstream processing.
+- In some advanced machine learning tasks, raw logits provide more flexibility for interpretation or post-processing, which is lost when softmax is applied.
+
+### Encourages Overconfidence in Predictions
+Softmax tends to amplify the confidence of predictions by exaggerating the differences between logits. For example:
+
+- If two logits are close in value, the softmax output will still assign a disproportionately high probability to the larger logit.
+- This can lead to **overconfident predictions**, even when the model is unsure (i.e., the logits are close in value). Overconfidence can make it harder to assess the true uncertainty of the model.
+
+By keeping raw logits, you retain the original scale of the outputs, which can be useful for understanding the model's confidence and uncertainty.
+
+## Conclusion
+
+While softmax is a widely used activation function, its application as the final layer in a neural network is not always the best choice. Its **redundancy with loss functions**, **numerical instability**, **training instability**, **loss of interpretability**, **lack of flexibility for post-processing**, and **tendency to encourage overconfidence** are significant drawbacks. By keeping the final layer as raw logits, you maintain numerical stability, computational efficiency, and flexibility for downstream tasks.
+
+In modern machine learning workflows, it is often better to leave the last layer as raw logits and let the loss function or downstream processing handle the conversion to probabilities when needed. This approach not only avoids the pitfalls of softmax but also aligns better with best practices in many frameworks.
+
+For a deeper dive into this topic, check out the resources provided above to enhance your understanding of raw logits and softmax!
+
+## Resources
+
+If you want to dive deeper into this topic, here are some resources to help you learn more about raw logits, softmax, and their implications in neural networks:
+
+1. [**Deep Learning Book by Ian Goodfellow et al.**](https://www.deeplearningbook.org/)
+   - Chapter 6 on "Feedforward Networks" provides a detailed explanation of softmax and alternatives for output layers.
+2. [**PyTorch Documentation on CrossEntropyLoss**](https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html)
+   - Explains why you should use raw logits with `CrossEntropyLoss` and how the loss function integrates softmax internally.
+6. **[On Calibration of Modern Neural Networks](https://arxiv.org/abs/1706.04599)**
+   - Discusses softmax's tendency to produce overconfident predictions and explores techniques for improving calibration.
