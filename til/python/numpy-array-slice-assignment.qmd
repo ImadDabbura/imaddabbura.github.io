@@ -1,0 +1,17 @@
+---
+title: "Assigning Array to Numpy Slice"
+date: 2025-01-26
+categories: Python
+---
+
+Even when assigning a separate array to a slice, NumPy does not create a
+persistent copy of the right-hand side array. The values are transferred
+directly to the original array's memory:
+
+```python
+original = np.zeros(5)
+new_data = np.array([1, 2, 3])
+original[1:4] = new_data  # Values copied directly into original's array memory
+new_data[0] = 999  # Does NOT affect original array
+print(original)  # [0, 1, 2, 3, 0]
+```
