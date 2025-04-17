@@ -1,0 +1,92 @@
+---
+title: "OpenHands: An Open Platform for AI Software Developers as Generalist Agents"
+date: 2025-03-07
+categories:
+  - LLM
+  - NLP
+  - Agents
+---
+**[OpenHands: An Open Platform for AI Software Developers as Generalist Agents](http://arxiv.org/abs/2407.16741)**
+
+- **Thesis**: Software engineering agentic platform that facilitates the
+  development of multi-agent systems to colloborate to solve software's related
+  problems. The platform provides generalist agent that follows tha CodeAct
+  architecture as well as specialized agents that are smaller and do things
+  such as browsing. One important piece is that tools are basically
+  programming-language primitives that extend the agent skills
+- **Contribution**:
+  - Evaluation framework of agents across wide range of tasks
+  - Agentic platform
+  - Agent skills in the form of programming-language functions
+- **Importance**: It is open source and provide key agent skills and
+  capabilites to build SWE multi-agent systems
+- **Improvements**:
+  - Improve agent's ability to view multiple file formats such as images and
+    videos
+  - Agents are still struggling with complex tasks -> need stronger agents
+    either through training or inference
+  - Agents suffer at editing long files
+  - Web browsing is still a challenge
+  - Optimizing multi-agent system is a challenge
+- **Notes**:
+  - OpenHands:
+      - Agent Hub: community can provide implementation of different agents
+      - Agent Stream: Tracks the history of actions and observations
+      - Agent Runtime: Sandboxed environment to execute actions and collect observations
+  - Agents collaborate, write code, execute code in a Sandboxed environment, and
+    browse the web
+  - Agent implementation:
+    - State: data structure with previous actions and observations as well ass
+      agent's own actions and user feedbacks/instructions. It also includes
+      other metadata related to the agent's operation
+    - Agent is connected to the environment through some set of code actions in
+      Python and bash following CodeAct architecture and can browse the
+      internet (borrowed from WebArena). This is very flexible and compatible
+      with any actions needed
+    - Tools are provided to the agent using programming-language primitives
+      actions such as functions. Agent may sometime write the tool itself when
+      there is no API available to perform the task(s)
+    - Observations: Previous results of actions and user messages in the form
+      of instructions/feedbacks
+    - A user can create/customize agents by changing the logic of the `step`
+      method that would have the agent logic and expected behavior. The user
+      doesn't have to worry about how the code gets executed
+  - Runtime environment:
+    - Provides bash terminal to run code and command line tools, Jupyter
+      notebook for writing and executing code, and browing the web to web-based
+      tasks
+    - It is based on docker sandbox. OpenHands interact with the sandbox
+      environment using REST API. OpenHands also maintains a server inside the
+      sandbox environment that listens to event stream for requested actions.
+      The results of the actions will be returned to event stream as
+      observations. We can also mount directories to this environment related
+      to the agent's task(s)
+  - Agent Skills:
+    - AgentSkills is a Python library that provides tools to agents to extend
+      its skills. It can also be imported inside Jupyter notebook and any agent
+      can use the available tools or contribute such tools in the form of
+      functions to the library
+    - There is no need to add tools that the LLM knows such as pandas that was
+      part of the pre-training dataset
+  - Agent delegation:
+    - Agents can delegate to another agent some work. For example, generalist
+      agent such as CodeAct agent can delegate web browsing work to
+      BrowsingAgent, which specialized in web browsing
+  - AgentHub:
+    - CodeAct agent is a generalist agent the converses with humans and perform
+      coding tasks using bash commands and Python. It can also do web browsing
+    - BrowsingAgent is also a generalist that does web browsing similar to that
+      in WebArena
+    - GPTSwarm is a specialized agent that optimize graphs to construct agent
+      systems where each node is an operation and each edge defines communication
+      pathways and collaboration. This should lead to powerful multi-agent
+      systems
+    - Micro agent is a small and specialized agent that does specific task. It
+      typically reuses most of the implementations from CodeAct agent but have
+      different optimized prompt that works better in certain use cases
+  - Evaluation:
+    - OpenHands agents, without any optimization and are general, evaluation
+      results may not be the top but are very close to agentic systems that
+      were tuned and optimized for specific tasks
+
+#nlp #llm #agents
