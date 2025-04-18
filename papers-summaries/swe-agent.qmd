@@ -1,0 +1,72 @@
+---
+title: "SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering"
+date: 2025-02-21
+categories:
+  - LLM
+  - NLP
+  - Agents
+---
+**[SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering](http://arxiv.org/abs/2405.15793)**
+
+- **Thesis**: Agent-Computer Interfaces (ACIs) can significantly enhance the
+  ability of language model agents to autonomously perform software engineering
+  tasks. The paper introduces SWE-agent, a system that leverages these interfaces
+  to enable language models, such as GPT-4 or other large language models, to
+  interact with computers effectively. This interaction allows the agent to
+  autonomously address tasks like bug fixing, competitive coding, and even
+  offensive cybersecurity challenges
+- **Contribution**:
+  - Introduce ACI and its importance to improve LM agent's performance
+  - SWE-agent
+- **Takeaways**: Spending time on building well-crafted ACI will yield the best
+  performance boost for LM agents. The current state of UI has only human end
+  users in my which is completely different than LM agent than has different
+  needs and abilities. ACI in a major step forward to enhance LM agents to
+  search and execute commands and integrate environment feedback into their
+  state
+- **Notes**:
+  - LM agent represents a new category of end users. Carefully designing the
+    agent-computer interface (ACI) helps improve the LM performance and ability
+    to solve complex tasks
+  - SWE-agent is a system that solves SWE tasks by creating ACI that allows the
+    agent to create/edit files, navigate repositories, and execute tests/programs
+  - ACI is just an abstraction that provides the LM agent with an interface to
+    simple few commands such as viewing and editing files as well as searching
+    and navigating repositories. It also provides well-formatted/structured
+    feedback for the agent's actions. Finally, it has some guardrails to
+    prevent common mistakes
+    - The current UI are built with only human end users in mind. However, LM
+      agent has different abilities and needs. For example, LM agent suffers
+      (as of now) to grasp the GUI and not get destracted with all unnecessary
+      details that would also harm its performance
+    - ACI provides actions that the LM agent can take as well as how the
+      environment feedback is represented to the agent. It should specifies the
+      previous changes, manage history in terms of what to ignore and what to
+      keep an eye on, and actions that it can take efficiently and reliably
+  - For a good ACI:
+    - Actions should be simple with concise documentation
+    - Environment feedback should be informative and concise
+    - Consolidate actions especially the common ones
+    - Have guardrails to prevent common mistakes
+  - The agent follows ReAct framework by generating a thought and action at
+    each step. It then incorporate the feedback from the executed commands
+  - The agent has access to common Linux commands
+  - Search & Navigation:Agent has access to search for files and strings that
+    are mentioned in the issues. Commands are `find_file`, `search_file`,
+    `search_directory`. Results returned are at most 50 results for each query
+  - File viewer: open a file in a window using `open` command and restrict it
+    to 100 lines. The agent can use `scroll_down` and `scroll_up` to move the
+    window as well as `goto` to jump to specific line. Code localization is
+    provided by presenting the full path of the file and number of lines
+    before/after the current line as well as the total number of lines in the
+    file
+  - File editor. `edit` command lets the agent to edit range of lines while
+    viewing the file. Code linter is used to provide feedback to the agent in
+    terms of syntax errors in the form of file contents before/after error was
+    introduced. If there is an error, the agent is asked to retry the edit
+  - Context management. The agent receives prompts, instructions,
+    documentation, and demonstration of the bash and ACI commands. If the agent
+    fail to generate a response that strictly follow the thought/action
+    paradigm, it triggers an error until one is produced
+
+#nlp #llm #agents
