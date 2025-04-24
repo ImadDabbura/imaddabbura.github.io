@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2024-01-29">
+<meta name="dcterms.date" content="2024-02-03">
 
-<title>Imad Dabbura - Designing ML Systems</title>
+<title>Imad Dabbura - Understanding Forward and Reverse-mode Automatic Differentiation in Deep Learning</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -108,42 +108,15 @@ ga('send', {
 });
 </script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Imad Dabbura - Designing ML Systems">
+<meta property="og:title" content="Imad Dabbura - Understanding Forward and Reverse-mode Automatic Differentiation in Deep Learning">
 <meta property="og:description" content="">
+<meta property="og:image" content="https://imaddabbura.github.io/posts/dl-systems/automatic-differentiation-image.jpeg">
 <meta property="og:site_name" content="Imad Dabbura">
-<meta name="twitter:title" content="Imad Dabbura - Designing ML Systems">
+<meta name="twitter:title" content="Imad Dabbura - Understanding Forward and Reverse-mode Automatic Differentiation in Deep Learning">
 <meta name="twitter:description" content="">
+<meta name="twitter:image" content="https://imaddabbura.github.io/posts/dl-systems/automatic-differentiation-image.jpeg">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 </head>
@@ -253,7 +226,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Designing ML Systems</h1>
+      <h1 class="title">Understanding Forward and Reverse-mode Automatic Differentiation in Deep Learning</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">MLSys</div>
               </div>
@@ -273,10 +246,16 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">January 29, 2024</p>
+        <p class="date">February 3, 2024</p>
       </div>
     </div>
     
+      <div>
+      <div class="quarto-title-meta-heading">Modified</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date-modified">February 3, 2024</p>
+      </div>
+    </div>
       
     </div>
     
@@ -289,23 +268,10 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#project-scoping" id="toc-project-scoping" class="nav-link active" data-scroll-target="#project-scoping">Project Scoping</a></li>
-  <li><a href="#types-of-data" id="toc-types-of-data" class="nav-link" data-scroll-target="#types-of-data">Types of Data</a></li>
-  <li><a href="#data-passing-modes" id="toc-data-passing-modes" class="nav-link" data-scroll-target="#data-passing-modes">Data Passing Modes</a></li>
-  <li><a href="#feature-types" id="toc-feature-types" class="nav-link" data-scroll-target="#feature-types">Feature Types</a></li>
-  <li><a href="#sampling-methods" id="toc-sampling-methods" class="nav-link" data-scroll-target="#sampling-methods">Sampling Methods</a></li>
-  <li><a href="#models-feedback" id="toc-models-feedback" class="nav-link" data-scroll-target="#models-feedback">Model’s Feedback</a></li>
-  <li><a href="#data-labeling" id="toc-data-labeling" class="nav-link" data-scroll-target="#data-labeling">Data Labeling</a></li>
-  <li><a href="#class-imbalance" id="toc-class-imbalance" class="nav-link" data-scroll-target="#class-imbalance">Class imbalance</a></li>
-  <li><a href="#data-augmentation" id="toc-data-augmentation" class="nav-link" data-scroll-target="#data-augmentation">Data Augmentation</a></li>
-  <li><a href="#feature-engineering" id="toc-feature-engineering" class="nav-link" data-scroll-target="#feature-engineering">Feature Engineering</a></li>
-  <li><a href="#data-leakage" id="toc-data-leakage" class="nav-link" data-scroll-target="#data-leakage">Data leakage</a></li>
-  <li><a href="#model-development" id="toc-model-development" class="nav-link" data-scroll-target="#model-development">Model development</a></li>
-  <li><a href="#model-deployment" id="toc-model-deployment" class="nav-link" data-scroll-target="#model-deployment">Model Deployment</a></li>
-  <li><a href="#causes-of-ml-system-failures" id="toc-causes-of-ml-system-failures" class="nav-link" data-scroll-target="#causes-of-ml-system-failures">Causes of ML System Failures</a></li>
-  <li><a href="#data-distribution-shifts" id="toc-data-distribution-shifts" class="nav-link" data-scroll-target="#data-distribution-shifts">Data Distribution Shifts</a></li>
-  <li><a href="#continual-learning" id="toc-continual-learning" class="nav-link" data-scroll-target="#continual-learning">Continual Learning</a></li>
-  <li><a href="#testing-in-production" id="toc-testing-in-production" class="nav-link" data-scroll-target="#testing-in-production">Testing in Production</a></li>
+  <li><a href="#forward-mode-ad-from-input-to-output" id="toc-forward-mode-ad-from-input-to-output" class="nav-link active" data-scroll-target="#forward-mode-ad-from-input-to-output">Forward-mode AD: From Input to Output</a></li>
+  <li><a href="#reverse-mode-ad-the-power-of-reverse-computation" id="toc-reverse-mode-ad-the-power-of-reverse-computation" class="nav-link" data-scroll-target="#reverse-mode-ad-the-power-of-reverse-computation">Reverse-mode AD: The Power of Reverse Computation</a></li>
+  <li><a href="#memory-usage-and-performance-considerations" id="toc-memory-usage-and-performance-considerations" class="nav-link" data-scroll-target="#memory-usage-and-performance-considerations">Memory Usage and Performance Considerations</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -316,337 +282,72 @@ window.Quarto = {
 
 
 
-<p><img src="mlsys.jpeg" width="800" height="500"></p>
-<p>In today’s rapidly evolving technological landscape, designing robust and scalable machine learning systems has become a critical skill for organizations seeking to leverage artificial intelligence effectively. While many focus on model accuracy and algorithmic improvements, the success of a machine learning system ultimately depends on its thoughtful architecture and implementation. This article explores the essential best practices that separate production-ready ML systems from experimental prototypes.</p>
-<section id="project-scoping" class="level2">
-<h2 class="anchored" data-anchor-id="project-scoping">Project Scoping</h2>
-<ul>
-<li>During training, we care more about throughput. However, once we deploy the model, we care more about latency.
-<ul>
-<li>Increased latency in production leads to reduction in customer satisfaction and conversion rates, which are more important than a relatively more accurate predictions.</li>
-<li>It is common to focus on the high percentiles of the latency such as 90th/95th/99th or even 99.9th percentiles.</li>
-</ul></li>
-<li>Map ML metrics to business metrics and see how improvement in ML model would lead to an improvement in business metrics.
-<ul>
-<li>In some cases, ML is just a small part of the overall process that makes it hard to attribute loss/revenue to a particular component in the process.</li>
-</ul></li>
-<li>Requirements of ML systems:
-<ul>
-<li>Reliability: ML systems performs correct function in the case of failures. How do we check if predictions are not wrong?</li>
-<li>Scalability: ML system can grow in:
-<ul>
-<li>Model complexity</li>
-<li>Number of models</li>
-<li>Number of requests served by each ML model</li>
-</ul></li>
-<li>Maintainability: Code should be documented. Code, data, and artifacts should be versioned. Experiments and models should be able to be reproduced</li>
-<li>Adaptability: ML system should adapt quickly to change in data distribution and business requirements</li>
-</ul></li>
-<li>Developing an ML system is an iterative process that we typically go back and forth between different steps such as: scoping project, data engineering, model development, model deployment, monitoring and retraining, business analysis, etc.</li>
-<li>For multiclass classification problems with a lot of classes, it may be helpful to frame it as a hierarchical classification where each example is first classified into few major classes then another classifier is used to classify subclasses and so on.
-<ul>
-<li>For each class, ML model needs at least 100 samples to learn to classify that class.</li>
-</ul></li>
-<li>For mutlilabel classification problems, we either build a binary classifier for each label or use one model for all labels
-<ul>
-<li>It is more challenging to build one model with multilabel because now we need to figure out how to get predictions out of raw probabilities</li>
-</ul></li>
-<li>If we have multiple objectives, it is better to decouple the objectives and train different model for each objective. Finally, get the final score of each prediction by combining the output from each model using different weight for each objective (which can be tuned based on business priorities). This way we can change one model without the need to retrain all the models.</li>
-<li>Data-centric approach to ML model development tends to lead to the best results as compared to algorithm-centric approach. Data is the critical piece in obtaining good performance if we have decent architecture.</li>
-</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="automatic-differentiation-image.jpeg" class="quarto-figure quarto-figure-center figure-img" width="800" height="500"></p>
+</figure>
+</div>
+<p>Automatic Differentiation (AD) is a fundamental technique in modern machine learning, particularly crucial for training neural networks and optimizing complex models. In this post, we’ll dive deep into the two main modes of AD: Forward Mode and Reverse-mode, exploring their mechanisms, advantages, and trade-offs.</p>
+<section id="forward-mode-ad-from-input-to-output" class="level2">
+<h2 class="anchored" data-anchor-id="forward-mode-ad-from-input-to-output">Forward-mode AD: From Input to Output</h2>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/ForwardAD.png/500px-ForwardAD.png" class="img-fluid"></p>
+<p>Forward Mode AD operates by propagating derivatives from input nodes to output nodes in a computational graph. At each step, it calculates the partial derivative of the current node with respect to the input node. This mode implements a straightforward approach to computing derivatives, making it particularly intuitive to understand.</p>
+<p>Key features:</p>
+<ol type="1">
+<li><p><strong>Multiple Passes Required</strong>: For a function with n inputs, Forward Mode AD requires n separate forward passes to compute all necessary derivatives. This characteristic makes it less efficient for functions with many input variables, which is often the case in deep learning applications.</p></li>
+<li><p><strong>Implementation Using Dual Numbers</strong>: Forward Mode AD typically uses dual numbers (a + bε) to track both the value and its derivative simultaneously during computation. This elegant mathematical approach allows for efficient derivative computation alongside function evaluation.</p></li>
+<li><p><strong>Memory Efficiency</strong>: One advantage of Forward Mode AD is its relatively lower memory requirements compared to Reverse-mode. Since it doesn’t need to store intermediate results for backpropagation, it can be more memory-efficient for certain types of computations.</p></li>
+</ol>
 </section>
-<section id="types-of-data" class="level2">
-<h2 class="anchored" data-anchor-id="types-of-data">Types of Data</h2>
+<section id="reverse-mode-ad-the-power-of-reverse-computation" class="level2">
+<h2 class="anchored" data-anchor-id="reverse-mode-ad-the-power-of-reverse-computation">Reverse-mode AD: The Power of Reverse Computation</h2>
+<p><img src="reverse-mode-AD.png" class="img-fluid"></p>
+<p>Reverse-mode AD, has become the cornerstone of modern deep learning frameworks. This approach computes derivatives by working backwards from the output to the inputs, making it particularly efficient for functions with many inputs but few outputs.</p>
+<p>key features:</p>
+<ol type="1">
+<li><p><strong>Single Pass Efficiency</strong>: One of the most significant advantages of Reverse-mode AD is its ability to compute gradients with respect to all input variables in a single backward pass. This makes it highly efficient for typical deep learning scenarios where we have scalar loss functions but numerous parameters.</p></li>
+<li><p><strong>Gradient Computation</strong>: The gradients computed at each node indicate how much that node needs to be adjusted to achieve the steepest ascent/descent direction locally. This information is crucial for optimization algorithms like gradient descent.</p></li>
+<li><p><strong>Hardware Optimization</strong>: Reverse-mode AD allows for various optimizations that can leverage underlying hardware capabilities. Framework implementations can fuse operations and utilize parallel processing to enhance performance.</p></li>
+</ol>
+<p>Pros:</p>
 <ul>
-<li>First-party data: Data collected by companies about their customers</li>
-<li>Second-party data: Data collected by another companies about their customers</li>
-<li>Third-party data: Data collected on the public on who aren’t their customers</li>
-<li>User data are the most messy and require heavy cleanups</li>
+<li>Highly efficient for functions with many inputs and few outputs (typical in deep learning)</li>
+<li>Enables sophisticated hardware optimizations and operation fusion</li>
 </ul>
-</section>
-<section id="data-passing-modes" class="level2">
-<h2 class="anchored" data-anchor-id="data-passing-modes">Data Passing Modes</h2>
+<p>Cons:</p>
 <ul>
-<li>Databases. Not recommended for applications with strong latency requirements</li>
-<li>Services using requests such as REST or RPC. Recommended for applications that rely more on logic than data. It is called <code>request-driven</code>/microservice architecture, which is the most common</li>
-<li>Real-time transport such as Kafka. Recommended for applications that are data-heavy. It is called <code>event-driven</code> architecture.</li>
-</ul>
-</section>
-<section id="feature-types" class="level2">
-<h2 class="anchored" data-anchor-id="feature-types">Feature Types</h2>
+<li>Requires storing intermediate results during computation</li>
+<li>Higher memory usage due to maintaining input tensors and operations for gradient computation
 <ul>
-<li>Batch features (also called static features) are features that aren’t expected to change frequently, which are computed using batch processing.</li>
-<li>Streaming features (also called dynamic features) are features that changes quickly, which are computed using stream processing.</li>
-</ul>
-</section>
-<section id="sampling-methods" class="level2">
-<h2 class="anchored" data-anchor-id="sampling-methods">Sampling Methods</h2>
-<ul>
-<li>Nonprobability sampling such as selecting the most recent data</li>
-<li>Random sampling</li>
-<li>Stratified random sampling</li>
-<li>Weighted sampling</li>
-<li>Reservoir sampling</li>
-<li>Importance sampling</li>
-</ul>
-</section>
-<section id="models-feedback" class="level2">
-<h2 class="anchored" data-anchor-id="models-feedback">Model’s Feedback</h2>
-<ul>
-<li>Extracting labels from feedback: User feedback goes through different stages where each stage has different volume, strength of signal, and feedback loop length</li>
-<li>There is a trade-off between accuracy and speed of the feedback loop window. The shorter the feedback loop window the less accurate the labels. But also the longer the feedback loop window the longer to notice and fix model problems.</li>
-</ul>
-</section>
-<section id="data-labeling" class="level2">
-<h2 class="anchored" data-anchor-id="data-labeling">Data Labeling</h2>
-<ul>
-<li>Weak supervision: Have no labeled data and use labeling functions to label data (Snorkel)</li>
-<li>Semi supervision: Have limited labeled data that are used to generate more labels through different methods such as perturbation</li>
-<li>Transfer learning</li>
-<li>Active learning: Selectively pick the samples to train the model on such as the most confident wrong samples</li>
-</ul>
-</section>
-<section id="class-imbalance" class="level2">
-<h2 class="anchored" data-anchor-id="class-imbalance">Class imbalance</h2>
-<p>There are different degrees of class imbalance.</p>
-<ul>
-<li>It affects learning algorithms in many ways:
-<ul>
-<li>Algorithm didn’t have sufficient signals from rare classes</li>
-<li>Algorithm may use simple heuristics to always output majority class to get best metric</li>
-<li>Rare classes have typically asymmetric costs of errors such as if the X-ray is cancerous. Therefore, we might need to build a model that is more accurate on the rare classes and less accurate on the majority class(es)</li>
-</ul></li>
-<li>The more complex the problem -&gt; the more sensitive the algorithm(s) to class imbalance. If classes are linearly separable, class imbalance has no effect.</li>
-<li>Solutions:
-<ul>
-<li>Data resampling methods:
-<ul>
-<li>Undersampling</li>
-<li>Oversampling</li>
-<li>SMOTE: oversampling technique</li>
-<li>Tomek links: undersampling technique where two similar samples from opposite classes are chosen and the one from majority class is dropped</li>
-<li>Dynamic sampling: Undersample majority class to all classes have the same number of samples and train the model on the resampled data. Then fine tune the model on the original imbalanced data</li>
-</ul></li>
-<li>Algorithm methods:
-<ul>
-<li>Define cost sensitive matrix that will be used in the loss function</li>
-<li>Class-balanced loss where each sample has weight of misclassification that is inversely proportional to the number of samples it belongs to</li>
-<li>Focal loss: Focus on learning the samples that model has difficulty in classifying; i.e.&nbsp;has the low probability of being right</li>
-<li>Ensembles sometimes help with class imbalance</li>
-</ul></li>
+<li>Memory requirements can become significant for large models or batch sizes</li>
 </ul></li>
 </ul>
 </section>
-<section id="data-augmentation" class="level2">
-<h2 class="anchored" data-anchor-id="data-augmentation">Data Augmentation</h2>
+<section id="memory-usage-and-performance-considerations" class="level2">
+<h2 class="anchored" data-anchor-id="memory-usage-and-performance-considerations">Memory Usage and Performance Considerations</h2>
+<p>The choice between Forward and Reverse-mode AD often comes down to memory-performance trade-offs:</p>
+<ol type="1">
+<li><strong>Memory Patterns</strong>:
 <ul>
-<li>Label-preserving transformations such as randomly flipping images or replace word with its synonym in NLP tasks</li>
-<li>Perturbation that adds noise to the data but still preserve the label. BERT uses such technique where 15% of the tokens are chosen randomly and 10% of such chosen tokens will be replaced by random tokens.</li>
-<li>Data synthesis: create data from existing data such as mixup or using templates in NLP</li>
-</ul>
+<li>Forward Mode AD can achieve up to 1.97 times memory reduction compared to baseline models</li>
+<li>Reverse-mode AD requires more memory but offers better computational efficiency for typical deep learning scenarios</li>
+</ul></li>
+<li><strong>Performance Impact</strong>:
+<ul>
+<li>Forward Mode AD can show up to 20% performance improvement over recomputation methods under similar memory constraints</li>
+<li>Reverse-mode AD’s efficiency makes it the preferred choice for deep learning despite higher memory requirements</li>
+</ul></li>
+</ol>
 </section>
-<section id="feature-engineering" class="level2">
-<h2 class="anchored" data-anchor-id="feature-engineering">Feature Engineering</h2>
-<p>Having the right features give us the biggest performance boost compared to algorithmic techniques and hyperparameter-tuning. It requires domain-specific knowledge, SME, and algorithm-specific knowledge.</p>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Both Forward and Reverse-mode AD have their place in modern machine learning. While Forward Mode AD offers better memory efficiency and is suitable for functions with few inputs, Reverse-mode AD has become the de facto standard in deep learning due to its computational efficiency with scalar loss functions and many parameters. Understanding these trade-offs is crucial for choosing the right approach for specific applications and optimizing model training processes.</p>
+<p>The choice between the two modes ultimately depends on your specific use case, considering factors such as:</p>
 <ul>
-<li>Missing values. Be careful that not all missing values are <code>NaN</code>. Some systems use predefined values such as empty string or 1999 for missing values.
-<ul>
-<li>Reasons for missing values:
-<ul>
-<li>Missing not at random: When the value is missing due to related observed value such as some type of customers don’t disclose their age.</li>
-<li>Missing at random: When the value is missing due to the value itself such as when people with high income mostly decide to not disclose their income.</li>
-<li>Missing completely at random: When there is no pattern for missing values such as customer forgot to insert the value. This is very rare in practice.</li>
-</ul></li>
-<li>Handling missing values:
-<ul>
-<li>Deletion:
-<ul>
-<li>Columns deletion. Not recommended for almost all cases.</li>
-<li>Row deletion.
-<ul>
-<li>It might be okay if the % of rows with missing values are very small especially for large datasets and it is missing completely at random</li>
-<li>It is very risking to delete such rows if the missing are either not at random or at random</li>
-</ul></li>
-</ul></li>
-<li>Imputation. The most common is median/mode imputation. Make sure that if the filled value is constant to not be a possible value for the feature such as <code>-999</code></li>
-<li>It is almost always a good idea to add an indicator for each feature that indicates whether a value is missing</li>
-</ul></li>
-</ul></li>
-<li>Scaling. Most classical ML algorithms such as logistic regression and gradient-boosted trees as well as NN require that features are normalized.
-<ul>
-<li>We can normalize to have range [0, 1] or [-1, 1] if we don’t want to make any assumption on the distribution of the data. This would change the distribution of the data.</li>
-<li>Standardization. This would preserve the distribution. Be careful that the statistics used from training data may be out of date when used during inference if the distribution of the feature changes dramatically. Therefore, we need to train the model frequently to update such statistics.</li>
-<li>Other transformation: <code>log(1 + x)</code> or <code>sqrt(x)</code></li>
-</ul></li>
-<li>Discretization/Binning. Convert the feature into small buckets (bins) which will make the feature categorical. It is useful if values within a bucket is not that different in terms of the feature itself or the behavior of the customer. It is rarely proven to be useful. It is a challenge to pick the number of bins or the bin boundaries. Quantiles are commonly used for bins boundaries.</li>
-<li>Encoding categorical features. Some features have fixed categories such as marital status while others have categories that change all the time such as product names.
-<ul>
-<li>It is risky to encode infrequent/unknown categories to one category.</li>
-<li>Hashing is pretty good especially if the hashing space is big enough where collision rate is low. We don’t have to worry about unknown categories in production.</li>
-</ul></li>
-<li>Feature crossing. It helps learn nonlinear relationships between features especially for models that aren’t good at learning nonlinear relationships such as logistic regression and tree-based models. The caveat is that it makes the feature space of the new feature blow up and requires more data to learn all these possible values. For example, if two features have 10 unique categories each, then the new feature would possible have 10 x 10 = 100 possible values.</li>
-</ul>
-</section>
-<section id="data-leakage" class="level2">
-<h2 class="anchored" data-anchor-id="data-leakage">Data leakage</h2>
-<p>It refers to the case where some form of the label leaks into the feature(s) that aren’t available during inference. Common causes for data leakage:</p>
-<ul>
-<li>Splitting time-correlated data randomly. This is due to the fact that trends are time-correlated and the model would have access to future things it wouldn’t have otherwise.</li>
-<li>Scaling before splitting</li>
-<li>Fill missing values before splitting</li>
-<li>Poor handling data duplication before splitting. Check for duplicates or near-duplicates before/after splitting</li>
-<li>Leakage from data generation process. Need to check with SME because this is the hardest cause of data leakage to uncover because it requires detailed knowledge about the process.</li>
-<li>Group leakage: group of data have correlated labels but are spread into different splits such as images of the same person are spread into training and test</li>
-<li>Feature importance is very important to avoid useless features as well as checking for data leakage. It is also helpful to interpret the model.
-<ul>
-<li>Be careful of features that have very high importance</li>
-<li>It is better to remove features if they are useless even if the model can ignore them</li>
-</ul></li>
-<li>Feature generalization:
-<ul>
-<li>Features coverage (% of missing values). Check whether the coverage is similar between splits. Also, if the coverage is low, check if it adds value to the model; otherwise, delete it.</li>
-<li>Distribution of values between data splits. Aim for 100% overlaps of values for all features between the splits.
-<ul>
-<li>Build a model to predict whether a row is in train or valid using the features used to build the main model. If the new model is good enough, check the most important features because those will be the features that have different distributions between train and valid splits.</li>
-<li>There is a trade-off between generalization and specifity. IS_RUSH_HOUR is more generalizable than HOUR_OF_DAY.</li>
-</ul></li>
-</ul></li>
-</ul>
-</section>
-<section id="model-development" class="level2">
-<h2 class="anchored" data-anchor-id="model-development">Model development</h2>
-<ul>
-<li>Baselines:
-<ul>
-<li>Random</li>
-<li>Most common</li>
-<li>Simple heuristics</li>
-<li>Random Forest is also a good baseline</li>
-</ul></li>
-<li>Evaluation methods:
-<ul>
-<li>Perturbation tests. Ideally, we don’t want the output of the model to change much if inputs are close to each other. We can add random noise to the test data to see how the model behaves and check its sensitivity.</li>
-<li>Directional expectation tests. Check if changes in some features would lead to changes in the output in the expected direction; otherwise, the model might be learning the wrong thing.</li>
-<li>Model calibration. Unless the model is explicitly trained using <code>LogLoss</code>, the probabilities from the model won’t be calibrated. We need to calibrate the model so that the probability produced by the model should match the underlying probability distribution of the data.</li>
-<li>Confidence level measurement. We can avoid showing uncertain predictions and maybe involve human in the loop or ask the user for more info. For example, predict positive class if probability &gt;= 80% and negative class if probability &lt;= 20%.</li>
-<li>Slice-based evaluation. Evaluate the model on different slices of data to either make sure the model’s performance across different slices are acceptable OR if we care about critical slices we can confirm our requirements. This also gives us indication of how to improve the model. We can discover slices by:
-<ul>
-<li>Simple heuristics that come from domain knowledge and heavy EDA of the data</li>
-<li>Error analysis</li>
-<li>Slice finder algorithms</li>
-</ul></li>
-</ul></li>
-</ul>
-</section>
-<section id="model-deployment" class="level2">
-<h2 class="anchored" data-anchor-id="model-deployment">Model Deployment</h2>
-<ul>
-<li>Online prediction: Predictions generated on demand using either streaming features OR both streaming and batch features.
-<ul>
-<li>Pros: Always adapt to new behaviors/trends. Also don’t have to compute predictions not needed and waste compute/storage</li>
-<li>Cons: Constrained by latency</li>
-</ul></li>
-<li>Batch prediction: Predictions generated periodically using batch features.
-<ul>
-<li>Pros: Not constrained by latency and utilize vectorization/parallel computations and allows to use very complex models that takes time to generate predictions</li>
-<li>Cons: Model is not responsive to changes in customers behaviors/trends</li>
-</ul></li>
-<li>Model compression:
-<ul>
-<li>Knowledge distillation</li>
-<li>Pruning</li>
-<li>Quantization</li>
-</ul></li>
-<li>Cloud vs Edge:
-<ul>
-<li>Cloud is much easier to setup and very flexible at the cost of privacy and network latency.</li>
-<li>Edge avoid network latency and privacy concerns but device must have enough memory, compute, and battery. Also, It takes more engineering work and model compression to make the model run on devices with a reasonable latency.</li>
-</ul></li>
-</ul>
-</section>
-<section id="causes-of-ml-system-failures" class="level2">
-<h2 class="anchored" data-anchor-id="causes-of-ml-system-failures">Causes of ML System Failures</h2>
-<ul>
-<li>Software system failures such 1) server is down, 2) hardware failures, 3) dependency failure, 4) deployment failure. Addressing such failures require more of SWE skills than ML skills.</li>
-<li>ML-specific failures. They are hard to detect and fix. Examples of such failures such as 1) data processing/feature engineering errors, 2) wrong hyperparameter values, 3) data distribution shifts.</li>
-</ul>
-</section>
-<section id="data-distribution-shifts" class="level2">
-<h2 class="anchored" data-anchor-id="data-distribution-shifts">Data Distribution Shifts</h2>
-<ul>
-<li>Production data is usually different than training data:
-<ul>
-<li>Production data is not the same as the training data</li>
-<li>Production data is not stationary. It can change suddenly/gradually/seasonally.</li>
-</ul></li>
-<li>Sometimes data shifts are due to internal errors that have nothing the data such as bugs in data pipeline, missing values are incorrectly inputted, inconsistency between training and inference features, wrong model version, etc.</li>
-<li>Edge case is related to model performance in which the model performs badly on such cases. ML systems need to take into account such edge/corner cases and decide what to do with them when the model face them in production.</li>
-<li>Degenerate feedback loop is when the model’s output affect user behavior which affects the input to the ML model which again affects its output. This is why popular recommendations get more popular because the model first recommends them, then the users are more likely to click on them than the rest which will feed back to the model which will make it recommend them more with higher probabilities.
-<ul>
-<li>We can use different metrics to detect degenerate feedback loop such as hit rate against popularity and the accuracy of the model for item groups with different popularities feedback loop such as hit rate against popularity and the accuracy of the model for item groups with different popularities.</li>
-<li>Correcting degenerate feedback loop can be through either randomization of recommendation until we gather enough feedback of an item that reflects its true quality OR change the positions of the recommendation</li>
-</ul></li>
-<li>Types of data shifts:
-<ul>
-<li>Covariate shift: When <span class="math inline">\(P(X)\)</span> changes but <span class="math inline">\(P(Y/X)\)</span> remains the same. For example, if age distribution changes but probability of success given a certain age remains the same. It can happen for many reasons during training such as over/under sampling and selection bias. It also can happen in production such as doing campaigns to attract certain group of users.</li>
-<li>Label shift: When <span class="math inline">\(P(Y)\)</span> changes but <span class="math inline">\(P(X/Y)\)</span> remains the same.</li>
-<li>Concept shift: When <span class="math inline">\(P(Y/X)\)</span> changes but <span class="math inline">\(P(X)\)</span> remains the same. Happens typically for seasonal/cyclic trends.</li>
-<li>Feature change such as possible values for a feature changes or the unit of measurement changes such as age is now in months instead of years.</li>
-<li>Label schema changes such as we have more classes or possible values changes in the case of regression.</li>
-</ul></li>
-<li>We can monitor <span class="math inline">\(P(X)\)</span>, <span class="math inline">\(P(Y)\)</span>, <span class="math inline">\(P(Y/X)\)</span>, and <span class="math inline">\(P(X/Y)\)</span>. We can monitor spatially and temporally.
-<ul>
-<li>Temporal monitoring is more complicated and requires monitoring at different granularity using different time windows as well as using sliding statistics and cumulative statistics.</li>
-</ul></li>
-<li>Retraining: Either retrain from scratch or continue training from last checkpoint. Also, we need to decide which data to use for retraining: Last month, old data plus new data, only data that started to drift. We need to do some experiments to figure out which strategy works best for a given use case.</li>
-<li>Monitoring:
-<ul>
-<li>Monitor operations-related metrics such as uptime</li>
-<li>Monitor ML-specific metrics such as accuracy-related metrics, predictions feedback, prediction and feature distribution, feature validation (using libraries such as Great Expectations).</li>
-</ul></li>
-</ul>
-</section>
-<section id="continual-learning" class="level2">
-<h2 class="anchored" data-anchor-id="continual-learning">Continual Learning</h2>
-<p>How our deployed model gets (re)trained and the frequency.</p>
-<ul>
-<li>Stateless retraining means training the model from scratch on every run using some predefined historical data window.</li>
-<li>Stateful training means continue training using new data to update the model with new data. Much less compute needed and less complicated. It only works if the architecture is still the same and the features are still the same. If anyone changes, we may need to retrain from scratch.
-<ul>
-<li>The best use cases for such training strategy are the ones that collect natural labels from users after making predictions; Otherwise, it will be bottlenecked by the availability of labeled data.</li>
-<li>The evaluation period also affects how fast we can deploy new models especially if we are dealing with imbalanced datasets.</li>
-<li>The main drawback of this approach is that the new model is susceptible to attacks that would result in the model outputting catastrophic predictions.</li>
-<li>A model update may be triggered based on time, performance, volume, or data drifts.</li>
-<li>Experiments with the importance of data freshness by training the model on different datasets from the past to predict current month and see how the performance deteriorates as we go back.</li>
-</ul></li>
-</ul>
-</section>
-<section id="testing-in-production" class="level2">
-<h2 class="anchored" data-anchor-id="testing-in-production">Testing in Production</h2>
-<ul>
-<li>Test on holdout data split</li>
-<li>Test on the most recent data (backtest) such as last day</li>
-<li>Shadow deployment. The main disadvantage is the compute cost because now we’re doing two predictions for each data point.
-<ul>
-<li>Deploy the candidate model in parallel with the existing model.</li>
-<li>For each incoming request, route it to both models to make predictions, but only serve the existing model’s prediction to the user.</li>
-<li>Log the predictions from the new model for analysis purposes.</li>
-</ul></li>
-<li>A/B Testing. We just need to figure out the sample size needed to achieve the needed statistical significance. It is the most common in the industry.
-<ul>
-<li>Deploy the candidate model alongside the existing model.</li>
-<li>A percentage of traffic is routed to the new model for predictions; the rest is routed to the existing model for predictions. It’s common for both variants to serve prediction traffic at the same time. However, there are cases where one model’s predictions might affect another model’s predictions —e.g., in ridesharing’s dynamic pricing, a model’s predicted prices might influence the number of available drivers and riders, which, in turn, influence the other model’s predictions. In those cases, you might have to run your variants alternatively, e.g., serve model A one day and then serve model B the next day.</li>
-<li>Monitor and analyze the predictions and user feedback, if any, from both models to determine whether the difference in the two models’ performance is statistically significant</li>
-</ul></li>
-<li>Canary release. Reduces the risk of introducing the model by gradually rolling it out to the users and monitor the performance of the new (candidate) model.
-<ul>
-<li>Deploy the candidate model alongside the existing model. The candidate model is called the canary.</li>
-<li>A portion of the traffic is routed to the candidate model.</li>
-<li>If its performance is satisfactory, increase the traffic to the candidate model. If not, abort the canary and route all the traffic back to the existing model.</li>
-<li>Stop when either the canary serves all the traffic (the candidate model has replaced the existing model) or when the canary is aborted.</li>
-</ul></li>
-<li>Interleaving experiment. We can randomly provide predictions/recommendations from different models to the same user and see how the user interact with these recommendations. It is different than A/B testing in the sense that we don’t split user base to receive recommendations from specific models but the same user receives recommendations from different models.</li>
-<li>Bandits algorithm (least adopted). It is much more efficient than A/B testing in that it requires much less data to determine which model is better. It is stateful (as opposed to A/B testing which is stateless). It routes traffic based on exploitation/exploration criteria.</li>
+<li>The ratio of input to output variables</li>
+<li>Available memory resources</li>
+<li>Computational efficiency requirements</li>
+<li>Hardware optimization capabilities</li>
 </ul>
 
 
