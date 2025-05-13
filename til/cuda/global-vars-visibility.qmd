@@ -1,0 +1,31 @@
+---
+title: CUDA Kernels Are Functions with Restrictions
+date: 2025-01-10
+category: CUDA
+---
+In CUDA programming, you work in two distinct worlds: the host and the device.
+In general, device kernels cannot access host variables and host functions
+cannot access device variables, even though these variables are declared in
+the same file scope.
+
+The CUDA runtime API can access both host and device variables, but it is up to
+you to provide the correct arguments to the correct functions so that they
+operate properly on the correct variables. Because the runtime API makes
+assumptions about the memory space of certain parameters, passing a host
+variable where it expects a device variable or vice versa will result in
+undefined behavior (likely crashing your application).
+
+```c
+#include <cuda_runtime.h>
+#include <stdio.h>
+__device__ float devData;
+int main(void) {
+  float value = 3.14f;
+  float *devPtr = NULL;
+  // Get the memory address of the global variable
+  cudaGetSymbolAddress((void **)&devPtr, devData)
+  // Now we can use typical cudaMemcpy
+  cudaMemcpy(dptr, &value, cudaMemcpyHostToDevice);
+  return 0;
+}
+```
