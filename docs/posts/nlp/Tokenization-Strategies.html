@@ -329,46 +329,46 @@ ga('send', {
 <p><img src="tokenization.jpg" alt="Imad" height="400px" width="600px"></p>
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
-<p><strong>Tokenization</strong> is the process of breaking down a string into smaller units of information that will be used by the model. This process sometimes involves some preprocessing steps such as converting to lowercase, <a href="https://nlp.stanford.edu/IR-book/html/htmledition/stemming-and-lemmatization-1.html">stemming &amp; lemmatization</a>, etc. There are many tokenizations strategies that each has its own advantages and drawbacks. We will first give a brief introduction of the different steps involved in the tokenization process. Then we’ll consider the two <em>extreme</em> and easy tokenization strategies: <em>character tokenization</em> and <em>word tokenization</em>. Finally, we will discuss subword tokenizations where statistical methods and language heuristics are used to learn the optimal splitting of words such as WordPiece and SentencePiece tokenizers.</p>
+<p><strong>Tokenization</strong> is the process of breaking down a string into smaller units of information that will be used by the model. This process sometimes involves some preprocessing steps such as converting to lowercase, <a href="https://nlp.stanford.edu/IR-book/html/htmledition/stemming-and-lemmatization-1.html">stemming &amp; lemmatization</a>, etc. There are many tokenization strategies that each has its own advantages and drawbacks. We will first give a brief introduction of the different steps involved in the tokenization process. Then we’ll consider the two <em>extreme</em> and easy tokenization strategies: <em>character tokenization</em> and <em>word tokenization</em>. Finally, we will discuss subword tokenizations where statistical methods and language heuristics are used to learn the optimal splitting of words such as WordPiece and SentencePiece tokenizers.</p>
 </section>
 <section id="tokenization-process" class="level1">
 <h1>Tokenization Process</h1>
 <p><img src="tokenization-pipeline.png" class="img-fluid"></p>
 <p>Tokenization process involves 4 steps:</p>
 <ul>
-<li><em>Normalizations</em>: This is the first step where a set of operations are applied to a raw text to make it cleaner. Such operations may include <a href="https://unicode.org/reports/tr15/">Unicode Normalization</a>, lowercasing.</li>
+<li><em>Normalizations</em>: This is the first step where a set of operations are applied to a raw text to make it cleaner. Such operations may include <a href="https://unicode.org/reports/tr15/">Unicode Normalization</a> and lowercasing.</li>
 <li><em>Pretokenization</em>: This step involves splitting the normalized text into words. For languages like English and German, splitting on whitespaces and punctuations work really well. However, some languages such as Japanese and Chinese don’t have whitespace character and we would be better off using language-specific tokenizer.</li>
 <li><em>Tokenizer</em>: This step applies subword splitting model such as <a href="https://arxiv.org/abs/1609.08144v2">WordPiece</a> and <a href="https://arxiv.org/abs/1808.06226">SentencePiece</a>. The subword model would be learned/trained on the pretrained corpus.</li>
-<li><em>Postprocessing</em>: This is the last step where some additional tokens will be added to each sequence. For exampe, BERT tokenizer add <code>[CLS]</code> to the beginning of the sequence and <code>[SEP]</code> to separate two sequence. On the other hands, XLM-R adds <code>&lt;s&gt;</code> to indicate the beginning of a sequence and <code>&lt;/s&gt;</code> to indicate the end of the sequence.</li>
+<li><em>Postprocessing</em>: This is the last step where some additional tokens will be added to each sequence. For exampe, BERT tokenizer adds <code>[CLS]</code> to the beginning of the sequence and <code>[SEP]</code> to separate two sequences. On the other hands, XLM-R adds <code>&lt;s&gt;</code> to indicate the beginning of a sequence and <code>&lt;/s&gt;</code> to indicate the end of the sequence.</li>
 </ul>
 </section>
 <section id="tokenization-strategies" class="level1">
 <h1>Tokenization Strategies</h1>
-<p>There are so many tokenizers that each have their own rules to split raw text into individual tokens. Each tokenization strategy has its own advantages and drawbacks. Depending on the task, some tokenizers maybe better suit your application than others. However, in the case of using pretrained model, you must use the same tokenizer that the pretrained model used during training.</p>
+<p>There are so many tokenizers that each have their own rules to split raw text into individual tokens. Each tokenization strategy has its own advantages and drawbacks. Depending on the task, some tokenizers may suit your application better than others. However, in the case of using pretrained model, you must use the same tokenizer that the pretrained model used during training.</p>
 <p>Below are the most common tokenization schemes.</p>
 <section id="character-tokenization" class="level2">
 <h2 class="anchored" data-anchor-id="character-tokenization">Character Tokenization</h2>
 <p>This is the simplest tokenization strategy where we simply break down the text at the character level. Then the characters will be fed to the model. Consider the following example:</p>
-<div id="92ba1e07-4dff-4f3a-9b31-0daf88028379" class="cell" data-execution_count="2">
+<div id="92ba1e07-4dff-4f3a-9b31-0daf88028379" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">"I love NLP!"</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">list</span>(text)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="2">
+<div class="cell-output cell-output-display" data-execution_count="3">
 <pre><code>['I', ' ', 'l', 'o', 'v', 'e', ' ', 'N', 'L', 'P', '!']</code></pre>
 </div>
 </div>
 <p>From here, it is easy to convert each character into integers that would be fed to the model. This step is called <em>numericalization</em>. We can numericalize the above text by first building the vocabulary, and then convert each character to its corresponding index as follows:</p>
-<div id="88aa86ee-95da-4173-82e0-20dd5f5c3fc6" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>vocab <span class="op">=</span> {char: idx <span class="cf">for</span> idx, char <span class="kw">in</span> <span class="bu">enumerate</span>(<span class="bu">sorted</span>(<span class="bu">list</span>(text)))}</span>
+<div id="88aa86ee-95da-4173-82e0-20dd5f5c3fc6" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>vocab <span class="op">=</span> {char: idx <span class="cf">for</span> idx, char <span class="kw">in</span> <span class="bu">enumerate</span>(<span class="bu">sorted</span>(<span class="bu">set</span>(text)))}</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(vocab)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>{' ': 1, '!': 2, 'I': 3, 'L': 4, 'N': 5, 'P': 6, 'e': 7, 'l': 8, 'o': 9, 'v': 10}</code></pre>
+<pre><code>{' ': 0, '!': 1, 'I': 2, 'L': 3, 'N': 4, 'P': 5, 'e': 6, 'l': 7, 'o': 8, 'v': 9}</code></pre>
 </div>
 </div>
 <p>Now we can simply map each token (character in this case) to its own corresponding index:</p>
-<div id="cabb3953-a7e5-4bab-9ae6-5f3f3c319e55" class="cell" data-execution_count="4">
+<div id="cabb3953-a7e5-4bab-9ae6-5f3f3c319e55" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>[vocab[char] <span class="cf">for</span> char <span class="kw">in</span> text]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="4">
-<pre><code>[3, 1, 8, 9, 10, 7, 1, 5, 4, 6, 2]</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre><code>[2, 0, 7, 8, 9, 6, 0, 4, 3, 5, 1]</code></pre>
 </div>
 </div>
 <ul>
@@ -379,31 +379,31 @@ ga('send', {
 </ul></li>
 <li><strong>Drawbacks</strong>:
 <ul>
-<li>Sequences length will be very long</li>
+<li>Sequences’ length will be very long</li>
 <li>Linguistic structures such as words now need to be learned from data. This requires much more data, memory, and computation</li>
-<li>Because we have fixed context length for most LLM and the sequence would be very long, we would lose the ability to attend the important tokens from before</li>
+<li>Because we have fixed context length for most LLMs and the sequence would be very long, we would lose the ability to attend the important tokens from before</li>
 </ul></li>
 </ul>
 </section>
 <section id="word-tokenization" class="level2">
 <h2 class="anchored" data-anchor-id="word-tokenization">Word Tokenization</h2>
-<p>The other extreme of word tokenization is to split text into words and then map each word to its corresponding index in the vocabulary. The simplest form would be to split on whitespace (which work well for English but not other languages such as Japanese that don’t have a well-defined idea of a word):</p>
-<div id="1b6e7b4b-99d2-4ce4-a3d7-3176cdf65250" class="cell" data-execution_count="5">
+<p>The other extreme of word tokenization is to split text into words and then map each word to its corresponding index in the vocabulary. The simplest form would be to split on whitespace (which works well for English but not other languages such as Japanese that don’t have a well-defined idea of a word):</p>
+<div id="1b6e7b4b-99d2-4ce4-a3d7-3176cdf65250" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>text.split()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="5">
+<div class="cell-output cell-output-display" data-execution_count="6">
 <pre><code>['I', 'love', 'NLP!']</code></pre>
 </div>
 </div>
-<div id="c5daf75d-a025-42d4-a21a-35b3b96391b3" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>vocab <span class="op">=</span> {char: idx <span class="cf">for</span> idx, char <span class="kw">in</span> <span class="bu">enumerate</span>(<span class="bu">sorted</span>(text.split()))}</span>
+<div id="c5daf75d-a025-42d4-a21a-35b3b96391b3" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>vocab <span class="op">=</span> {char: idx <span class="cf">for</span> idx, char <span class="kw">in</span> <span class="bu">enumerate</span>(<span class="bu">sorted</span>(<span class="bu">set</span>(text.split())))}</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(vocab)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>{'I': 0, 'NLP!': 1, 'love': 2}</code></pre>
 </div>
 </div>
-<div id="7af9c548-5537-4a74-aee4-904ddfd45184" class="cell" data-execution_count="7">
+<div id="7af9c548-5537-4a74-aee4-904ddfd45184" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>[vocab[word] <span class="cf">for</span> word <span class="kw">in</span> text.split()]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="7">
+<div class="cell-output cell-output-display" data-execution_count="9">
 <pre><code>[0, 2, 1]</code></pre>
 </div>
 </div>
@@ -411,31 +411,31 @@ ga('send', {
 <ul>
 <li><strong>Advantages</strong>:
 <ul>
-<li>Sequences length will be short</li>
+<li>Sequences’ length will be short, which means a token can attend to much more context</li>
 </ul></li>
 <li><strong>Drawbacks</strong>:
 <ul>
 <li>Size of the vocabulary will explode for large corpus due to the fact that words can include declinations, misspellings, or punctuations. If the vocabulary size has 1m words and the embedding dimension is 512 -&gt; the first embedding layer would be ~ 0.5 billion parameters!
 <ul>
-<li>We can work around this issue by including top n most frequent words. For example, if we include top 100,000 words -&gt; the first embedding layer would be ~ 0.5 million parameters. However, because all other words will be mapped to the <code>UNK</code> token, the model has no idea about the words associated with the <code>UNK</code> token and we may lose some important information</li>
+<li>We can work around this issue by including top <code>n</code> most frequent words. For example, if we include top 100,000 words -&gt; the first embedding layer would be ~ 0.5 million parameters. However, because all other words will be mapped to the <code>UNK</code> token, the model has no idea about the words associated with the <code>UNK</code> token and we may lose some important information</li>
 </ul></li>
 <li>Some languages don’t have well-defined idea of what constitute a word</li>
-<li>Because we have so many tokens that are either rare or never happened in the training data, these tokens would either never been activated or maybe fe passes activated them which is not good to get good embedding vector for them. Therefore, they are occupying memory w/o being that useful</li>
+<li>Because we have so many tokens that are either rare or never happened in the training data, these tokens would either have never been activated or maybe few passes activated them which is not good to get good embedding vector for them (under-trained). Therefore, they are occupying memory w/o being that useful</li>
 </ul></li>
 </ul>
 </section>
 <section id="subword-tokenization" class="level2">
 <h2 class="anchored" data-anchor-id="subword-tokenization">Subword Tokenization</h2>
-<p>Split words into smaller parts based on the most frequent sub-strings. Therefore, we want to keep the most frequent words as unique entities but split the rare words into smaller units to allow us to deal with misspellings and complex words. This will help us achieve the best of both wolds: 1) manageable vocabulary size, 2) keep frequent words as their own entities, and 3) deal with complex and misspelling words.</p>
-<p>The subword tokenizers are typically learned from pretraining corpus using statistical rules and algorithms. We will cover the most common ones: WordPiece and SentencePiece:</p>
+<p>Split words into smaller parts based on the most frequent sub-strings. Therefore, we want to keep the most frequent words as unique entities but split the rare words into smaller units to allow us to deal with misspellings and complex words. This will help us achieve the best of both wolds: 1) Manageable vocabulary size 2) Keep frequent words as their own entities 3) And deal with complex and misspelling words</p>
+<p>The subword tokenizers are typically learned from pretraining corpus using statistical rules and algorithms. We will cover the most common ones: <em>WordPiece</em> and <em>SentencePiece</em>.</p>
 <section id="wordpiece" class="level3">
 <h3 class="anchored" data-anchor-id="wordpiece">WordPiece</h3>
 <p><a href="https://arxiv.org/abs/1609.08144v2">WordPiece</a> tokenizer is used by the <a href="https://arxiv.org/abs/1910.01108">DistilBERT</a> model. The vocabulary is first initialized with individual characters in the language, then the most frequent combinations of symbols in the vocabulary are iteratively added to the vocabulary. The process is:</p>
 <ol type="1">
-<li>Initialize the vocabulary with all the characters in the text.</li>
-<li>Build a language model on the training corpus using vocabulary build previously.</li>
-<li>Generate a new word by combining two units out of the current vocabulary to increment the word vocabulary by one. Choose the new word unit out of all the possible ones that increases the likelihood on the training data the most when added to the model.</li>
-<li>Goto 2 until a predefined limit of vocabulary size is reached or the likelihood increase falls below a certain threshold.</li>
+<li>Initialize the vocabulary with all the characters in the text</li>
+<li>Build a language model on the training corpus using vocabulary built previously</li>
+<li>Generate a new word by combining two units out of the current vocabulary to increment the word vocabulary by one. Choose the new word unit out of all the possible ones that increases the likelihood on the training data the most when added to the model</li>
+<li>Goto 2 until a predefined limit of vocabulary size is reached or the likelihood increase falls below a certain threshold</li>
 </ol>
 <p>Let’s illustrate by example using 🤗 transformers library.</p>
 <div id="99b30f6a-2857-4850-9b6d-7ccfbd2ec75b" class="cell" data-execution_count="8">
@@ -460,7 +460,7 @@ ga('send', {
 <li><code>[SEP]</code> is also a special token to separate multiple sequences</li>
 <li><code>##</code> prefix indicates that the previous string isn’t whitespace
 <ul>
-<li>This shows that nlp is not common token, so it was split into two tokens</li>
+<li>This shows that nlp is not a common token, so it was split into two tokens</li>
 </ul></li>
 <li>We can also see that <code>!</code> has its own token</li>
 </ul>
@@ -482,7 +482,7 @@ ga('send', {
 <li>Initialize the vocabulary with all the characters in the text plus end-of-word symbol</li>
 <li>Find the most common adjacent characters</li>
 <li>Replace instances of the character pair with the new subword</li>
-<li>Goto step2 until desired vocab size</li>
+<li>Goto step 2 until desired vocab size is reached</li>
 </ol>
 <p>Let’s again use 🤗 transformers library to tokenize the same text.</p>
 <div id="12596fb8-0a5a-439c-aa79-5bc0ab181f9c" class="cell" data-execution_count="13">
@@ -507,7 +507,7 @@ ga('send', {
 <li><code>&lt;/s&gt;</code> is also a special token to indicate the end of the sequence</li>
 <li><code>_</code> prefix indicates that the previous string is whitespace
 <ul>
-<li>This shows that nlp is not common token, so it was split into two tokens</li>
+<li>This shows that nlp is not a common token, so it was split into two tokens</li>
 </ul></li>
 <li>We can also see that <code>!</code> has its own token</li>
 </ul>
@@ -526,7 +526,7 @@ ga('send', {
 <section id="conclusion" class="level1">
 <h1>Conclusion</h1>
 <p>Through this post, we covered three tokenization strategies along with their advantages and challenges/limitations. We mostly use tokenizers from well-known libraries such as <a href="https://spacy.io/">spaCy</a> because it is very hard to get it right ourselves.</p>
-<p><strong>NB</strong>: When using pretrained models such as DistilBERT, we must use the same tokenizer that the model used during training. Otherwise, what the model assumes token_id = 1 is will be completely different than what the new token_id = 1 represents. It has the same effect as shuffling the vocabulary.</p>
+<p><strong>NB</strong>: When using pretrained models such as DistilBERT, we must use the same tokenizer that the model used during training. Otherwise, what the model assumes <code>token_id = 1</code> is will be completely different than what the new <code>token_id = 1</code> represents. It has the same effect as shuffling the vocabulary.</p>
 
 
 </section>
