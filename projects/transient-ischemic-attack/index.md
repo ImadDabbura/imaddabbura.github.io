@@ -1,10 +1,10 @@
 ---
 title: "Transient Ischemic Attack"
 description: "Build a classifier to predict whether a given patient will have TIA and deploy the best model as a RESTful API."
-author:  "Imad Dabbura"
+author: "Imad Dabbura"
 image: "feature.jpg"
 date: "2019-04-22"
-categories: ["Machine Learning", "Deep Learning"]
+categories: ["ML", "DL"]
 toc: true
 code-link: true
 ---
