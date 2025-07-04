@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2024-09-05">
+<meta name="description" content="Tensor library to build DL systems">
 
-<title>Imad Dabbura - Hard-Learned Lessons in Shipping Software (AI/ML) Projects</title>
+<title>Imad Dabbura - tiny_pytorch</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -107,16 +107,20 @@ ga('send', {
   'anonymizeIp': true,
 });
 </script>
+<meta name="mermaid-theme" content="default">
+<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Imad Dabbura - Hard-Learned Lessons in Shipping Software (AI/ML) Projects">
-<meta property="og:description" content="A Guide for Engineers and Product Managers">
-<meta property="og:image" content="https://imaddabbura.github.io/posts/product-management/shipping-software-projects.jpeg">
+<meta property="og:title" content="Imad Dabbura - tiny_pytorch">
+<meta property="og:description" content="Tensor library to build DL systems">
+<meta property="og:image" content="https://imaddabbura.github.io/projects/tiny-pytorch/feature.jpg">
 <meta property="og:site_name" content="Imad Dabbura">
-<meta name="twitter:title" content="Imad Dabbura - Hard-Learned Lessons in Shipping Software (AI/ML) Projects">
-<meta name="twitter:description" content="A Guide for Engineers and Product Managers">
-<meta name="twitter:image" content="https://imaddabbura.github.io/posts/product-management/shipping-software-projects.jpeg">
+<meta name="twitter:title" content="Imad Dabbura - tiny_pytorch">
+<meta name="twitter:description" content="Tensor library to build DL systems">
+<meta name="twitter:image" content="https://imaddabbura.github.io/projects/tiny-pytorch/feature.jpg">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 </head>
@@ -163,22 +167,14 @@ ga('send', {
 <span class="menu-text">DL Tips &amp; Tricks</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../cmn-ai.html"> 
-<span class="menu-text">cmn_ai</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../../tiny-pytorch.html"> 
-<span class="menu-text">Tiny-PyTorch</span></a>
+    <a class="nav-link" href="../../projects-index.html"> 
+<span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item dropdown ">
     <a class="nav-link dropdown-toggle" href="#" id="nav-menu-more" role="button" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">More</span>
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-more">    
-        <li>
-    <a class="dropdown-item" href="../../projects-index.html">
- <span class="dropdown-text">Projects</span></a>
-  </li>  
         <li>
     <a class="dropdown-item" href="../../books-summaries.html">
  <span class="dropdown-text">Books’ Summaries</span></a>
@@ -226,10 +222,16 @@ ga('send', {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Hard-Learned Lessons in Shipping Software (AI/ML) Projects</h1>
-            <p class="subtitle lead">A Guide for Engineers and Product Managers</p>
-                                <div class="quarto-categories">
-                <div class="quarto-category">Product Management</div>
+      <h1 class="title"><code>tiny_pytorch</code></h1>
+                  <div>
+        <div class="description">
+          Tensor library to build DL systems
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">ML</div>
+                <div class="quarto-category">DL</div>
+                <div class="quarto-category">AI</div>
               </div>
                   </div>
   </div>
@@ -244,19 +246,7 @@ ga('send', {
             </div>
     </div>
       
-      <div>
-      <div class="quarto-title-meta-heading">Published</div>
-      <div class="quarto-title-meta-contents">
-        <p class="date">September 5, 2024</p>
-      </div>
-    </div>
     
-      <div>
-      <div class="quarto-title-meta-heading">Modified</div>
-      <div class="quarto-title-meta-contents">
-        <p class="date-modified">September 5, 2024</p>
-      </div>
-    </div>
       
     </div>
     
@@ -265,13 +255,7 @@ ga('send', {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#final-thoughts-start-shipping" id="toc-final-thoughts-start-shipping" class="nav-link active" data-scroll-target="#final-thoughts-start-shipping">Final Thoughts: Start Shipping</a></li>
-  </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+        
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
@@ -280,109 +264,38 @@ ga('send', {
 
 
 
-<p>Shipping software projects — especially in machine learning (ML) and AI—can feel like navigating a maze of unknowns. Over the years, I’ve learned (often the hard way) what works and what doesn’t when it comes to delivering projects on time and with impact. Below, I share my most valuable lessons, distilled into actionable advice to help you ship your project faster, with fewer headaches, and greater confidence.</p>
-<hr>
-<section id="write-for-a-specific-audience-and-topic" class="level4">
-<h4 class="anchored" data-anchor-id="write-for-a-specific-audience-and-topic"><strong>1. Write for a Specific Audience and Topic</strong></h4>
-<p>One of the easiest ways to reduce complexity in a project is to focus on a specific audience and topic. Building for “everyone” leads to endless scope creep, vague requirements, and delayed delivery. When you narrow your audience and define your topic, you’ll find it much easier to: - Define the core problem you’re solving. - Decide which features and functionality are essential.<br>
-In short, specificity speeds up decision-making—and delivery.</p>
-<hr>
-</section>
-<section id="set-a-deadline-and-stick-to-it" class="level4">
-<h4 class="anchored" data-anchor-id="set-a-deadline-and-stick-to-it"><strong>2. Set a Deadline and Stick to It</strong></h4>
-<p>Deadlines are your best friend, not your enemy. View them as a challenge: “What can I ship by this date, no matter what?”<br>
-The key here is <strong>to ship whatever is ready</strong>—even if it’s incomplete or imperfect. Deadlines force you to prioritize ruthlessly and get the project out the door. Remember, you can always iterate later.</p>
-<hr>
-</section>
-<section id="work-backwards-from-the-end-goal" class="level4">
-<h4 class="anchored" data-anchor-id="work-backwards-from-the-end-goal"><strong>3. Work Backwards from the End Goal</strong></h4>
-<p>When starting any project, first ask: “What does success look like?” Work backwards from there, breaking the project into essential questions:<br>
-- What’s the end result look like, exactly?<br>
-- How many features are needed?<br>
-- What’s absolutely required vs.&nbsp;what’s nice to have?<br>
-- How perfect does it need to be?<br>
-- How long will each step take?<br>
-- What tasks need to happen first, and what preparation is required?</p>
-<p>By answering these questions, you’ll create a clear roadmap, reduce uncertainty, and avoid aimless wandering through your project.</p>
-<hr>
-</section>
-<section id="break-it-down-into-manageable-pieces" class="level4">
-<h4 class="anchored" data-anchor-id="break-it-down-into-manageable-pieces"><strong>4. Break It Down into Manageable Pieces</strong></h4>
-<p>Big projects can feel overwhelming, which is why breaking them into smaller components is essential. Tackle each piece in focused, deep work sessions. Every time you complete a component, you’ll feel a sense of accomplishment—which keeps motivation high.<br>
-Example: If you’re building an ML pipeline, treat data preprocessing, model training, and evaluation as separate milestones rather than one big, nebulous task.</p>
-<hr>
-</section>
-<section id="be-crystal-clear-on-completion-criteria" class="level4">
-<h4 class="anchored" data-anchor-id="be-crystal-clear-on-completion-criteria"><strong>5. Be Crystal Clear on Completion Criteria</strong></h4>
-<p>Ambiguity is the enemy of progress. For every stage of your project, define what “done” looks like. This clarity not only helps you move faster but also ensures you avoid endlessly tweaking and polishing.</p>
-<hr>
-</section>
-<section id="start-small-and-learn-quickly" class="level4">
-<h4 class="anchored" data-anchor-id="start-small-and-learn-quickly"><strong>6. Start Small (and Learn Quickly)</strong></h4>
-<p>Start with a small prototype or proof of concept. This gives you a realistic sense of what it will take to deliver the full project while helping you identify potential roadblocks early.<br>
-Starting small also lowers the stakes, making it easier to experiment and iterate without fear of failure.</p>
-<hr>
-</section>
-<section id="track-progress-and-celebrate-wins" class="level4">
-<h4 class="anchored" data-anchor-id="track-progress-and-celebrate-wins"><strong>7. Track Progress and Celebrate Wins</strong></h4>
-<p>Use tools like <code>Trello</code>, <code>Jira</code>, or even a simple Kanban board to track your tasks and progress. Keep completed tasks visible—seeing progress in real time is a <strong>great motivator</strong>.<br>
-Why? Because software projects are as much about emotional management as technical execution. Visible progress keeps momentum alive and helps you push through inevitable roadblocks.</p>
-<hr>
-</section>
-<section id="dont-reinvent-the-wheel" class="level4">
-<h4 class="anchored" data-anchor-id="dont-reinvent-the-wheel"><strong>8. Don’t Reinvent the Wheel</strong></h4>
-<p>Time is your most valuable resource. Wherever possible, lean on existing tools, libraries, and frameworks to speed up development.<br>
-For instance, in ML and AI, libraries like <code>TensorFlow</code>, <code>scikit-learn</code>, or pre-trained models can save you weeks of effort. You can always revisit and optimize later if needed. The goal is to get something functional in front of users quickly.</p>
-<hr>
-</section>
-<section id="every-version-should-be-better" class="level4">
-<h4 class="anchored" data-anchor-id="every-version-should-be-better"><strong>9. Every Version Should Be Better</strong></h4>
-<p>A common pitfall is aiming to ship a perfect product from day one. Don’t. Instead, focus on shipping a <strong>better</strong> version with each iteration.<br>
-Why? Because you’ll learn more from real-world usage and user feedback than from endless internal debates or polishing. Each version builds on the last, so it doesn’t have to be perfect—it just has to be better.</p>
-<hr>
-</section>
-<section id="define-success-criteria-for-the-first-version" class="level4">
-<h4 class="anchored" data-anchor-id="define-success-criteria-for-the-first-version"><strong>10. Define Success Criteria for the First Version</strong></h4>
-<p>Before you start coding, define what “success” means for the first version. What must it accomplish to be considered shippable?<br>
-Write these criteria down. This clarity will keep you focused and prevent scope creep.</p>
-<hr>
-</section>
-<section id="do-your-homework-research-before-you-start" class="level4">
-<h4 class="anchored" data-anchor-id="do-your-homework-research-before-you-start"><strong>11. Do Your Homework (Research Before You Start)</strong></h4>
-<p>Before diving into implementation, spend time researching:<br>
-- What tools, frameworks, or libraries can you use?<br>
-- What’s the best structure for the project?<br>
-- How have others solved similar problems?</p>
-<p>A solid research phase will save you countless hours of trial and error later.</p>
-<hr>
-</section>
-<section id="prioritize-must-haves-vs.-nice-to-haves" class="level4">
-<h4 class="anchored" data-anchor-id="prioritize-must-haves-vs.-nice-to-haves"><strong>12. Prioritize Must-Haves vs.&nbsp;Nice-to-Haves</strong></h4>
-<p>Not all features are created equal. Early in the project, create two lists:<br>
-- <strong>Must-haves:</strong> Features that are absolutely necessary for the project to function.<br>
-- <strong>Nice-to-haves:</strong> Features that would be great to include but aren’t essential.<br>
-Focus on the must-haves first. Nice-to-haves can wait for later versions.</p>
-<hr>
-</section>
-<section id="mistakes-will-happendont-take-them-personally" class="level4">
-<h4 class="anchored" data-anchor-id="mistakes-will-happendont-take-them-personally"><strong>13. Mistakes Will Happen—Don’t Take Them Personally</strong></h4>
-<p>No matter how well you plan, mistakes will happen. Bugs will slip through, features might not work as expected, and some users may complain. <strong>Don’t take it personally.</strong><br>
-Instead, treat every mistake as an opportunity to learn and improve. Fix the issue, iterate, and move forward.</p>
-<hr>
-</section>
-<section id="ship-now-improve-later" class="level4">
-<h4 class="anchored" data-anchor-id="ship-now-improve-later"><strong>14. Ship Now, Improve Later</strong></h4>
-<p>Shipping something today—even if it’s imperfect—is far more valuable than shipping something “perfect” six months from now. Why? Because you learn more from trial and error than from endless planning.<br>
-Fast iterations drive faster learning—and faster progress.</p>
-<hr>
-</section>
-<section id="final-thoughts-start-shipping" class="level3">
-<h3 class="anchored" data-anchor-id="final-thoughts-start-shipping">Final Thoughts: Start Shipping</h3>
-<p>Shipping software projects is never easy, especially in ML and AI, where complexity is the norm. But by following these principles—working backwards, starting small, tracking progress, and focusing on iteration—you can consistently deliver impactful projects on time.</p>
-<p>The most important lesson? <strong>Just ship it.</strong> You’ll learn far more by putting your work into the world than by waiting for perfection.</p>
+<p>Tiny-Pytorch (<a href="https://github.com/ImadDabbura/tiny-pytorch">GH repo</a>, <a href="imaddabbura.github.io/tiny-pytorch/">Documentation</a>) is a deep learning system that is similar in nature to <strong>Pytorch</strong>. It involves implementing the core underlying machinery and algorithms behind deep learning systems such as 1) <strong>Automatic differentiation</strong>, 2) <strong>Tensor</strong> (multi-dimensional array), 3) <strong>Neural network</strong> modules such as <strong>Linear/BatchNorm/RNN/LSTM</strong>, 4) <strong>Optimization</strong> algorithms such as <strong>Stochastic Gradient Boosting (SGD)</strong> and <strong>Adaptive Momentum (Adam)</strong>, 5) <strong>Hardware acceleration</strong> such as GPUs, etc.</p>
+<p>The main learning and critical part of this project is building everything from the ground up:</p>
+<div class="cell" data-fig-width="6.5" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">graph BT
+    A[Flat Array] --&gt; B[N-Dimensional Array]
+    B[N-Dimensional Array] --&gt; C[Tensor]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>The main objectives to build this framework:</p>
+<ul>
+<li><p>Build deep learning systems</p>
+<ul>
+<li>Contribute to open-source deep learning frameworks.</li>
+<li>Work on developing my own framework for specific tasks. I have been collecting my own implementation of different things in Pytorch such as analyzing gradients of each layer.</li>
+</ul></li>
+<li><p>Use existing systems more effectively:</p>
+<ul>
+<li>Understanding how the internals of existing deep learning systems work let you use them much more efficiently.</li>
+<li>The only way to understand how things really work is to build it from scratch.</li>
+</ul></li>
+<li><p>Understand how operations are carried on both CPU and GPU so I can optimize my customized models/layers to run more efficiently.</p></li>
+</ul>
 
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -950,7 +863,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
     <li class="nav-item compact">
