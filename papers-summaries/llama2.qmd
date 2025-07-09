@@ -15,7 +15,12 @@ categories:
   - Models:
     - Base LLMs: 7B, 13B, 34B, 70B
     - Chat LLMs: 7B, 13B, 34B, 70B
-    - Use `KV` cache during inference. The task of LLM is **next token prediction**. At each step we're only interested in the prediction of the last token but we still need to give the previous tokens (context) that were already computed from before. So at step 10, we would've already computed the attention scores for token1 9 times and token2 8 times. Also, we're not interested in the attention scores for future tokens for causal inference since the attention score matrix is lower triangular. To summarize:
+    - Use `KV` cache during inference. The task of LLM is **next token prediction**.
+      At each step we're only interested in the prediction of the next token but
+      we still need to give the previous tokens (context) that were already
+      computed from before. So at step $10$, we would've already computed the
+      attention scores for token_1 9 times and token_2 8 times. Also, we're 
+      not interested in the attention scores for future tokens for causal inference since the attention score matrix is lower triangular. To summarize:
       - Can we cache the dot-products of tokens from previous steps?
       - Can we not compute attention scores for successor tokens?
       - Can we not compute prediction for previous tokens since we already have them?
