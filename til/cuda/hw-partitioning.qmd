@@ -1,0 +1,25 @@
+---
+title: Dynamic HW Partitioning (GPU)
+date: 2025-05-10
+categories: CUDA
+---
+
+Dynamic hardware partitioning in GPU architectures refers to the ability to
+allocate and reallocate GPU resources (such as compute units, memory
+bandwidth, or execution queues) to different workloads or tasks at runtime.
+Unlike static partitioning, where resources are fixed at launch, dynamic
+partitioning enables better utilization and responsiveness by adapting to
+workload demands. This is particularly useful in heterogeneous environments
+or multi-tenant systems where workloads may vary significantly in compute or
+memory intensity. By dynamically reallocating resources, GPUs can reduce
+contention, improve throughput, and enhance latency-sensitive performance.
+However, the overhead of partition switching and the complexity of resource
+management can introduce trade-offs that must be carefully balanced.
+Additionally, dynamic partitioning can affect the number of threads running
+concurrently depending on resource usage such as register pressure. For
+instance, if a workload uses a large number of registers per thread, fewer
+threads can be resident per streaming multiprocessor, reducing concurrency.
+Conversely, if register usage is low, more threads can run concurrently.
+Similarly, large thread blocks may lead to underutilization of resources if
+they exceed per-block limits, while smaller thread blocks may allow more
+flexibility and better occupancy under dynamic partitioning constraints.
