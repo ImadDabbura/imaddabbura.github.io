@@ -274,6 +274,7 @@ window.Quarto = {
 <section id="general" class="level2">
 <h2 class="anchored" data-anchor-id="general">General</h2>
 <ul>
+<li><p>Good learning rate for <code>Adam/AdamW</code> with reasonable model size is 3e-4. As the model’s complexity decreases (smaller models) -&gt; we can get away with higher learning rates</p></li>
 <li><p>Check if your model can overfit <code>1</code> example then few examples. The model should easily be able to overfit few examples. If not, there would be something wrong with the optimization or other parts of the training code.</p></li>
 <li><p>Check the worst mistakes that the model make. In the case of binary classification, check the positive examples that were mispredicted with probabilities close to <code>0</code> or negative example that were mispredicted with probabilities close to <code>1</code>. Also the check the examples that model is least confident about such as examples with probabilities close to <code>0.5</code>. This would highlight issues with data preprocessing and labeling mistakes.</p></li>
 <li><p>Look at the output of all transformations before you plug them into the pipeline because you may loose a lot of the characteristics of the input in some transformations.</p></li>
@@ -288,6 +289,9 @@ window.Quarto = {
 </ul></li>
 <li><p>When using mixed precision, it is better to increase batch size to utilize the GPU since every batch will occupy much smaller memory. As a result, there will be less updates for each epoch because the model will see less number of batches in every epoch. This means that 1) we need to increase the number of epochs and 2) increase the learning rate.</p></li>
 <li><p>Mixup: linear combination of 2 random examples from training dataset using lambda parameter that is drawn from <code>Beta</code> distribution (<code>α</code>, <code>α</code>). The output vector will also be linear combination of two examples labels. This will force model to be more robust and learn linear combination of examples instead of memorizing them. As a result, model becomes less sensitive to corrupted labels and noise in the training data. This method can also be applied to tabular data. However, because it is harder for the model to learn to differentiate between the two examples and the weight of each, we need to train for much longer to get good results.</p></li>
+<li><p>Check the distribution of the activations and the gradients as well as the percentage of the neurons that are saturated</p></li>
+<li><p>Check grad/data ratio to see the size of the step when updating parameters</p></li>
+<li><p>Check update size to see if we need to change learning rate. This typically shows us if our steps are small/good/large</p></li>
 </ul>
 </section>
 <section id="nlp" class="level2">
@@ -296,6 +300,13 @@ window.Quarto = {
 <li><p>With LLM, generally the more compute the better the results. We can define compute, roughly, as the number of parameters x number of tokens. Therefore, we can make the model bigger and keep the number of tokens fixed OR keep the model size the same and increase the number of tokens which means that we have to train for longer. There is a trade-off that depends on the task.</p></li>
 <li><p>Improving logloss for LLMs is correlated with improved performance on downstream tasks</p></li>
 <li><p>Even though loss scales smoothly with compute, individual downstream tasks may scale in an emergent fashion. This means some tasks’ loss may be flat, others maybe inversely scaled, etc.</p></li>
+<li><p>Initialization: It is very important to try to initialize the weights to good values because weights don’t change much from their initial values. We want the initial loss to be the loss that we would expect. This can be determined depending on the task. For example, in LM, we want in the first iteration for the probability of each token, which is <span class="math inline">\(1/vocab\_{sz}\)</span>, to be almost equal because there is no reason to assign higher prob for some tokens. Therefore, the loss on each token would be the same (<span class="math inline">\(\approx -log(1/vocab\_sz)\)</span>) because the probability distribution would be diffused.</p></li>
+<li><p>Weight sharing between token embedding and the final linear layer (also called classifier or LM head) key because we want the tokens that are semantically similar to have similar probability when predicting next token.</p>
+<ul>
+<li>This also has a huge advantage on computational efficiency as those matrices have a lot of parameters. For GPT2, each one has <span class="math inline">\(50257 * 768 \approx 38.5M\)</span> which is <span class="math inline">\(1/3\)</span> of the GPT2 model.</li>
+<li>As a result of weight sharing, gradient update will be addition from the two branches: classifier and token embedding</li>
+</ul></li>
+<li><p>For tokens that don’t appear in the training data, we want their probabilities to be very close to zero</p></li>
 </ul>
 </section>
 <section id="tabular" class="level2">

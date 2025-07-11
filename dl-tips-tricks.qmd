@@ -8,6 +8,10 @@ image: images/dl-tips-and-tricks-image.png
 ---
 ## General
 
+- Good learning rate for `Adam/AdamW` with reasonable model size is 3e-4. As
+the model's complexity decreases (smaller models) -> we can get away with
+higher learning rates
+
 - Check if your model can overfit `1` example then few examples. The model should
   easily be able to overfit few examples. If not, there would be something
 wrong with the optimization or other parts of the training code.
@@ -42,25 +46,77 @@ that the output of augmented data first makes sense and second doesn't change th
   be close to `0` and not learning anything.
 
 - Monitor the magnitude of the parameter updates relative to the parameters.
-Ideally, we want the ratio to be close to 1%, not $0.001%$ (no learning) or $50%$ (changes super fast and may overshoot).
+Ideally, we want the ratio to be close to 1%, not $0.001%$ (no learning) or
+$50%$ (changes super fast and may overshoot).
 
-- Gradient accumulation: to avoid out-of-memory errors (OOM) while training on GPUs, break larger batches into smaller batches and accumulate gradients by back-propagating after every batch to gather gradients before running optimization step. It should give identical results as if we train with larger batches unless we have layers that kind of depending on the batch size in the forward pass such as `BatchNorm`.
-    - For example, in pytorch, instead of calling `optimizer.step()` for every batch, we call it every few batches.
+- Gradient accumulation: to avoid out-of-memory errors (OOM) while training on
+  GPUs, break larger batches into smaller batches and accumulate gradients by
+  back-propagating after every batch to gather gradients before running
+  optimization step. It should give identical results as if we train with
+  larger batches unless we have layers that kind of depending on the batch
+  size in the forward pass such as `BatchNorm`.
+    - For example, in pytorch, instead of calling `optimizer.step()` for every
+      batch, we call it every few batches.
 
-- When using mixed precision, it is better to increase batch size to utilize the GPU since every batch will occupy much smaller memory. As a result, there will be less updates for each epoch because the model will see less number of batches in every epoch. This means that 1) we need to increase the number of epochs and 2) increase the learning rate.
+- When using mixed precision, it is better to increase batch size to utilize
+  the GPU since every batch will occupy much smaller memory. As a result,
+  there will be less updates for each epoch because the model will see less
+  number of batches in every epoch. This means that 1) we need to increase the
+  number of epochs and 2) increase the learning rate.
 
-- Mixup: linear combination of 2 random examples from training dataset using lambda parameter that is drawn from `Beta` distribution (`α`, `α`). The output
-vector will also be linear combination of two examples labels. This will force model to be more robust and learn linear combination of examples instead of memorizing them. As a result, model becomes less sensitive to corrupted labels and noise in the training data. This method can also be applied to tabular data. However, because it is harder for the model to learn to differentiate between the two examples and the weight of each, we need to train for much longer to get good results.
+- Mixup: linear combination of 2 random examples from training dataset using
+  lambda parameter that is drawn from `Beta` distribution (`α`, `α`). The output
+  vector will also be linear combination of two examples labels. This will
+  force model to be more robust and learn linear combination of examples
+  instead of memorizing them. As a result, model becomes less sensitive to
+  corrupted labels and noise in the training data. This method can also be
+  applied to tabular data. However, because it is harder for the model to learn
+  to differentiate between the two examples and the weight of each, we need to
+  train for much longer to get good results.
 
+- Check the distribution of the activations and the gradients as well as the
+  percentage of the neurons that are saturated
+
+- Check grad/data ratio to see the size of the step when updating parameters
+
+- Check update size to see if we need to change learning rate. This typically
+  shows us if our steps are small/good/large
 
 ## NLP
 
-- With LLM, generally the more compute the better the results. We can define compute, roughly, as the number of parameters x number of tokens. Therefore, we can make the model bigger and keep the number of tokens fixed OR keep the model size the same and increase the number of tokens which means that we have to train for longer. There is a trade-off that depends on the task.
+- With LLM, generally the more compute the better the results. We can define
+  compute, roughly, as the number of parameters x number of tokens. Therefore,
+  we can make the model bigger and keep the number of tokens fixed OR keep the
+  model size the same and increase the number of tokens which means that we
+  have to train for longer. There is a trade-off that depends on the task.
 
 - Improving logloss for LLMs is correlated with improved performance on
 downstream tasks
 
-- Even though loss scales smoothly with compute, individual downstream tasks may scale in an emergent fashion. This means some tasks' loss may be flat, others maybe inversely scaled, etc.
+- Even though loss scales smoothly with compute, individual downstream tasks
+  may scale in an emergent fashion. This means some tasks' loss may be flat,
+  others maybe inversely scaled, etc.
+
+- Initialization: It is very important to try to initialize the weights to
+  good values because weights don't change much from their initial values.
+  We want the initial loss to be the loss that we would expect. This can
+  be determined depending on the task. For example, in LM, we want in the
+  first iteration for the probability of each token, which is $1/vocab\_{sz}$,
+  to be almost equal because there is no reason to assign higher prob for some
+  tokens. Therefore, the loss on each token would be the same ($\approx -log(1/vocab\_sz)$)
+  because the probability distribution would be diffused.
+
+- Weight sharing between token embedding and the final linear layer (also
+  called classifier or LM head) key because we want the tokens that are semantically
+  similar to have similar probability when predicting next token.
+  - This also has a huge advantage on computational efficiency as those matrices
+    have a lot of parameters. For GPT2, each one has $50257 * 768 \approx 38.5M$ which
+    is $1/3$ of the GPT2 model.
+  - As a result of weight sharing, gradient update will be addition from the
+    two branches: classifier and token embedding
+
+- For tokens that don't appear in the training data, we want their probabilities
+  to be very close to zero
 
 ## Tabular
 
