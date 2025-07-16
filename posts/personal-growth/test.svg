@@ -1,0 +1,183 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradients for futuristic feel -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a23;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1a1a3a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2a0845;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="brainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00ffff;stop-opacity:0.8" />
+      <stop offset="50%" style="stop-color:#ff00ff;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#ffff00;stop-opacity:0.4" />
+    </linearGradient>
+    
+    <linearGradient id="nodeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00ffaa;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#0088ff;stop-opacity:0.7" />
+    </linearGradient>
+    
+    <!-- Glow effects -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="strongGlow">
+      <feGaussianBlur stdDeviation="5" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="600" fill="url(#bgGradient)"/>
+  
+  <!-- Floating geometric particles -->
+  <circle cx="100" cy="100" r="3" fill="#00ffff" opacity="0.6">
+    <animate attributeName="cy" values="100;120;100" dur="3s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="700" cy="150" r="2" fill="#ff00ff" opacity="0.5">
+    <animate attributeName="cy" values="150;130;150" dur="2.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="50" cy="400" r="4" fill="#ffff00" opacity="0.4">
+    <animate attributeName="cy" values="400;420;400" dur="4s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- Central brain/neural network structure -->
+  <g transform="translate(400,300)">
+    
+    <!-- Central core representing the learning mind -->
+    <circle cx="0" cy="0" r="40" fill="url(#brainGradient)" filter="url(#strongGlow)" opacity="0.8">
+      <animate attributeName="r" values="40;45;40" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- Neural pathways extending outward -->
+    <g stroke="#00ffff" stroke-width="2" fill="none" opacity="0.7">
+      <!-- Main pathways -->
+      <path d="M 0,0 Q -80,-60 -120,-40" filter="url(#glow)">
+        <animate attributeName="stroke-opacity" values="0.7;1;0.7" dur="1.5s" repeatCount="indefinite"/>
+      </path>
+      <path d="M 0,0 Q 80,-60 120,-40" filter="url(#glow)">
+        <animate attributeName="stroke-opacity" values="0.7;1;0.7" dur="1.8s" repeatCount="indefinite"/>
+      </path>
+      <path d="M 0,0 Q -80,60 -120,40" filter="url(#glow)">
+        <animate attributeName="stroke-opacity" values="0.7;1;0.7" dur="2.1s" repeatCount="indefinite"/>
+      </path>
+      <path d="M 0,0 Q 80,60 120,40" filter="url(#glow)">
+        <animate attributeName="stroke-opacity" values="0.7;1;0.7" dur="1.7s" repeatCount="indefinite"/>
+      </path>
+      
+      <!-- Secondary pathways -->
+      <path d="M 0,0 Q -40,-100 -60,-140" filter="url(#glow)">
+        <animate attributeName="stroke-opacity" values="0.5;0.9;0.5" dur="2.3s" repeatCount="indefinite"/>
+      </path>
+      <path d="M 0,0 Q 40,-100 60,-140" filter="url(#glow)">
+        <animate attributeName="stroke-opacity" values="0.5;0.9;0.5" dur="2.0s" repeatCount="indefinite"/>
+      </path>
+      <path d="M 0,0 Q -40,100 -60,140" filter="url(#glow)">
+        <animate attributeName="stroke-opacity" values="0.5;0.9;0.5" dur="1.9s" repeatCount="indefinite"/>
+      </path>
+      <path d="M 0,0 Q 40,100 60,140" filter="url(#glow)">
+        <animate attributeName="stroke-opacity" values="0.5;0.9;0.5" dur="2.4s" repeatCount="indefinite"/>
+      </path>
+    </g>
+    
+    <!-- Knowledge nodes -->
+    <circle cx="-120" cy="-40" r="15" fill="url(#nodeGradient)" filter="url(#glow)">
+      <animate attributeName="r" values="15;18;15" dur="2.2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="120" cy="-40" r="15" fill="url(#nodeGradient)" filter="url(#glow)">
+      <animate attributeName="r" values="15;18;15" dur="1.8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="-120" cy="40" r="15" fill="url(#nodeGradient)" filter="url(#glow)">
+      <animate attributeName="r" values="15;18;15" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="120" cy="40" r="15" fill="url(#nodeGradient)" filter="url(#glow)">
+      <animate attributeName="r" values="15;18;15" dur="1.6s" repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- Meta-learning nodes (higher level) -->
+    <circle cx="-60" cy="-140" r="12" fill="#ff00ff" filter="url(#glow)" opacity="0.8">
+      <animate attributeName="r" values="12;15;12" dur="2.7s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="60" cy="-140" r="12" fill="#ff00ff" filter="url(#glow)" opacity="0.8">
+      <animate attributeName="r" values="12;15;12" dur="2.1s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="-60" cy="140" r="12" fill="#ff00ff" filter="url(#glow)" opacity="0.8">
+      <animate attributeName="r" values="12;15;12" dur="1.9s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="60" cy="140" r="12" fill="#ff00ff" filter="url(#glow)" opacity="0.8">
+      <animate attributeName="r" values="12;15;12" dur="2.3s" repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- Interconnecting smaller nodes -->
+    <g fill="#00ffaa" opacity="0.6">
+      <circle cx="-90" cy="-80" r="5" filter="url(#glow)">
+        <animate attributeName="opacity" values="0.6;1;0.6" dur="1.5s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="90" cy="-80" r="5" filter="url(#glow)">
+        <animate attributeName="opacity" values="0.6;1;0.6" dur="1.8s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="-90" cy="80" r="5" filter="url(#glow)">
+        <animate attributeName="opacity" values="0.6;1;0.6" dur="2.1s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="90" cy="80" r="5" filter="url(#glow)">
+        <animate attributeName="opacity" values="0.6;1;0.6" dur="1.7s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    
+    <!-- Data flow lines -->
+    <g stroke="#ffff00" stroke-width="1" fill="none" opacity="0.5">
+      <path d="M -120,-40 Q -90,-80 -60,-140">
+        <animate attributeName="stroke-dasharray" values="0 100;100 0;0 100" dur="3s" repeatCount="indefinite"/>
+      </path>
+      <path d="M 120,-40 Q 90,-80 60,-140">
+        <animate attributeName="stroke-dasharray" values="0 100;100 0;0 100" dur="2.5s" repeatCount="indefinite"/>
+      </path>
+      <path d="M -120,40 Q -90,80 -60,140">
+        <animate attributeName="stroke-dasharray" values="0 100;100 0;0 100" dur="2.8s" repeatCount="indefinite"/>
+      </path>
+      <path d="M 120,40 Q 90,80 60,140">
+        <animate attributeName="stroke-dasharray" values="0 100;100 0;0 100" dur="2.2s" repeatCount="indefinite"/>
+      </path>
+    </g>
+  </g>
+  
+  <!-- Abstract geometric shapes representing learning processes -->
+  <g transform="translate(150,150)" opacity="0.3">
+    <polygon points="0,0 20,10 15,30 -5,25" fill="#00ffff" filter="url(#glow)">
+      <animateTransform attributeName="transform" type="rotate" values="0;360" dur="10s" repeatCount="indefinite"/>
+    </polygon>
+  </g>
+  
+  <g transform="translate(650,450)" opacity="0.3">
+    <polygon points="0,0 15,8 12,25 -3,20" fill="#ff00ff" filter="url(#glow)">
+      <animateTransform attributeName="transform" type="rotate" values="0;-360" dur="8s" repeatCount="indefinite"/>
+    </polygon>
+  </g>
+  
+  <!-- Subtle circuit-like patterns -->
+  <g stroke="#00ffaa" stroke-width="1" fill="none" opacity="0.2">
+    <path d="M 50,50 L 100,50 L 100,100 L 150,100"/>
+    <path d="M 650,500 L 700,500 L 700,550 L 750,550"/>
+    <circle cx="100" cy="50" r="3" fill="#00ffaa"/>
+    <circle cx="100" cy="100" r="3" fill="#00ffaa"/>
+    <circle cx="700" cy="500" r="3" fill="#00ffaa"/>
+    <circle cx="700" cy="550" r="3" fill="#00ffaa"/>
+  </g>
+  
+  <!-- Flowing energy streams -->
+  <g stroke="#ffff00" stroke-width="2" fill="none" opacity="0.4">
+    <path d="M 0,300 Q 200,250 400,300 Q 600,350 800,300">
+      <animate attributeName="stroke-dasharray" values="0 50;50 0;0 50" dur="4s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  
+</svg>
