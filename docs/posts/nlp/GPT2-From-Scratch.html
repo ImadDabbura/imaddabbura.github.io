@@ -296,8 +296,8 @@ ga('send', {
    
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#gpts" id="toc-gpts" class="nav-link" data-scroll-target="#gpts">GPTs</a></li>
   <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation">Implementation</a></li>
-  <li><a href="#implementation-1" id="toc-implementation-1" class="nav-link" data-scroll-target="#implementation-1">Implementation</a></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources">Resources</a></li>
   </ul>
@@ -313,30 +313,30 @@ ga('send', {
 <p><img src="gpt2.jpeg" height="600px" width="800px&quot;"></p>
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
-<p>There’s an old saying in engineering: “You don’t really understand something until you can build it.” This principle has never been more relevant than in the era of large language models, where the gap between using these powerful tools and truly comprehending their inner workings continues to widen. Today, we’re embarking on an ambitious journey—implementing a GPT-2/GPT-3 style model (specifically the 124M parameter variant) from scratch using PyTorch, focusing on the components that truly matter for understanding how these models work.</p>
-<p>Now, I’ve already taken “from scratch” to its extreme in a previous project where I built an <a href="https://github.com/ImadDabbura/tiny-pytorch">entire deep learning framework</a>, complete with automatic differentiation, tensor operations, and ndarray implementations supporting CPU and GPU backend. That journey taught me the fundamentals of how gradients flow and computations are optimized at the lowest level. But this project has a different focus: understanding the architectural decisions and engineering challenges specific to transformer-based language models. We’ll use PyTorch’s battle-tested primitives for tensor operations and autograd, allowing us to focus on what makes GPT special: multi-head attention mechanisms, positional encodings, layer normalization, and the transformer blocks that orchestrate these components into something capable of understanding and generating human language.</p>
-<p>This hands-on experience reveals challenges you can’t appreciate until you face them directly. You’ll watch your GPU memory overflow, witness your training grind to a halt from inefficient data loading, and experience firsthand why mixed-precision training isn’t just an optimization—it’s a necessity. You’ll learn why gradient accumulation exists when you can’t fit your desired batch size, why activation checkpointing trades computation for memory, and how a poorly implemented attention mechanism can turn your sleek transformer into a computational nightmare. Having built the low-level primitives before, you’ll now appreciate why even with optimized frameworks like PyTorch, the architecture-level decisions in transformers require careful engineering to scale efficiently.</p>
+<p>There’s an old saying in engineering: “You don’t really understand something until you can build it.” This has never been more true than in the era of LLMs. While we’ve previously explored the foundational concepts in my post on the Transformer architecture <a href="https://imaddabbura.github.io/posts/nlp/Transformer-Architecture-Explained.html">explained here</a>, true understanding comes from implementation. That’s why today, we’re building a GPT-style model (the 124M variant) from scratch in PyTorch.</p>
+<p>This project has a different focus than my last “from scratch” endeavor, where I built an <a href="https://github.com/ImadDabbura/tiny-pytorch">entire deep learning framework</a> to grasp the low-level mechanics of autograd and tensor ops. Here, we’ll leverage PyTorch’s battle-tested primitives to focus on what makes GPT special: multi-head attention, positional encodings, and the specific architectural decisions that enable language understanding.</p>
+<p>This hands-on process reveals challenges you can’t appreciate from diagrams alone. You’ll watch your GPU memory overflow, see training grind to a halt from inefficient data loading, and learn firsthand why techniques like mixed-precision training, gradient accumulation, and activation checkpointing are necessities, not just optimizations. It’s in facing these hurdles that you truly appreciate the engineering craft required to build and scale transformers efficiently.</p>
 </section>
-<section id="implementation" class="level1">
-<h1>Implementation</h1>
+<section id="gpts" class="level1">
+<h1>GPTs</h1>
 <p>GPT (Generative Pre-trained Transformer) models, developed by OpenAI, represent a breakthrough in natural language processing. GPT-2, released in 2019, demonstrated that a transformer-based model trained on vast amounts of text could generate remarkably coherent and contextually relevant content. GPT-3, its successor, scaled this approach to 175 billion parameters, showcasing emergent capabilities like few-shot learning and complex reasoning. Both models share the same fundamental architecture: stacked transformer decoder blocks that predict the next token in a sequence, trained on the simple objective of minimizing prediction error across massive text corpora. The 124M parameter version we’ll be building captures the essential architecture while remaining computationally tractable for individual developers—though even at this “small” scale, you’ll quickly discover why the ML community spends so much time optimizing both training efficiency and model performance.</p>
 <p>By the end of this journey, you won’t just know how transformers work—you’ll have built the critical components with your own hands, optimized the training loop, and watched your model evolve from random noise to coherent text generation. Let’s begin.</p>
 </section>
-<section id="implementation-1" class="level1">
+<section id="implementation" class="level1">
 <h1>Implementation</h1>
 <p>Throughout this implementation, every piece of code will be thoroughly annotated with explanations of not just what we’re doing, but why we’re doing it. More importantly, we’ll use few optimizations that make a big difference in terms of computational efficiency:</p>
 <ul>
 <li><p><strong>TensorFloat32 (TF32)</strong>: NVIDIA’s precision format that uses 19 bits of precision instead of 23, providing up to 8x speedup on A100 GPUs while maintaining model quality. We’ll see how a single line of code can dramatically accelerate matrix multiplications.</p></li>
 <li><p><strong>BFloat16 with Autocast</strong>: Mixed precision training using brain floating-point format, which maintains the same exponent range as FP32 but reduces mantissa precision. Combined with automatic mixed precision (AMP), this cuts memory usage in half and speeds up training significantly.</p></li>
 <li><p><strong>torch.compile</strong>: PyTorch 2.0’s just-in-time compilation that fuses operations and generates optimized kernels. We’ll explore how graph compilation can provide 10-30% speedups with minimal code changes.</p></li>
-<li><p><strong>Flash Attention and Online Softmax</strong>: An algorithmic improvement that computes attention without materializing the full attention matrix, reducing memory complexity from O(n²) to O(n). We’ll implement the online softmax trick that makes this possible.</p></li>
+<li><p><strong>Flash Attention and Online Softmax</strong>: An algorithmic improvement that computes attention without materializing the full attention matrix, reducing memory complexity from O(n²) to O(n).</p></li>
 <li><p><strong>Fused AdamW</strong>: A single-kernel implementation of the AdamW optimizer that reduces memory reads/writes by computing all parameter updates in one pass, providing up to 2x optimizer step speedup.</p></li>
 <li><p><strong>Annealed Learning Rate</strong>: Starting with a warmup phase followed by cosine decay, we’ll implement the learning rate schedule that has become standard for training transformers, understanding why stable training requires careful lr management.</p></li>
 <li><p><strong>Weight Decay Only on Matrices</strong>: A subtle but crucial detail—applying weight decay only to weight matrices in Linear and Embedding layers while excluding biases and layer normalization parameters, which improves model performance.</p></li>
 <li><p><strong>Distributed Data Parallelism (DDP)</strong>: Scaling training across multiple GPUs using PyTorch’s DDP, including gradient synchronization, proper data loading, and the intricacies of maintaining consistent model states across devices.</p></li>
 </ul>
 <p>Finally, since the GPT-2 paper omits certain architectural details and hyperparameter specifications, we’ll refer to the GPT-3 paper to fill these gaps—fortunately, the core architecture remains consistent between the two models, making the GPT-3 paper a reliable source for these missing implementation details.</p>
-<div id="660e14ce-2270-4cf4-9078-36759f24db29" class="cell" data-execution_count="1">
+<div id="660e14ce-2270-4cf4-9078-36759f24db29" class="cell">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> inspect</span>
@@ -357,7 +357,7 @@ ga('send', {
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.nn.parallel <span class="im">import</span> DistributedDataParallel <span class="im">as</span> DDP</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="f585c521" class="cell" data-execution_count="2">
+<div id="f585c521" class="cell">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> listify(obj):</span>
@@ -373,7 +373,7 @@ ga('send', {
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> [obj]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="4fd6e093-b414-4fb9-a165-04ae9e312c03" class="cell" data-execution_count="3">
+<div id="4fd6e093-b414-4fb9-a165-04ae9e312c03" class="cell">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> annealer(func: Callable):</span>
@@ -416,21 +416,26 @@ ga('send', {
 <span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _inner</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="96f98324-58a9-49f1-9ad1-789c1a6b20e4" class="cell" data-execution_count="4">
+<div id="96f98324-58a9-49f1-9ad1-789c1a6b20e4" class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="at">@dataclass</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> GPTConfig:</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    block_sz: <span class="bu">int</span> <span class="op">=</span> <span class="dv">1024</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    block_sz: <span class="bu">int</span> <span class="op">=</span> <span class="dv">1024</span> <span class="co"># Sequence length</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    vocab_sz: <span class="bu">int</span> <span class="op">=</span> (</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="dv">50257</span>  <span class="co"># 50000 BPE merges + 256 byte tokens + 1 for &lt;|endoftext|&gt; token</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="dv">50257</span>  <span class="co"># Originally 50000 BPE merges + 256 byte tokens + 1 for &lt;|endoftext|&gt; token</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="co"># which will delimits different documents. This token's index is 50256</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    n_layer: <span class="bu">int</span> <span class="op">=</span> <span class="dv">12</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    n_embd: <span class="bu">int</span> <span class="op">=</span> <span class="dv">768</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    n_head: <span class="bu">int</span> <span class="op">=</span> <span class="dv">12</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    lr: <span class="bu">float</span> <span class="op">=</span> <span class="fl">3e-4</span>  <span class="co"># Good for big models</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    batch_sz: <span class="bu">int</span> <span class="op">=</span> <span class="dv">4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="co"># However, we found that using 50257 as the vocab size is not a multiple of 64 and we</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        <span class="co"># could improve efficiency and performance (through better occupancy) if we round up</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        <span class="co"># to the closest multiple of 64, which is 5304.</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    n_layer: <span class="bu">int</span> <span class="op">=</span> <span class="dv">12</span> <span class="co"># Number of layers</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    n_embd: <span class="bu">int</span> <span class="op">=</span> <span class="dv">768</span> <span class="co"># Embedding dimension</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    n_head: <span class="bu">int</span> <span class="op">=</span> <span class="dv">12</span> <span class="co"># Number of attention heads</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    lr: <span class="bu">float</span> <span class="op">=</span> <span class="fl">3e-4</span>  <span class="co"># Good for big models</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    batch_sz: <span class="bu">int</span> <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    dropout: <span class="bu">float</span> <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    bias: <span class="bu">bool</span> <span class="op">=</span> <span class="va">True</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="f41875c6" class="cell" data-execution_count="5">
+<div id="f41875c6" class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MLP(nn.Module):</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config: GPTConfig):</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Point-wise feed-forward network that applies non-linearity</span></span>
@@ -442,54 +447,58 @@ ga('send', {
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Found to be better than ReLU in terms of gradient saturation</span></span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.gelu <span class="op">=</span> nn.GELU(approximate<span class="op">=</span><span class="st">"tanh"</span>)</span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.c_proj <span class="op">=</span> nn.Linear(config.n_embd <span class="op">*</span> <span class="dv">4</span>, config.n_embd)</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.c_proj.NANOGPT_SCALE_INIT <span class="op">=</span> <span class="dv">1</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.c_proj(<span class="va">self</span>.gelu(<span class="va">self</span>.c_fc(x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.dropout <span class="op">=</span> nn.Dropout(config.dropout)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.c_proj.NANOGPT_SCALE_INIT <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.dropout(<span class="va">self</span>.c_proj(<span class="va">self</span>.gelu(<span class="va">self</span>.c_fc(x))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="a14dee4c" class="cell" data-execution_count="6">
+<div id="a14dee4c" class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> CausalSelfAttention(nn.Module):</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config: GPTConfig):</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.n_head <span class="op">=</span> config.n_head</span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.n_embd <span class="op">=</span> config.n_embd</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.c_attn <span class="op">=</span> nn.Linear(config.n_embd, config.n_embd <span class="op">*</span> <span class="dv">3</span>)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.c_proj <span class="op">=</span> nn.Linear(config.n_embd, config.n_embd)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.c_proj.NANOGPT_SCALE_INIT <span class="op">=</span> <span class="dv">1</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        <span class="co"># </span><span class="al">NOTE</span><span class="co">: Mask is not needed when we use Pytorch's Flash attention</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="co"># self.register_buffer(</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">#     "mask",</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        <span class="co">#     torch.tril(torch.ones(config.block_sz, config.block_sz)).view(</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        <span class="co">#         config.block_sz, config.block_sz</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        <span class="co">#     ),</span></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        <span class="co"># )</span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        B, T, C <span class="op">=</span> x.shape</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>        qkv <span class="op">=</span> <span class="va">self</span>.c_attn(x)</span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>        <span class="co"># q/k/v is B x T x n_embd each</span></span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        q, k, v <span class="op">=</span> torch.split(qkv, <span class="va">self</span>.n_embd, dim<span class="op">=-</span><span class="dv">1</span>)</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Reshape q/k/v to B x n_head x T x (n_embd / n_head)</span></span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>        <span class="co"># So each head would be learning different kind of</span></span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>        <span class="co"># relationships</span></span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>        q <span class="op">=</span> q.view(B, T, <span class="va">self</span>.n_head, C <span class="op">//</span> <span class="va">self</span>.n_head).transpose(<span class="dv">1</span>, <span class="dv">2</span>)</span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>        k <span class="op">=</span> k.view(B, T, <span class="va">self</span>.n_head, C <span class="op">//</span> <span class="va">self</span>.n_head).transpose(<span class="dv">1</span>, <span class="dv">2</span>)</span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>        v <span class="op">=</span> v.view(B, T, <span class="va">self</span>.n_head, C <span class="op">//</span> <span class="va">self</span>.n_head).transpose(<span class="dv">1</span>, <span class="dv">2</span>)</span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>        <span class="co"># attn is B x T x T</span></span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>        <span class="co"># attn = (q @ k.transpose(-2, -1)) * (1.0 / math.sqrt(k.shape[-1]))</span></span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>        <span class="co"># # Mask out future tokens</span></span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>        <span class="co"># attn = attn.masked_fill(self.mask[:T, :T] == 0, float("-inf"))</span></span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>        <span class="co"># attn = F.softmax(attn, dim=-1)</span></span>
-<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>        <span class="co"># # y is B x T x n_embd</span></span>
-<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>        <span class="co"># y = attn @ v</span></span>
-<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Uses Flash attention that never materialize attention matrices for</span></span>
-<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>        <span class="co"># each head and is aware of the memory hierarchy and tries to reduce</span></span>
-<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>        <span class="co"># read/writes with more FLOPs -&gt; Speed up since we're memory bound</span></span>
-<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>        y <span class="op">=</span> F.scaled_dot_product_attention(q, k, v, is_causal<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>        y <span class="op">=</span> y.transpose(<span class="dv">1</span>, <span class="dv">2</span>).contiguous().view(B, T, C)</span>
-<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.c_proj(y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.c_attn <span class="op">=</span> nn.Linear(config.n_embd, config.n_embd <span class="op">*</span> <span class="dv">3</span>, bias<span class="op">=</span>config.bias)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.c_proj <span class="op">=</span> nn.Linear(config.n_embd, config.n_embd, bias<span class="op">=</span>config.bias)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.attn_dropout <span class="op">=</span> nn.Dropout(config.dropout)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.resid_dropout <span class="op">=</span> nn.Dropout(config.dropout)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.dropout <span class="op">=</span> config.dropout</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.c_proj.NANOGPT_SCALE_INIT <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        <span class="co"># </span><span class="al">NOTE</span><span class="co">: Mask is not needed when we use Pytorch's Flash attention</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        <span class="co"># self.register_buffer(</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        <span class="co">#     "mask",</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        <span class="co">#     torch.tril(torch.ones(config.block_sz, config.block_sz)).view(</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        <span class="co">#         config.block_sz, config.block_sz</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>        <span class="co">#     ),</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        <span class="co"># )</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        B, T, C <span class="op">=</span> x.shape</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>        qkv <span class="op">=</span> <span class="va">self</span>.c_attn(x)</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>        <span class="co"># q/k/v is B x T x n_embd each</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>        q, k, v <span class="op">=</span> torch.split(qkv, <span class="va">self</span>.n_embd, dim<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Reshape q/k/v to B x n_head x T x (n_embd / n_head)</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>        <span class="co"># So each head would be learning different kind of</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>        <span class="co"># relationships</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>        q <span class="op">=</span> q.view(B, T, <span class="va">self</span>.n_head, C <span class="op">//</span> <span class="va">self</span>.n_head).transpose(<span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>        k <span class="op">=</span> k.view(B, T, <span class="va">self</span>.n_head, C <span class="op">//</span> <span class="va">self</span>.n_head).transpose(<span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>        v <span class="op">=</span> v.view(B, T, <span class="va">self</span>.n_head, C <span class="op">//</span> <span class="va">self</span>.n_head).transpose(<span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>        <span class="co"># attn is B x T x T</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>        <span class="co"># attn = (q @ k.transpose(-2, -1)) * (1.0 / math.sqrt(k.shape[-1]))</span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>        <span class="co"># # Mask out future tokens</span></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>        <span class="co"># attn = attn.masked_fill(self.mask[:T, :T] == 0, float("-inf"))</span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>        <span class="co"># attn = self.attn_dropout(F.softmax(attn, dim=-1))</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>        <span class="co"># # y is B x T x n_embd</span></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>        <span class="co"># y = attn @ v</span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Uses Flash attention that never materialize attention matrices for</span></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>        <span class="co"># each head and is aware of the memory hierarchy and tries to reduce</span></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>        <span class="co"># read/writes with more FLOPs -&gt; Speed up since we're memory bound</span></span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>        y <span class="op">=</span> F.scaled_dot_product_attention(q, k, v, is_causal<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>        y <span class="op">=</span> y.transpose(<span class="dv">1</span>, <span class="dv">2</span>).contiguous().view(B, T, C)</span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.resid_dropout(<span class="va">self</span>.c_proj(y))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="85779fd0" class="cell" data-execution_count="7">
+<div id="85779fd0" class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Block(nn.Module):</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config: GPTConfig):</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
@@ -506,7 +515,7 @@ ga('send', {
 <span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> x <span class="op">+</span> <span class="va">self</span>.mlp(<span class="va">self</span>.ln_2(x))</span>
 <span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="20a4b2f4" class="cell" data-execution_count="8">
+<div id="20a4b2f4" class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> GPT2(nn.Module):</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config: GPTConfig):</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
@@ -641,64 +650,65 @@ ga('send', {
 <span id="cb8-132"><a href="#cb8-132" aria-hidden="true" tabindex="-1"></a>            idxs <span class="op">=</span> torch.cat([idxs, idx], dim<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> idxs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="b10a62ed" class="cell" data-execution_count="14">
+<div id="b10a62ed" class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> DataLoaderLight:</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>,</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        batch_sz: <span class="bu">int</span>,</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        block_sz: <span class="bu">int</span>,</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        process_rank: <span class="bu">int</span> <span class="op">=</span> <span class="dv">0</span>,</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        number_processes: <span class="bu">int</span> <span class="op">=</span> <span class="dv">1</span>,</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.batch_sz <span class="op">=</span> batch_sz</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.block_sz <span class="op">=</span> block_sz</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.process_rank <span class="op">=</span> process_rank</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.number_processes <span class="op">=</span> number_processes</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> <span class="bu">open</span>(<span class="st">"tinyshakespeare.txt"</span>, <span class="st">"r"</span>) <span class="im">as</span> f:</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>            text <span class="op">=</span> f.read()</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>        encoder <span class="op">=</span> tiktoken.get_encoding(<span class="st">"gpt2"</span>)</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.tokens <span class="op">=</span> torch.tensor(encoder.encode(text), dtype<span class="op">=</span>torch.<span class="bu">long</span>)</span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>        <span class="co"># We can truncate the tokens to a be multiple of batch_sz x block_sz</span></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>        <span class="co"># x number_processes. This is useful for multi-node training and mimics</span></span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>        <span class="co"># the behavior of DataLoader's `drop_last` parameter.</span></span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.tokens <span class="op">=</span> <span class="va">self</span>.tokens[: <span class="bu">len</span>(<span class="va">self</span>.tokens) <span class="op">//</span> (</span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.batch_sz <span class="op">*</span> <span class="va">self</span>.block_sz <span class="op">*</span> <span class="va">self</span>.number_processes</span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>            <span class="op">*</span> <span class="va">self</span>.batch_sz</span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>            <span class="op">*</span> <span class="va">self</span>.block_sz</span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>            <span class="op">*</span> <span class="va">self</span>.number_processes]</span>
-<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Loaded </span><span class="sc">{</span><span class="bu">len</span>(<span class="va">self</span>.tokens)<span class="sc">}</span><span class="ss"> tokens"</span>)</span>
-<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"1 epoch = </span><span class="sc">{</span><span class="bu">len</span>(<span class="va">self</span>)<span class="sc">}</span><span class="ss"> batches"</span>)</span>
-<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.current_pos <span class="op">=</span> batch_sz <span class="op">*</span> block_sz <span class="op">*</span> process_rank</span>
-<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__len__</span>(<span class="va">self</span>):</span>
-<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">len</span>(<span class="va">self</span>.tokens) <span class="op">//</span> (<span class="va">self</span>.batch_sz <span class="op">*</span> <span class="va">self</span>.block_sz)</span>
-<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> next_batch(<span class="va">self</span>):</span>
-<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>        buf <span class="op">=</span> <span class="va">self</span>.tokens[</span>
-<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.current_pos : <span class="va">self</span>.current_pos</span>
-<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>            <span class="op">+</span> <span class="va">self</span>.batch_sz <span class="op">*</span> <span class="va">self</span>.block_sz</span>
-<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>            <span class="op">+</span> <span class="dv">1</span></span>
-<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>        ]</span>
-<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> buf[:<span class="op">-</span><span class="dv">1</span>].view(<span class="va">self</span>.batch_sz, <span class="va">self</span>.block_sz)</span>
-<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>        y <span class="op">=</span> buf[<span class="dv">1</span>:].view(<span class="va">self</span>.batch_sz, <span class="va">self</span>.block_sz)</span>
-<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Each process will process batch_sz x block_sz tokens in each</span></span>
-<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>        <span class="co"># iteration -&gt; with number_processes processes, total tokens processed</span></span>
-<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>        <span class="co"># in each iteration is batch_sz x block_sz x number_processes. In the</span></span>
-<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>        <span class="co"># case of one process, total tokens would be batch_sz x block_sz</span></span>
-<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.current_pos <span class="op">+=</span> (</span>
-<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.batch_sz <span class="op">*</span> <span class="va">self</span>.block_sz <span class="op">*</span> <span class="va">self</span>.number_processes</span>
-<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Similar to DataLoader's `drop_last` parameter, we drop the last</span></span>
-<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>        <span class="co"># batch if it's not a multiple of batch_sz x block_sz x number_processes</span></span>
-<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>        <span class="co"># if self.current_pos + (</span></span>
-<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a>        <span class="co">#     self.batch_sz * self.block_sz * self.number_processes</span></span>
-<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a>        <span class="co"># ) + self.number_processes &gt; len(self):</span></span>
-<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.current_pos <span class="op">&gt;=</span> <span class="bu">len</span>(<span class="va">self</span>.tokens):</span>
-<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.current_pos <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x, y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        file_path: <span class="bu">str</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        batch_sz: <span class="bu">int</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        block_sz: <span class="bu">int</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        process_rank: <span class="bu">int</span> <span class="op">=</span> <span class="dv">0</span>,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        number_processes: <span class="bu">int</span> <span class="op">=</span> <span class="dv">1</span>,</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.batch_sz <span class="op">=</span> batch_sz</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.block_sz <span class="op">=</span> block_sz</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.process_rank <span class="op">=</span> process_rank</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.number_processes <span class="op">=</span> number_processes</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> <span class="bu">open</span>(file_path, <span class="st">"r"</span>) <span class="im">as</span> f:</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>            text <span class="op">=</span> f.read()</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>        encoder <span class="op">=</span> tiktoken.get_encoding(<span class="st">"gpt2"</span>)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.tokens <span class="op">=</span> torch.tensor(encoder.encode(text), dtype<span class="op">=</span>torch.<span class="bu">long</span>)</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>        <span class="co"># We can truncate the tokens to a be multiple of batch_sz x block_sz</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>        <span class="co"># x number_processes. This is useful for multi-node training and mimics</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>        <span class="co"># the behavior of DataLoader's `drop_last` parameter.</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.tokens <span class="op">=</span> <span class="va">self</span>.tokens[: <span class="bu">len</span>(<span class="va">self</span>.tokens) <span class="op">//</span> (</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.batch_sz <span class="op">*</span> <span class="va">self</span>.block_sz <span class="op">*</span> <span class="va">self</span>.number_processes</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>            <span class="op">*</span> <span class="va">self</span>.batch_sz</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>            <span class="op">*</span> <span class="va">self</span>.block_sz</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>            <span class="op">*</span> <span class="va">self</span>.number_processes]</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Loaded </span><span class="sc">{</span><span class="bu">len</span>(<span class="va">self</span>.tokens)<span class="sc">}</span><span class="ss"> tokens"</span>)</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"1 epoch = </span><span class="sc">{</span><span class="bu">len</span>(<span class="va">self</span>)<span class="sc">}</span><span class="ss"> batches"</span>)</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.current_pos <span class="op">=</span> batch_sz <span class="op">*</span> block_sz <span class="op">*</span> process_rank</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__len__</span>(<span class="va">self</span>):</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">len</span>(<span class="va">self</span>.tokens) <span class="op">//</span> (<span class="va">self</span>.batch_sz <span class="op">*</span> <span class="va">self</span>.block_sz)</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> next_batch(<span class="va">self</span>):</span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>        buf <span class="op">=</span> <span class="va">self</span>.tokens[</span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.current_pos : <span class="va">self</span>.current_pos</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>            <span class="op">+</span> <span class="va">self</span>.batch_sz <span class="op">*</span> <span class="va">self</span>.block_sz</span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>            <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>        ]</span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> buf[:<span class="op">-</span><span class="dv">1</span>].view(<span class="va">self</span>.batch_sz, <span class="va">self</span>.block_sz)</span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>        y <span class="op">=</span> buf[<span class="dv">1</span>:].view(<span class="va">self</span>.batch_sz, <span class="va">self</span>.block_sz)</span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Each process will process batch_sz x block_sz tokens in each</span></span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>        <span class="co"># iteration -&gt; with number_processes processes, total tokens processed</span></span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>        <span class="co"># in each iteration is batch_sz x block_sz x number_processes. In the</span></span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>        <span class="co"># case of one process, total tokens would be batch_sz x block_sz</span></span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.current_pos <span class="op">+=</span> (</span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.batch_sz <span class="op">*</span> <span class="va">self</span>.block_sz <span class="op">*</span> <span class="va">self</span>.number_processes</span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Similar to DataLoader's `drop_last` parameter, we drop the last</span></span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>        <span class="co"># batch if it's not a multiple of batch_sz x block_sz x number_processes</span></span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a>        <span class="co"># if self.current_pos + (</span></span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a>        <span class="co">#     self.batch_sz * self.block_sz * self.number_processes</span></span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a>        <span class="co"># ) + self.number_processes &gt; len(self):</span></span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.current_pos <span class="op">&gt;=</span> <span class="bu">len</span>(<span class="va">self</span>.tokens):</span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.current_pos <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x, y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="7913deb5" class="cell" data-execution_count="18">
+<div id="7913deb5" class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">###########</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Distributed Data Parallel</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">###########</span></span>
@@ -801,86 +811,80 @@ ga('send', {
 <span id="cb10-100"><a href="#cb10-100" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Calculated gradient accumulation steps: </span><span class="sc">{</span>grad_accum_steps<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb10-101"><a href="#cb10-101" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-102"><a href="#cb10-102" aria-hidden="true" tabindex="-1"></a>train_dl <span class="op">=</span> DataLoaderLight(</span>
-<span id="cb10-103"><a href="#cb10-103" aria-hidden="true" tabindex="-1"></a>    batch_sz<span class="op">=</span>GPTConfig.batch_sz, block_sz<span class="op">=</span>GPTConfig.block_sz</span>
-<span id="cb10-104"><a href="#cb10-104" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb10-105"><a href="#cb10-105" aria-hidden="true" tabindex="-1"></a><span class="co"># Pytorch will use TensorFloat32 if available, else use FP32</span></span>
-<span id="cb10-106"><a href="#cb10-106" aria-hidden="true" tabindex="-1"></a><span class="co"># But the weights will still be stored using FP32 with less precision</span></span>
-<span id="cb10-107"><a href="#cb10-107" aria-hidden="true" tabindex="-1"></a><span class="co"># (10 bits for mantissa instead of 23). It is just the</span></span>
-<span id="cb10-108"><a href="#cb10-108" aria-hidden="true" tabindex="-1"></a><span class="co"># operations would be executed as TF32 if available</span></span>
-<span id="cb10-109"><a href="#cb10-109" aria-hidden="true" tabindex="-1"></a>torch.set_float32_matmul_precision(<span class="st">"high"</span>)</span>
-<span id="cb10-110"><a href="#cb10-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-111"><a href="#cb10-111" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> step <span class="kw">in</span> <span class="bu">range</span>(max_steps):</span>
-<span id="cb10-112"><a href="#cb10-112" aria-hidden="true" tabindex="-1"></a>    start <span class="op">=</span> time.time()</span>
-<span id="cb10-113"><a href="#cb10-113" aria-hidden="true" tabindex="-1"></a>    x, y <span class="op">=</span> train_dl.next_batch()</span>
-<span id="cb10-114"><a href="#cb10-114" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> x.to(device)</span>
-<span id="cb10-115"><a href="#cb10-115" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> y.to(device)</span>
-<span id="cb10-116"><a href="#cb10-116" aria-hidden="true" tabindex="-1"></a>    <span class="co"># code.interact(local=locals())</span></span>
-<span id="cb10-117"><a href="#cb10-117" aria-hidden="true" tabindex="-1"></a>    optimizer.zero_grad()</span>
-<span id="cb10-118"><a href="#cb10-118" aria-hidden="true" tabindex="-1"></a>    loss_accum <span class="op">=</span> <span class="fl">0.0</span></span>
-<span id="cb10-119"><a href="#cb10-119" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> macro_step <span class="kw">in</span> <span class="bu">range</span>(grad_accum_steps):</span>
-<span id="cb10-120"><a href="#cb10-120" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> device <span class="op">==</span> <span class="st">"cuda"</span>:</span>
-<span id="cb10-121"><a href="#cb10-121" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Tensors that will be greatly affected by less precission such</span></span>
-<span id="cb10-122"><a href="#cb10-122" aria-hidden="true" tabindex="-1"></a>            <span class="co"># as loss, layernorm would still be in FP32 while others such</span></span>
-<span id="cb10-123"><a href="#cb10-123" aria-hidden="true" tabindex="-1"></a>            <span class="co"># as attention weights would be in BF16</span></span>
-<span id="cb10-124"><a href="#cb10-124" aria-hidden="true" tabindex="-1"></a>            <span class="cf">with</span> torch.autocast(device_type<span class="op">=</span>device, dtype<span class="op">=</span>torch.bfloat16):</span>
-<span id="cb10-125"><a href="#cb10-125" aria-hidden="true" tabindex="-1"></a>                logits, loss <span class="op">=</span> model(x, y)</span>
-<span id="cb10-126"><a href="#cb10-126" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
-<span id="cb10-127"><a href="#cb10-127" aria-hidden="true" tabindex="-1"></a>            logits, loss <span class="op">=</span> model(x, y)</span>
-<span id="cb10-128"><a href="#cb10-128" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Just accumulating gradients yield to summation of objective but</span></span>
-<span id="cb10-129"><a href="#cb10-129" aria-hidden="true" tabindex="-1"></a>        <span class="co"># we want mean so we weight each loss by 1/grad_accum_steps</span></span>
-<span id="cb10-130"><a href="#cb10-130" aria-hidden="true" tabindex="-1"></a>        loss <span class="op">/=</span> grad_accum_steps</span>
-<span id="cb10-131"><a href="#cb10-131" aria-hidden="true" tabindex="-1"></a>        loss_accum <span class="op">+=</span> loss.detach()</span>
-<span id="cb10-132"><a href="#cb10-132" aria-hidden="true" tabindex="-1"></a>        <span class="co"># To avoid syncing the gradients between the processes after every</span></span>
-<span id="cb10-133"><a href="#cb10-133" aria-hidden="true" tabindex="-1"></a>        <span class="co"># macro step, we disable it and only allows the sync up of</span></span>
-<span id="cb10-134"><a href="#cb10-134" aria-hidden="true" tabindex="-1"></a>        <span class="co"># gradients after we finish all gradient accumulation in each</span></span>
-<span id="cb10-135"><a href="#cb10-135" aria-hidden="true" tabindex="-1"></a>        <span class="co"># process</span></span>
-<span id="cb10-136"><a href="#cb10-136" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> ddp:</span>
-<span id="cb10-137"><a href="#cb10-137" aria-hidden="true" tabindex="-1"></a>            model.require_backward_grad_sync <span class="op">=</span> (</span>
-<span id="cb10-138"><a href="#cb10-138" aria-hidden="true" tabindex="-1"></a>                macro_step <span class="op">==</span> grad_accum_steps <span class="op">-</span> <span class="dv">1</span></span>
-<span id="cb10-139"><a href="#cb10-139" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb10-140"><a href="#cb10-140" aria-hidden="true" tabindex="-1"></a>        loss.backward()</span>
-<span id="cb10-141"><a href="#cb10-141" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Each process would have its own loss_accum tensor, so to get the</span></span>
-<span id="cb10-142"><a href="#cb10-142" aria-hidden="true" tabindex="-1"></a>    <span class="co"># average loss_accum across all processes, we want to compute the</span></span>
-<span id="cb10-143"><a href="#cb10-143" aria-hidden="true" tabindex="-1"></a>    <span class="co"># average of all loss_accum in all processes</span></span>
-<span id="cb10-144"><a href="#cb10-144" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> ddp:</span>
-<span id="cb10-145"><a href="#cb10-145" aria-hidden="true" tabindex="-1"></a>        dist.all_reduce(loss_accum, op<span class="op">=</span>dist.ReduceOp.AVG)</span>
-<span id="cb10-146"><a href="#cb10-146" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Clips gradient to global norm. It is very useful to avoid having a</span></span>
-<span id="cb10-147"><a href="#cb10-147" aria-hidden="true" tabindex="-1"></a>    <span class="co"># very high loss for some (bad) batch(es) that would have very high</span></span>
-<span id="cb10-148"><a href="#cb10-148" aria-hidden="true" tabindex="-1"></a>    <span class="co"># loss # which would lead to high gradients and huge updates</span></span>
-<span id="cb10-149"><a href="#cb10-149" aria-hidden="true" tabindex="-1"></a>    <span class="co"># </span><span class="al">NOTE</span><span class="co">: In the beginning of training it is normal to have high norms</span></span>
-<span id="cb10-150"><a href="#cb10-150" aria-hidden="true" tabindex="-1"></a>    <span class="co"># as the # model initialized randomly</span></span>
-<span id="cb10-151"><a href="#cb10-151" aria-hidden="true" tabindex="-1"></a>    norm <span class="op">=</span> nn.utils.clip_grad_norm_(model.parameters(), <span class="fl">1.0</span>)</span>
-<span id="cb10-152"><a href="#cb10-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-153"><a href="#cb10-153" aria-hidden="true" tabindex="-1"></a>    <span class="co"># </span><span class="al">TODO</span><span class="co">: Use ParamScheduler from `cmn_ai`</span></span>
-<span id="cb10-154"><a href="#cb10-154" aria-hidden="true" tabindex="-1"></a>    lr <span class="op">=</span> sched(step <span class="op">/</span> max_steps)</span>
-<span id="cb10-155"><a href="#cb10-155" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> pg <span class="kw">in</span> optimizer.param_groups:</span>
-<span id="cb10-156"><a href="#cb10-156" aria-hidden="true" tabindex="-1"></a>        pg[<span class="st">"lr"</span>] <span class="op">=</span> lr</span>
-<span id="cb10-157"><a href="#cb10-157" aria-hidden="true" tabindex="-1"></a>    optimizer.step()</span>
-<span id="cb10-158"><a href="#cb10-158" aria-hidden="true" tabindex="-1"></a>    end <span class="op">=</span> time.time()</span>
-<span id="cb10-159"><a href="#cb10-159" aria-hidden="true" tabindex="-1"></a>    elapsed_time <span class="op">=</span> end <span class="op">-</span> start</span>
-<span id="cb10-160"><a href="#cb10-160" aria-hidden="true" tabindex="-1"></a>    token_per_sec <span class="op">=</span> (</span>
-<span id="cb10-161"><a href="#cb10-161" aria-hidden="true" tabindex="-1"></a>        GPTConfig.batch_sz</span>
-<span id="cb10-162"><a href="#cb10-162" aria-hidden="true" tabindex="-1"></a>        <span class="op">*</span> GPTConfig.block_sz</span>
-<span id="cb10-163"><a href="#cb10-163" aria-hidden="true" tabindex="-1"></a>        <span class="op">*</span> grad_accum_steps</span>
-<span id="cb10-164"><a href="#cb10-164" aria-hidden="true" tabindex="-1"></a>        <span class="op">*</span> ddp_world_size</span>
-<span id="cb10-165"><a href="#cb10-165" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">/</span> (elapsed_time)</span>
-<span id="cb10-166"><a href="#cb10-166" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(</span>
-<span id="cb10-167"><a href="#cb10-167" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"step </span><span class="sc">{</span>step<span class="sc">}</span><span class="ss">, loss: </span><span class="sc">{</span>loss<span class="sc">.</span>item()<span class="sc">}</span><span class="ss">, lr </span><span class="sc">{</span>lr<span class="sc">:.4e}</span><span class="ss">, norm: </span><span class="sc">{</span>norm<span class="sc">:.2f}</span><span class="ss">, time: </span><span class="sc">{</span>elapsed_time<span class="sc">:.2f}</span><span class="ss">s, tok/sec: </span><span class="sc">{</span>token_per_sec<span class="sc">:.2f}</span><span class="ss">"</span></span>
-<span id="cb10-168"><a href="#cb10-168" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb10-169"><a href="#cb10-169" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-170"><a href="#cb10-170" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> ddp:</span>
-<span id="cb10-171"><a href="#cb10-171" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Kills all processes</span></span>
-<span id="cb10-172"><a href="#cb10-172" aria-hidden="true" tabindex="-1"></a>    destroy_process_group()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>mps
-Total desired batch size: 524288
-Calculated gradient accumulation steps: 128
-Loaded 335872 tokens
-1 epoch = 82 batches</code></pre>
-</div>
-<div class="cell-output cell-output-error">
-<pre><code>KeyboardInterrupt: </code></pre>
-</div>
+<span id="cb10-103"><a href="#cb10-103" aria-hidden="true" tabindex="-1"></a>    <span class="st">"tinyshakespeare.txt"</span>,</span>
+<span id="cb10-104"><a href="#cb10-104" aria-hidden="true" tabindex="-1"></a>    batch_sz<span class="op">=</span>GPTConfig.batch_sz,</span>
+<span id="cb10-105"><a href="#cb10-105" aria-hidden="true" tabindex="-1"></a>    block_sz<span class="op">=</span>GPTConfig.block_sz,</span>
+<span id="cb10-106"><a href="#cb10-106" aria-hidden="true" tabindex="-1"></a>    process_rank<span class="op">=</span>ddp_rank,</span>
+<span id="cb10-107"><a href="#cb10-107" aria-hidden="true" tabindex="-1"></a>    number_processes<span class="op">=</span>ddp_world_size</span>
+<span id="cb10-108"><a href="#cb10-108" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-109"><a href="#cb10-109" aria-hidden="true" tabindex="-1"></a><span class="co"># Pytorch will use TensorFloat32 if available, else use FP32</span></span>
+<span id="cb10-110"><a href="#cb10-110" aria-hidden="true" tabindex="-1"></a><span class="co"># But the weights will still be stored using FP32 with less precision</span></span>
+<span id="cb10-111"><a href="#cb10-111" aria-hidden="true" tabindex="-1"></a><span class="co"># (10 bits for mantissa instead of 23). It is just the</span></span>
+<span id="cb10-112"><a href="#cb10-112" aria-hidden="true" tabindex="-1"></a><span class="co"># operations would be executed as TF32 if available</span></span>
+<span id="cb10-113"><a href="#cb10-113" aria-hidden="true" tabindex="-1"></a>torch.set_float32_matmul_precision(<span class="st">"high"</span>)</span>
+<span id="cb10-114"><a href="#cb10-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-115"><a href="#cb10-115" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> step <span class="kw">in</span> <span class="bu">range</span>(max_steps):</span>
+<span id="cb10-116"><a href="#cb10-116" aria-hidden="true" tabindex="-1"></a>    start <span class="op">=</span> time.time()</span>
+<span id="cb10-117"><a href="#cb10-117" aria-hidden="true" tabindex="-1"></a>    x, y <span class="op">=</span> train_dl.next_batch()</span>
+<span id="cb10-118"><a href="#cb10-118" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> x.to(device)</span>
+<span id="cb10-119"><a href="#cb10-119" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> y.to(device)</span>
+<span id="cb10-120"><a href="#cb10-120" aria-hidden="true" tabindex="-1"></a>    <span class="co"># code.interact(local=locals())</span></span>
+<span id="cb10-121"><a href="#cb10-121" aria-hidden="true" tabindex="-1"></a>    optimizer.zero_grad()</span>
+<span id="cb10-122"><a href="#cb10-122" aria-hidden="true" tabindex="-1"></a>    loss_accum <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb10-123"><a href="#cb10-123" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> macro_step <span class="kw">in</span> <span class="bu">range</span>(grad_accum_steps):</span>
+<span id="cb10-124"><a href="#cb10-124" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> device <span class="op">==</span> <span class="st">"cuda"</span>:</span>
+<span id="cb10-125"><a href="#cb10-125" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Tensors that will be greatly affected by less precission such</span></span>
+<span id="cb10-126"><a href="#cb10-126" aria-hidden="true" tabindex="-1"></a>            <span class="co"># as loss, layernorm would still be in FP32 while others such</span></span>
+<span id="cb10-127"><a href="#cb10-127" aria-hidden="true" tabindex="-1"></a>            <span class="co"># as attention weights would be in BF16</span></span>
+<span id="cb10-128"><a href="#cb10-128" aria-hidden="true" tabindex="-1"></a>            <span class="cf">with</span> torch.autocast(device_type<span class="op">=</span>device, dtype<span class="op">=</span>torch.bfloat16):</span>
+<span id="cb10-129"><a href="#cb10-129" aria-hidden="true" tabindex="-1"></a>                logits, loss <span class="op">=</span> model(x, y)</span>
+<span id="cb10-130"><a href="#cb10-130" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb10-131"><a href="#cb10-131" aria-hidden="true" tabindex="-1"></a>            logits, loss <span class="op">=</span> model(x, y)</span>
+<span id="cb10-132"><a href="#cb10-132" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Just accumulating gradients yield to summation of objective but</span></span>
+<span id="cb10-133"><a href="#cb10-133" aria-hidden="true" tabindex="-1"></a>        <span class="co"># we want mean so we weight each loss by 1/grad_accum_steps</span></span>
+<span id="cb10-134"><a href="#cb10-134" aria-hidden="true" tabindex="-1"></a>        loss <span class="op">/=</span> grad_accum_steps</span>
+<span id="cb10-135"><a href="#cb10-135" aria-hidden="true" tabindex="-1"></a>        loss_accum <span class="op">+=</span> loss.detach()</span>
+<span id="cb10-136"><a href="#cb10-136" aria-hidden="true" tabindex="-1"></a>        <span class="co"># To avoid syncing the gradients between the processes after every</span></span>
+<span id="cb10-137"><a href="#cb10-137" aria-hidden="true" tabindex="-1"></a>        <span class="co"># macro step, we disable it and only allows the sync up of</span></span>
+<span id="cb10-138"><a href="#cb10-138" aria-hidden="true" tabindex="-1"></a>        <span class="co"># gradients after we finish all gradient accumulation in each</span></span>
+<span id="cb10-139"><a href="#cb10-139" aria-hidden="true" tabindex="-1"></a>        <span class="co"># process</span></span>
+<span id="cb10-140"><a href="#cb10-140" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> ddp:</span>
+<span id="cb10-141"><a href="#cb10-141" aria-hidden="true" tabindex="-1"></a>            model.require_backward_grad_sync <span class="op">=</span> (</span>
+<span id="cb10-142"><a href="#cb10-142" aria-hidden="true" tabindex="-1"></a>                macro_step <span class="op">==</span> grad_accum_steps <span class="op">-</span> <span class="dv">1</span></span>
+<span id="cb10-143"><a href="#cb10-143" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb10-144"><a href="#cb10-144" aria-hidden="true" tabindex="-1"></a>        loss.backward()</span>
+<span id="cb10-145"><a href="#cb10-145" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Each process would have its own loss_accum tensor, so to get the</span></span>
+<span id="cb10-146"><a href="#cb10-146" aria-hidden="true" tabindex="-1"></a>    <span class="co"># average loss_accum across all processes, we want to compute the</span></span>
+<span id="cb10-147"><a href="#cb10-147" aria-hidden="true" tabindex="-1"></a>    <span class="co"># average of all loss_accum in all processes</span></span>
+<span id="cb10-148"><a href="#cb10-148" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> ddp:</span>
+<span id="cb10-149"><a href="#cb10-149" aria-hidden="true" tabindex="-1"></a>        dist.all_reduce(loss_accum, op<span class="op">=</span>dist.ReduceOp.AVG)</span>
+<span id="cb10-150"><a href="#cb10-150" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Clips gradient to global norm. It is very useful to avoid having a</span></span>
+<span id="cb10-151"><a href="#cb10-151" aria-hidden="true" tabindex="-1"></a>    <span class="co"># very high loss for some (bad) batch(es) that would have very high</span></span>
+<span id="cb10-152"><a href="#cb10-152" aria-hidden="true" tabindex="-1"></a>    <span class="co"># loss # which would lead to high gradients and huge updates</span></span>
+<span id="cb10-153"><a href="#cb10-153" aria-hidden="true" tabindex="-1"></a>    <span class="co"># </span><span class="al">NOTE</span><span class="co">: In the beginning of training it is normal to have high norms</span></span>
+<span id="cb10-154"><a href="#cb10-154" aria-hidden="true" tabindex="-1"></a>    <span class="co"># as the # model initialized randomly</span></span>
+<span id="cb10-155"><a href="#cb10-155" aria-hidden="true" tabindex="-1"></a>    norm <span class="op">=</span> nn.utils.clip_grad_norm_(model.parameters(), <span class="fl">1.0</span>)</span>
+<span id="cb10-156"><a href="#cb10-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-157"><a href="#cb10-157" aria-hidden="true" tabindex="-1"></a>    <span class="co"># </span><span class="al">TODO</span><span class="co">: Use ParamScheduler from `cmn_ai`</span></span>
+<span id="cb10-158"><a href="#cb10-158" aria-hidden="true" tabindex="-1"></a>    lr <span class="op">=</span> sched(step <span class="op">/</span> max_steps)</span>
+<span id="cb10-159"><a href="#cb10-159" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> pg <span class="kw">in</span> optimizer.param_groups:</span>
+<span id="cb10-160"><a href="#cb10-160" aria-hidden="true" tabindex="-1"></a>        pg[<span class="st">"lr"</span>] <span class="op">=</span> lr</span>
+<span id="cb10-161"><a href="#cb10-161" aria-hidden="true" tabindex="-1"></a>    optimizer.step()</span>
+<span id="cb10-162"><a href="#cb10-162" aria-hidden="true" tabindex="-1"></a>    end <span class="op">=</span> time.time()</span>
+<span id="cb10-163"><a href="#cb10-163" aria-hidden="true" tabindex="-1"></a>    elapsed_time <span class="op">=</span> end <span class="op">-</span> start</span>
+<span id="cb10-164"><a href="#cb10-164" aria-hidden="true" tabindex="-1"></a>    token_per_sec <span class="op">=</span> (</span>
+<span id="cb10-165"><a href="#cb10-165" aria-hidden="true" tabindex="-1"></a>        GPTConfig.batch_sz</span>
+<span id="cb10-166"><a href="#cb10-166" aria-hidden="true" tabindex="-1"></a>        <span class="op">*</span> GPTConfig.block_sz</span>
+<span id="cb10-167"><a href="#cb10-167" aria-hidden="true" tabindex="-1"></a>        <span class="op">*</span> grad_accum_steps</span>
+<span id="cb10-168"><a href="#cb10-168" aria-hidden="true" tabindex="-1"></a>        <span class="op">*</span> ddp_world_size</span>
+<span id="cb10-169"><a href="#cb10-169" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">/</span> (elapsed_time)</span>
+<span id="cb10-170"><a href="#cb10-170" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(</span>
+<span id="cb10-171"><a href="#cb10-171" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"step </span><span class="sc">{</span>step<span class="sc">}</span><span class="ss">, loss: </span><span class="sc">{</span>loss<span class="sc">.</span>item()<span class="sc">}</span><span class="ss">, lr </span><span class="sc">{</span>lr<span class="sc">:.4e}</span><span class="ss">, norm: </span><span class="sc">{</span>norm<span class="sc">:.2f}</span><span class="ss">, time: </span><span class="sc">{</span>elapsed_time<span class="sc">:.2f}</span><span class="ss">s, tok/sec: </span><span class="sc">{</span>token_per_sec<span class="sc">:.2f}</span><span class="ss">"</span></span>
+<span id="cb10-172"><a href="#cb10-172" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb10-173"><a href="#cb10-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-174"><a href="#cb10-174" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> ddp:</span>
+<span id="cb10-175"><a href="#cb10-175" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Kills all processes</span></span>
+<span id="cb10-176"><a href="#cb10-176" aria-hidden="true" tabindex="-1"></a>    destroy_process_group()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="conclusion" class="level1">
