@@ -1,0 +1,25 @@
+---
+title: "CUDA's Fine-Grained Multithreading: Why GPUs are SPMD, not True SIMD"
+date: 2025-03-20
+categories: CUDA
+---
+CUDA uses a Single Program, Multiple Data (SPMD) programming model, not Single
+Instruction, Multiple Data (SIMD). While threads within a GPU's warp execute in
+a SIMD-like fashion, with the same instruction issued to all threads
+simultaneously, the overall architecture is SPMD. This is because:
+
+- **Warp Divergence:** Threads within a single warp can take different execution paths
+due to conditional branching, a phenomenon called warp divergence. The hardware
+handles this by serializing the execution of the different paths, but it breaks
+the strict SIMD model where every processing element executes the exact same
+instruction at the exact same time.
+
+- **Independent Warps:** Different warps on the same or different Streaming
+  Multiprocessors (SMs) are not guaranteed to be executing the same instruction
+  at the same time. The GPU's warp schedulers can dispatch different instructions
+  to different warps, allowing them to follow completely independent execution paths.
+
+In essence, CUDA's SPMD model allows programmers to write a single kernel
+program that is executed by many threads, with the flexibility for those
+threads to have unique execution paths, while the underlying hardware uses
+SIMD-like execution for performance within a warp.
