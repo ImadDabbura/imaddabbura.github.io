@@ -3,18 +3,334 @@ title: "`cmn_ai`"
 description: "Python library that incorporates reusable code and best practices
 in Machine Learning, AI, & Data Science."
 author:  "Imad Dabbura"
-image: "feature.jpg"
+image: "logo.png"
 categories: ["ML", "DL", "DS", "Python"]
 toc: true
 code-link: true
 ---
 
+![](logo.png){fig-align="center" width="500" height="300"}
 
-I am a big believer in **Boyd's Law**, which states that _speed of iteration beats quality of iteration_. Following this principle, I created `cmn_ai` to incorporate the most common tasks we encounter in ML/AI from data exploration to model development and training. Additionally, I baked into it some of the best practices I learned in my career so I don't have to repeat myself on every project I work on.
+# Introducing cmn\_ai: The High-Speed Library for Modern ML Workflows
 
-It is worth noting that the majority of the DL code such as `Learner` and callbacks assume that [`pytorch`](https://pytorch.org/) is used as the underlying DL library. Also, tabular data preprocessors/models are compatible with [`sklearn`](https://github.com/scikit-learn/scikit-learn) so they can be used easily with its `Pipeline` or `ColumnTransformer`.
+### Abstract
 
-Given the nature of the progress in ML/AI, I will always keep adding more functionalities as time passes.
+In the world of machine learning, the biggest bottleneck isn't always model performance—it's the time it takes to get there. **cmn\_ai** is a high-performance Python library designed to break that bottleneck. Built for AI, Deep Learning, and Data Science, it provides a robust toolkit of reusable components for PyTorch and scikit-learn that eliminates boilerplate and lets you focus on what truly matters: rapid experimentation and faster delivery.
 
-- Documentation: <a href="https://imaddabbura.github.io/cmn_ai/">https://imaddabbura.github.io/cmn_ai/</a>
-- Repo: <a href="https://github.com/ImadDabbura/cmn_ai">https://github.com/ImadDabbura/cmn_ai</a>
+### Table of Contents
+
+1.  [The Problem: Why Is ML Development So Slow?](https://www.google.com/search?q=%23the-problem-why-is-ml-development-so-slow)
+2.  [Our Guiding Principle: Boyd's Law in Machine Learning](https://www.google.com/search?q=%23our-guiding-principle-boyds-law-in-machine-learning)
+3.  [The Core Engine: A Flexible `Learner` Architecture](https://www.google.com/search?q=%23the-core-engine-a-flexible-learner-architecture)
+4.  [Fine-Grained Control with an Exception-Based Callback System](https://www.google.com/search?q=%23fine-grained-control-with-an-exception-based-callback-system)
+5.  [Key Features at a Glance](https://www.google.com/search?q=%23key-features-at-a-glance)
+6.  [Getting Started: A Quick Tour](https://www.google.com/search?q=%23getting-started-a-quick-tour)
+7.  [Under the Hood: A Modular Design](https://www.google.com/search?q=%23under-the-hood-a-modular-design)
+8.  [Conclusion: Build Faster, Iterate Smarter](https://www.google.com/search?q=%23conclusion-build-faster-iterate-smarter)
+9.  [License and Citation](https://www.google.com/search?q=%23license-and-citation)
+10. [References](https://www.google.com/search?q=%23references)
+
+-----
+
+## The Problem: Why Is ML Development So Slow?
+
+If you've ever built a machine learning model, you know the routine. You spend hours, if not days, writing and rewriting the same boilerplate code: custom training loops, logging mechanisms, data loading pipelines, and metric calculations. While essential, this repetitive work slows down the **cycle of experimentation**, which is the very heart of machine learning. Every moment spent on boilerplate is a moment not spent testing a new hypothesis, tuning a hyperparameter, or analyzing a result.
+
+This is the problem `cmn_ai` was built to solve. It is a comprehensive library born from years of real-world ML engineering experience, designed to abstract away the repetitive tasks and provide a solid foundation for your projects.
+
+> **Takeaway:** The overhead of writing boilerplate code for training loops, data handling, and logging is a major obstacle to rapid experimentation in machine learning.
+
+-----
+
+## Our Guiding Principle: Boyd's Law in Machine Learning
+
+The philosophy behind `cmn_ai` is directly inspired by **Boyd's Law of Iteration**: *Speed of iteration beats quality of iteration*.
+
+In combat, the fighter pilot John Boyd argued that the side able to observe, orient, decide, and act (OODA) the fastest would win, even if their individual actions weren't perfect. The same is true in machine learning. The ability to quickly run an experiment, get feedback, and start the next cycle is more valuable than spending weeks perfecting a single, monolithic training script.
+
+`cmn_ai` is designed to accelerate your OODA loop, letting you test ideas faster and arrive at a better solution sooner.
+
+```{mermaid}
+flowchart TD
+    subgraph "Traditional ML Development Cycle"
+        direction LR
+        A[Idea] --> B(Write DataLoaders) --> C(Write Model) --> D(Write Training Loop) --> E(Write Logging/Metrics) --> F(Debug & Run) --> G{Evaluate}
+        G -- "Hypothesis Fails?" --> B
+        G -- "Works!" --> H[Deploy]
+    end
+
+    subgraph "cmn_ai Accelerated Cycle"
+         direction LR
+         I[Idea] --> J[Configure Data & Model] --> K["learner = Learner(...)"] --> L["learner.fit()"] --> M{Evaluate}
+         M -- "Hypothesis Fails?" --> J
+         M -- "Works!" --> N[Deploy]
+    end
+
+    style D stroke-width:2px,stroke-dasharray: 5 5,stroke:red
+    style E stroke-width:2px,stroke-dasharray: 5 5,stroke:red
+    style K stroke-width:2px,stroke:green
+    style L stroke-width:2px,stroke:green
+```
+
+**Diagram 1: Workflow Comparison.** The `cmn_ai` workflow (bottom) significantly reduces the repetitive, time-consuming steps (red dashed boxes) inherent in the traditional approach (top) by encapsulating them within the `Learner` class.
+
+> **Takeaway:** By prioritizing iteration speed, `cmn_ai` helps you learn from more experiments in less time, leading to better models, faster.
+
+-----
+
+## The Core Engine: A Flexible `Learner` Architecture
+
+The heart of `cmn_ai`'s deep learning toolkit is the `Learner` class. It serves as a powerful, flexible orchestrator for the entire training process, handling everything from device placement to mixed-precision training and metric tracking.
+
+Let's compare a standard PyTorch training snippet with the `cmn_ai` approach.
+
+**Before: A Manual PyTorch Training Loop**
+
+```python
+# A lot of manual steps...
+model.to(device)
+for epoch in range(epochs):
+    for xb, yb in dl:
+        xb, yb = xb.to(device), yb.to(device)
+        optimizer.zero_grad()
+        pred = model(xb)
+        loss = loss_func(pred, yb)
+        loss.backward()
+        optimizer.step()
+        # ... and you still need to add logging, metrics, etc.
+```
+
+**After: Using the `cmn_ai` Learner**
+
+```python
+from cmn_ai.learner import Learner
+from cmn_ai.callbacks.training import DeviceCallBack, Recorder
+
+# Create a learner with data, model, and callbacks
+learner = Learner(model, dls, loss_func, opt_func, callbacks=[Recorder("lr")])
+learner.add_callback(DeviceCallBack("cuda:0")) # Handles moving data to the GPU
+
+# Train your model with one line
+learner.fit(epochs=10, lr=1e-3)
+```
+
+As you can see, the `Learner` API is clean and concise, yet highly extensible through its powerful callback system.
+
+> **Takeaway:** The `Learner` class replaces manual training loops with a clean, high-level API, letting you focus on the model and data, not the plumbing.
+
+-----
+
+## Fine-Grained Control with an Exception-Based Callback System
+
+While `Learner` provides simplicity, **callbacks** provide power. `cmn_ai` uses a unique, exception-based callback system that gives you precise control over every stage of the training process.
+
+Callbacks are small, self-contained classes that can be "hooked" into the `Learner` to perform actions at specific moments (e.g., `after_batch`, `before_epoch`). By raising a specific `Cancel...Exception`, a callback can gracefully interrupt and modify the training flow on the fly.
+
+```{mermaid}
+sequenceDiagram
+    participant Learner
+    participant Callback
+    loop Training Loop
+        Learner->>Callback: before_batch()
+        Note over Learner: Forward pass, calculate loss...
+        Learner->>Callback: after_loss()
+        opt CancelBackwardException thrown?
+            Learner->>Learner: Skip backward()
+        end
+        Learner->>Learner: loss.backward()
+        Learner->>Callback: after_backward()
+        opt CancelStepException thrown?
+            Learner->>Learner: Skip optimizer.step()
+        end
+        Learner->>Learner: optimizer.step()
+        Learner->>Callback: after_step()
+    end
+```
+
+**Diagram 2: Callback Exception Flow.** This diagram shows how a callback can throw an exception (e.g., `CancelStepException`) after the backward pass to prevent the optimizer from updating the model weights for a specific batch, giving you ultimate control.
+
+The main exceptions include:
+
+  * `CancelBatchException`: Skips the remainder of the current batch.
+  * `CancelBackwardException`: Skips the `loss.backward()` call.
+  * `CancelStepException`: Skips the `optimizer.step()` call.
+  * `CancelEpochException`: Skips the remainder of the current epoch.
+  * `CancelFitException`: Stops the entire training process immediately.
+
+This system enables sophisticated training techniques like gradient accumulation or freezing layers without complicating your main training logic.
+
+> **Takeaway:** The exception-based callback framework offers a powerful and clean way to customize training behavior without rewriting the `Learner` or creating complex stateful logic.
+
+-----
+
+## Key Features at a Glance
+
+| Feature | Description |
+| :--- | :--- |
+| 🚀 **Accelerated Development** | Pre-built modules and a flexible `Learner` eliminate boilerplate, enabling rapid prototyping. |
+| 🎯 **Best Practices Built-In** | The library distills years of ML engineering experience into robust, reusable components with consistent APIs. |
+| 🔧 **Framework Integration** | Built on PyTorch for deep learning and fully compatible with scikit-learn `Pipeline` and `ColumnTransformer` for tabular data. |
+| 📊 **Domain-Specific Tools** | Specialized utilities for **Vision**, **Text**, and **Tabular** machine learning, including EDA tools and data visualizers. |
+
+-----
+
+## Getting Started: A Quick Tour
+
+Getting started with `cmn_ai` is simple.
+
+> **Important Note:** `cmn_ai` requires **Python 3.13+** and depends on PyTorch, scikit-learn, NumPy, and pandas.
+
+### Installation
+
+The recommended way to install is directly from PyPI:
+
+```bash
+pip install cmn-ai
+```
+
+### Quick Examples
+
+Here’s how you can use `cmn_ai` for different tasks:
+
+**1. General Deep Learning**
+Customize your training loop with powerful callbacks for scheduling learning rates and tracking metrics.
+
+```python
+from cmn_ai.learner import Learner
+from cmn_ai.callbacks.schedule import BatchScheduler
+from cmn_ai.callbacks.training import MetricsCallback, ProgressCallback
+from torcheval.metrics import MulticlassAccuracy
+import torch.optim as opt
+from functools import partial
+
+# Schedule learning rate over all batches
+sched = partial(opt.lr_scheduler.OneCycleLR, max_lr=6e-2, total_steps=100)
+learner = Learner(model, dls, loss_func, opt_func)
+learner.add_callbacks([
+    ProgressCallback(),
+    BatchScheduler(sched),
+    MetricsCallback(accuracy=MulticlassAccuracy(num_classes=10)),
+])
+
+learner.fit(epochs=50, lr=1e-3)
+```
+
+**2. Computer Vision**
+The `VisionLearner` provides handy utilities like `show_batch` to quickly visualize your data.
+
+```python
+from cmn_ai.vision import VisionLearner
+
+# Vision-specific learner with built-in utilities
+vision_learner = VisionLearner(model, dls, loss_func)
+vision_learner.show_batch() # Visualize a batch of training data
+vision_learner.fit(epochs=20, lr=1e-4)
+```
+
+**3. Tabular Data Processing**
+`cmn_ai`'s tabular tools are fully compatible with scikit-learn, so they can be dropped directly into your existing pipelines.
+
+```python
+import pandas as pd
+from cmn_ai.tabular.preprocessing import DateTransformer
+from sklearn.pipeline import Pipeline
+
+# Create sample time-series data
+x = pd.DataFrame(
+    pd.date_range(start=pd.to_datetime("1/1/2018"), end=pd.to_datetime("1/08/2018"))
+)
+# This transformer automatically extracts date features like Day, Month, Year, etc.
+tfm = DateTransformer(drop=False)
+transformed_data = tfm.fit_transform(x)
+```
+
+> **Takeaway:** `cmn_ai` provides a simple installation and a consistent API across different ML domains, making it easy to integrate into new or existing projects.
+
+-----
+
+## Under the Hood: A Modular Design
+
+`cmn_ai` is designed to be modular, so you can use as much or as little of the library as you need. The architecture is organized logically by function.
+
+```
+cmn_ai/
+├── learner.py          # Core Learner class
+├── callbacks/          # Training callbacks
+├── vision/             # Computer vision utilities
+├── text/               # NLP processing tools
+├── tabular/            # Traditional ML tools
+├── utils/              # Core utilities
+├── plot.py             # Visualization tools
+└── losses.py           # Custom loss functions
+```
+
+**Source: [cmn\_ai GitHub Repository](https://github.com/ImadDabbura/cmn_ai)**
+
+This structure separates the core training engine from the domain-specific tools, making the library easy to maintain and extend.
+
+```{mermaid}
+graph TD
+    subgraph "cmn_ai Architecture"
+        L[Learner]
+        CB[Callbacks]
+        U[Utils]
+        P[Plot]
+        Loss[Losses]
+
+        L -- "Uses" --> CB
+        L -- "Uses" --> Loss
+        L -- "Uses" --> U
+        L -- "Uses" --> P
+
+        subgraph "Domain Layers"
+            V[VisionLearner]
+            T[TextList]
+            Tab[Tabular Transformers]
+        end
+
+        V -- "Extends" --> L
+        T -- "Built for" --> L
+        Tab -- "Integrates with" --> Sklearn[scikit-learn]
+
+        U -- "Supports" --> V
+        U -- "Supports" --> T
+        U -- "Supports" --> Tab
+    end
+```
+
+**Diagram 3: High-Level Architecture.** The core `Learner` is extended by domain-specific modules like `VisionLearner`, while tabular tools integrate directly with the scikit-learn ecosystem. Common utilities support all parts of the library.
+
+> **Takeaway:** The modular design allows you to adopt `cmn_ai` incrementally and ensures that the library remains organized and scalable.
+
+-----
+
+## Conclusion: Build Faster, Iterate Smarter
+
+**cmn\_ai** is more than just a collection of tools; it's a workflow philosophy designed to make you a more effective and efficient machine learning practitioner. By handling the boilerplate and providing a flexible, powerful framework for experimentation, it allows you to accelerate your development cycles and deliver robust solutions faster.
+
+Ready to speed up your workflow?
+
+  * **Install the library:** `pip install cmn-ai`
+  * **Explore the code:** [Visit the GitHub Repository](https://github.com/ImadDabbura/cmn_ai)
+  * **Read the docs:** [Full Documentation](https://imaddabbura.github.io/cmn_ai/)
+
+-----
+
+## License and Citation
+
+`cmn_ai` is licensed under the Apache License 2.0. If you use this library in your research, please consider citing it:
+
+```bibtex
+@software{cmn_ai,
+  title={cmn_ai: A Machine Learning Library for Accelerated AI Workflows},
+  author={Imad Dabbura},
+  url={https://github.com/ImadDabbura/cmn_ai},
+  year={2024}
+}
+```
+
+-----
+
+## References
+
+[1] Dabbura, I. (2024). *cmn\_ai: A Machine Learning Library for Accelerated AI Workflows* [Software]. GitHub. Retrieved from [https://github.com/ImadDabbura/cmn\_ai](https://github.com/ImadDabbura/cmn_ai).

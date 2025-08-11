@@ -22,6 +22,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -107,16 +141,20 @@ ga('send', {
   'anonymizeIp': true,
 });
 </script>
+<meta name="mermaid-theme" content="default">
+<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 <link rel="stylesheet" href="../../styles.css">
 <meta property="og:title" content="Imad Dabbura - cmn_ai">
 <meta property="og:description" content="Python library that incorporates reusable code and best practices in Machine Learning, AI, &amp; Data Science.">
-<meta property="og:image" content="https://imaddabbura.github.io/projects/cmn-ai/feature.jpg">
+<meta property="og:image" content="https://imaddabbura.github.io/projects/cmn-ai/logo.png">
 <meta property="og:site_name" content="Imad Dabbura">
 <meta name="twitter:title" content="Imad Dabbura - cmn_ai">
 <meta name="twitter:description" content="Python library that incorporates reusable code and best practices in Machine Learning, AI, &amp; Data Science.">
-<meta name="twitter:image" content="https://imaddabbura.github.io/projects/cmn-ai/feature.jpg">
+<meta name="twitter:image" content="https://imaddabbura.github.io/projects/cmn-ai/logo.png">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 </head>
@@ -252,7 +290,31 @@ ga('send', {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introducing-cmn_ai-the-high-speed-library-for-modern-ml-workflows" id="toc-introducing-cmn_ai-the-high-speed-library-for-modern-ml-workflows" class="nav-link active" data-scroll-target="#introducing-cmn_ai-the-high-speed-library-for-modern-ml-workflows">Introducing cmn_ai: The High-Speed Library for Modern ML Workflows</a>
+  <ul class="collapse">
+  <li><a href="#abstract" id="toc-abstract" class="nav-link" data-scroll-target="#abstract">Abstract</a></li>
+  <li><a href="#table-of-contents" id="toc-table-of-contents" class="nav-link" data-scroll-target="#table-of-contents">Table of Contents</a></li>
+  <li><a href="#the-problem-why-is-ml-development-so-slow" id="toc-the-problem-why-is-ml-development-so-slow" class="nav-link" data-scroll-target="#the-problem-why-is-ml-development-so-slow">The Problem: Why Is ML Development So Slow?</a></li>
+  <li><a href="#our-guiding-principle-boyds-law-in-machine-learning" id="toc-our-guiding-principle-boyds-law-in-machine-learning" class="nav-link" data-scroll-target="#our-guiding-principle-boyds-law-in-machine-learning">Our Guiding Principle: Boyd’s Law in Machine Learning</a></li>
+  <li><a href="#the-core-engine-a-flexible-learner-architecture" id="toc-the-core-engine-a-flexible-learner-architecture" class="nav-link" data-scroll-target="#the-core-engine-a-flexible-learner-architecture">The Core Engine: A Flexible <code>Learner</code> Architecture</a></li>
+  <li><a href="#fine-grained-control-with-an-exception-based-callback-system" id="toc-fine-grained-control-with-an-exception-based-callback-system" class="nav-link" data-scroll-target="#fine-grained-control-with-an-exception-based-callback-system">Fine-Grained Control with an Exception-Based Callback System</a></li>
+  <li><a href="#key-features-at-a-glance" id="toc-key-features-at-a-glance" class="nav-link" data-scroll-target="#key-features-at-a-glance">Key Features at a Glance</a></li>
+  <li><a href="#getting-started-a-quick-tour" id="toc-getting-started-a-quick-tour" class="nav-link" data-scroll-target="#getting-started-a-quick-tour">Getting Started: A Quick Tour</a>
+  <ul class="collapse">
+  <li><a href="#installation" id="toc-installation" class="nav-link" data-scroll-target="#installation">Installation</a></li>
+  <li><a href="#quick-examples" id="toc-quick-examples" class="nav-link" data-scroll-target="#quick-examples">Quick Examples</a></li>
+  </ul></li>
+  <li><a href="#under-the-hood-a-modular-design" id="toc-under-the-hood-a-modular-design" class="nav-link" data-scroll-target="#under-the-hood-a-modular-design">Under the Hood: A Modular Design</a></li>
+  <li><a href="#conclusion-build-faster-iterate-smarter" id="toc-conclusion-build-faster-iterate-smarter" class="nav-link" data-scroll-target="#conclusion-build-faster-iterate-smarter">Conclusion: Build Faster, Iterate Smarter</a></li>
+  <li><a href="#license-and-citation" id="toc-license-and-citation" class="nav-link" data-scroll-target="#license-and-citation">License and Citation</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
@@ -261,15 +323,341 @@ ga('send', {
 
 
 
-<p>I am a big believer in <strong>Boyd’s Law</strong>, which states that <em>speed of iteration beats quality of iteration</em>. Following this principle, I created <code>cmn_ai</code> to incorporate the most common tasks we encounter in ML/AI from data exploration to model development and training. Additionally, I baked into it some of the best practices I learned in my career so I don’t have to repeat myself on every project I work on.</p>
-<p>It is worth noting that the majority of the DL code such as <code>Learner</code> and callbacks assume that <a href="https://pytorch.org/"><code>pytorch</code></a> is used as the underlying DL library. Also, tabular data preprocessors/models are compatible with <a href="https://github.com/scikit-learn/scikit-learn"><code>sklearn</code></a> so they can be used easily with its <code>Pipeline</code> or <code>ColumnTransformer</code>.</p>
-<p>Given the nature of the progress in ML/AI, I will always keep adding more functionalities as time passes.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="logo.png" class="quarto-figure quarto-figure-center figure-img" width="500" height="300"></p>
+</figure>
+</div>
+<section id="introducing-cmn_ai-the-high-speed-library-for-modern-ml-workflows" class="level1">
+<h1>Introducing cmn_ai: The High-Speed Library for Modern ML Workflows</h1>
+<section id="abstract" class="level3">
+<h3 class="anchored" data-anchor-id="abstract">Abstract</h3>
+<p>In the world of machine learning, the biggest bottleneck isn’t always model performance—it’s the time it takes to get there. <strong>cmn_ai</strong> is a high-performance Python library designed to break that bottleneck. Built for AI, Deep Learning, and Data Science, it provides a robust toolkit of reusable components for PyTorch and scikit-learn that eliminates boilerplate and lets you focus on what truly matters: rapid experimentation and faster delivery.</p>
+</section>
+<section id="table-of-contents" class="level3">
+<h3 class="anchored" data-anchor-id="table-of-contents">Table of Contents</h3>
+<ol type="1">
+<li><a href="https://www.google.com/search?q=%23the-problem-why-is-ml-development-so-slow">The Problem: Why Is ML Development So Slow?</a></li>
+<li><a href="https://www.google.com/search?q=%23our-guiding-principle-boyds-law-in-machine-learning">Our Guiding Principle: Boyd’s Law in Machine Learning</a></li>
+<li><a href="https://www.google.com/search?q=%23the-core-engine-a-flexible-learner-architecture">The Core Engine: A Flexible <code>Learner</code> Architecture</a></li>
+<li><a href="https://www.google.com/search?q=%23fine-grained-control-with-an-exception-based-callback-system">Fine-Grained Control with an Exception-Based Callback System</a></li>
+<li><a href="https://www.google.com/search?q=%23key-features-at-a-glance">Key Features at a Glance</a></li>
+<li><a href="https://www.google.com/search?q=%23getting-started-a-quick-tour">Getting Started: A Quick Tour</a></li>
+<li><a href="https://www.google.com/search?q=%23under-the-hood-a-modular-design">Under the Hood: A Modular Design</a></li>
+<li><a href="https://www.google.com/search?q=%23conclusion-build-faster-iterate-smarter">Conclusion: Build Faster, Iterate Smarter</a></li>
+<li><a href="https://www.google.com/search?q=%23license-and-citation">License and Citation</a></li>
+<li><a href="https://www.google.com/search?q=%23references">References</a></li>
+</ol>
+<hr>
+</section>
+<section id="the-problem-why-is-ml-development-so-slow" class="level2">
+<h2 class="anchored" data-anchor-id="the-problem-why-is-ml-development-so-slow">The Problem: Why Is ML Development So Slow?</h2>
+<p>If you’ve ever built a machine learning model, you know the routine. You spend hours, if not days, writing and rewriting the same boilerplate code: custom training loops, logging mechanisms, data loading pipelines, and metric calculations. While essential, this repetitive work slows down the <strong>cycle of experimentation</strong>, which is the very heart of machine learning. Every moment spent on boilerplate is a moment not spent testing a new hypothesis, tuning a hyperparameter, or analyzing a result.</p>
+<p>This is the problem <code>cmn_ai</code> was built to solve. It is a comprehensive library born from years of real-world ML engineering experience, designed to abstract away the repetitive tasks and provide a solid foundation for your projects.</p>
+<blockquote class="blockquote">
+<p><strong>Takeaway:</strong> The overhead of writing boilerplate code for training loops, data handling, and logging is a major obstacle to rapid experimentation in machine learning.</p>
+</blockquote>
+<hr>
+</section>
+<section id="our-guiding-principle-boyds-law-in-machine-learning" class="level2">
+<h2 class="anchored" data-anchor-id="our-guiding-principle-boyds-law-in-machine-learning">Our Guiding Principle: Boyd’s Law in Machine Learning</h2>
+<p>The philosophy behind <code>cmn_ai</code> is directly inspired by <strong>Boyd’s Law of Iteration</strong>: <em>Speed of iteration beats quality of iteration</em>.</p>
+<p>In combat, the fighter pilot John Boyd argued that the side able to observe, orient, decide, and act (OODA) the fastest would win, even if their individual actions weren’t perfect. The same is true in machine learning. The ability to quickly run an experiment, get feedback, and start the next cycle is more valuable than spending weeks perfecting a single, monolithic training script.</p>
+<p><code>cmn_ai</code> is designed to accelerate your OODA loop, letting you test ideas faster and arrive at a better solution sooner.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    subgraph "Traditional ML Development Cycle"
+        direction LR
+        A[Idea] --&gt; B(Write DataLoaders) --&gt; C(Write Model) --&gt; D(Write Training Loop) --&gt; E(Write Logging/Metrics) --&gt; F(Debug &amp; Run) --&gt; G{Evaluate}
+        G -- "Hypothesis Fails?" --&gt; B
+        G -- "Works!" --&gt; H[Deploy]
+    end
+
+    subgraph "cmn_ai Accelerated Cycle"
+         direction LR
+         I[Idea] --&gt; J[Configure Data &amp; Model] --&gt; K["learner = Learner(...)"] --&gt; L["learner.fit()"] --&gt; M{Evaluate}
+         M -- "Hypothesis Fails?" --&gt; J
+         M -- "Works!" --&gt; N[Deploy]
+    end
+
+    style D stroke-width:2px,stroke-dasharray: 5 5,stroke:red
+    style E stroke-width:2px,stroke-dasharray: 5 5,stroke:red
+    style K stroke-width:2px,stroke:green
+    style L stroke-width:2px,stroke:green
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p><strong>Diagram 1: Workflow Comparison.</strong> The <code>cmn_ai</code> workflow (bottom) significantly reduces the repetitive, time-consuming steps (red dashed boxes) inherent in the traditional approach (top) by encapsulating them within the <code>Learner</code> class.</p>
+<blockquote class="blockquote">
+<p><strong>Takeaway:</strong> By prioritizing iteration speed, <code>cmn_ai</code> helps you learn from more experiments in less time, leading to better models, faster.</p>
+</blockquote>
+<hr>
+</section>
+<section id="the-core-engine-a-flexible-learner-architecture" class="level2">
+<h2 class="anchored" data-anchor-id="the-core-engine-a-flexible-learner-architecture">The Core Engine: A Flexible <code>Learner</code> Architecture</h2>
+<p>The heart of <code>cmn_ai</code>’s deep learning toolkit is the <code>Learner</code> class. It serves as a powerful, flexible orchestrator for the entire training process, handling everything from device placement to mixed-precision training and metric tracking.</p>
+<p>Let’s compare a standard PyTorch training snippet with the <code>cmn_ai</code> approach.</p>
+<p><strong>Before: A Manual PyTorch Training Loop</strong></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A lot of manual steps...</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>model.to(device)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(epochs):</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> xb, yb <span class="kw">in</span> dl:</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        xb, yb <span class="op">=</span> xb.to(device), yb.to(device)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        optimizer.zero_grad()</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        pred <span class="op">=</span> model(xb)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        loss <span class="op">=</span> loss_func(pred, yb)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        loss.backward()</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        optimizer.step()</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        <span class="co"># ... and you still need to add logging, metrics, etc.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>After: Using the <code>cmn_ai</code> Learner</strong></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> cmn_ai.learner <span class="im">import</span> Learner</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> cmn_ai.callbacks.training <span class="im">import</span> DeviceCallBack, Recorder</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a learner with data, model, and callbacks</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>learner <span class="op">=</span> Learner(model, dls, loss_func, opt_func, callbacks<span class="op">=</span>[Recorder(<span class="st">"lr"</span>)])</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>learner.add_callback(DeviceCallBack(<span class="st">"cuda:0"</span>)) <span class="co"># Handles moving data to the GPU</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Train your model with one line</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>learner.fit(epochs<span class="op">=</span><span class="dv">10</span>, lr<span class="op">=</span><span class="fl">1e-3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>As you can see, the <code>Learner</code> API is clean and concise, yet highly extensible through its powerful callback system.</p>
+<blockquote class="blockquote">
+<p><strong>Takeaway:</strong> The <code>Learner</code> class replaces manual training loops with a clean, high-level API, letting you focus on the model and data, not the plumbing.</p>
+</blockquote>
+<hr>
+</section>
+<section id="fine-grained-control-with-an-exception-based-callback-system" class="level2">
+<h2 class="anchored" data-anchor-id="fine-grained-control-with-an-exception-based-callback-system">Fine-Grained Control with an Exception-Based Callback System</h2>
+<p>While <code>Learner</code> provides simplicity, <strong>callbacks</strong> provide power. <code>cmn_ai</code> uses a unique, exception-based callback system that gives you precise control over every stage of the training process.</p>
+<p>Callbacks are small, self-contained classes that can be “hooked” into the <code>Learner</code> to perform actions at specific moments (e.g., <code>after_batch</code>, <code>before_epoch</code>). By raising a specific <code>Cancel...Exception</code>, a callback can gracefully interrupt and modify the training flow on the fly.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">sequenceDiagram
+    participant Learner
+    participant Callback
+    loop Training Loop
+        Learner-&gt;&gt;Callback: before_batch()
+        Note over Learner: Forward pass, calculate loss...
+        Learner-&gt;&gt;Callback: after_loss()
+        opt CancelBackwardException thrown?
+            Learner-&gt;&gt;Learner: Skip backward()
+        end
+        Learner-&gt;&gt;Learner: loss.backward()
+        Learner-&gt;&gt;Callback: after_backward()
+        opt CancelStepException thrown?
+            Learner-&gt;&gt;Learner: Skip optimizer.step()
+        end
+        Learner-&gt;&gt;Learner: optimizer.step()
+        Learner-&gt;&gt;Callback: after_step()
+    end
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p><strong>Diagram 2: Callback Exception Flow.</strong> This diagram shows how a callback can throw an exception (e.g., <code>CancelStepException</code>) after the backward pass to prevent the optimizer from updating the model weights for a specific batch, giving you ultimate control.</p>
+<p>The main exceptions include:</p>
 <ul>
-<li>Documentation: <a href="https://imaddabbura.github.io/cmn_ai/">https://imaddabbura.github.io/cmn_ai/</a></li>
-<li>Repo: <a href="https://github.com/ImadDabbura/cmn_ai">https://github.com/ImadDabbura/cmn_ai</a></li>
+<li><code>CancelBatchException</code>: Skips the remainder of the current batch.</li>
+<li><code>CancelBackwardException</code>: Skips the <code>loss.backward()</code> call.</li>
+<li><code>CancelStepException</code>: Skips the <code>optimizer.step()</code> call.</li>
+<li><code>CancelEpochException</code>: Skips the remainder of the current epoch.</li>
+<li><code>CancelFitException</code>: Stops the entire training process immediately.</li>
 </ul>
+<p>This system enables sophisticated training techniques like gradient accumulation or freezing layers without complicating your main training logic.</p>
+<blockquote class="blockquote">
+<p><strong>Takeaway:</strong> The exception-based callback framework offers a powerful and clean way to customize training behavior without rewriting the <code>Learner</code> or creating complex stateful logic.</p>
+</blockquote>
+<hr>
+</section>
+<section id="key-features-at-a-glance" class="level2">
+<h2 class="anchored" data-anchor-id="key-features-at-a-glance">Key Features at a Glance</h2>
+<table class="table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">🚀 <strong>Accelerated Development</strong></td>
+<td style="text-align: left;">Pre-built modules and a flexible <code>Learner</code> eliminate boilerplate, enabling rapid prototyping.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">🎯 <strong>Best Practices Built-In</strong></td>
+<td style="text-align: left;">The library distills years of ML engineering experience into robust, reusable components with consistent APIs.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">🔧 <strong>Framework Integration</strong></td>
+<td style="text-align: left;">Built on PyTorch for deep learning and fully compatible with scikit-learn <code>Pipeline</code> and <code>ColumnTransformer</code> for tabular data.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">📊 <strong>Domain-Specific Tools</strong></td>
+<td style="text-align: left;">Specialized utilities for <strong>Vision</strong>, <strong>Text</strong>, and <strong>Tabular</strong> machine learning, including EDA tools and data visualizers.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="getting-started-a-quick-tour" class="level2">
+<h2 class="anchored" data-anchor-id="getting-started-a-quick-tour">Getting Started: A Quick Tour</h2>
+<p>Getting started with <code>cmn_ai</code> is simple.</p>
+<blockquote class="blockquote">
+<p><strong>Important Note:</strong> <code>cmn_ai</code> requires <strong>Python 3.13+</strong> and depends on PyTorch, scikit-learn, NumPy, and pandas.</p>
+</blockquote>
+<section id="installation" class="level3">
+<h3 class="anchored" data-anchor-id="installation">Installation</h3>
+<p>The recommended way to install is directly from PyPI:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install cmn-ai</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="quick-examples" class="level3">
+<h3 class="anchored" data-anchor-id="quick-examples">Quick Examples</h3>
+<p>Here’s how you can use <code>cmn_ai</code> for different tasks:</p>
+<p><strong>1. General Deep Learning</strong> Customize your training loop with powerful callbacks for scheduling learning rates and tracking metrics.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> cmn_ai.learner <span class="im">import</span> Learner</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> cmn_ai.callbacks.schedule <span class="im">import</span> BatchScheduler</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> cmn_ai.callbacks.training <span class="im">import</span> MetricsCallback, ProgressCallback</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torcheval.metrics <span class="im">import</span> MulticlassAccuracy</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.optim <span class="im">as</span> opt</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> functools <span class="im">import</span> partial</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Schedule learning rate over all batches</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>sched <span class="op">=</span> partial(opt.lr_scheduler.OneCycleLR, max_lr<span class="op">=</span><span class="fl">6e-2</span>, total_steps<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>learner <span class="op">=</span> Learner(model, dls, loss_func, opt_func)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>learner.add_callbacks([</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    ProgressCallback(),</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    BatchScheduler(sched),</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    MetricsCallback(accuracy<span class="op">=</span>MulticlassAccuracy(num_classes<span class="op">=</span><span class="dv">10</span>)),</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>learner.fit(epochs<span class="op">=</span><span class="dv">50</span>, lr<span class="op">=</span><span class="fl">1e-3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>2. Computer Vision</strong> The <code>VisionLearner</code> provides handy utilities like <code>show_batch</code> to quickly visualize your data.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> cmn_ai.vision <span class="im">import</span> VisionLearner</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Vision-specific learner with built-in utilities</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>vision_learner <span class="op">=</span> VisionLearner(model, dls, loss_func)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>vision_learner.show_batch() <span class="co"># Visualize a batch of training data</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>vision_learner.fit(epochs<span class="op">=</span><span class="dv">20</span>, lr<span class="op">=</span><span class="fl">1e-4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>3. Tabular Data Processing</strong> <code>cmn_ai</code>’s tabular tools are fully compatible with scikit-learn, so they can be dropped directly into your existing pipelines.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> cmn_ai.tabular.preprocessing <span class="im">import</span> DateTransformer</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> Pipeline</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Create sample time-series data</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    pd.date_range(start<span class="op">=</span>pd.to_datetime(<span class="st">"1/1/2018"</span>), end<span class="op">=</span>pd.to_datetime(<span class="st">"1/08/2018"</span>))</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co"># This transformer automatically extracts date features like Day, Month, Year, etc.</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>tfm <span class="op">=</span> DateTransformer(drop<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>transformed_data <span class="op">=</span> tfm.fit_transform(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<blockquote class="blockquote">
+<p><strong>Takeaway:</strong> <code>cmn_ai</code> provides a simple installation and a consistent API across different ML domains, making it easy to integrate into new or existing projects.</p>
+</blockquote>
+<hr>
+</section>
+</section>
+<section id="under-the-hood-a-modular-design" class="level2">
+<h2 class="anchored" data-anchor-id="under-the-hood-a-modular-design">Under the Hood: A Modular Design</h2>
+<p><code>cmn_ai</code> is designed to be modular, so you can use as much or as little of the library as you need. The architecture is organized logically by function.</p>
+<pre><code>cmn_ai/
+├── learner.py          # Core Learner class
+├── callbacks/          # Training callbacks
+├── vision/             # Computer vision utilities
+├── text/               # NLP processing tools
+├── tabular/            # Traditional ML tools
+├── utils/              # Core utilities
+├── plot.py             # Visualization tools
+└── losses.py           # Custom loss functions</code></pre>
+<p><strong>Source: <a href="https://github.com/ImadDabbura/cmn_ai">cmn_ai GitHub Repository</a></strong></p>
+<p>This structure separates the core training engine from the domain-specific tools, making the library easy to maintain and extend.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">graph TD
+    subgraph "cmn_ai Architecture"
+        L[Learner]
+        CB[Callbacks]
+        U[Utils]
+        P[Plot]
+        Loss[Losses]
+
+        L -- "Uses" --&gt; CB
+        L -- "Uses" --&gt; Loss
+        L -- "Uses" --&gt; U
+        L -- "Uses" --&gt; P
+
+        subgraph "Domain Layers"
+            V[VisionLearner]
+            T[TextList]
+            Tab[Tabular Transformers]
+        end
+
+        V -- "Extends" --&gt; L
+        T -- "Built for" --&gt; L
+        Tab -- "Integrates with" --&gt; Sklearn[scikit-learn]
+
+        U -- "Supports" --&gt; V
+        U -- "Supports" --&gt; T
+        U -- "Supports" --&gt; Tab
+    end
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p><strong>Diagram 3: High-Level Architecture.</strong> The core <code>Learner</code> is extended by domain-specific modules like <code>VisionLearner</code>, while tabular tools integrate directly with the scikit-learn ecosystem. Common utilities support all parts of the library.</p>
+<blockquote class="blockquote">
+<p><strong>Takeaway:</strong> The modular design allows you to adopt <code>cmn_ai</code> incrementally and ensures that the library remains organized and scalable.</p>
+</blockquote>
+<hr>
+</section>
+<section id="conclusion-build-faster-iterate-smarter" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion-build-faster-iterate-smarter">Conclusion: Build Faster, Iterate Smarter</h2>
+<p><strong>cmn_ai</strong> is more than just a collection of tools; it’s a workflow philosophy designed to make you a more effective and efficient machine learning practitioner. By handling the boilerplate and providing a flexible, powerful framework for experimentation, it allows you to accelerate your development cycles and deliver robust solutions faster.</p>
+<p>Ready to speed up your workflow?</p>
+<ul>
+<li><strong>Install the library:</strong> <code>pip install cmn-ai</code></li>
+<li><strong>Explore the code:</strong> <a href="https://github.com/ImadDabbura/cmn_ai">Visit the GitHub Repository</a></li>
+<li><strong>Read the docs:</strong> <a href="https://imaddabbura.github.io/cmn_ai/">Full Documentation</a></li>
+</ul>
+<hr>
+</section>
+<section id="license-and-citation" class="level2">
+<h2 class="anchored" data-anchor-id="license-and-citation">License and Citation</h2>
+<p><code>cmn_ai</code> is licensed under the Apache License 2.0. If you use this library in your research, please consider citing it:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bibtex code-with-copy"><code class="sourceCode bibtex"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">@software{cmn_ai,</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">  title={cmn_ai: A Machine Learning Library for Accelerated AI Workflows},</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">  author={Imad Dabbura},</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">  url={https://github.com/ImadDabbura/cmn_ai},</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">  year={2024}</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<p>[1] Dabbura, I. (2024). <em>cmn_ai: A Machine Learning Library for Accelerated AI Workflows</em> [Software]. GitHub. Retrieved from <a href="https://github.com/ImadDabbura/cmn_ai">https://github.com/ImadDabbura/cmn_ai</a>.</p>
 
 
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -837,7 +1225,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
     <li class="nav-item compact">
