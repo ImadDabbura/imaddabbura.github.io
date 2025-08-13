@@ -1,5 +1,6 @@
 ---
-title: "Understanding Neural Network Pruning: A Comprehensive Guide"
+title: "Cutting the Fat: A Practical Guide to Neural Network Pruning"
+subtitle: "From weight sparsity to hardware-aware strategies—learn how to shrink deep learning models without shrinking their performance"
 date: 05-03-2024
 date-modified: 05-03-2024
 image: pruning.jpeg
