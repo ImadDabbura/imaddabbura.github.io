@@ -9,7 +9,7 @@
 <meta name="author" content="Imad Dabbura">
 <meta name="dcterms.date" content="2022-12-10">
 
-<title>Imad Dabbura - LSTM Implementation</title>
+<title>Imad Dabbura - Inside LSTMs: Implementing and Optimizing Sequential Models from First Principles</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -173,12 +173,12 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Imad Dabbura - LSTM Implementation">
-<meta property="og:description" content="">
+<meta property="og:title" content="Imad Dabbura - Inside LSTMs: Implementing and Optimizing Sequential Models from First Principles">
+<meta property="og:description" content="A deep dive into LSTM internals—covering the math, gates, performance considerations, and a full PyTorch-aligned implementation from scratch.">
 <meta property="og:image" content="https://imaddabbura.github.io/posts/nlp/lstm-cell.jpeg">
 <meta property="og:site_name" content="Imad Dabbura">
-<meta name="twitter:title" content="Imad Dabbura - LSTM Implementation">
-<meta name="twitter:description" content="">
+<meta name="twitter:title" content="Imad Dabbura - Inside LSTMs: Implementing and Optimizing Sequential Models from First Principles">
+<meta name="twitter:description" content="A deep dive into LSTM internals—covering the math, gates, performance considerations, and a full PyTorch-aligned implementation from scratch.">
 <meta name="twitter:image" content="https://imaddabbura.github.io/posts/nlp/lstm-cell.jpeg">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
@@ -281,7 +281,8 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">LSTM Implementation</h1>
+      <h1 class="title">Inside LSTMs: Implementing and Optimizing Sequential Models from First Principles</h1>
+            <p class="subtitle lead">A deep dive into LSTM internals—covering the math, gates, performance considerations, and a full PyTorch-aligned implementation from scratch.</p>
                                 <div class="quarto-categories">
                 <div class="quarto-category">NLP</div>
                 <div class="quarto-category">Deep Learning</div>
@@ -341,7 +342,7 @@ window.Quarto = {
 
 
 
-<p><img src="lstm-cell.jpeg" class="img-fluid"></p>
+<p><img src="lstm-cell.jpeg" align="center" height="500px" width="800px"></p>
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
 <p><strong>Long Short-Term Memory (LSTM)</strong> is a recurrent neural network (RNN) architectute that was introduced by <a href="https://www.bioinf.jku.at/publications/older/2604.pdf">Hochreiter and Schmidhuber</a> in 1997 to solve the problem of vanishing gradients that RNNs suffered from for long sequences. This issue is the result of repeated multiplication using the same weights in all timesteps since the weights are shared between all timesteps. Instead of having one hidden state as is the case for RNNs, we have two hidden states: cell state that is responsible for retaining long short-term memory, and hidden state that is focused on predicting the next word.</p>
