@@ -6,10 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2025-01-05">
 
-<title>Imad Dabbura - Hard-Learned Lessons in Shipping Software (AI/ML) Projects</title>
+<title>Imad Dabbura</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,29 +20,63 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../../site_libs/quarto-search/quarto-search.js"></script>
-<script src="../../site_libs/quarto-search/autocomplete-preset-algolia.umd.js"></script>
-<meta name="quarto:offset" content="../../">
-<link href="../../images/profile.jpg" rel="icon" type="image/jpeg">
-<script src="../../site_libs/quarto-html/quarto.js"></script>
-<script src="../../site_libs/quarto-html/popper.min.js"></script>
-<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<script src="site_libs/quarto-search/autocomplete-preset-algolia.umd.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./images/profile.jpg" rel="icon" type="image/jpeg">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -109,29 +141,27 @@ ga('send', {
 </script>
 
 
-<link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Imad Dabbura - Hard-Learned Lessons in Shipping Software (AI/ML) Projects">
-<meta property="og:description" content="A Guide for Engineers and Product Managers">
-<meta property="og:image" content="https://imaddabbura.github.io/posts/product-management/shipping-software-projects.jpeg">
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="Imad Dabbura">
+<meta property="og:description" content="">
 <meta property="og:site_name" content="Imad Dabbura">
-<meta name="twitter:title" content="Imad Dabbura - Hard-Learned Lessons in Shipping Software (AI/ML) Projects">
-<meta name="twitter:description" content="A Guide for Engineers and Product Managers">
-<meta name="twitter:image" content="https://imaddabbura.github.io/posts/product-management/shipping-software-projects.jpeg">
+<meta name="twitter:title" content="Imad Dabbura">
+<meta name="twitter:description" content="">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+  <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
-    <img src="../../images/profile.jpg" alt="" class="navbar-logo">
+    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    <img src="./images/profile.jpg" alt="" class="navbar-logo">
     </a>
-    <a class="navbar-brand" href="../../index.html">
+    <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">Imad Dabbura</span>
     </a>
   </div>
@@ -142,28 +172,28 @@ ga('send', {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../about.html"> 
+    <a class="nav-link" href="./about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html"> 
+    <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Posts</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../til.html"> <i class="bi bi-lightbulb" role="img">
+    <a class="nav-link" href="./til.html"> <i class="bi bi-lightbulb" role="img">
 </i> 
 <span class="menu-text">TIL</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../papers-summaries.html"> 
+    <a class="nav-link" href="./papers-summaries.html"> 
 <span class="menu-text">Papers’ Summaries</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../dl-tips-tricks.html"> 
+    <a class="nav-link" href="./dl-tips-tricks.html"> 
 <span class="menu-text">DL Tips &amp; Tricks</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../projects-index.html"> 
+    <a class="nav-link" href="./projects-index.html"> 
 <span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -172,19 +202,19 @@ ga('send', {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-more">    
         <li>
-    <a class="dropdown-item" href="../../books-summaries.html">
+    <a class="dropdown-item" href="./books-summaries.html">
  <span class="dropdown-text">Books’ Summaries</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../misc-notes.html">
+    <a class="dropdown-item" href="./misc-notes.html">
  <span class="dropdown-text">Misc. Notes</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../reading-list.html">
+    <a class="dropdown-item" href="./reading-list.html">
  <span class="dropdown-text">Reading List</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../resume.html">
+    <a class="dropdown-item" href="./resume.html">
  <span class="dropdown-text">Resume</span></a>
   </li>  
     </ul>
@@ -215,232 +245,130 @@ ga('send', {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
-      <h1 class="title">Hard-Learned Lessons in Shipping Software (AI/ML) Projects</h1>
-            <p class="subtitle lead">A Guide for Engineers and Product Managers</p>
-                                <div class="quarto-categories">
-                <div class="quarto-category">Product Management</div>
-              </div>
-                  </div>
-  </div>
-    
-  
-  <div class="quarto-title-meta">
-
-      <div>
-      <div class="quarto-title-meta-heading">Author</div>
-      <div class="quarto-title-meta-contents">
-               <p>Imad Dabbura </p>
-            </div>
-    </div>
-      
-      <div>
-      <div class="quarto-title-meta-heading">Published</div>
-      <div class="quarto-title-meta-contents">
-        <p class="date">January 5, 2025</p>
-      </div>
-    </div>
-    
-      <div>
-      <div class="quarto-title-meta-heading">Modified</div>
-      <div class="quarto-title-meta-contents">
-        <p class="date-modified">January 5, 2025</p>
-      </div>
-    </div>
-      
-    </div>
-    
-  
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#write-for-a-specific-audience-and-topic" id="toc-write-for-a-specific-audience-and-topic" class="nav-link active" data-scroll-target="#write-for-a-specific-audience-and-topic">Write for a Specific Audience and Topic</a></li>
-  <li><a href="#set-a-deadline-and-stick-to-it" id="toc-set-a-deadline-and-stick-to-it" class="nav-link" data-scroll-target="#set-a-deadline-and-stick-to-it">Set a Deadline and Stick to It</a></li>
-  <li><a href="#work-backwards-from-the-end-goal" id="toc-work-backwards-from-the-end-goal" class="nav-link" data-scroll-target="#work-backwards-from-the-end-goal">Work Backwards from the End Goal</a></li>
-  <li><a href="#break-it-down-into-manageable-pieces" id="toc-break-it-down-into-manageable-pieces" class="nav-link" data-scroll-target="#break-it-down-into-manageable-pieces">Break It Down into Manageable Pieces</a></li>
-  <li><a href="#be-crystal-clear-on-completion-criteria" id="toc-be-crystal-clear-on-completion-criteria" class="nav-link" data-scroll-target="#be-crystal-clear-on-completion-criteria">Be Crystal Clear on Completion Criteria</a></li>
-  <li><a href="#start-small-and-learn-quickly" id="toc-start-small-and-learn-quickly" class="nav-link" data-scroll-target="#start-small-and-learn-quickly">Start Small (and Learn Quickly)</a></li>
-  <li><a href="#track-progress-and-celebrate-wins" id="toc-track-progress-and-celebrate-wins" class="nav-link" data-scroll-target="#track-progress-and-celebrate-wins">Track Progress and Celebrate Wins</a></li>
-  <li><a href="#dont-reinvent-the-wheel" id="toc-dont-reinvent-the-wheel" class="nav-link" data-scroll-target="#dont-reinvent-the-wheel">Don’t Reinvent the Wheel</a></li>
-  <li><a href="#every-version-should-be-better" id="toc-every-version-should-be-better" class="nav-link" data-scroll-target="#every-version-should-be-better">Every Version Should Be Better</a></li>
-  <li><a href="#define-success-criteria-for-the-first-version" id="toc-define-success-criteria-for-the-first-version" class="nav-link" data-scroll-target="#define-success-criteria-for-the-first-version">Define Success Criteria for the First Version</a></li>
-  <li><a href="#do-your-homework-research-before-you-start" id="toc-do-your-homework-research-before-you-start" class="nav-link" data-scroll-target="#do-your-homework-research-before-you-start">Do Your Homework (Research Before You Start)</a></li>
-  <li><a href="#prioritize-must-haves-vs.-nice-to-haves" id="toc-prioritize-must-haves-vs.-nice-to-haves" class="nav-link" data-scroll-target="#prioritize-must-haves-vs.-nice-to-haves">Prioritize Must-Haves vs.&nbsp;Nice-to-Haves</a></li>
-  <li><a href="#mistakes-will-happendont-take-them-personally" id="toc-mistakes-will-happendont-take-them-personally" class="nav-link" data-scroll-target="#mistakes-will-happendont-take-them-personally">Mistakes Will Happen—Don’t Take Them Personally</a></li>
-  <li><a href="#ship-now-improve-later" id="toc-ship-now-improve-later" class="nav-link" data-scroll-target="#ship-now-improve-later">Ship Now, Improve Later</a></li>
-  <li><a href="#final-thoughts-start-shipping" id="toc-final-thoughts-start-shipping" class="nav-link" data-scroll-target="#final-thoughts-start-shipping">Final Thoughts: Start Shipping</a></li>
-  </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
-    </div>
+    
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
 
 
 
 
-
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="shipping-software-projects.jpeg" class="quarto-figure quarto-figure-center figure-img" width="700" height="500"></p>
-</figure>
-</div>
-<p>Shipping software projects — especially in machine learning (ML) and AI—can feel like navigating a maze of unknowns. Over the years, I’ve learned (often the hard way) what works and what doesn’t when it comes to delivering projects on time and with impact. Below, I share my most valuable lessons, distilled into actionable advice to help you ship your project faster, with fewer headaches, and greater confidence.</p>
-<section id="write-for-a-specific-audience-and-topic" class="level3">
-<h3 class="anchored" data-anchor-id="write-for-a-specific-audience-and-topic">Write for a Specific Audience and Topic</h3>
-<p>One of the easiest ways to reduce complexity in a project is to focus on a specific audience and topic. Building for “everyone” leads to endless scope creep, vague requirements, and delayed delivery. When you narrow your audience and define your topic, you’ll find it much easier to: - Define the core problem you’re solving. - Decide which features and functionality are essential.<br>
-In short, specificity speeds up decision-making—and delivery.</p>
+<section id="claude.md" class="level1">
+<h1>CLAUDE.md</h1>
+<p>This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.</p>
+<section id="project-overview" class="level2">
+<h2 class="anchored" data-anchor-id="project-overview">Project Overview</h2>
+<p>This is a personal website built with Quarto, a publishing system for scientific and technical content. The site features blog posts about machine learning, data science, programming, and technical tutorials, along with paper summaries, projects, and personal notes.</p>
 </section>
-<section id="set-a-deadline-and-stick-to-it" class="level3">
-<h3 class="anchored" data-anchor-id="set-a-deadline-and-stick-to-it">Set a Deadline and Stick to It</h3>
-<p>Deadlines are your best friend, not your enemy. View them as a challenge: “What can I ship by this date, no matter what?”<br>
-The key here is to ship whatever is ready—even if it’s incomplete or imperfect. Deadlines force you to prioritize ruthlessly and get the project out the door. Remember, you can always iterate later.</p>
+<section id="technology-stack" class="level2">
+<h2 class="anchored" data-anchor-id="technology-stack">Technology Stack</h2>
+<ul>
+<li><strong>Quarto</strong>: Static site generator for scientific and technical publishing</li>
+<li><strong>Python</strong>: For notebooks, scripts, and data analysis examples</li>
+<li><strong>Jupyter Notebooks</strong>: Interactive content for technical posts</li>
+<li><strong>HTML/CSS/JavaScript</strong>: Generated output for web deployment</li>
+<li><strong>GitHub Pages</strong>: Hosting platform (deploys to <code>docs/</code> directory)</li>
+</ul>
 </section>
-<section id="work-backwards-from-the-end-goal" class="level3">
-<h3 class="anchored" data-anchor-id="work-backwards-from-the-end-goal">Work Backwards from the End Goal</h3>
-<p>When starting any project, first ask: “What does success look like?” Work backwards from there, breaking the project into essential questions:<br>
-- What’s the end result look like, exactly?<br>
-- How many features are needed?<br>
-- What’s absolutely required vs.&nbsp;what’s nice to have?<br>
-- How perfect does it need to be?<br>
-- How long will each step take?<br>
-- What tasks need to happen first, and what preparation is required?</p>
-<p>By answering these questions, you’ll create a clear roadmap, reduce uncertainty, and avoid aimless wandering through your project.</p>
+<section id="development-commands" class="level2">
+<h2 class="anchored" data-anchor-id="development-commands">Development Commands</h2>
+<section id="building-the-site" class="level3">
+<h3 class="anchored" data-anchor-id="building-the-site">Building the Site</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This renders all <code>.qmd</code> and <code>.ipynb</code> files to HTML in the <code>docs/</code> directory.</p>
 </section>
-<section id="break-it-down-into-manageable-pieces" class="level3">
-<h3 class="anchored" data-anchor-id="break-it-down-into-manageable-pieces">Break It Down into Manageable Pieces</h3>
-<p>Big projects can feel overwhelming, which is why breaking them into smaller components is essential. Tackle each piece in focused, deep work sessions. Every time you complete a component, you’ll feel a sense of accomplishment—which keeps motivation high.<br>
-Example: If you’re building an ML pipeline, treat data preprocessing, model training, and evaluation as separate milestones rather than one big, nebulous task.</p>
+<section id="preview-during-development" class="level3">
+<h3 class="anchored" data-anchor-id="preview-during-development">Preview During Development</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> preview</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Starts a local development server with live reload.</p>
 </section>
-<section id="be-crystal-clear-on-completion-criteria" class="level3">
-<h3 class="anchored" data-anchor-id="be-crystal-clear-on-completion-criteria">Be Crystal Clear on Completion Criteria</h3>
-<p>Ambiguity is the enemy of progress. For every stage of your project, define what “done” looks like. This clarity not only helps you move faster but also ensures you avoid endlessly tweaking and polishing.</p>
+<section id="publishing" class="level3">
+<h3 class="anchored" data-anchor-id="publishing">Publishing</h3>
+<p>The site auto-deploys to GitHub Pages from the <code>docs/</code> directory when changes are pushed to the main branch.</p>
 </section>
-<section id="start-small-and-learn-quickly" class="level3">
-<h3 class="anchored" data-anchor-id="start-small-and-learn-quickly">Start Small (and Learn Quickly)</h3>
-<p>Start with a small prototype or proof of concept. This gives you a realistic sense of what it will take to deliver the full project while helping you identify potential roadblocks early.<br>
-Starting small also lowers the stakes, making it easier to experiment and iterate without fear of failure.</p>
 </section>
-<section id="track-progress-and-celebrate-wins" class="level3">
-<h3 class="anchored" data-anchor-id="track-progress-and-celebrate-wins">Track Progress and Celebrate Wins</h3>
-<p>Use tools like <code>Trello</code>, <code>Jira</code>, or even a simple Kanban board to track your tasks and progress. Keep completed tasks visible—seeing progress in real time is a great motivator.<br>
-Why? Because software projects are as much about emotional management as technical execution. Visible progress keeps momentum alive and helps you push through inevitable roadblocks.</p>
+<section id="project-structure" class="level2">
+<h2 class="anchored" data-anchor-id="project-structure">Project Structure</h2>
+<section id="content-organization" class="level3">
+<h3 class="anchored" data-anchor-id="content-organization">Content Organization</h3>
+<ul>
+<li><strong>Posts</strong> (<code>posts/</code>): Technical blog posts organized by topic (e.g., <code>nlp/</code>, <code>python/</code>, <code>airflow/</code>)</li>
+<li><strong>Papers Summaries</strong> (<code>papers-summaries/</code>): Research paper summaries and notes</li>
+<li><strong>TIL</strong> (<code>til/</code>): “Today I Learned” short notes organized by technology</li>
+<li><strong>Projects</strong> (<code>projects/</code>): Portfolio project descriptions</li>
+<li><strong>Books/Misc Notes</strong> (<code>books-summaries/</code>, <code>misc-notes/</code>): Additional content sections</li>
+</ul>
 </section>
-<section id="dont-reinvent-the-wheel" class="level3">
-<h3 class="anchored" data-anchor-id="dont-reinvent-the-wheel">Don’t Reinvent the Wheel</h3>
-<p>Time is your most valuable resource. Wherever possible, lean on existing tools, libraries, and frameworks to speed up development.<br>
-For instance, in ML and AI, libraries like <code>TensorFlow</code>, <code>scikit-learn</code>, or pre-trained models can save you weeks of effort. You can always revisit and optimize later if needed. The goal is to get something functional in front of users quickly.</p>
+<section id="file-types" class="level3">
+<h3 class="anchored" data-anchor-id="file-types">File Types</h3>
+<ul>
+<li><strong><code>.qmd</code></strong>: Quarto markdown files (main content format)</li>
+<li><strong><code>.ipynb</code></strong>: Jupyter notebooks (for code-heavy technical content)</li>
+<li><strong><code>.md</code></strong>: Standard markdown (some legacy content)</li>
+<li><strong><code>_metadata.yml</code></strong>: Directory-specific metadata and configuration</li>
+</ul>
 </section>
-<section id="every-version-should-be-better" class="level3">
-<h3 class="anchored" data-anchor-id="every-version-should-be-better">Every Version Should Be Better</h3>
-<p>A common pitfall is aiming to ship a perfect product from day one. Don’t. Instead, focus on shipping a better version with each iteration.<br>
-Why? Because you’ll learn more from real-world usage and user feedback than from endless internal debates or polishing. Each version builds on the last, so it doesn’t have to be perfect—it just has to be better.</p>
+<section id="key-configuration" class="level3">
+<h3 class="anchored" data-anchor-id="key-configuration">Key Configuration</h3>
+<ul>
+<li><strong><code>_quarto.yml</code></strong>: Main site configuration, navigation, themes, and build settings</li>
+<li><strong><code>styles.css</code></strong>: Custom CSS styling</li>
+<li><strong><code>_citation.qmd</code></strong>: Citation format included in all pages</li>
+</ul>
 </section>
-<section id="define-success-criteria-for-the-first-version" class="level3">
-<h3 class="anchored" data-anchor-id="define-success-criteria-for-the-first-version">Define Success Criteria for the First Version</h3>
-<p>Before you start coding, define what “success” means for the first version. What must it accomplish to be considered shippable?<br>
-Write these criteria down. This clarity will keep you focused and prevent scope creep.</p>
 </section>
-<section id="do-your-homework-research-before-you-start" class="level3">
-<h3 class="anchored" data-anchor-id="do-your-homework-research-before-you-start">Do Your Homework (Research Before You Start)</h3>
-<p>Before diving into implementation, spend time researching:<br>
-- What tools, frameworks, or libraries can you use?<br>
-- What’s the best structure for the project?<br>
-- How have others solved similar problems?</p>
-<p>A solid research phase will save you countless hours of trial and error later.</p>
+<section id="content-creation-workflow" class="level2">
+<h2 class="anchored" data-anchor-id="content-creation-workflow">Content Creation Workflow</h2>
+<ol type="1">
+<li><strong>Blog Posts</strong>: Create in appropriate <code>posts/[category]/</code> subdirectory</li>
+<li><strong>Notebooks</strong>: Use for interactive, code-heavy content with visualizations</li>
+<li><strong>Images</strong>: Store in topic-specific <code>images/</code> subdirectories or main <code>images/</code> folder</li>
+<li><strong>Metadata</strong>: Include proper YAML frontmatter with title, date, categories, and features</li>
+</ol>
 </section>
-<section id="prioritize-must-haves-vs.-nice-to-haves" class="level3">
-<h3 class="anchored" data-anchor-id="prioritize-must-haves-vs.-nice-to-haves">Prioritize Must-Haves vs.&nbsp;Nice-to-Haves</h3>
-<p>Not all features are created equal. Early in the project, create two lists:<br>
-- Must-haves: Features that are absolutely necessary for the project to function.<br>
-- Nice-to-haves: Features that would be great to include but aren’t essential.<br>
-Focus on the must-haves first. Nice-to-haves can wait for later versions.</p>
+<section id="development-notes" class="level2">
+<h2 class="anchored" data-anchor-id="development-notes">Development Notes</h2>
+<ul>
+<li>The site uses Quarto’s listing feature for automatic post organization</li>
+<li>Search functionality powered by Algolia</li>
+<li>Comments system integrated via Giscus</li>
+<li>Google Analytics tracking configured</li>
+<li>Dark/light theme support via Bootstrap themes</li>
+<li>Social media integration (Twitter, LinkedIn, GitHub)</li>
+</ul>
 </section>
-<section id="mistakes-will-happendont-take-them-personally" class="level3">
-<h3 class="anchored" data-anchor-id="mistakes-will-happendont-take-them-personally">Mistakes Will Happen—Don’t Take Them Personally</h3>
-<p>No matter how well you plan, mistakes will happen. Bugs will slip through, features might not work as expected, and some users may complain. Don’t take it personally.<br>
-Instead, treat every mistake as an opportunity to learn and improve. Fix the issue, iterate, and move forward.</p>
-</section>
-<section id="ship-now-improve-later" class="level3">
-<h3 class="anchored" data-anchor-id="ship-now-improve-later">Ship Now, Improve Later</h3>
-<p>Shipping something today—even if it’s imperfect—is far more valuable than shipping something “perfect” six months from now. Why? Because you learn more from trial and error than from endless planning.<br>
-Fast iterations drive faster learning—and faster progress.</p>
-</section>
-<section id="final-thoughts-start-shipping" class="level2">
-<h2 class="anchored" data-anchor-id="final-thoughts-start-shipping">Final Thoughts: Start Shipping</h2>
-<p>Shipping software projects is never easy, especially in ML and AI, where complexity is the norm. But by following these principles—working backwards, starting small, tracking progress, and focusing on iteration—you can consistently deliver impactful projects on time.</p>
-<p>The most important lesson? Just ship it. You’ll learn far more by putting your work into the world than by waiting for perfection.</p>
+<section id="python-dependencies" class="level2">
+<h2 class="anchored" data-anchor-id="python-dependencies">Python Dependencies</h2>
+<p>The site includes Python scripts and utilities primarily for: - Bandit algorithm implementations and plotting (<code>posts/scripts/</code>) - BPE tokenizer implementation (<code>bpe.py</code>) - Data analysis examples in notebooks - Machine learning tutorials and implementations</p>
+<p>Most Python code is self-contained within individual post directories or serves as educational examples rather than production dependencies.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    // Only add citation to post pages (not index, about, etc.)
-    if (window.location.pathname.includes('/posts/')) {
-        // Find the main content area
-        const mainContent = document.querySelector('main.content');
-        if (mainContent) {
-            // Get metadata from the page
-            const titleElement = document.querySelector('h1.title');
-            const dateElement = document.querySelector('.date');
-            
-            const title = titleElement ? titleElement.textContent : 'Untitled';
-            const dateText = dateElement ? dateElement.textContent : new Date().toLocaleDateString();
-            
-            // Get the current post URL - construct proper GitHub Pages URL
-            const postPath = window.location.pathname;
-            const postUrl = 'https://imaddabbura.github.io' + postPath;
-            
-            // Parse date and format it
-            const date = new Date(dateText);
-            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                               "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            const formattedDate = monthNames[date.getMonth()] + " " + date.getFullYear();
-            const year = date.getFullYear();
-            const month = monthNames[date.getMonth()];
-            
-            // Create citation HTML
-            const citationHTML = '<hr>' +
-                '<div class="callout callout-style-default callout-note no-icon callout-titled">' +
-                    '<div class="callout-header d-flex align-content-center">' +
-                        '<div class="callout-icon-container">' +
-                            '<i class="callout-icon no-icon"></i>' +
-                        '</div>' +
-                        '<div class="callout-title-container flex-fill">' +
-                            'How to Cite This Post' +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="callout-body-container callout-body">' +
-                        '<p>If you found this useful, please cite this write-up as:</p>' +
-                        '<blockquote class="blockquote">' +
-                            '<p>Dabbura, Imad. (' + formattedDate + '). ' + title + '. https://imaddabbura.github.io. ' + postUrl + '.</p>' +
-                        '</blockquote>' +
-                        '<p>or</p>' +
-                        '<div class="sourceCode"><pre class="sourceCode bibtex code-with-copy"><code class="sourceCode bibtex">@article{dabbura' + year + ',\n' +
-                        '  title   = {' + title + '},\n' +
-                        '  author  = {Dabbura, Imad},\n' +
-                        '  journal = {https://imaddabbura.github.io},\n' +
-                        '  year    = {' + year + '},\n' +
-                        '  month   = {' + month + '},\n' +
-                        '  url     = {' + postUrl + '}\n' +
-                        '}</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>' +
-                    '</div>' +
-                '</div>';
-            
-            // Insert citation at the end of main content, before closing tag
-            mainContent.insertAdjacentHTML('beforeend', citationHTML);
-        }
-    }
-});
-</script>
+::: {.callout-note icon="false"}
+## How to Cite This Post
+
+If you found this useful, please cite this write-up as:
+
+&gt; Imad Dabbura. (?meta:date). *?meta:title*. Imad Dabbura. [https://imaddabbura.github.io](https://imaddabbura.github.io).
+
+or
+
+```bibtex
+@article{dabbura?meta:date,
+  title   = { ?meta:title },
+  author  = {Imad Dabbura},
+  journal = {Imad Dabbura},
+  year    = { ?meta:date },
+  month   = { ?meta:date },
+  url     = {https://imaddabbura.github.io}
+}
+```
+:::
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -1006,7 +934,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
     <li class="nav-item compact">
