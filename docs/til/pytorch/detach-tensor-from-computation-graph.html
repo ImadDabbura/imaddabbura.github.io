@@ -336,6 +336,66 @@ ga('send', {
 
 
 </main> <!-- /main -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Only add citation to post pages (not index, about, etc.)
+    if (window.location.pathname.includes('/posts/')) {
+        // Find the main content area
+        const mainContent = document.querySelector('main');
+        if (mainContent) {
+            // Get metadata from the page
+            const titleElement = document.querySelector('h1.title');
+            const dateElement = document.querySelector('.date');
+            
+            const title = titleElement ? titleElement.textContent : 'Untitled';
+            const dateText = dateElement ? dateElement.textContent : new Date().toLocaleDateString();
+            
+            // Get the current post URL - construct proper GitHub Pages URL
+            const postPath = window.location.pathname;
+            const postUrl = 'https://imaddabbura.github.io' + postPath;
+            
+            // Parse date and format it
+            const date = new Date(dateText);
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                               "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const formattedDate = monthNames[date.getMonth()] + " " + date.getFullYear();
+            const year = date.getFullYear();
+            const month = monthNames[date.getMonth()];
+            
+            // Create citation HTML
+            const citationHTML = '<hr>' +
+                '<div class="callout callout-style-default callout-note no-icon callout-titled">' +
+                    '<div class="callout-header d-flex align-content-center">' +
+                        '<div class="callout-icon-container">' +
+                            '<i class="callout-icon no-icon"></i>' +
+                        '</div>' +
+                        '<div class="callout-title-container flex-fill">' +
+                            'How to Cite This Post' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="callout-body-container callout-body">' +
+                        '<p>If you found this useful, please cite this write-up as:</p>' +
+                        '<blockquote class="blockquote">' +
+                            '<p>Dabbura, Imad. (' + formattedDate + '). ' + title + '. https://imaddabbura.github.io. ' + postUrl + '.</p>' +
+                        '</blockquote>' +
+                        '<p>or</p>' +
+                        '<div class="sourceCode"><pre class="sourceCode bibtex code-with-copy"><code class="sourceCode bibtex">@article{dabbura' + year + ',\n' +
+                        '  title   = {' + title + '},\n' +
+                        '  author  = {Dabbura, Imad},\n' +
+                        '  journal = {https://imaddabbura.github.io},\n' +
+                        '  year    = {' + year + '},\n' +
+                        '  month   = {' + month + '},\n' +
+                        '  url     = {' + postUrl + '}\n' +
+                        '}</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>' +
+                    '</div>' +
+                '</div>';
+            
+            // Insert citation at the end of main content, before closing tag
+            mainContent.insertAdjacentHTML('beforeend', citationHTML);
+        }
+    }
+});
+</script>
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
