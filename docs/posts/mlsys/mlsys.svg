@@ -1,0 +1,218 @@
+<svg viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e293b;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Glow effect for nodes -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Arrow marker -->
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b" />
+    </marker>
+    
+    <!-- Gradient for production side -->
+    <linearGradient id="prodGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#059669;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:0.6" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="600" fill="url(#bgGradient)"/>
+  
+  <!-- Grid pattern for technical look -->
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5" opacity="0.3"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="600" fill="url(#grid)" opacity="0.5"/>
+  
+  <!-- Title -->
+  <text x="600" y="40" font-family="'Segoe UI', Arial, sans-serif" font-size="28" font-weight="bold" fill="#f1f5f9" text-anchor="middle">
+    Building Production-Ready ML Systems
+  </text>
+  
+  <!-- Development Side (Left) -->
+  <g id="development">
+    <!-- Container -->
+    <rect x="50" y="80" width="250" height="480" rx="10" fill="none" stroke="#3b82f6" stroke-width="2" opacity="0.5"/>
+    <text x="175" y="110" font-family="'Segoe UI', Arial, sans-serif" font-size="18" font-weight="600" fill="#60a5fa" text-anchor="middle">DEVELOPMENT</text>
+    
+    <!-- Notebook icon -->
+    <rect x="135" y="130" width="80" height="100" rx="5" fill="#1e40af" opacity="0.8"/>
+    <rect x="145" y="140" width="60" height="8" fill="#60a5fa"/>
+    <rect x="145" y="155" width="50" height="5" fill="#93c5fd"/>
+    <rect x="145" y="165" width="55" height="5" fill="#93c5fd"/>
+    <rect x="145" y="175" width="45" height="5" fill="#93c5fd"/>
+    <text x="175" y="205" font-family="monospace" font-size="10" fill="#60a5fa" text-anchor="middle">model.py</text>
+    
+    <!-- Metrics -->
+    <g transform="translate(100, 250)">
+      <text x="75" y="0" font-family="monospace" font-size="14" fill="#93c5fd" text-anchor="middle">Accuracy: 95%</text>
+      <text x="75" y="20" font-family="monospace" font-size="14" fill="#93c5fd" text-anchor="middle">AUC: 0.92</text>
+      <text x="75" y="40" font-family="monospace" font-size="14" fill="#93c5fd" text-anchor="middle">F1: 0.89</text>
+    </g>
+    
+    <!-- Static data representation -->
+    <g transform="translate(100, 340)">
+      <rect x="20" y="0" width="130" height="60" rx="5" fill="#1e3a8a" opacity="0.6"/>
+      <text x="85" y="25" font-family="'Segoe UI', Arial, sans-serif" font-size="12" fill="#93c5fd" text-anchor="middle">Static Dataset</text>
+      <text x="85" y="45" font-family="'Segoe UI', Arial, sans-serif" font-size="11" fill="#60a5fa" text-anchor="middle">Clean &amp; Curated</text>
+    </g>
+    
+    <!-- Time luxury -->
+    <g transform="translate(100, 420)">
+      <circle cx="75" cy="30" r="25" fill="none" stroke="#60a5fa" stroke-width="2" opacity="0.5"/>
+      <text x="75" y="35" font-family="'Segoe UI', Arial, sans-serif" font-size="12" fill="#93c5fd" text-anchor="middle">Time ∞</text>
+    </g>
+  </g>
+  
+  <!-- The Gap (Middle) -->
+  <g id="gap">
+    <!-- Zigzag path representing the challenge -->
+    <path d="M 330 150 L 370 180 L 330 210 L 370 240 L 330 270 L 370 300 L 330 330 L 370 360 L 330 390 L 370 420 L 330 450" 
+          stroke="#ef4444" stroke-width="3" fill="none" opacity="0.7"/>
+    
+    <!-- Challenges text -->
+    <text x="400" y="170" font-family="'Segoe UI', Arial, sans-serif" font-size="11" fill="#fca5a5" transform="rotate(-30 400 170)">Data Drift</text>
+    <text x="410" y="230" font-family="'Segoe UI', Arial, sans-serif" font-size="11" fill="#fca5a5" transform="rotate(-30 410 230)">Latency</text>
+    <text x="400" y="290" font-family="'Segoe UI', Arial, sans-serif" font-size="11" fill="#fca5a5" transform="rotate(-30 400 290)">Leakage</text>
+    <text x="410" y="350" font-family="'Segoe UI', Arial, sans-serif" font-size="11" fill="#fca5a5" transform="rotate(-30 410 350)">Scale</text>
+    <text x="400" y="410" font-family="'Segoe UI', Arial, sans-serif" font-size="11" fill="#fca5a5" transform="rotate(-30 400 410)">Monitoring</text>
+    
+    <!-- Arrow crossing the gap -->
+    <path d="M 300 300 L 520 300" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)" stroke-dasharray="5,5" opacity="0.5"/>
+    <text x="410" y="295" font-family="'Segoe UI', Arial, sans-serif" font-size="12" fill="#94a3b8" text-anchor="middle">The Production Gap</text>
+  </g>
+  
+  <!-- Production Side (Right) -->
+  <g id="production">
+    <!-- Container -->
+    <rect x="550" y="80" width="600" height="480" rx="10" fill="none" stroke="#10b981" stroke-width="2" opacity="0.5"/>
+    <text x="850" y="110" font-family="'Segoe UI', Arial, sans-serif" font-size="18" font-weight="600" fill="#34d399" text-anchor="middle">PRODUCTION</text>
+    
+    <!-- Multiple components showing system complexity -->
+    
+    <!-- Data Pipeline -->
+    <g transform="translate(580, 140)">
+      <rect x="0" y="0" width="120" height="60" rx="5" fill="#064e3b" opacity="0.8"/>
+      <text x="60" y="25" font-family="'Segoe UI', Arial, sans-serif" font-size="11" fill="#6ee7b7" text-anchor="middle">Data Pipeline</text>
+      <circle cx="20" cy="40" r="3" fill="#10b981" filter="url(#glow)"/>
+      <circle cx="60" cy="40" r="3" fill="#10b981" filter="url(#glow)"/>
+      <circle cx="100" cy="40" r="3" fill="#10b981" filter="url(#glow)"/>
+      <path d="M 20 40 L 100 40" stroke="#10b981" stroke-width="1" opacity="0.5"/>
+    </g>
+    
+    <!-- Feature Store -->
+    <g transform="translate(720, 140)">
+      <rect x="0" y="0" width="120" height="60" rx="5" fill="#064e3b" opacity="0.8"/>
+      <text x="60" y="25" font-family="'Segoe UI', Arial, sans-serif" font-size="11" fill="#6ee7b7" text-anchor="middle">Feature Store</text>
+      <rect x="15" y="35" width="20" height="15" fill="#10b981" opacity="0.6"/>
+      <rect x="50" y="35" width="20" height="15" fill="#10b981" opacity="0.6"/>
+      <rect x="85" y="35" width="20" height="15" fill="#10b981" opacity="0.6"/>
+    </g>
+    
+    <!-- Model Serving -->
+    <g transform="translate(860, 140)">
+      <rect x="0" y="0" width="120" height="60" rx="5" fill="#064e3b" opacity="0.8"/>
+      <text x="60" y="25" font-family="'Segoe UI', Arial, sans-serif" font-size="11" fill="#6ee7b7" text-anchor="middle">Model Serving</text>
+      <path d="M 30 40 L 50 35 L 50 45 Z" fill="#10b981" opacity="0.8"/>
+      <rect x="55" y="35" width="30" height="10" fill="#10b981" opacity="0.6"/>
+      <path d="M 90 40 L 100 35 L 100 45 Z" fill="#10b981" opacity="0.8"/>
+    </g>
+    
+    <!-- Monitoring Dashboard -->
+    <g transform="translate(1000, 140)">
+      <rect x="0" y="0" width="120" height="60" rx="5" fill="#064e3b" opacity="0.8"/>
+      <text x="60" y="25" font-family="'Segoe UI', Arial, sans-serif" font-size="11" fill="#6ee7b7" text-anchor="middle">Monitoring</text>
+      <polyline points="20,45 30,40 40,42 50,38 60,41 70,39 80,43 90,40 100,42" stroke="#10b981" stroke-width="2" fill="none"/>
+    </g>
+    
+    <!-- Real-time constraints -->
+    <g transform="translate(650, 240)">
+      <text x="50" y="0" font-family="monospace" font-size="12" fill="#fbbf24">⚡ P99 Latency &lt; 100ms</text>
+      <text x="50" y="20" font-family="monospace" font-size="12" fill="#fbbf24">⚡ 10K QPS</text>
+      <text x="50" y="40" font-family="monospace" font-size="12" fill="#fbbf24">⚡ 99.9% Uptime</text>
+    </g>
+    
+    <!-- Complex Data Flow -->
+    <g transform="translate(580, 320)">
+      <rect x="0" y="0" width="260" height="80" rx="5" fill="#064e3b" opacity="0.4"/>
+      <text x="130" y="20" font-family="'Segoe UI', Arial, sans-serif" font-size="12" fill="#6ee7b7" text-anchor="middle">Live Data Streams</text>
+      
+      <!-- Streaming visualization -->
+      <circle cx="30" cy="40" r="4" fill="#34d399" opacity="0.8">
+        <animate attributeName="cx" from="30" to="230" dur="3s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.8;0.3;0.8" dur="3s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="30" cy="55" r="4" fill="#34d399" opacity="0.6">
+        <animate attributeName="cx" from="30" to="230" dur="3s" begin="0.5s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.6;0.2;0.6" dur="3s" begin="0.5s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="30" cy="45" r="4" fill="#34d399" opacity="0.7">
+        <animate attributeName="cx" from="30" to="230" dur="3s" begin="1s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.7;0.3;0.7" dur="3s" begin="1s" repeatCount="indefinite"/>
+      </circle>
+      
+      <text x="130" y="60" font-family="'Segoe UI', Arial, sans-serif" font-size="10" fill="#86efac" text-anchor="middle">Noisy • Missing • Drifting</text>
+    </g>
+    
+    <!-- Infrastructure Components -->
+    <g transform="translate(860, 320)">
+      <rect x="0" y="0" width="260" height="80" rx="5" fill="#064e3b" opacity="0.4"/>
+      <text x="130" y="20" font-family="'Segoe UI', Arial, sans-serif" font-size="12" fill="#6ee7b7" text-anchor="middle">Infrastructure Stack</text>
+      
+      <!-- Stack visualization -->
+      <rect x="40" y="30" width="180" height="10" fill="#059669" opacity="0.8"/>
+      <text x="130" y="38" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#e0f2fe" text-anchor="middle">Load Balancers</text>
+      
+      <rect x="40" y="42" width="180" height="10" fill="#047857" opacity="0.8"/>
+      <text x="130" y="50" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#e0f2fe" text-anchor="middle">API Gateway</text>
+      
+      <rect x="40" y="54" width="180" height="10" fill="#065f46" opacity="0.8"/>
+      <text x="130" y="62" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#e0f2fe" text-anchor="middle">Model Servers</text>
+      
+      <rect x="40" y="66" width="180" height="10" fill="#064e3b" opacity="0.8"/>
+      <text x="130" y="74" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#e0f2fe" text-anchor="middle">Databases</text>
+    </g>
+    
+    <!-- Alert/Issues indicator -->
+    <g transform="translate(950, 440)">
+      <circle cx="0" cy="0" r="15" fill="#dc2626" opacity="0.8">
+        <animate attributeName="r" values="15;18;15" dur="2s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.8;0.4;0.8" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <text x="0" y="5" font-family="'Segoe UI', Arial, sans-serif" font-size="16" font-weight="bold" fill="white" text-anchor="middle">!</text>
+      <text x="0" y="30" font-family="'Segoe UI', Arial, sans-serif" font-size="10" fill="#fca5a5" text-anchor="middle">3AM Alert</text>
+    </g>
+    
+    <!-- Success metrics but with caveats -->
+    <g transform="translate(650, 440)">
+      <text x="0" y="0" font-family="monospace" font-size="12" fill="#f87171">Revenue Impact: ???</text>
+      <text x="0" y="20" font-family="monospace" font-size="12" fill="#f87171">User Satisfaction: ↓</text>
+      <text x="0" y="40" font-family="monospace" font-size="12" fill="#f87171">Technical Debt: ↑↑</text>
+    </g>
+  </g>
+  
+  <!-- Key Lessons -->
+  <g transform="translate(600, 520)">
+    <text x="0" y="0" font-family="'Segoe UI', Arial, sans-serif" font-size="14" fill="#cbd5e1" text-anchor="middle" font-style="italic">
+      "The model is just 10% of the system"
+    </text>
+  </g>
+  
+  <!-- Decorative elements -->
+  <circle cx="100" cy="100" r="80" fill="none" stroke="#3b82f6" stroke-width="0.5" opacity="0.2"/>
+  <circle cx="1100" cy="500" r="100" fill="none" stroke="#10b981" stroke-width="0.5" opacity="0.2"/>
+</svg>
