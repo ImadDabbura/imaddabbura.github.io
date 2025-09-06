@@ -1,12 +1,13 @@
 ---
 title: "The Production ML Survival Guide"
 subtitle: "What I Learned Deploying Models That Serve Millions While Others Failed at Launch"
-image: mlsys.svg
+image: "images/mlsys.svg"
 date: "2025-01-29"
+date-modified: "2025-06-12"
 categories: MLSys
 ---
 
-![](mlsys.svg){height="500" width="800"}
+![](images/mlsys.svg){height="500" width="800"}
 
 # Building Production-Ready Machine Learning Systems: A Practitioner's Guide
 
@@ -16,6 +17,8 @@ categories: MLSys
 
 ### The Throughput vs. Latency Trade-off
 
+![Figure 1: Throughput vs latency trade-off](images/throughput-vs-latency.svg)
+
 During my years deploying ML systems, I've learned that the transition from training to production involves a fundamental shift in priorities. During training, we optimize for throughput - processing millions of examples efficiently to extract maximum learning from our data. Time is on our side; we can afford to wait hours or days for a model to train if it means better performance.
 
 However, once we deploy the model, latency becomes paramount. I've witnessed numerous cases where a model with exceptional accuracy failed in production simply because it couldn't meet latency requirements. Customer satisfaction and conversion rates are far more sensitive to response time than to marginal improvements in prediction accuracy.
@@ -24,14 +27,21 @@ The critical insight here is that we must design for the high percentiles of lat
 
 ```{mermaid}
 graph TD
+    %% Style definitions
+    classDef good fill:#bbf0c9,stroke:#2e7d32,stroke-width:2px,color:#1b5e20
+    classDef warn fill:#fff3cd,stroke:#ff9800,stroke-width:2px,color:#795548
+    classDef fail fill:#ffcdd2,stroke:#d32f2f,stroke-width:2px,color:#b71c1c
+    classDef impact fill:#bbdefb,stroke:#1565c0,stroke-width:2px,color:#0d47a1
+    classDef outcome fill:#e1bee7,stroke:#6a1b9a,stroke-width:2px,color:#4a148c
+
     subgraph "Latency Distribution Reality"
-        A[User Request] --> B["P50: 50ms (OK)"]
-        A --> C["P90: 100ms (OK)"]
-        A --> D["P95: 200ms (Warning)"]
-        A --> E["P99: 2000ms (Fail)"]
-        E --> F["1% Users Frustrated"]
-        F --> G["Negative Reviews"]
-        G --> H["Churn"]
+        A([User Request]):::impact --> B["P50: 50ms ✓ OK"]:::good
+        A --> C["P90: 100ms ✓ OK"]:::good
+        A --> D["P95: 200ms ⚠ Warning"]:::warn
+        A --> E["P99: 2000ms ✗ Fail"]:::fail
+        E --> F["1% Users Frustrated"]:::warn
+        F --> G["Negative Reviews"]:::impact
+        G --> H["Customer Churn"]:::outcome
     end
 ```
 
@@ -40,6 +50,8 @@ What makes this particularly challenging is that the factors contributing to tai
 In practice, I've found that teams often need to make painful trade-offs. That ensemble of deep learning models might improve accuracy by 3%, but if it pushes your P99 latency above acceptable thresholds, you're better off with a simpler model that responds quickly. Users rarely notice a slightly less accurate recommendation, but they always notice when the page takes forever to load.
 
 ### Mapping ML Metrics to Business Metrics
+
+![Figure 2: Mapping ml metrics to buisiness metrics](images/ml-to-business-metrics.svg)
 
 One of the most persistent challenges I've encountered is the disconnect between ML metrics and business value. It's common to focus intensely on improving model accuracy, only to discover that a 2% improvement in AUC has negligible impact on business KPIs. This disconnect often leads to frustration on both sides - data scientists feel their improvements aren't valued, while business stakeholders don't understand why the ML team is celebrating.
 
@@ -91,18 +103,27 @@ As a rule of thumb, each class needs at least 100 samples for the model to learn
 
 ```{mermaid}
 graph TD
-    subgraph "Hierarchical Classification Benefits"
-        A[10,000 Products] --> B[100 Categories]
-        B --> C[10 Departments]
-        
-        D[Data Requirements]
-        D --> E[Flat: 1M samples minimum]
-        D --> F[Hierarchical: 100K sufficient]
-        
-        G[Error Impact]
-        G --> H[Flat: Wrong product]
-        G --> I[Hierarchical: Right category, wrong product]
-    end
+    A1[Flat: Input Image] --> B1[Single Model: 10,000 classes directly]
+    B1 --> C1[Output: Class 7832 - iPhone 13]
+    B1 -.-> D1[Problem: Need 1M samples]
+    B1 -.-> E1[Problem: One feature set for all]
+    
+    A2[Hierarchical: Input Image] --> B2[Level 1: 10 categories]
+    B2 -->|Confident| C2[Level 2: 50 types]
+    C2 -->|Confident| D2[Level 3: 200 models]
+    D2 --> E2[Output: iPhone 13]
+    
+    B2 -->|Not Confident| F2[Stop Early: Return Electronics]
+    
+    B2 -.-> G2[Benefit: 100K samples total]
+    C2 -.-> H2[Benefit: Category-specific features]
+    D2 -.-> I2[Benefit: Model-specific features]
+    
+    style B1 fill:#fee2e2
+    style B2 fill:#dbeafe
+    style C2 fill:#dcfce7
+    style D2 fill:#fef3c7
+    style F2 fill:#f3e8ff
 ```
 
 For multilabel classification, the choice between building separate binary classifiers versus a single multilabel model depends on label correlations. If labels are independent (rare in practice), separate classifiers offer more flexibility - you can update, debug, and optimize each independently. If labels are correlated (the common case), a single model can capture these relationships, leading to better overall performance.
@@ -139,6 +160,8 @@ MultiObjectiveScoring:
 ## Part II: Data - The Foundation of Everything
 
 ### Understanding Data Types and Their Implications
+
+![Figure 3: Data types](images/data-types-characteristics.svg)
 
 The source and nature of your data fundamentally determines your system's capabilities and limitations. This is a lesson I learned the hard way when building a user preference model that relied heavily on third-party demographic data. When our data provider changed their methodology without notice, our model's performance degraded overnight. We had built our castle on sand.
 
@@ -192,6 +215,8 @@ Most production systems I've built use both types, combining rich historical con
 
 ### Choosing the Right Sampling Strategy
 
+![Figure 4: Sampling strategy selection](images/sampling-strategy.svg)
+
 The choice of sampling method can make or break your model's performance. Through painful experience, I've learned that different scenarios require fundamentally different approaches, and the "obvious" choice is often wrong.
 
 **Nonprobability sampling**, such as selecting the most recent data, is simple but dangerous. I once worked on a fraud detection model where we trained on the most recent month of data (because it was convenient). The model performed terribly in production. Why? Fraud patterns are seasonal, and we had trained on December data - when holiday shopping created unusual patterns that didn't generalize to other months.
@@ -220,17 +245,79 @@ Finally, we have **explicit feedback** - ratings, purchases, reviews. These prov
 
 The challenge is balancing signal quality against feedback speed. Waiting for explicit feedback gives you accurate labels but delays model updates. Using implicit feedback allows rapid adaptation but with noisier labels.
 
+<!-- ```{mermaid} -->
+<!-- graph LR -->
+<!--     subgraph "Feedback Trade-offs" -->
+<!--         A[Implicit]:::implicit --> B["Volume: High\nDelay: 0s\nNoise: High"]:::card -->
+<!--         C[Engagement]:::engagement --> D["Volume: Medium\nDelay: Minutes\nNoise: Medium"]:::card -->
+<!--         E[Explicit]:::explicit --> F["Volume: Low\nDelay: Days\nNoise: Low"]:::card -->
+<!---->
+<!--         G["Fast Learning\nLow Quality"] -.-> A -->
+<!--         H["Slow Learning\nHigh Quality"] -.-> E -->
+<!--     end -->
+<!---->
+<!--     classDef implicit fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e3a8a,font-weight:bold; -->
+<!--     classDef engagement fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#92400e,font-weight:bold; -->
+<!--     classDef explicit fill:#dcfce7,stroke:#15803d,stroke-width:2px,color:#065f46,font-weight:bold; -->
+<!--     classDef card fill:#ffffff,stroke:#94a3b8,stroke-dasharray:3 3,rx:10,ry:10; -->
+<!-- ``` -->
+```{mermaid}
+graph TD
+    subgraph T["Feedback Maturity Funnel: Speed vs. Quality Trade-offs"]
+        direction LR
+        A[Implicit]:::implicit --> B[Volume: High\nDelay: Instant\nSignal: Weak]:::card
+        B --> C[Engagement]:::engagement
+        C --> D[Volume: Medium\nDelay: Minutes-Hours\nSignal: Moderate]:::card
+        D --> E[Explicit]:::explicit
+        E --> F[Volume: Low\nDelay: Days-Weeks\nSignal: Strong]:::card
+
+        G[Fast updates\nNoisy labels]:::note -.-> A
+        H[Slow updates\nAccurate labels]:::note -.-> E
+    end
+
+    classDef implicit fill:#dbeafe,stroke:#2563eb,color:#1e3a8a;
+    classDef engagement fill:#fef3c7,stroke:#d97706,color:#92400e;
+    classDef explicit fill:#dcfce7,stroke:#15803d,color:#065f46;
+    classDef card fill:#ffffff,stroke:#94a3b8,color:#0f172a,stroke-dasharray:3 3;
+    classDef note fill:#faf5ff,stroke:#7c3aed,color:#4c1d95,stroke-dasharray:4 4;
+```
 ```{mermaid}
 graph LR
-    subgraph "Feedback Trade-offs"
-        A[Implicit] --> B[Volume: High<br/>Delay: 0s<br/>Noise: High]
-        C[Engagement] --> D[Volume: Medium<br/>Delay: Minutes<br/>Noise: Medium]
-        E[Explicit] --> F[Volume: Low<br/>Delay: Days<br/>Noise: Low]
-        G[Fast Learning<br/>Low Quality] -.-> A
-        H[Slow Learning<br/>High Quality] -.-> E
-    end
-```
+    subgraph T["Mapping Feedback Signals to Training Pipelines"]
+        direction LR
+        U[User Activity Stream]:::user --> A[Implicit\nviews, hovers, scroll]:::implicit
+        U --> C[Engagement\nclicks, dwell, shares]:::engagement
+        U --> E[Explicit\nratings, purchases, reviews]:::explicit
 
+        A -->|online / streaming| M1[Online Learner\nrapid updates]:::fast
+        C -->|mini-batch hourly| M2[Nearline Trainer\nrolling updates]:::mid
+        E -->|batch daily/weekly| M3[Batch Trainer\nground-truth]:::slow
+
+        M1 --> S[Model Registry]:::serve
+        M2 --> S
+        M3 --> S
+        S --> P[Production Model\nblended signals]:::prod
+
+        F1[Pros: fast adaptation\nCons: noisy labels]:::note -.-> A
+        F2[Pros: balanced\nCons: ambiguous intents]:::note -.-> C
+        F3[Pros: strong labels\nCons: slow & sparse]:::note -.-> E
+    end
+
+    classDef user fill:#e0f2fe,stroke:#0284c7,color:#083344;
+    classDef implicit fill:#dbeafe,stroke:#2563eb,color:#1e3a8a;
+    classDef engagement fill:#fef3c7,stroke:#d97706,color:#92400e;
+    classDef explicit fill:#dcfce7,stroke:#15803d,color:#065f46;
+
+    classDef fast fill:#f0f9ff,stroke:#38bdf8,color:#0c4a6e;
+    classDef mid fill:#f5f3ff,stroke:#8b5cf6,color:#2e1065;
+    classDef slow fill:#fff7ed,stroke:#fb923c,color:#7c2d12;
+
+    classDef serve fill:#f1f5f9,stroke:#94a3b8,color:#0f172a;
+    classDef prod fill:#ecfccb,stroke:#65a30d,color:#1a2e05;
+
+    classDef note fill:#faf5ff,stroke:#7c3aed,color:#4c1d95,stroke-dasharray:4 4;
+
+```
 I've found success using multiple feedback types in cascade. Use implicit signals for rapid adaptation and exploration. Use engagement signals for short-term model updates. Use explicit signals for periodic retraining and calibration. This multi-timescale approach balances adaptability with accuracy.
 
 ## Part IV: Data Labeling Strategies
@@ -260,6 +347,8 @@ The challenge with active learning is the feedback loop - selecting informative 
 ## Part V: Class Imbalance - A Production Reality
 
 ### Understanding the Imbalance Spectrum
+
+![Figure 5: Class imbalance solutions by severity](images/class-imbalance.svg)
 
 Class imbalance is ubiquitous in production systems. Fraud is rare. Purchases are uncommon. Clicks are infrequent. Most real-world problems have some degree of imbalance, and how you handle it can make the difference between success and failure.
 
@@ -339,6 +428,8 @@ The key insight is that augmentation should reflect your production distribution
 
 ### Handling Missing Values in Production
 
+![Figure 6: Handling missing values](images/missing-values.svg)
+
 Missing values are ubiquitous in production systems, and handling them incorrectly can destroy model performance. But here's the critical insight: not all missing values are actually missing. Many systems use sentinel values like -999, empty strings, "N/A", or dates like "1900-01-01" to represent missing data. Your first task is identifying what "missing" actually means in your system.
 
 Understanding why values are missing is crucial for proper handling. **Missing Not at Random (MNAR)** occurs when the missingness is related to the value itself. High-income individuals might not disclose their income. Certain age groups might skip profile fields. This missingness pattern itself contains information - the fact that income is missing might indicate high income.
@@ -408,6 +499,8 @@ The solution is selective crossing. Only cross features where interactions make 
 
 ### Common Causes and Prevention
 
+![Figure 7: Data leakage detection](images/data-leakage.svg)
+
 Data leakage has caused more production failures I've witnessed than any other issue. It's insidious because it makes you feel successful right until the moment of deployment, when everything falls apart.
 
 **Temporal leakage** is the most common and dangerous form. Using future information to predict the past seems obviously wrong, yet it happens constantly. That feature "days_since_last_purchase"? If computed after the target date, it's leaking information. That aggregate "user_lifetime_value"? If it includes the transaction you're trying to predict, it's leakage.
@@ -430,7 +523,8 @@ The first line of defense is **feature importance analysis**. Suspiciously impor
 
 A powerful technique is building a model to predict whether a sample belongs to train or test set. If this model succeeds (AUC > 0.7), you have distribution differences that might indicate leakage or other problems. The features most important for distinguishing train from test are your suspects:
 
-```pseudocode
+```python
+# pseudocode
 LeakageDetection:
     combined_data = concat(train_data.add_column("is_train", 1),
                           test_data.add_column("is_train", 0))
@@ -553,6 +647,8 @@ ML systems fail in unique ways that go beyond traditional software failures. Yes
 
 ### Comprehensive Monitoring Strategy
 
+![Figure 8: ML monitoring stack](images/monitoring.svg)
+
 Effective monitoring requires watching multiple layers simultaneously. Each layer provides different signals, and problems often manifest across layers in complex ways.
 
 **System metrics** (latency, throughput, errors, resource usage) are your first line of defense. But they only tell you that something is wrong, not what or why. A latency spike might be due to model complexity, feature computation, data volume, or infrastructure issues.
@@ -580,6 +676,8 @@ Sometimes shifts are gradual - user demographics slowly changing, preferences gr
 What makes this particularly challenging is that internal changes can masquerade as distribution shifts. A bug in data pipeline might look like feature drift. A configuration change might appear as prediction shift. Always verify the basics before assuming true drift.
 
 ### Types of Distribution Shifts
+
+![Figure 9: Distribution shift types](images/distribution-shift.svg)
 
 **Covariate shift** occurs when P(X) changes but P(Y|X) remains stable. The input distribution shifts but the relationship between inputs and outputs stays constant. For example, your user demographics might change due to a marketing campaign, but user behavior given demographics remains the same.
 
@@ -657,6 +755,8 @@ The key is balancing triggers. Time-based provides regularity. Performance-based
 ## Part XIV: Testing in Production
 
 ### The Testing Hierarchy
+
+![Figure 10: Production testing](images/production-testing.svg)
 
 Each testing stage catches different issues and provides different confidence levels. Skipping stages is tempting but dangerous - I've seen too many models fail in production because teams rushed through testing.
 

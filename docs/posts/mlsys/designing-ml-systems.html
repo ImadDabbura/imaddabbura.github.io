@@ -150,11 +150,11 @@ ga('send', {
 <link rel="stylesheet" href="../../styles.css">
 <meta property="og:title" content="Imad Dabbura - The Production ML Survival Guide">
 <meta property="og:description" content="What I Learned Deploying Models That Serve Millions While Others Failed at Launch">
-<meta property="og:image" content="https://imaddabbura.github.io/posts/mlsys/mlsys.svg">
+<meta property="og:image" content="https://imaddabbura.github.io/posts/mlsys/images/mlsys.svg">
 <meta property="og:site_name" content="Imad Dabbura">
 <meta name="twitter:title" content="Imad Dabbura - The Production ML Survival Guide">
 <meta name="twitter:description" content="What I Learned Deploying Models That Serve Millions While Others Failed at Launch">
-<meta name="twitter:image" content="https://imaddabbura.github.io/posts/mlsys/mlsys.svg">
+<meta name="twitter:image" content="https://imaddabbura.github.io/posts/mlsys/images/mlsys.svg">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 </head>
@@ -281,6 +281,12 @@ ga('send', {
       </div>
     </div>
     
+      <div>
+      <div class="quarto-title-meta-heading">Modified</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date-modified">June 12, 2025</p>
+      </div>
+    </div>
       
     </div>
     
@@ -395,7 +401,7 @@ ga('send', {
 
 
 
-<p><img src="mlsys.svg" width="800" height="500"></p>
+<p><img src="images/mlsys.svg" width="800" height="500"></p>
 <section id="building-production-ready-machine-learning-systems-a-practitioners-guide" class="level1">
 <h1>Building Production-Ready Machine Learning Systems: A Practitioner’s Guide</h1>
 <p><em>This guide synthesizes years of experience building and deploying ML systems at scale, incorporating lessons learned from both successes and failures. It draws from foundational works like Chip Huyen’s “Designing Machine Learning Systems” and Cathy Chen’s “Reliable Machine Learning,” while providing practical insights that only come from hands-on production experience.</em></p>
@@ -403,6 +409,12 @@ ga('send', {
 <h2 class="anchored" data-anchor-id="part-i-project-scoping---the-foundation-of-success">Part I: Project Scoping - The Foundation of Success</h2>
 <section id="the-throughput-vs.-latency-trade-off" class="level3">
 <h3 class="anchored" data-anchor-id="the-throughput-vs.-latency-trade-off">The Throughput vs.&nbsp;Latency Trade-off</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/throughput-vs-latency.svg" class="img-fluid figure-img"></p>
+<figcaption>Figure 1: Throughput vs latency trade-off</figcaption>
+</figure>
+</div>
 <p>During my years deploying ML systems, I’ve learned that the transition from training to production involves a fundamental shift in priorities. During training, we optimize for throughput - processing millions of examples efficiently to extract maximum learning from our data. Time is on our side; we can afford to wait hours or days for a model to train if it means better performance.</p>
 <p>However, once we deploy the model, latency becomes paramount. I’ve witnessed numerous cases where a model with exceptional accuracy failed in production simply because it couldn’t meet latency requirements. Customer satisfaction and conversion rates are far more sensitive to response time than to marginal improvements in prediction accuracy.</p>
 <p>The critical insight here is that we must design for the high percentiles of latency distribution - the P90, P95, and especially P99 percentiles. A system might have a median latency of 50ms, which seems acceptable, but if the P99 latency spikes to 2 seconds, that means 1% of your users are having a terrible experience. These tail latencies often determine overall user satisfaction more than median performance.</p>
@@ -412,14 +424,21 @@ ga('send', {
 <p></p><figure class="figure"><p></p>
 <div>
 <pre class="mermaid mermaid-js">graph TD
+    %% Style definitions
+    classDef good fill:#bbf0c9,stroke:#2e7d32,stroke-width:2px,color:#1b5e20
+    classDef warn fill:#fff3cd,stroke:#ff9800,stroke-width:2px,color:#795548
+    classDef fail fill:#ffcdd2,stroke:#d32f2f,stroke-width:2px,color:#b71c1c
+    classDef impact fill:#bbdefb,stroke:#1565c0,stroke-width:2px,color:#0d47a1
+    classDef outcome fill:#e1bee7,stroke:#6a1b9a,stroke-width:2px,color:#4a148c
+
     subgraph "Latency Distribution Reality"
-        A[User Request] --&gt; B["P50: 50ms (OK)"]
-        A --&gt; C["P90: 100ms (OK)"]
-        A --&gt; D["P95: 200ms (Warning)"]
-        A --&gt; E["P99: 2000ms (Fail)"]
-        E --&gt; F["1% Users Frustrated"]
-        F --&gt; G["Negative Reviews"]
-        G --&gt; H["Churn"]
+        A([User Request]):::impact --&gt; B["P50: 50ms ✓ OK"]:::good
+        A --&gt; C["P90: 100ms ✓ OK"]:::good
+        A --&gt; D["P95: 200ms ⚠ Warning"]:::warn
+        A --&gt; E["P99: 2000ms ✗ Fail"]:::fail
+        E --&gt; F["1% Users Frustrated"]:::warn
+        F --&gt; G["Negative Reviews"]:::impact
+        G --&gt; H["Customer Churn"]:::outcome
     end
 </pre>
 </div>
@@ -432,6 +451,12 @@ ga('send', {
 </section>
 <section id="mapping-ml-metrics-to-business-metrics" class="level3">
 <h3 class="anchored" data-anchor-id="mapping-ml-metrics-to-business-metrics">Mapping ML Metrics to Business Metrics</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/ml-to-business-metrics.svg" class="img-fluid figure-img"></p>
+<figcaption>Figure 2: Mapping ml metrics to buisiness metrics</figcaption>
+</figure>
+</div>
 <p>One of the most persistent challenges I’ve encountered is the disconnect between ML metrics and business value. It’s common to focus intensely on improving model accuracy, only to discover that a 2% improvement in AUC has negligible impact on business KPIs. This disconnect often leads to frustration on both sides - data scientists feel their improvements aren’t valued, while business stakeholders don’t understand why the ML team is celebrating.</p>
 <p>The root cause is that ML metrics are proxies, not direct measurements of business value. A recommender system’s NDCG score doesn’t directly translate to revenue. A fraud model’s precision doesn’t immediately map to losses prevented. The relationship between these metrics is complex and often non-linear.</p>
 <p>I learned this lesson painfully when working on a content recommendation system. We spent three months improving our ranking model’s AUC from 0.78 to 0.82 - a significant achievement from an ML perspective. However, when we deployed it, the impact on user engagement was barely measurable. Why? Because the improvement was primarily in ranking items 50-100, but users rarely scrolled past the first 20 items. We were optimizing the wrong part of the problem.</p>
@@ -469,18 +494,27 @@ ga('send', {
 <p></p><figure class="figure"><p></p>
 <div>
 <pre class="mermaid mermaid-js">graph TD
-    subgraph "Hierarchical Classification Benefits"
-        A[10,000 Products] --&gt; B[100 Categories]
-        B --&gt; C[10 Departments]
-        
-        D[Data Requirements]
-        D --&gt; E[Flat: 1M samples minimum]
-        D --&gt; F[Hierarchical: 100K sufficient]
-        
-        G[Error Impact]
-        G --&gt; H[Flat: Wrong product]
-        G --&gt; I[Hierarchical: Right category, wrong product]
-    end
+    A1[Flat: Input Image] --&gt; B1[Single Model: 10,000 classes directly]
+    B1 --&gt; C1[Output: Class 7832 - iPhone 13]
+    B1 -.-&gt; D1[Problem: Need 1M samples]
+    B1 -.-&gt; E1[Problem: One feature set for all]
+    
+    A2[Hierarchical: Input Image] --&gt; B2[Level 1: 10 categories]
+    B2 --&gt;|Confident| C2[Level 2: 50 types]
+    C2 --&gt;|Confident| D2[Level 3: 200 models]
+    D2 --&gt; E2[Output: iPhone 13]
+    
+    B2 --&gt;|Not Confident| F2[Stop Early: Return Electronics]
+    
+    B2 -.-&gt; G2[Benefit: 100K samples total]
+    C2 -.-&gt; H2[Benefit: Category-specific features]
+    D2 -.-&gt; I2[Benefit: Model-specific features]
+    
+    style B1 fill:#fee2e2
+    style B2 fill:#dbeafe
+    style C2 fill:#dcfce7
+    style D2 fill:#fef3c7
+    style F2 fill:#f3e8ff
 </pre>
 </div>
 <p></p></figure><p></p>
@@ -518,6 +552,12 @@ ga('send', {
 <h2 class="anchored" data-anchor-id="part-ii-data---the-foundation-of-everything">Part II: Data - The Foundation of Everything</h2>
 <section id="understanding-data-types-and-their-implications" class="level3">
 <h3 class="anchored" data-anchor-id="understanding-data-types-and-their-implications">Understanding Data Types and Their Implications</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/data-types-characteristics.svg" class="img-fluid figure-img"></p>
+<figcaption>Figure 3: Data types</figcaption>
+</figure>
+</div>
 <p>The source and nature of your data fundamentally determines your system’s capabilities and limitations. This is a lesson I learned the hard way when building a user preference model that relied heavily on third-party demographic data. When our data provider changed their methodology without notice, our model’s performance degraded overnight. We had built our castle on sand.</p>
 <p><strong>First-party data</strong> collected directly from your customers is gold - it’s specific to your use case and directly reflects user behavior. However, it’s also the messiest data you’ll work with. Users provide inconsistent information, leave fields blank, use fake emails like “asdf@asdf.com”, and behave in ways that defy logic. I once discovered that 15% of our users claimed to be born on January 1st - not because of an unusual demographic phenomenon, but because our date picker defaulted to that date and users didn’t bother changing it.</p>
 <p>The key with first-party data is defensive processing. Never trust user input. Always validate, clean, and have fallbacks for missing or corrupted data. Build systems that expect chaos and handle it gracefully.</p>
@@ -552,6 +592,12 @@ ga('send', {
 <h2 class="anchored" data-anchor-id="part-iii-sampling-methods-and-data-collection">Part III: Sampling Methods and Data Collection</h2>
 <section id="choosing-the-right-sampling-strategy" class="level3">
 <h3 class="anchored" data-anchor-id="choosing-the-right-sampling-strategy">Choosing the Right Sampling Strategy</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/sampling-strategy.svg" class="img-fluid figure-img"></p>
+<figcaption>Figure 4: Sampling strategy selection</figcaption>
+</figure>
+</div>
 <p>The choice of sampling method can make or break your model’s performance. Through painful experience, I’ve learned that different scenarios require fundamentally different approaches, and the “obvious” choice is often wrong.</p>
 <p><strong>Nonprobability sampling</strong>, such as selecting the most recent data, is simple but dangerous. I once worked on a fraud detection model where we trained on the most recent month of data (because it was convenient). The model performed terribly in production. Why? Fraud patterns are seasonal, and we had trained on December data - when holiday shopping created unusual patterns that didn’t generalize to other months.</p>
 <p><strong>Random sampling</strong> provides unbiased estimates but can miss rare events. In a system processing millions of transactions where 0.01% are fraudulent, random sampling might not capture enough fraud cases to train an effective model. You need targeted strategies for imbalanced problems.</p>
@@ -568,19 +614,80 @@ ga('send', {
 <p>Next comes <strong>engagement feedback</strong> - clicks, time spent, shares. These provide moderate signal strength with reasonable volume. A click indicates interest, but not necessarily satisfaction. Time spent might indicate engagement or confusion.</p>
 <p>Finally, we have <strong>explicit feedback</strong> - ratings, purchases, reviews. These provide the strongest signal but at the lowest volume and with significant delay. A purchase is a clear positive signal, but it might happen days after the initial recommendation.</p>
 <p>The challenge is balancing signal quality against feedback speed. Waiting for explicit feedback gives you accurate labels but delays model updates. Using implicit feedback allows rapid adaptation but with noisier labels.</p>
+<!-- ```{mermaid} -->
+<!-- graph LR -->
+<!--     subgraph "Feedback Trade-offs" -->
+<!--         A[Implicit]:::implicit -->
+<p>B[“Volume: High: 0s: High”]:::card –&gt; <!--         C[Engagement]:::engagement --> D[“Volume: Medium: Minutes: Medium”]:::card –&gt; <!--         E[Explicit]:::explicit --> F[“Volume: Low: Days: Low”]:::card –&gt; <!----> <!--         G["Fast Learning\nLow Quality"] -.-> A --> <!--         H["Slow Learning\nHigh Quality"] -.-> E --> <!--     end --> <!----> <!--     classDef implicit fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e3a8a,font-weight:bold; --> <!--     classDef engagement fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#92400e,font-weight:bold; --> <!--     classDef explicit fill:#dcfce7,stroke:#15803d,stroke-width:2px,color:#065f46,font-weight:bold; --> <!--     classDef card fill:#ffffff,stroke:#94a3b8,stroke-dasharray:3 3,rx:10,ry:10; --> <!-- ``` --></p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">graph TD
+    subgraph T["Feedback Maturity Funnel: Speed vs. Quality Trade-offs"]
+        direction LR
+        A[Implicit]:::implicit --&gt; B[Volume: High\nDelay: Instant\nSignal: Weak]:::card
+        B --&gt; C[Engagement]:::engagement
+        C --&gt; D[Volume: Medium\nDelay: Minutes-Hours\nSignal: Moderate]:::card
+        D --&gt; E[Explicit]:::explicit
+        E --&gt; F[Volume: Low\nDelay: Days-Weeks\nSignal: Strong]:::card
+
+        G[Fast updates\nNoisy labels]:::note -.-&gt; A
+        H[Slow updates\nAccurate labels]:::note -.-&gt; E
+    end
+
+    classDef implicit fill:#dbeafe,stroke:#2563eb,color:#1e3a8a;
+    classDef engagement fill:#fef3c7,stroke:#d97706,color:#92400e;
+    classDef explicit fill:#dcfce7,stroke:#15803d,color:#065f46;
+    classDef card fill:#ffffff,stroke:#94a3b8,color:#0f172a,stroke-dasharray:3 3;
+    classDef note fill:#faf5ff,stroke:#7c3aed,color:#4c1d95,stroke-dasharray:4 4;
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
 <div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div>
 <p></p><figure class="figure"><p></p>
 <div>
 <pre class="mermaid mermaid-js">graph LR
-    subgraph "Feedback Trade-offs"
-        A[Implicit] --&gt; B[Volume: High&lt;br/&gt;Delay: 0s&lt;br/&gt;Noise: High]
-        C[Engagement] --&gt; D[Volume: Medium&lt;br/&gt;Delay: Minutes&lt;br/&gt;Noise: Medium]
-        E[Explicit] --&gt; F[Volume: Low&lt;br/&gt;Delay: Days&lt;br/&gt;Noise: Low]
-        G[Fast Learning&lt;br/&gt;Low Quality] -.-&gt; A
-        H[Slow Learning&lt;br/&gt;High Quality] -.-&gt; E
+    subgraph T["Mapping Feedback Signals to Training Pipelines"]
+        direction LR
+        U[User Activity Stream]:::user --&gt; A[Implicit\nviews, hovers, scroll]:::implicit
+        U --&gt; C[Engagement\nclicks, dwell, shares]:::engagement
+        U --&gt; E[Explicit\nratings, purchases, reviews]:::explicit
+
+        A --&gt;|online / streaming| M1[Online Learner\nrapid updates]:::fast
+        C --&gt;|mini-batch hourly| M2[Nearline Trainer\nrolling updates]:::mid
+        E --&gt;|batch daily/weekly| M3[Batch Trainer\nground-truth]:::slow
+
+        M1 --&gt; S[Model Registry]:::serve
+        M2 --&gt; S
+        M3 --&gt; S
+        S --&gt; P[Production Model\nblended signals]:::prod
+
+        F1[Pros: fast adaptation\nCons: noisy labels]:::note -.-&gt; A
+        F2[Pros: balanced\nCons: ambiguous intents]:::note -.-&gt; C
+        F3[Pros: strong labels\nCons: slow &amp; sparse]:::note -.-&gt; E
     end
+
+    classDef user fill:#e0f2fe,stroke:#0284c7,color:#083344;
+    classDef implicit fill:#dbeafe,stroke:#2563eb,color:#1e3a8a;
+    classDef engagement fill:#fef3c7,stroke:#d97706,color:#92400e;
+    classDef explicit fill:#dcfce7,stroke:#15803d,color:#065f46;
+
+    classDef fast fill:#f0f9ff,stroke:#38bdf8,color:#0c4a6e;
+    classDef mid fill:#f5f3ff,stroke:#8b5cf6,color:#2e1065;
+    classDef slow fill:#fff7ed,stroke:#fb923c,color:#7c2d12;
+
+    classDef serve fill:#f1f5f9,stroke:#94a3b8,color:#0f172a;
+    classDef prod fill:#ecfccb,stroke:#65a30d,color:#1a2e05;
+
+    classDef note fill:#faf5ff,stroke:#7c3aed,color:#4c1d95,stroke-dasharray:4 4;
+
 </pre>
 </div>
 <p></p></figure><p></p>
@@ -610,6 +717,12 @@ ga('send', {
 <h2 class="anchored" data-anchor-id="part-v-class-imbalance---a-production-reality">Part V: Class Imbalance - A Production Reality</h2>
 <section id="understanding-the-imbalance-spectrum" class="level3">
 <h3 class="anchored" data-anchor-id="understanding-the-imbalance-spectrum">Understanding the Imbalance Spectrum</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/class-imbalance.svg" class="img-fluid figure-img"></p>
+<figcaption>Figure 5: Class imbalance solutions by severity</figcaption>
+</figure>
+</div>
 <p>Class imbalance is ubiquitous in production systems. Fraud is rare. Purchases are uncommon. Clicks are infrequent. Most real-world problems have some degree of imbalance, and how you handle it can make the difference between success and failure.</p>
 <p>The fundamental challenge is that standard algorithms optimize for overall accuracy, which means predicting the majority class. A fraud detection model that never predicts fraud might achieve 99.9% accuracy but be completely useless. The model hasn’t learned to detect fraud - it’s learned that fraud is rare.</p>
 <p>The degree of imbalance determines your strategy. At mild imbalance (less than 1:10), simple techniques like class weights or threshold adjustment often suffice. The model can still learn patterns for both classes; it just needs encouragement to pay attention to the minority class.</p>
@@ -664,6 +777,12 @@ ga('send', {
 <h2 class="anchored" data-anchor-id="part-vii-feature-engineering---the-highest-leverage-activity">Part VII: Feature Engineering - The Highest Leverage Activity</h2>
 <section id="handling-missing-values-in-production" class="level3">
 <h3 class="anchored" data-anchor-id="handling-missing-values-in-production">Handling Missing Values in Production</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/missing-values.svg" class="img-fluid figure-img"></p>
+<figcaption>Figure 6: Handling missing values</figcaption>
+</figure>
+</div>
 <p>Missing values are ubiquitous in production systems, and handling them incorrectly can destroy model performance. But here’s the critical insight: not all missing values are actually missing. Many systems use sentinel values like -999, empty strings, “N/A”, or dates like “1900-01-01” to represent missing data. Your first task is identifying what “missing” actually means in your system.</p>
 <p>Understanding why values are missing is crucial for proper handling. <strong>Missing Not at Random (MNAR)</strong> occurs when the missingness is related to the value itself. High-income individuals might not disclose their income. Certain age groups might skip profile fields. This missingness pattern itself contains information - the fact that income is missing might indicate high income.</p>
 <p><strong>Missing at Random (MAR)</strong> happens when missingness relates to other observed variables but not the missing value itself. Younger users might skip certain fields regardless of what those values would be. Mobile users might have more missing data due to form complexity. You can often predict these missing values from other features.</p>
@@ -717,6 +836,12 @@ ga('send', {
 <h2 class="anchored" data-anchor-id="part-viii-data-leakage---the-silent-killer">Part VIII: Data Leakage - The Silent Killer</h2>
 <section id="common-causes-and-prevention" class="level3">
 <h3 class="anchored" data-anchor-id="common-causes-and-prevention">Common Causes and Prevention</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/data-leakage.svg" class="img-fluid figure-img"></p>
+<figcaption>Figure 7: Data leakage detection</figcaption>
+</figure>
+</div>
 <p>Data leakage has caused more production failures I’ve witnessed than any other issue. It’s insidious because it makes you feel successful right until the moment of deployment, when everything falls apart.</p>
 <p><strong>Temporal leakage</strong> is the most common and dangerous form. Using future information to predict the past seems obviously wrong, yet it happens constantly. That feature “days_since_last_purchase”? If computed after the target date, it’s leaking information. That aggregate “user_lifetime_value”? If it includes the transaction you’re trying to predict, it’s leakage.</p>
 <p>I once debugged a churn prediction model with 99% accuracy. The team was ecstatic until deployment, when accuracy dropped to 60%. Investigation revealed a feature called “account_status” that was computed after churn had occurred. The model had learned to identify customers who had already churned, not those who were about to.</p>
@@ -730,15 +855,16 @@ ga('send', {
 <h3 class="anchored" data-anchor-id="detection-and-prevention-strategies">Detection and Prevention Strategies</h3>
 <p>The first line of defense is <strong>feature importance analysis</strong>. Suspiciously important features often contain leakage. If one feature dominates all others, investigate immediately. I’ve found features that were transformations of the target, encodings that included future information, or aggregates that contained the prediction itself.</p>
 <p>A powerful technique is building a model to predict whether a sample belongs to train or test set. If this model succeeds (AUC &gt; 0.7), you have distribution differences that might indicate leakage or other problems. The features most important for distinguishing train from test are your suspects:</p>
-<pre class="pseudocode"><code>LeakageDetection:
-    combined_data = concat(train_data.add_column("is_train", 1),
-                          test_data.add_column("is_train", 0))
-    
-    model = train_classifier(combined_data.features, combined_data.is_train)
-    
-    if model.auc &gt; 0.7:
-        suspicious_features = model.get_top_features(n=5)
-        investigate(suspicious_features)</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pseudocode</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>LeakageDetection:</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    combined_data <span class="op">=</span> concat(train_data.add_column(<span class="st">"is_train"</span>, <span class="dv">1</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                          test_data.add_column(<span class="st">"is_train"</span>, <span class="dv">0</span>))</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> train_classifier(combined_data.features, combined_data.is_train)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> model.auc <span class="op">&gt;</span> <span class="fl">0.7</span>:</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        suspicious_features <span class="op">=</span> model.get_top_features(n<span class="op">=</span><span class="dv">5</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        investigate(suspicious_features)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><strong>Feature coverage analysis</strong> reveals distribution mismatches. Check whether feature values in test set appear in training set. Low overlap might indicate temporal patterns, data drift, or leakage. If a categorical feature has values in test that never appear in training, something’s wrong.</p>
 <p><strong>Ablation studies</strong> can reveal leakage. Remove features one at a time and retrain. If removing a single feature causes massive performance drops, it might contain leaked information. Real predictive features rarely carry that much unique information.</p>
 <p>The ultimate test is <strong>temporal validation</strong>. Take recent data and try to reproduce your validation scores. If production performance is far worse than validation, leakage is a prime suspect.</p>
@@ -811,6 +937,12 @@ ga('send', {
 </section>
 <section id="comprehensive-monitoring-strategy" class="level3">
 <h3 class="anchored" data-anchor-id="comprehensive-monitoring-strategy">Comprehensive Monitoring Strategy</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/monitoring.svg" class="img-fluid figure-img"></p>
+<figcaption>Figure 8: ML monitoring stack</figcaption>
+</figure>
+</div>
 <p>Effective monitoring requires watching multiple layers simultaneously. Each layer provides different signals, and problems often manifest across layers in complex ways.</p>
 <p><strong>System metrics</strong> (latency, throughput, errors, resource usage) are your first line of defense. But they only tell you that something is wrong, not what or why. A latency spike might be due to model complexity, feature computation, data volume, or infrastructure issues.</p>
 <p><strong>Data metrics</strong> monitor input distributions, feature statistics, and data quality. Are features within expected ranges? Are categorical features seeing new values? Is the rate of missing values increasing? These metrics provide early warning of problems.</p>
@@ -831,6 +963,12 @@ ga('send', {
 </section>
 <section id="types-of-distribution-shifts" class="level3">
 <h3 class="anchored" data-anchor-id="types-of-distribution-shifts">Types of Distribution Shifts</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/distribution-shift.svg" class="img-fluid figure-img"></p>
+<figcaption>Figure 9: Distribution shift types</figcaption>
+</figure>
+</div>
 <p><strong>Covariate shift</strong> occurs when P(X) changes but P(Y|X) remains stable. The input distribution shifts but the relationship between inputs and outputs stays constant. For example, your user demographics might change due to a marketing campaign, but user behavior given demographics remains the same.</p>
 <p>This is often the most benign form of shift if your model has seen similar examples during training. But if the new distribution includes regions of feature space not covered in training, performance will degrade.</p>
 <p><strong>Label shift</strong> happens when P(Y) changes but P(X|Y) remains stable. The output distribution shifts but features given labels stay consistent. For example, the overall fraud rate might increase, but fraudulent transactions still have similar characteristics.</p>
@@ -887,6 +1025,12 @@ ga('send', {
 <h2 class="anchored" data-anchor-id="part-xiv-testing-in-production">Part XIV: Testing in Production</h2>
 <section id="the-testing-hierarchy" class="level3">
 <h3 class="anchored" data-anchor-id="the-testing-hierarchy">The Testing Hierarchy</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/production-testing.svg" class="img-fluid figure-img"></p>
+<figcaption>Figure 10: Production testing</figcaption>
+</figure>
+</div>
 <p>Each testing stage catches different issues and provides different confidence levels. Skipping stages is tempting but dangerous - I’ve seen too many models fail in production because teams rushed through testing.</p>
 <p><strong>Holdout testing</strong> on a reserved test set validates basic model performance. This is necessary but far from sufficient. It tells you the model can learn patterns but not whether it will work in production.</p>
 <p><strong>Backtesting</strong> on recent historical data reveals temporal issues. Always test on the most recent data available before deployment. If your model trained on 2023 data performs poorly on 2024 data, it will fail in production.</p>
