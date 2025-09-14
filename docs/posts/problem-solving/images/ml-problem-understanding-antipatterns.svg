@@ -1,0 +1,197 @@
+<svg viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="dangerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="safeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="0" dy="4" result="offsetblur"/>
+      <feFlood flood-color="#000000" flood-opacity="0.2"/>
+      <feComposite in2="offsetblur" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="900" fill="#fef2f2"/>
+  
+  <!-- Title -->
+  <text x="600" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#991b1b">
+    Dangerous Anti-Patterns in ML Problem Understanding
+  </text>
+  
+  <!-- Anti-Pattern 1: Solution in Search of Problem -->
+  <g transform="translate(100, 100)">
+    <rect x="0" y="0" width="480" height="160" rx="10" fill="white" stroke="#ef4444" stroke-width="3" filter="url(#shadow)"/>
+    <circle cx="30" cy="30" r="15" fill="url(#dangerGrad)"/>
+    <text x="30" y="35" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">1</text>
+    
+    <text x="60" y="35" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#dc2626">
+      "Solution in Search of a Problem"
+    </text>
+    
+    <text x="20" y="65" font-family="Arial, sans-serif" font-size="14" fill="#ef4444">
+      ❌ Wrong Way:
+    </text>
+    <text x="30" y="85" font-family="Arial, sans-serif" font-size="12" fill="#4b5563">
+      "We need to use deep learning!" → "What can we apply it to?"
+    </text>
+    
+    <text x="20" y="115" font-family="Arial, sans-serif" font-size="14" fill="#16a34a">
+      ✓ Right Way:
+    </text>
+    <text x="30" y="135" font-family="Arial, sans-serif" font-size="12" fill="#4b5563">
+      "We need to reduce churn by 20%" → "What's the best approach?"
+    </text>
+  </g>
+  
+  <!-- Anti-Pattern 2: Metric Fixation -->
+  <g transform="translate(620, 100)">
+    <rect x="0" y="0" width="480" height="160" rx="10" fill="white" stroke="#ef4444" stroke-width="3" filter="url(#shadow)"/>
+    <circle cx="30" cy="30" r="15" fill="url(#dangerGrad)"/>
+    <text x="30" y="35" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">2</text>
+    
+    <text x="60" y="35" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#dc2626">
+      "Metric Fixation"
+    </text>
+    
+    <text x="20" y="65" font-family="Arial, sans-serif" font-size="14" fill="#ef4444">
+      ❌ Wrong Way:
+    </text>
+    <text x="30" y="85" font-family="Arial, sans-serif" font-size="12" fill="#4b5563">
+      Optimize accuracy to 99.9% on test set, ignore production reality
+    </text>
+    
+    <text x="20" y="115" font-family="Arial, sans-serif" font-size="14" fill="#16a34a">
+      ✓ Right Way:
+    </text>
+    <text x="30" y="135" font-family="Arial, sans-serif" font-size="12" fill="#4b5563">
+      Balance multiple metrics aligned with business outcomes
+    </text>
+  </g>
+  
+  <!-- Anti-Pattern 3: Perfect Prediction Fallacy -->
+  <g transform="translate(100, 290)">
+    <rect x="0" y="0" width="480" height="160" rx="10" fill="white" stroke="#ef4444" stroke-width="3" filter="url(#shadow)"/>
+    <circle cx="30" cy="30" r="15" fill="url(#dangerGrad)"/>
+    <text x="30" y="35" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">3</text>
+    
+    <text x="60" y="35" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#dc2626">
+      "Perfect Prediction Fallacy"
+    </text>
+    
+    <text x="20" y="65" font-family="Arial, sans-serif" font-size="14" fill="#ef4444">
+      ❌ Wrong Way:
+    </text>
+    <text x="30" y="85" font-family="Arial, sans-serif" font-size="12" fill="#4b5563">
+      "With enough data, we can predict everything perfectly"
+    </text>
+    
+    <text x="20" y="115" font-family="Arial, sans-serif" font-size="14" fill="#16a34a">
+      ✓ Right Way:
+    </text>
+    <text x="30" y="135" font-family="Arial, sans-serif" font-size="12" fill="#4b5563">
+      Accept inherent uncertainty, design for "good enough"
+    </text>
+  </g>
+  
+  <!-- Anti-Pattern 4: Batch Thinking in Streaming World -->
+  <g transform="translate(620, 290)">
+    <rect x="0" y="0" width="480" height="160" rx="10" fill="white" stroke="#ef4444" stroke-width="3" filter="url(#shadow)"/>
+    <circle cx="30" cy="30" r="15" fill="url(#dangerGrad)"/>
+    <text x="30" y="35" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">4</text>
+    
+    <text x="60" y="35" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#dc2626">
+      "Batch Thinking in Streaming World"
+    </text>
+    
+    <text x="20" y="65" font-family="Arial, sans-serif" font-size="14" fill="#ef4444">
+      ❌ Wrong Way:
+    </text>
+    <text x="30" y="85" font-family="Arial, sans-serif" font-size="12" fill="#4b5563">
+      Train on clean, complete historical data → Deploy to messy real-time
+    </text>
+    
+    <text x="20" y="115" font-family="Arial, sans-serif" font-size="14" fill="#16a34a">
+      ✓ Right Way:
+    </text>
+    <text x="30" y="135" font-family="Arial, sans-serif" font-size="12" fill="#4b5563">
+      Design for production constraints from the start
+    </text>
+  </g>
+  
+  <!-- Anti-Pattern 5: Stakeholder Misalignment -->
+  <g transform="translate(100, 480)">
+    <rect x="0" y="0" width="480" height="160" rx="10" fill="white" stroke="#ef4444" stroke-width="3" filter="url(#shadow)"/>
+    <circle cx="30" cy="30" r="15" fill="url(#dangerGrad)"/>
+    <text x="30" y="35" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">5</text>
+    
+    <text x="60" y="35" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#dc2626">
+      "Stakeholder Misalignment"
+    </text>
+    
+    <text x="20" y="65" font-family="Arial, sans-serif" font-size="14" fill="#ef4444">
+      ❌ Wrong Way:
+    </text>
+    <text x="30" y="85" font-family="Arial, sans-serif" font-size="12" fill="#4b5563">
+      Different teams have different (hidden) definitions of success
+    </text>
+    
+    <text x="20" y="115" font-family="Arial, sans-serif" font-size="14" fill="#16a34a">
+      ✓ Right Way:
+    </text>
+    <text x="30" y="135" font-family="Arial, sans-serif" font-size="12" fill="#4b5563">
+      Explicit, documented, agreed-upon success criteria
+    </text>
+  </g>
+  
+  <!-- Anti-Pattern 6: Data Leakage Blindness -->
+  <g transform="translate(620, 480)">
+    <rect x="0" y="0" width="480" height="160" rx="10" fill="white" stroke="#ef4444" stroke-width="3" filter="url(#shadow)"/>
+    <circle cx="30" cy="30" r="15" fill="url(#dangerGrad)"/>
+    <text x="30" y="35" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">6</text>
+    
+    <text x="60" y="35" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#dc2626">
+      "Data Leakage Blindness"
+    </text>
+    
+    <text x="20" y="65" font-family="Arial, sans-serif" font-size="14" fill="#ef4444">
+      ❌ Wrong Way:
+    </text>
+    <text x="30" y="85" font-family="Arial, sans-serif" font-size="12" fill="#4b5563">
+      Amazing test results! (using future information accidentally)
+    </text>
+    
+    <text x="20" y="115" font-family="Arial, sans-serif" font-size="14" fill="#16a34a">
+      ✓ Right Way:
+    </text>
+    <text x="30" y="135" font-family="Arial, sans-serif" font-size="12" fill="#4b5563">
+      Rigorous temporal validation, production-like testing
+    </text>
+  </g>
+  
+  <!-- Central Warning -->
+  <g transform="translate(300, 700)">
+    <rect x="0" y="0" width="600" height="120" rx="15" fill="#fef2f2" stroke="#dc2626" stroke-width="3" filter="url(#shadow)"/>
+    <text x="300" y="35" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#991b1b">
+      ⚠️ Critical Insight
+    </text>
+    <text x="300" y="65" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#dc2626">
+      These anti-patterns compound: starting with a solution in search of a problem
+    </text>
+    <text x="300" y="85" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#dc2626">
+      leads to metric fixation, which creates stakeholder misalignment, ultimately
+    </text>
+    <text x="300" y="105" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#dc2626">
+      resulting in complete project failure despite technical "success"
+    </text>
+  </g>
+</svg>

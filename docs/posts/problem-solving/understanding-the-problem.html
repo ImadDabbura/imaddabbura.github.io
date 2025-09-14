@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.553">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Imad Dabbura">
+<meta name="dcterms.date" content="2025-03-05">
+
+<title>Imad Dabbura - Understanding the Problem: The Foundation of Every Successful Data Science Solution</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete-preset-algolia.umd.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../images/profile.jpg" rel="icon" type="image/jpeg">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "algolia": {
+    "application-id": "PVDXB8B7OS",
+    "search-only-api-key": "eb3007c200831c30465f8a5172690cf0",
+    "index-name": "Initial-Website-Search-Index",
+    "analytics-events": true,
+    "show-logo": true,
+    "libDir": "site_libs"
+  },
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdn.jsdelivr.net/npm/algoliasearch@4.5.1/dist/algoliasearch-lite.umd.js"></script>
+
+
+<script type="text/javascript">
+var ALGOLIA_INSIGHTS_SRC = "https://cdn.jsdelivr.net/npm/search-insights/dist/search-insights.iife.min.js";
+!function(e,a,t,n,s,i,c){e.AlgoliaAnalyticsObject=s,e[s]=e[s]||function(){
+(e[s].queue=e[s].queue||[]).push(arguments)},i=a.createElement(t),c=a.getElementsByTagName(t)[0],
+i.async=1,i.src=n,c.parentNode.insertBefore(i,c)
+}(window,document,"script",ALGOLIA_INSIGHTS_SRC,"aa");
+</script>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-plugin-algolia-insights">
+
+</script>
+
+<script type="text/javascript">
+
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-127825273-1', 'auto');
+
+ga('send', {
+  hitType: 'pageview',
+  'anonymizeIp': true,
+});
+</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+<meta property="og:title" content="Imad Dabbura - Understanding the Problem: The Foundation of Every Successful Data Science Solution">
+<meta property="og:description" content="What I Learned Deploying Models That Serve Millions While Others Failed at Launch">
+<meta property="og:image" content="https://imaddabbura.github.io/posts/problem-solving/images/feature.jpeg">
+<meta property="og:site_name" content="Imad Dabbura">
+<meta name="twitter:title" content="Imad Dabbura - Understanding the Problem: The Foundation of Every Successful Data Science Solution">
+<meta name="twitter:description" content="What I Learned Deploying Models That Serve Millions While Others Failed at Launch">
+<meta name="twitter:image" content="https://imaddabbura.github.io/posts/problem-solving/images/feature.jpeg">
+<meta name="twitter:creator" content="@imaddabbura">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../images/profile.jpg" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Imad Dabbura</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Posts</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../til.html"> <i class="bi bi-lightbulb" role="img">
+</i> 
+<span class="menu-text">TIL</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../papers-summaries.html"> 
+<span class="menu-text">Papers’ Summaries</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../dl-tips-tricks.html"> 
+<span class="menu-text">DL Tips &amp; Tricks</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../projects-index.html"> 
+<span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-more" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">More</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-more">    
+        <li>
+    <a class="dropdown-item" href="../../books-summaries.html">
+ <span class="dropdown-text">Books’ Summaries</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../misc-notes.html">
+ <span class="dropdown-text">Misc. Notes</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../reading-list.html">
+ <span class="dropdown-text">Reading List</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../resume.html">
+ <span class="dropdown-text">Resume</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/imaddabbura"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/imadphd"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Understanding the Problem: The Foundation of Every Successful Data Science Solution</h1>
+            <p class="subtitle lead">What I Learned Deploying Models That Serve Millions While Others Failed at Launch</p>
+                                <div class="quarto-categories">
+                <div class="quarto-category">MLSys</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Imad Dabbura </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">March 5, 2025</p>
+      </div>
+    </div>
+    
+      <div>
+      <div class="quarto-title-meta-heading">Modified</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date-modified">March 5, 2025</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction-the-hidden-crisis-in-ai-development" id="toc-introduction-the-hidden-crisis-in-ai-development" class="nav-link active" data-scroll-target="#introduction-the-hidden-crisis-in-ai-development"><strong>Introduction: The Hidden Crisis in AI Development</strong></a></li>
+  <li><a href="#the-three-pillars-of-problem-understanding" id="toc-the-three-pillars-of-problem-understanding" class="nav-link" data-scroll-target="#the-three-pillars-of-problem-understanding"><strong>The Three Pillars of Problem Understanding</strong></a>
+  <ul class="collapse">
+  <li><a href="#what-is-the-unknown-the-art-of-target-definition" id="toc-what-is-the-unknown-the-art-of-target-definition" class="nav-link" data-scroll-target="#what-is-the-unknown-the-art-of-target-definition"><strong>What is the Unknown? The Art of Target Definition</strong></a></li>
+  <li><a href="#what-are-the-data-beyond-simple-statistics" id="toc-what-are-the-data-beyond-simple-statistics" class="nav-link" data-scroll-target="#what-are-the-data-beyond-simple-statistics">What are the Data? Beyond Simple Statistics</a></li>
+  <li><a href="#what-is-the-condition-the-constraint-ecosystem" id="toc-what-is-the-condition-the-constraint-ecosystem" class="nav-link" data-scroll-target="#what-is-the-condition-the-constraint-ecosystem">What is the Condition? The Constraint Ecosystem</a></li>
+  </ul></li>
+  <li><a href="#the-process-of-problem-decomposition" id="toc-the-process-of-problem-decomposition" class="nav-link" data-scroll-target="#the-process-of-problem-decomposition">The Process of Problem Decomposition</a></li>
+  <li><a href="#the-art-of-feasibility-assessment" id="toc-the-art-of-feasibility-assessment" class="nav-link" data-scroll-target="#the-art-of-feasibility-assessment">The Art of Feasibility Assessment</a></li>
+  <li><a href="#creating-shared-understanding-across-teams" id="toc-creating-shared-understanding-across-teams" class="nav-link" data-scroll-target="#creating-shared-understanding-across-teams">Creating Shared Understanding Across Teams</a></li>
+  <li><a href="#common-anti-patterns-in-problem-understanding" id="toc-common-anti-patterns-in-problem-understanding" class="nav-link" data-scroll-target="#common-anti-patterns-in-problem-understanding">Common Anti-Patterns in Problem Understanding</a></li>
+  <li><a href="#industry-specific-considerations" id="toc-industry-specific-considerations" class="nav-link" data-scroll-target="#industry-specific-considerations">Industry-Specific Considerations</a></li>
+  <li><a href="#practical-tools-and-templates" id="toc-practical-tools-and-templates" class="nav-link" data-scroll-target="#practical-tools-and-templates">Practical Tools and Templates</a></li>
+  <li><a href="#case-studies-in-problem-understanding" id="toc-case-studies-in-problem-understanding" class="nav-link" data-scroll-target="#case-studies-in-problem-understanding">Case Studies in Problem Understanding</a></li>
+  <li><a href="#from-understanding-to-action" id="toc-from-understanding-to-action" class="nav-link" data-scroll-target="#from-understanding-to-action">From Understanding to Action</a></li>
+  <li><a href="#conclusion-the-compound-returns-of-problem-understanding" id="toc-conclusion-the-compound-returns-of-problem-understanding" class="nav-link" data-scroll-target="#conclusion-the-compound-returns-of-problem-understanding">Conclusion: The Compound Returns of Problem Understanding</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p><em>Part 1 of 4: Applying Polya’s Problem-Solving Framework to Data Science, ML, and AI</em></p>
+<p><em>A Comprehensive Guide for Practitioners</em></p>
+<section id="introduction-the-hidden-crisis-in-ai-development" class="level2">
+<h2 class="anchored" data-anchor-id="introduction-the-hidden-crisis-in-ai-development"><strong>Introduction: The Hidden Crisis in AI Development</strong></h2>
+<p>In the rush to implement cutting-edge machine learning solutions, organizations across industries are encountering a troubling pattern of failure. Despite unprecedented investment in AI technologies and the availability of sophisticated algorithms, the vast majority of data science projects never deliver their promised value. Recent studies reveal that approximately 87% of data science projects fail to reach production, while those that do often fail to meet their original objectives. This crisis isn’t primarily technical in nature—it stems from a fundamental misunderstanding of the problems these systems are meant to solve.George Polya, the renowned Hungarian mathematician, anticipated this challenge decades before the advent of modern computing. In his 1945 masterwork “How to Solve It,” Polya articulated a truth that resonates even more strongly in our age of artificial intelligence: the most critical phase of problem-solving occurs before any solution is attempted. His systematic framework for problem understanding, originally developed for mathematical reasoning, provides exactly the rigor and structure that modern data science desperately needs.</p>
+<p>The challenge of problem understanding in artificial intelligence extends far beyond the difficulties encountered in traditional software development. When building conventional systems, requirements typically manifest as concrete specifications—a form must capture specific fields, a report must display particular metrics, an API must return defined responses. These requirements, while sometimes complex, exist in the realm of the deterministic and the definable. Machine learning problems, however, inhabit a fundamentally different space. They deal with probabilities rather than certainties, with patterns rather than rules, with approximations rather than exact solutions.</p>
+<p>Consider the seemingly straightforward task of building a customer churn prediction model. The surface-level requirement appears simple: identify customers likely to cancel their subscriptions. Yet beneath this simplicity lies a web of critical questions that must be answered with precision. What exactly constitutes churn in this context? Is it the moment a customer clicks the cancellation button, the end of their billing period, or the point at which they stop engaging with the service? Over what time horizon should predictions be made—next week, next month, or next quarter? What level of confidence is required for the prediction to trigger an intervention? What are the relative costs of false positives versus false negatives? Each of these questions, if answered incorrectly or left unexamined, can render even the most sophisticated model useless in practice.</p>
+<p>The compounding nature of misunderstanding in AI projects deserves particular attention. When a problem is misunderstood by even a small margin at the outset, this error doesn’t simply add a proportional amount of waste to the project. Instead, it multiplies through each subsequent phase, creating an exponential cascade of inefficiency. A 10% misalignment in problem definition becomes a 20% misdirection in planning, as architects design systems for the wrong objectives. This doubles again during implementation, reaching 40% waste as engineers optimize for incorrect metrics. By the deployment phase, the cumulative effect can result in 80% waste—or complete project failure.</p>
+<p><img src="images/cascading-cost.svg" class="img-fluid"></p>
+</section>
+<section id="the-three-pillars-of-problem-understanding" class="level2">
+<h2 class="anchored" data-anchor-id="the-three-pillars-of-problem-understanding"><strong>The Three Pillars of Problem Understanding</strong></h2>
+<section id="what-is-the-unknown-the-art-of-target-definition" class="level3">
+<h3 class="anchored" data-anchor-id="what-is-the-unknown-the-art-of-target-definition"><strong>What is the Unknown? The Art of Target Definition</strong></h3>
+<p>Polya’s first fundamental question—“What is the unknown?”—appears deceptively simple. In mathematical problems, the unknown might be a single variable or a proof to be demonstrated. In machine learning, however, the unknown encompasses not just what we’re predicting, but the entire context in which that prediction exists and will be used.</p>
+<p>The specification of the unknown in a machine learning context requires us to think across multiple dimensions simultaneously. We must consider not only the technical nature of the prediction—whether it’s a continuous value, a category, or a probability—but also its temporal characteristics, its intended use, and its relationship to business processes. A prediction that arrives too late to be actionable is worthless, regardless of its accuracy. A highly accurate model that requires data unavailable at inference time is an elaborate fiction. A probabilistic output that decision-makers don’t understand how to interpret might as well be random noise.</p>
+<p><img src="images/types-ml-unknowns.svg" class="img-fluid"></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pseudocode</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> validate_target_specification(target_spec):</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Comprehensive validation of target variable definition</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Ensures all aspects of the unknown are properly specified</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    validation_results <span class="op">=</span> {}</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Check temporal alignment</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    IF target_spec.prediction_horizon <span class="kw">is</span> NULL:</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        validation_results.add_error(<span class="st">"Prediction horizon not specified"</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    ELSE IF target_spec.prediction_horizon <span class="op">&lt;</span> data_availability_lag:</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        validation_results.add_error(<span class="st">"Cannot predict before data available"</span>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Check actionability window</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    IF target_spec.action_deadline <span class="op">&lt;</span> target_spec.prediction_horizon:</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>        validation_results.add_error(<span class="st">"Prediction arrives too late for action"</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Check measurement feasibility</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    IF target_spec.ground_truth_delay <span class="op">&gt;</span> evaluation_window:</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        validation_results.add_warning(<span class="st">"Cannot measure success in reasonable time"</span>)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Check business alignment</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    IF target_spec.decision_threshold <span class="kw">is</span> NULL:</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>        validation_results.add_error(<span class="st">"No decision threshold specified"</span>)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    ELSE:</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>        expected_precision <span class="op">=</span> estimate_precision(target_spec.decision_threshold)</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>        IF expected_precision <span class="op">&lt;</span> target_spec.minimum_precision:</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>            validation_results.add_warning(<span class="st">"Threshold may not meet precision requirements"</span>)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Check data sufficiency</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    positive_examples <span class="op">=</span> count_historical_positives(target_spec)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    IF positive_examples <span class="op">&lt;</span> <span class="dv">100</span> <span class="op">*</span> number_of_features:</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>        validation_results.add_error(<span class="st">"Insufficient positive examples for reliable learning"</span>)</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Check <span class="cf">for</span> label leakage</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    FOR each feature <span class="kw">in</span> available_features:</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>        IF feature.creation_time <span class="op">&gt;</span> target_spec.event_time:</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>            validation_results.add_error(<span class="ss">f"Feature </span><span class="sc">{</span>feature<span class="sc">}</span><span class="ss"> contains future information"</span>)</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> validation_results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The temporal dimension of the unknown often proves particularly challenging for practitioners to specify correctly. Consider a financial institution developing a loan default prediction model. Stating that the model should “predict loan defaults” leaves enormous ambiguity. Should it predict the probability of default at any point during the loan’s lifetime? Within the first year? Within the next payment period? The answer fundamentally changes the problem structure, the relevant features, the appropriate evaluation metrics, and the business value of the solution. A model predicting lifetime default risk might be valuable for initial underwriting decisions but useless for portfolio management, where the question is which current loans are likely to default in the near term.</p>
+<p>Furthermore, the unknown in machine learning problems often involves multiple interconnected predictions rather than a single output. A recommendation system doesn’t just predict what items a user might like; it must also predict the probability of engagement, the likely order value, the potential for cross-selling, and perhaps the long-term impact on customer satisfaction. These multiple unknowns must be carefully balanced and their relationships explicitly modeled. The tendency to oversimplify complex business problems into single prediction tasks has been the downfall of countless AI initiatives.</p>
+<p>The granularity at which the unknown is defined presents another critical consideration. Should a demand forecasting model predict at the SKU level, category level, or store level? Should it provide daily, weekly, or monthly forecasts? The answers depend not only on the available data and computational resources but more fundamentally on how the predictions will be used. A buyer making quarterly purchasing decisions needs different granularity than a store manager optimizing daily staff schedules. Understanding these use cases and their requirements must precede any technical decisions about model architecture or feature engineering.</p>
+</section>
+<section id="what-are-the-data-beyond-simple-statistics" class="level3">
+<h3 class="anchored" data-anchor-id="what-are-the-data-beyond-simple-statistics">What are the Data? Beyond Simple Statistics</h3>
+<p>Polya’s second question—“What are the data?”—requires us to understand not just what information we have, but what that information truly represents, how it was generated, and what it can and cannot tell us about our unknown. In the context of machine learning, data understanding extends far beyond calculating summary statistics or visualizing distributions. It requires a deep investigation into the data’s provenance, its biases, its temporal characteristics, and its relationship to the phenomenon we’re trying to model.</p>
+<p>The provenance of data—its origin and the process by which it was collected—fundamentally determines what problems it can solve. Data collected for one purpose often carries implicit assumptions that make it unsuitable for other uses. Customer service logs, for instance, only capture information about customers who contacted support, creating a selection bias that might invalidate models trying to understand overall customer satisfaction. Transaction data might only record completed purchases, missing the crucial information about abandoned carts that would be essential for understanding purchase intent. Understanding these collection mechanisms and their limitations is essential for determining whether available data can actually answer the questions being asked.</p>
+<p><img src="images/data-understanding-iceberg.svg" class="img-fluid"></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pseudocode</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> assess_data_provenance(dataset):</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Deep investigation of data origin and collection biases</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns comprehensive assessment of data limitations</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    provenance_report <span class="op">=</span> {}</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Analyze collection mechanism</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    collection_method <span class="op">=</span> identify_collection_method(dataset)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    IF collection_method <span class="op">==</span> <span class="st">"user_voluntary"</span>:</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        provenance_report.bias <span class="op">=</span> <span class="st">"self-selection bias likely"</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        provenance_report.missing_population <span class="op">=</span> estimate_non_participants()</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    ELSE IF collection_method <span class="op">==</span> <span class="st">"automated_sensors"</span>:</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        provenance_report.bias <span class="op">=</span> <span class="st">"measurement conditions may vary"</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        provenance_report.accuracy <span class="op">=</span> assess_sensor_calibration()</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    ELSE IF collection_method <span class="op">==</span> <span class="st">"human_annotation"</span>:</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        provenance_report.bias <span class="op">=</span> <span class="st">"annotator subjectivity present"</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>        provenance_report.consistency <span class="op">=</span> calculate_inter_annotator_agreement()</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Temporal coverage analysis</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    data_time_range <span class="op">=</span> get_temporal_range(dataset)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    FOR each major_event <span class="kw">in</span> business_timeline:</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>        IF major_event.date <span class="kw">in</span> data_time_range:</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>            provenance_report.add_discontinuity(major_event)</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Population coverage</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    represented_segments <span class="op">=</span> identify_data_segments(dataset)</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    target_population <span class="op">=</span> get_target_population()</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    FOR each segment <span class="kw">in</span> target_population:</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>        IF segment <span class="kw">not</span> <span class="kw">in</span> represented_segments:</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>            provenance_report.add_missing_segment(segment)</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>        ELSE:</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>            representation_ratio <span class="op">=</span> calculate_representation(segment)</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>            IF representation_ratio <span class="op">&lt;</span> <span class="fl">0.8</span>:</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>                provenance_report.add_underrepresented(segment, representation_ratio)</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Identify systematic gaps</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>    missing_pattern <span class="op">=</span> analyze_missing_patterns(dataset)</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>    IF missing_pattern.<span class="bu">type</span> <span class="op">==</span> <span class="st">"MNAR"</span>:  <span class="op">//</span> Missing Not At Random</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>        provenance_report.critical_warning <span class="op">=</span> <span class="st">"Missing data is informative"</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>        provenance_report.affected_features <span class="op">=</span> missing_pattern.correlated_features</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> provenance_report</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The temporal characteristics of data present particular challenges in machine learning applications. Most business data exhibits complex temporal patterns—seasonality, trends, periodic events, and gradual distribution shifts. A dataset that appears rich and comprehensive when viewed in aggregate might reveal serious gaps when examined temporally. Consider an e-commerce company with five years of transaction data. This might seem sufficient for building a robust demand forecasting model until temporal analysis reveals that a major website redesign two years ago fundamentally changed user behavior, effectively limiting usable data to a much shorter period. Similarly, data that seems current might actually have significant reporting delays, making real-time prediction impossible regardless of model sophistication.</p>
+<p>The relationship between available data and the target variable often proves more complex than initially assumed. Surface-level correlations might mask confounding variables, while truly predictive features might be hidden in complex interactions or temporal patterns. A retail model trying to predict product returns might find high correlation with certain product categories, but deeper investigation might reveal that the actual driver is shipping distance, with certain categories simply happening to be ordered more frequently from distant locations. This kind of insight only emerges from thorough data understanding that goes beyond statistical analysis to examine causal relationships and business logic.</p>
+<p>Data quality issues compound these challenges. Missing data rarely occurs randomly; the mechanism of missingness often contains information itself. Customers who don’t provide income information might systematically differ from those who do. Sensors that fail to report might do so under specific conditions that are precisely the ones we need to understand. These patterns of missingness must be understood not just to handle them technically but to determine whether the available data can support valid inference about the unknown.</p>
+</section>
+<section id="what-is-the-condition-the-constraint-ecosystem" class="level3">
+<h3 class="anchored" data-anchor-id="what-is-the-condition-the-constraint-ecosystem">What is the Condition? The Constraint Ecosystem</h3>
+<p>Polya’s third question—“What is the condition?”—addresses the constraints that bound our solution space. In machine learning applications, these constraints form a complex ecosystem of technical, business, ethical, and regulatory requirements that often conflict with each other and always shape the feasible solution space in non-obvious ways.</p>
+<p><img src="images/ml-constraint-ecosystem.svg" class="img-fluid"></p>
+<p>Technical constraints in modern machine learning systems extend well beyond simple computational limitations. Latency requirements for real-time systems must account not just for model inference time but for data retrieval, preprocessing, and post-processing. A fraud detection system that must respond within 100 milliseconds cannot use a model that requires complex feature engineering on historical data, regardless of how much that engineering might improve accuracy. Similarly, models deployed on edge devices face strict constraints on memory usage and computational complexity that eliminate entire classes of algorithms from consideration. These technical constraints must be understood not as implementation details to be addressed later but as fundamental aspects of the problem that shape what solutions are possible.</p>
+<p>Business constraints often prove even more restrictive than technical ones. Budget limitations don’t just affect the choice of infrastructure; they determine how much data can be labeled, how frequently models can be retrained, and how sophisticated the monitoring systems can be. Timeline constraints might force choices between building a comprehensive solution that arrives too late to capture value and a simpler solution that can be deployed while the opportunity still exists. Organizational constraints—the skills available on the team, the maturity of data infrastructure, the sophistication of end users—all fundamentally shape what kinds of solutions can be successfully deployed and maintained.</p>
+<p>The ethical and regulatory constraints on machine learning systems have rightfully become a central concern, yet they’re often treated as an afterthought rather than a fundamental aspect of problem definition. Requirements for model explainability, fairness across protected groups, privacy preservation, and regulatory compliance aren’t features to be added after the fact—they’re core constraints that must shape the solution from the beginning. A loan approval model that must provide adverse action notices under the Equal Credit Opportunity Act cannot use a black-box ensemble method, regardless of its superior predictive performance. A healthcare diagnostic system that must maintain patient privacy under HIPAA cannot use collaborative filtering approaches that might leak information between patients.</p>
+<p>These various constraints don’t exist in isolation; they interact in complex ways that create the actual solution space. High accuracy requirements might conflict with explainability needs. Real-time latency requirements might conflict with the desire for sophisticated feature engineering. Privacy requirements might conflict with the need for detailed user profiling. Understanding these interactions and their implications requires careful analysis before any model development begins. The feasible solution space is often much smaller than initially assumed, and discovering this after significant investment in development can be catastrophic for project success.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pseudocode</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> analyze_constraint_interactions(constraints):</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Identify conflicts between constraints and determine feasible solution space</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns feasibility assessment and recommended trade-offs</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    conflicts <span class="op">=</span> []</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    solution_space <span class="op">=</span> initialize_full_space()</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Check <span class="cf">for</span> fundamental incompatibilities</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    FOR each constraint_pair <span class="kw">in</span> combinations(constraints, <span class="dv">2</span>):</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        conflict_type <span class="op">=</span> check_compatibility(constraint_pair)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        IF conflict_type <span class="op">==</span> <span class="st">"HARD_CONFLICT"</span>:</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>            conflicts.append({</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>                <span class="st">"type"</span>: <span class="st">"incompatible"</span>,</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>                <span class="st">"constraints"</span>: constraint_pair,</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>                <span class="st">"resolution"</span>: <span class="st">"must_choose_one"</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>            })</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>            solution_space <span class="op">=</span> NULL</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>        ELSE IF conflict_type <span class="op">==</span> <span class="st">"SOFT_CONFLICT"</span>:</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>            conflicts.append({</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>                <span class="st">"type"</span>: <span class="st">"trade-off"</span>,</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>                <span class="st">"constraints"</span>: constraint_pair,</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>                <span class="st">"pareto_frontier"</span>: calculate_pareto_frontier(constraint_pair)</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>            })</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>            solution_space <span class="op">=</span> intersect(solution_space, constraint_pair.feasible_region)</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Analyze solution space</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    IF solution_space <span class="op">==</span> NULL:</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> {</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>            <span class="st">"feasible"</span>: <span class="va">False</span>,</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>            <span class="st">"reason"</span>: <span class="st">"Hard conflicts exist"</span>,</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>            <span class="st">"conflicts"</span>: conflicts</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    IF volume(solution_space) <span class="op">&lt;</span> minimum_viable_space:</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> {</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>            <span class="st">"feasible"</span>: <span class="va">False</span>,</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>            <span class="st">"reason"</span>: <span class="st">"Solution space too constrained"</span>,</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>            <span class="st">"bottleneck"</span>: identify_binding_constraints(constraints)</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Find optimal point within feasible space</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>    optimal_point <span class="op">=</span> optimize_within_constraints(solution_space, business_objective)</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>        <span class="st">"feasible"</span>: <span class="va">True</span>,</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>        <span class="st">"solution_space"</span>: solution_space,</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>        <span class="st">"recommended_approach"</span>: optimal_point,</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>        <span class="st">"trade_offs"</span>: conflicts,</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>        <span class="st">"flexibility"</span>: calculate_robustness(solution_space)</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>    }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="the-process-of-problem-decomposition" class="level2">
+<h2 class="anchored" data-anchor-id="the-process-of-problem-decomposition">The Process of Problem Decomposition</h2>
+<p>Polya emphasized that complex problems become manageable when properly decomposed into smaller, more tractable components. In machine learning applications, this decomposition must occur across multiple dimensions simultaneously, breaking down the problem by temporal characteristics, functional components, data complexity, and stakeholder concerns.</p>
+<p><img src="images/problem-decomposition-strategies.svg" class="img-fluid"></p>
+<p>Temporal decomposition recognizes that different aspects of a machine learning system operate on different time scales and have different latency requirements. Consider a recommendation system for an e-commerce platform. The real-time serving layer must respond within milliseconds, showing pre-computed recommendations to users as they browse. The batch processing layer might update user embeddings hourly, incorporating recent behavior while maintaining computational efficiency. The model retraining pipeline might run daily or weekly, incorporating new data and adapting to changing patterns. The fundamental model architecture might be revisited monthly or quarterly, based on accumulated performance data and changing business requirements. Each of these temporal components has different requirements, different constraints, and different success metrics, yet they must work together as a cohesive system.</p>
+<p>Functional decomposition breaks the overall prediction task into logical sub-problems that can be solved independently and then combined. A customer lifetime value prediction system might decompose into predicting whether a customer will make another purchase (a classification problem), how many purchases they’ll make (a count regression problem), and the average value of those purchases (a value regression problem). Each component can be optimized separately with appropriate techniques and then combined to produce the final prediction. This decomposition not only simplifies the modeling challenge but also provides interpretability and debugging advantages—when the system fails, it’s easier to identify which component is responsible.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pseudocode</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> decompose_ml_problem(problem_spec):</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Systematic decomposition across multiple dimensions</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns structured decomposition plan with dependencies</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    decomposition <span class="op">=</span> {</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"temporal"</span>: [],</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"functional"</span>: [],</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"data"</span>: [],</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"stakeholder"</span>: []</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Temporal decomposition</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    time_requirements <span class="op">=</span> analyze_time_requirements(problem_spec)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    FOR each time_scale <span class="kw">in</span> [<span class="st">"real_time"</span>, <span class="st">"near_real_time"</span>, <span class="st">"batch"</span>, <span class="st">"periodic"</span>]:</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        IF time_scale <span class="kw">in</span> time_requirements:</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>            component <span class="op">=</span> {</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>                <span class="st">"scale"</span>: time_scale,</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>                <span class="st">"latency"</span>: get_latency_requirement(time_scale),</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>                <span class="st">"update_frequency"</span>: get_update_frequency(time_scale),</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>                <span class="st">"infrastructure"</span>: map_to_infrastructure(time_scale)</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>            decomposition.temporal.append(component)</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Functional decomposition</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    sub_problems <span class="op">=</span> identify_sub_problems(problem_spec)</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    FOR each sub_problem <span class="kw">in</span> sub_problems:</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>        component <span class="op">=</span> {</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>            <span class="st">"name"</span>: sub_problem.name,</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>            <span class="st">"type"</span>: classify_problem_type(sub_problem),</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>            <span class="st">"algorithm_family"</span>: suggest_algorithms(sub_problem),</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>            <span class="st">"evaluation_metric"</span>: select_metric(sub_problem),</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>            <span class="st">"dependencies"</span>: identify_dependencies(sub_problem, sub_problems)</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>        decomposition.functional.append(component)</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Data complexity ladder</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>    data_sources <span class="op">=</span> identify_data_sources(problem_spec)</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>    complexity_levels <span class="op">=</span> []</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>    cumulative_data <span class="op">=</span> []</span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>    FOR complexity <span class="kw">in</span> [<span class="st">"structured"</span>, <span class="st">"text"</span>, <span class="st">"images"</span>, <span class="st">"temporal"</span>, <span class="st">"graph"</span>]:</span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>        available <span class="op">=</span> filter_by_type(data_sources, complexity)</span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>        IF available:</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>            cumulative_data.extend(available)</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>            level <span class="op">=</span> {</span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>                <span class="st">"version"</span>: <span class="ss">f"v</span><span class="sc">{</span><span class="bu">len</span>(complexity_levels) <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>                <span class="st">"data_types"</span>: cumulative_data.copy(),</span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>                <span class="st">"expected_improvement"</span>: estimate_improvement(cumulative_data),</span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>                <span class="st">"additional_effort"</span>: estimate_effort(available)</span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>            complexity_levels.append(level)</span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>    decomposition.data <span class="op">=</span> complexity_levels</span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Stakeholder perspectives</span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>    stakeholders <span class="op">=</span> identify_stakeholders(problem_spec)</span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>    FOR each stakeholder <span class="kw">in</span> stakeholders:</span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>        perspective <span class="op">=</span> {</span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>            <span class="st">"group"</span>: stakeholder.name,</span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>            <span class="st">"success_criteria"</span>: stakeholder.get_success_metrics(),</span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>            <span class="st">"constraints"</span>: stakeholder.get_constraints(),</span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>            <span class="st">"concerns"</span>: stakeholder.get_concerns(),</span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>            <span class="st">"communication_needs"</span>: define_reporting(stakeholder)</span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>        decomposition.stakeholder.append(perspective)</span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Validate decomposition coherence</span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>    validation <span class="op">=</span> validate_decomposition(decomposition)</span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>    IF <span class="kw">not</span> validation.is_coherent:</span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>        decomposition.warnings <span class="op">=</span> validation.issues</span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> decomposition</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The decomposition by data complexity allows teams to build incrementally, starting with simpler data sources and gradually incorporating more complex ones as the system matures. The first version might use only structured transactional data, establishing a baseline and proving the basic concept. Subsequent versions might incorporate unstructured text from customer reviews, clickstream data from website interactions, or external data sources like economic indicators. This incremental approach reduces risk, allows for faster initial deployment, and provides clear decision points about whether additional complexity is justified by improved performance.</p>
+<p>Stakeholder decomposition recognizes that different groups have different perspectives on the problem and different requirements for the solution. The data science team focuses on model performance metrics, the engineering team on system reliability and maintainability, the business team on ROI and strategic alignment, the legal team on compliance and risk, and the end users on usability and trustworthiness. Each perspective reveals different aspects of the problem and different constraints on the solution. Successful problem understanding requires synthesizing these perspectives into a coherent whole while managing the inevitable conflicts between them.</p>
+</section>
+<section id="the-art-of-feasibility-assessment" class="level2">
+<h2 class="anchored" data-anchor-id="the-art-of-feasibility-assessment">The Art of Feasibility Assessment</h2>
+<p>Before committing resources to solving a problem, Polya advocates for carefully assessing whether the conditions can actually be satisfied—whether the problem as stated is actually solvable with the available resources. In machine learning contexts, this feasibility assessment must examine statistical, technical, business, and ethical dimensions.</p>
+<p><img src="images/ml-feasibility-assessment-matrix.svg" class="img-fluid"></p>
+<p>Statistical feasibility begins with the fundamental question of whether the available data contains sufficient signal to predict the target variable. This goes beyond simple correlation analysis to examine the theoretical limits of predictability. Some phenomena are inherently unpredictable beyond a certain accuracy level—no amount of data or model sophistication will predict truly random events. Other phenomena might be theoretically predictable but require data that doesn’t exist or cannot be collected. A model attempting to predict customer satisfaction might fail not because of poor algorithms but because satisfaction is influenced by factors—personal circumstances, competitive offerings, unrecorded service interactions—that aren’t captured in any available data.</p>
+<p>The sample size requirements for machine learning often surprise stakeholders accustomed to traditional statistics. While classical statistical methods might require dozens or hundreds of samples, machine learning models, particularly deep learning approaches, might require thousands or millions of examples to achieve acceptable performance. Moreover, these samples must adequately represent all scenarios the model will encounter in production. A fraud detection model trained on historical data might fail catastrophically when fraudsters develop new techniques not represented in the training set. Understanding these sample requirements and their implications for data collection costs and timelines is essential for realistic project planning.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pseudocode</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> assess_statistical_feasibility(data, target, requirements):</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Comprehensive statistical feasibility assessment</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns detailed analysis of whether ML can solve this problem</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    feasibility_report <span class="op">=</span> {</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"overall"</span>: <span class="st">"UNKNOWN"</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"details"</span>: {},</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"recommendations"</span>: []</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> <span class="fl">1.</span> Sample size analysis</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    n_samples <span class="op">=</span> <span class="bu">len</span>(data)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    n_features <span class="op">=</span> data.shape[<span class="dv">1</span>]</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    n_classes <span class="op">=</span> target.nunique() <span class="cf">if</span> is_classification <span class="cf">else</span> <span class="va">None</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Rules of thumb <span class="cf">for</span> different model types</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    min_samples <span class="op">=</span> {</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>        <span class="st">"linear"</span>: n_features <span class="op">*</span> <span class="dv">10</span>,</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">"tree_based"</span>: n_features <span class="op">*</span> <span class="dv">50</span>,</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>        <span class="st">"neural_network"</span>: n_features <span class="op">*</span> <span class="dv">100</span>,</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>        <span class="st">"deep_learning"</span>: n_features <span class="op">*</span> <span class="dv">1000</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    feasibility_report.details[<span class="st">"sample_size"</span>] <span class="op">=</span> {</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>        <span class="st">"available"</span>: n_samples,</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>        <span class="st">"requirements"</span>: min_samples,</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>        <span class="st">"verdict"</span>: determine_adequacy(n_samples, min_samples)</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> <span class="fl">2.</span> Signal<span class="op">-</span>to<span class="op">-</span>noise analysis</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>    IF is_classification:</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>        <span class="op">//</span> Use mutual information <span class="cf">for</span> classification</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>        mi_scores <span class="op">=</span> mutual_information(data, target)</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>        signal_strength <span class="op">=</span> mean(mi_scores)</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>        noise_estimate <span class="op">=</span> estimate_bayes_error_rate(data, target)</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>    ELSE:</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>        <span class="op">//</span> Use correlation <span class="kw">and</span> R² <span class="cf">for</span> regression</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>        correlations <span class="op">=</span> [correlation(feature, target) <span class="cf">for</span> feature <span class="kw">in</span> data]</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>        signal_strength <span class="op">=</span> <span class="bu">max</span>(correlations)</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>        noise_estimate <span class="op">=</span> <span class="dv">1</span> <span class="op">-</span> best_possible_r2(data, target)</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>    feasibility_report.details[<span class="st">"signal"</span>] <span class="op">=</span> {</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>        <span class="st">"strength"</span>: signal_strength,</span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>        <span class="st">"noise_level"</span>: noise_estimate,</span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>        <span class="st">"predictability_ceiling"</span>: <span class="dv">1</span> <span class="op">-</span> noise_estimate,</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>        <span class="st">"verdict"</span>: <span class="st">"GOOD"</span> <span class="cf">if</span> signal_strength <span class="op">&gt;</span> <span class="fl">0.3</span> <span class="cf">else</span> <span class="st">"WEAK"</span></span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> <span class="fl">3.</span> Class imbalance assessment (<span class="cf">for</span> classification)</span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>    IF is_classification:</span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>        class_distribution <span class="op">=</span> target.value_counts(normalize<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>        minority_class <span class="op">=</span> <span class="bu">min</span>(class_distribution)</span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>        IF minority_class <span class="op">&lt;</span> <span class="fl">0.01</span>:</span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>            feasibility_report.details[<span class="st">"class_balance"</span>] <span class="op">=</span> {</span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>                <span class="st">"minority_ratio"</span>: minority_class,</span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>                <span class="st">"verdict"</span>: <span class="st">"SEVERE_IMBALANCE"</span>,</span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>                <span class="st">"min_samples_minority"</span>: n_samples <span class="op">*</span> minority_class,</span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>                <span class="st">"recommendation"</span>: <span class="st">"Consider anomaly detection instead"</span></span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>        ELSE IF minority_class <span class="op">&lt;</span> <span class="fl">0.1</span>:</span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>            feasibility_report.details[<span class="st">"class_balance"</span>] <span class="op">=</span> {</span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>                <span class="st">"minority_ratio"</span>: minority_class,</span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>                <span class="st">"verdict"</span>: <span class="st">"MODERATE_IMBALANCE"</span>,</span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>                <span class="st">"recommendation"</span>: <span class="st">"Will need resampling strategies"</span></span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> <span class="fl">4.</span> Feature informativeness</span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>    redundancy_matrix <span class="op">=</span> calculate_feature_redundancy(data)</span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a>    effective_features <span class="op">=</span> count_non_redundant_features(redundancy_matrix)</span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a>    feasibility_report.details[<span class="st">"features"</span>] <span class="op">=</span> {</span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>        <span class="st">"total"</span>: n_features,</span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a>        <span class="st">"effective"</span>: effective_features,</span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>        <span class="st">"redundancy"</span>: <span class="dv">1</span> <span class="op">-</span> (effective_features <span class="op">/</span> n_features),</span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a>        <span class="st">"verdict"</span>: <span class="st">"GOOD"</span> <span class="cf">if</span> effective_features <span class="op">&gt;</span> <span class="dv">10</span> <span class="cf">else</span> <span class="st">"INSUFFICIENT"</span></span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> <span class="fl">5.</span> Temporal stability (<span class="cf">if</span> applicable)</span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a>    IF has_temporal_component(data):</span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>        drift_analysis <span class="op">=</span> detect_distribution_drift(data, time_column)</span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a>        feasibility_report.details[<span class="st">"stability"</span>] <span class="op">=</span> {</span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a>            <span class="st">"drift_detected"</span>: drift_analysis.significant_drift,</span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a>            <span class="st">"drift_magnitude"</span>: drift_analysis.magnitude,</span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a>            <span class="st">"verdict"</span>: <span class="st">"UNSTABLE"</span> <span class="cf">if</span> drift_analysis.significant_drift <span class="cf">else</span> <span class="st">"STABLE"</span></span>
+<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Overall verdict</span>
+<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a>    critical_failures <span class="op">=</span> [</span>
+<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a>        v[<span class="st">"verdict"</span>] <span class="cf">for</span> v <span class="kw">in</span> feasibility_report.details.values() </span>
+<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> v[<span class="st">"verdict"</span>] <span class="kw">in</span> [<span class="st">"FAIL"</span>, <span class="st">"SEVERE_IMBALANCE"</span>, <span class="st">"INSUFFICIENT"</span>]</span>
+<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a>    IF <span class="bu">len</span>(critical_failures) <span class="op">&gt;</span> <span class="dv">0</span>:</span>
+<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a>        feasibility_report[<span class="st">"overall"</span>] <span class="op">=</span> <span class="st">"NOT_FEASIBLE"</span></span>
+<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a>        feasibility_report[<span class="st">"recommendations"</span>].append(<span class="st">"Address critical issues before proceeding"</span>)</span>
+<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a>    ELSE IF any_marginal_verdicts(feasibility_report.details):</span>
+<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a>        feasibility_report[<span class="st">"overall"</span>] <span class="op">=</span> <span class="st">"CONDITIONALLY_FEASIBLE"</span></span>
+<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a>        feasibility_report[<span class="st">"recommendations"</span>].append(<span class="st">"Proceed with risk mitigation strategies"</span>)</span>
+<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a>    ELSE:</span>
+<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a>        feasibility_report[<span class="st">"overall"</span>] <span class="op">=</span> <span class="st">"FEASIBLE"</span></span>
+<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a>        feasibility_report[<span class="st">"recommendations"</span>].append(<span class="st">"Green light to proceed"</span>)</span>
+<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> feasibility_report</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Technical feasibility extends beyond simple computational requirements to encompass the entire lifecycle of the machine learning system. Can the necessary data be accessed with acceptable latency? Can feature engineering be performed within the required time constraints? Can models be retrained frequently enough to adapt to changing patterns? Can predictions be delivered to downstream systems reliably? Can model performance be monitored effectively in production? Each of these questions must be answered affirmatively, with specific technical solutions identified, before proceeding with development.</p>
+<p>Business feasibility requires honest assessment of whether the predicted improvements justify the investment required. This calculation must account not just for initial development costs but for ongoing maintenance, periodic retraining, and eventual replacement. It must consider opportunity costs—what other projects could be pursued with the same resources? It must evaluate risk—what happens if the model performs worse than expected or fails entirely? And it must assess organizational readiness—does the organization have the processes and culture to effectively use model predictions in decision-making?</p>
+<p>Ethical feasibility has become increasingly critical as machine learning systems influence more consequential decisions. Can the model achieve acceptable performance across all demographic groups? Can its decisions be explained to affected individuals? Can privacy be preserved while still achieving business objectives? Can the system be audited for bias and fairness? These aren’t just nice-to-have features but fundamental requirements that, if not achievable, should halt project development before resources are wasted on an ultimately undeployable system.</p>
+</section>
+<section id="creating-shared-understanding-across-teams" class="level2">
+<h2 class="anchored" data-anchor-id="creating-shared-understanding-across-teams">Creating Shared Understanding Across Teams</h2>
+<p>One of Polya’s key insights was the importance of notation—creating a precise, shared language for discussing the problem. In machine learning projects, this shared understanding must bridge the gap between technical teams who think in terms of algorithms and metrics, and business stakeholders who think in terms of processes and outcomes.</p>
+<p><img src="images/technical-business-bridge.svg" class="img-fluid"></p>
+<p>The creation of this shared understanding begins with establishing clear definitions for all key terms. What exactly does “customer” mean in the context of this problem—someone who has ever made a purchase, someone who has purchased within the last year, or someone who currently has an active subscription? What constitutes “engagement”—any interaction with the platform, specific high-value actions, or sustained activity over time? These definitions might seem pedantic, but ambiguity at this stage cascades through the entire project, leading to misaligned efforts and failed deployments.</p>
+<p>Visual representations play a crucial role in creating shared understanding. System diagrams that show how predictions flow through business processes help stakeholders understand not just what the model predicts but how those predictions create value. Confusion matrices translated into business terms—showing dollar impacts rather than abstract metrics—make model performance tangible for non-technical stakeholders. Process flow diagrams that highlight where human judgment intersects with model predictions clarify the boundaries of automation and the importance of human oversight.</p>
+<p>The translation between technical and business metrics requires particular care. A data scientist might celebrate achieving an AUC-ROC of 0.92, but this means nothing to a business stakeholder. Translating this into business terms—“the model correctly ranks risky customers 92% of the time, allowing us to focus retention efforts on those most likely to churn”—creates meaningful understanding. Similarly, technical constraints must be translated into business implications. A latency requirement of 100 milliseconds isn’t just a technical specification; it means the model must make predictions fast enough to influence the customer experience without causing frustrating delays.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pseudocode</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_stakeholder_communication_plan(project_spec, stakeholders):</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Develop comprehensive communication strategy for all stakeholder groups</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Ensures consistent understanding across technical and business teams</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    communication_plan <span class="op">=</span> {</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"vocabulary"</span>: {},</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"metrics_mapping"</span>: {},</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"update_cadence"</span>: {},</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"decision_points"</span>: []</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Create unified vocabulary</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    technical_terms <span class="op">=</span> extract_technical_terms(project_spec)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    FOR each term <span class="kw">in</span> technical_terms:</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        translation <span class="op">=</span> {</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>            <span class="st">"technical_definition"</span>: term.technical_meaning,</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>            <span class="st">"business_translation"</span>: translate_to_business(term),</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>            <span class="st">"example_in_context"</span>: create_concrete_example(term),</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>            <span class="st">"visual_representation"</span>: suggest_visualization(term)</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>        communication_plan.vocabulary[term] <span class="op">=</span> translation</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Map technical metrics to business outcomes</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    FOR each metric <span class="kw">in</span> project_spec.evaluation_metrics:</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>        mapping <span class="op">=</span> {</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>            <span class="st">"technical_metric"</span>: metric.name,</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>            <span class="st">"calculation"</span>: metric.formula,</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>            <span class="st">"business_meaning"</span>: map_to_business_outcome(metric),</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>            <span class="st">"threshold_implications"</span>: {}</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>        <span class="op">//</span> Show what different threshold values mean</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>        FOR threshold <span class="kw">in</span> [<span class="fl">0.5</span>, <span class="fl">0.7</span>, <span class="fl">0.9</span>, <span class="fl">0.95</span>, <span class="fl">0.99</span>]:</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>            impact <span class="op">=</span> calculate_business_impact(metric, threshold)</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>            mapping.threshold_implications[threshold] <span class="op">=</span> {</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>                <span class="st">"true_positives"</span>: impact.correct_predictions,</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>                <span class="st">"false_positives"</span>: impact.false_alarms,</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>                <span class="st">"business_value"</span>: impact.net_value,</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>                <span class="st">"user_experience"</span>: describe_ux_impact(impact)</span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>        communication_plan.metrics_mapping[metric.name] <span class="op">=</span> mapping</span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Define update cadence <span class="cf">for</span> each stakeholder group</span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>    FOR each stakeholder_group <span class="kw">in</span> stakeholders:</span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>        cadence <span class="op">=</span> {</span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>            <span class="st">"frequency"</span>: determine_update_frequency(stakeholder_group),</span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>            <span class="st">"format"</span>: select_communication_format(stakeholder_group),</span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>            <span class="st">"key_metrics"</span>: filter_relevant_metrics(stakeholder_group),</span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>            <span class="st">"depth_of_detail"</span>: calibrate_technical_depth(stakeholder_group)</span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>        communication_plan.update_cadence[stakeholder_group] <span class="op">=</span> cadence</span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Identify critical decision points</span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>    decision_points <span class="op">=</span> identify_project_gates(project_spec)</span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>    FOR each decision_point <span class="kw">in</span> decision_points:</span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>        gate <span class="op">=</span> {</span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>            <span class="st">"milestone"</span>: decision_point.name,</span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>            <span class="st">"criteria"</span>: decision_point.success_criteria,</span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>            <span class="st">"stakeholders_required"</span>: decision_point.approvers,</span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>            <span class="st">"information_needed"</span>: prepare_decision_package(decision_point),</span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>            <span class="st">"fallback_plan"</span>: define_contingency(decision_point)</span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>        communication_plan.decision_points.append(gate)</span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> communication_plan</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Regular communication rituals that bring together technical and business stakeholders help maintain aligned understanding as the project evolves. Problem definition workshops at the project’s outset establish shared vocabulary and objectives. Regular review sessions during development ensure that technical choices align with business needs. Pre-deployment validations confirm that the solution actually addresses the original problem. These touchpoints prevent the gradual drift that often occurs when teams work in isolation.</p>
+</section>
+<section id="common-anti-patterns-in-problem-understanding" class="level2">
+<h2 class="anchored" data-anchor-id="common-anti-patterns-in-problem-understanding">Common Anti-Patterns in Problem Understanding</h2>
+<p>Experience across numerous failed machine learning projects reveals recurring patterns of problem misunderstanding. Recognizing these anti-patterns early can prevent significant waste and frustration.</p>
+<p><img src="images/ml-problem-understanding-antipatterns.svg" class="img-fluid"></p>
+<p>The “solution in search of a problem” anti-pattern occurs when teams become enamored with a particular technology or approach and then look for ways to apply it, rather than starting with a clear problem and finding the appropriate solution. This might manifest as insistence on using deep learning for problems where simple linear models would suffice, or forcing all problems into a supervised learning framework when unsupervised or reinforcement learning might be more appropriate. The result is unnecessary complexity, increased development time, and solutions that poorly match actual needs.</p>
+<p>The “metric fixation” anti-pattern involves optimizing for easily measurable metrics while losing sight of actual business objectives. A recommendation system might achieve high click-through rates by recommending popular items everyone already knows about, failing in its actual purpose of discovery. A customer service bot might minimize average handling time by quickly closing conversations without actually resolving issues. The key to avoiding this anti-pattern is maintaining clear connection between model metrics and business outcomes, regularly validating that improvements in the former actually drive the latter.</p>
+<p>The “perfect prediction” anti-pattern assumes that if we just had enough data and sophisticated enough models, we could predict outcomes with near-perfect accuracy. This ignores the inherent uncertainty in many business processes, the influence of external factors not captured in any dataset, and the reflexive nature of predictions that influence the outcomes they’re trying to predict. Accepting the limits of predictability and designing systems that work well despite uncertainty is essential for practical success.</p>
+<p>The “batch thinking in a streaming world” anti-pattern occurs when teams design solutions based on static datasets without considering the dynamic nature of production environments. Models trained on carefully curated historical data might fail when deployed to handle real-time streams with missing values, delayed updates, and distribution shifts. Understanding the temporal characteristics of both the problem and the production environment from the outset prevents expensive redesigns during deployment.</p>
+</section>
+<section id="industry-specific-considerations" class="level2">
+<h2 class="anchored" data-anchor-id="industry-specific-considerations">Industry-Specific Considerations</h2>
+<p>While Polya’s framework applies universally, its application must be tailored to the specific contexts and constraints of different industries. Each sector brings unique challenges that shape how problems must be understood and defined.</p>
+<p>In healthcare applications, problem understanding must account for the life-or-death consequences of predictions, the stringent regulatory environment, and the complex interplay between statistical and clinical significance. A model that achieves high accuracy in predicting disease might still be clinically useless if it doesn’t provide predictions early enough for intervention or if its false positives lead to unnecessary and harmful treatments. The problem definition must incorporate clinical workflows, consider the psychological impact of predictions on patients, and respect the fundamental principle of “first, do no harm.”</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pseudocode</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> healthcare_problem_validation(problem_spec):</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Specialized validation for healthcare ML problems</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Ensures clinical relevance and safety</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    validation_results <span class="op">=</span> {</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"clinical_validity"</span>: {},</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"regulatory_compliance"</span>: {},</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ethical_considerations"</span>: {},</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"safety_assessment"</span>: {}</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Clinical validity check</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    clinical_review <span class="op">=</span> {</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">"actionability"</span>: assess_clinical_actionability(problem_spec),</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>        <span class="st">"timing"</span>: verify_intervention_window(problem_spec),</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">"clinical_significance"</span>: check_effect_size_relevance(problem_spec),</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>        <span class="st">"workflow_integration"</span>: evaluate_workflow_fit(problem_spec)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    IF clinical_review.actionability <span class="op">==</span> <span class="st">"NOT_ACTIONABLE"</span>:</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>        validation_results.clinical_validity[<span class="st">"verdict"</span>] <span class="op">=</span> <span class="st">"FAIL"</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>        validation_results.clinical_validity[<span class="st">"reason"</span>] <span class="op">=</span> <span class="st">"Predictions don't enable clinical action"</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Regulatory compliance</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    regulatory_requirements <span class="op">=</span> get_regulatory_framework(problem_spec.domain)</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    FOR each requirement <span class="kw">in</span> regulatory_requirements:</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>        IF requirement.<span class="bu">type</span> <span class="op">==</span> <span class="st">"EXPLAINABILITY"</span>:</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>            IF problem_spec.model_type <span class="kw">in</span> [<span class="st">"deep_learning"</span>, <span class="st">"ensemble"</span>]:</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>                validation_results.regulatory_compliance[<span class="st">"risk"</span>] <span class="op">=</span> <span class="st">"HIGH"</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>                validation_results.regulatory_compliance[<span class="st">"mitigation"</span>] <span class="op">=</span> <span class="st">"Need interpretable model"</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>        IF requirement.<span class="bu">type</span> <span class="op">==</span> <span class="st">"VALIDATION"</span>:</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>            validation_results.regulatory_compliance[<span class="st">"needed"</span>] <span class="op">=</span> {</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>                <span class="st">"prospective_study"</span>: requirement.prospective_required,</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>                <span class="st">"external_validation"</span>: requirement.external_sites_needed,</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>                <span class="st">"sample_size"</span>: calculate_clinical_trial_size(problem_spec)</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Safety assessment</span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>    failure_modes <span class="op">=</span> analyze_failure_modes(problem_spec)</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>    FOR each failure_mode <span class="kw">in</span> failure_modes:</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>        harm_assessment <span class="op">=</span> {</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>            <span class="st">"failure_type"</span>: failure_mode.<span class="bu">type</span>,</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>            <span class="st">"probability"</span>: failure_mode.likelihood,</span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>            <span class="st">"severity"</span>: assess_patient_harm(failure_mode),</span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>            <span class="st">"detectability"</span>: assess_detection_capability(failure_mode)</span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>        risk_score <span class="op">=</span> harm_assessment.probability <span class="op">*</span> harm_assessment.severity <span class="op">/</span> harm_assessment.detectability</span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>        IF risk_score <span class="op">&gt;</span> ACCEPTABLE_RISK_THRESHOLD:</span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>            validation_results.safety_assessment[<span class="st">"unacceptable_risks"</span>].append(harm_assessment)</span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> validation_results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Financial services applications must navigate a complex web of regulations, fairness requirements, and adversarial actors. Problem understanding in this domain must account for the reflexive nature of financial predictions—a model that predicts loan default might influence lending decisions in ways that change the default patterns themselves. The requirement for explainable decisions under regulations like the Equal Credit Opportunity Act fundamentally constrains the solution space. The presence of adversarial actors attempting to game the system means that problems must be defined not just for current patterns but for how those patterns might evolve in response to the model’s deployment.</p>
+<p>Retail and e-commerce applications face the challenge of extreme scale and real-time requirements while operating on thin margins that constrain investment. Problem understanding must account for the highly seasonal nature of retail data, the cold-start problem for new products or customers, and the complex interplay between online and offline channels. A recommendation system must be defined not just in terms of relevance but also considering inventory constraints, margin optimization, and long-term customer value.</p>
+<p>Manufacturing and industrial applications bring unique constraints around reliability, safety, and integration with existing systems. Problem understanding must account for the cost of false positives in predictive maintenance (unnecessary downtime) versus false negatives (catastrophic failure). The limited availability of failure examples for training, the physics-based constraints on what patterns are possible, and the need for predictions that operators can understand and trust all shape how problems must be defined.</p>
+</section>
+<section id="practical-tools-and-templates" class="level2">
+<h2 class="anchored" data-anchor-id="practical-tools-and-templates">Practical Tools and Templates</h2>
+<p>To support systematic problem understanding, practitioners benefit from structured tools and templates that guide thinking and ensure completeness. These tools shouldn’t be treated as rigid forms to fill out but as frameworks that prompt the right questions and capture critical decisions.</p>
+<p><img src="images/ml-problem-understanding-canva.svg" class="img-fluid"></p>
+<p>The Problem Understanding Canvas serves as a central artifact for capturing and communicating problem definition. Unlike traditional requirements documents that often run to dozens of pages of prose, the canvas provides a single-page visual representation that all stakeholders can quickly grasp and reference. The canvas structures thinking around nine key areas: the core problem statement occupies the center, surrounded by stakeholders, success metrics, constraints, available data, target definition, assumptions, risks, and dependencies. This visual arrangement emphasizes the interconnected nature of these elements—changing the target definition might affect success metrics, new constraints might introduce additional risks, different stakeholders might have conflicting success criteria.</p>
+<p>The Feasibility Assessment Matrix provides a structured approach to evaluating whether a problem as defined can actually be solved. The matrix examines feasibility across multiple dimensions—statistical, technical, business, and ethical—with specific criteria for each. Statistical feasibility examines whether sufficient signal exists in the data, whether sample sizes are adequate, and whether the problem exhibits learnable patterns. Technical feasibility evaluates whether required latencies can be met, whether necessary infrastructure exists, and whether the team has appropriate skills. Business feasibility analyzes whether the expected value justifies the investment, whether the organization can act on predictions, and whether stakeholders will accept the solution. Ethical feasibility confirms whether fairness requirements can be met, whether privacy can be preserved, and whether decisions can be adequately explained.</p>
+<p>The Stakeholder Alignment Tracker helps manage the complex web of perspectives and requirements that characterize machine learning projects. Different stakeholders often have different mental models of the problem, different success criteria, and different constraints they consider non-negotiable. The tracker captures each stakeholder’s perspective, identifies areas of alignment and conflict, and documents resolution strategies. This tool proves particularly valuable when conflicts arise during development—having documented initial agreements prevents revisionist history and provides a basis for negotiation.</p>
+<p>The Data Reality Checklist forces teams to confront the often significant gaps between available data and problem requirements. The checklist examines not just what data exists but when it becomes available, how it’s collected, what biases it might contain, and how it might differ between training and production environments. This systematic examination often reveals fatal flaws in problem definition early, before significant resources are invested in development.</p>
+</section>
+<section id="case-studies-in-problem-understanding" class="level2">
+<h2 class="anchored" data-anchor-id="case-studies-in-problem-understanding">Case Studies in Problem Understanding</h2>
+<p>Examining real-world applications of Polya’s framework reveals both the power of proper problem understanding and the consequences of its neglect. These cases, drawn from actual machine learning projects, illustrate how the principles discussed throughout this article play out in practice.</p>
+<p>Consider a major retail bank that embarked on an ambitious project to use machine learning for credit card fraud detection. The initial problem statement seemed clear enough: identify fraudulent transactions to prevent losses. The team immediately began exploring sophisticated deep learning approaches, excited by recent advances in anomaly detection. They assembled a massive dataset of historical transactions, engineered hundreds of features, and achieved impressive results on their test set, with precision and recall metrics that suggested the model would save millions of dollars annually.</p>
+<p>The deployment was a disaster. The model, trained on historical data where fraud patterns were identified after thorough investigation, required information that wasn’t available in real-time. The latency requirements of the payment network—transactions must be approved or declined within 100 milliseconds—made most of the engineered features impossible to calculate. The model’s high precision came at the cost of flagging many legitimate transactions from customers traveling abroad or making unusual but legitimate purchases, leading to frustrated customers and abandoned transactions. Most critically, the team had optimized for detecting known fraud patterns, but fraudsters quickly adapted their techniques, rendering the model ineffective within weeks.</p>
+<p>A proper application of Polya’s framework would have revealed these issues before any model development began. Understanding the unknown would have clarified that the problem wasn’t just identifying fraud, but identifying fraud in real-time, with limited information, in a way that minimizes both losses and customer friction, against an adversarial opponent who adapts to detection methods. Understanding the data would have revealed the temporal constraints on feature availability and the fundamental difference between training data (with complete information post-investigation) and production data (with only real-time transaction details). Understanding the conditions would have surfaced the strict latency requirements, the customer experience constraints, and the need for continuous adaptation.</p>
+<p>In contrast, consider a logistics company that successfully applied Polya’s framework to develop a package delivery time prediction system. Rather than jumping directly to solution development, the team spent considerable time understanding the problem’s nuances. They recognized that the unknown wasn’t simply delivery time, but the probability distribution of delivery times, as different use cases required different aspects of this distribution. Customer communications needed accurate expected delivery dates, route planning required worst-case estimates, and capacity planning needed average throughput predictions.</p>
+<p>The team’s data understanding phase revealed that historical delivery data exhibited strong seasonal patterns, weather dependencies, and significant differences between urban and rural routes. They discovered that GPS tracking data, while abundant, had systematic biases in certain geographic areas where signal quality was poor. They identified that new delivery partners had different performance patterns than experienced ones, requiring special handling in the model.</p>
+<p>The condition analysis revealed complex, sometimes conflicting constraints. Predictions needed to be accurate enough to set customer expectations but conservative enough to account for unexpected delays. The system needed to integrate with existing route planning software that could only be updated quarterly. Predictions had to be explainable to delivery partners who might be penalized for late deliveries. By understanding these conditions upfront, the team designed a solution that balanced these requirements rather than optimizing for a single metric.</p>
+<p>The result was a successful deployment that improved customer satisfaction, reduced support calls about delivery status, and enabled better resource planning. The key to success wasn’t sophisticated algorithms—the final model was relatively simple—but rather the deep understanding of the problem that guided appropriate technical choices.</p>
+</section>
+<section id="from-understanding-to-action" class="level2">
+<h2 class="anchored" data-anchor-id="from-understanding-to-action">From Understanding to Action</h2>
+<p>The transition from problem understanding to solution development should feel natural and inevitable when problem understanding has been done well. The unknown, clearly specified, determines what algorithms are appropriate and what metrics matter. The data, thoroughly understood, guides feature engineering and reveals necessary preprocessing steps. The conditions, carefully analyzed, shape the architecture and deployment strategy. Rather than facing a blank slate and endless possibilities, the team has a clear direction and bounded solution space.</p>
+<p>Problem understanding also establishes clear checkpoints for project continuation. If the unknown cannot be specified precisely enough for all stakeholders to agree, the project isn’t ready to proceed. If the data doesn’t contain sufficient signal to predict the target, no amount of algorithmic sophistication will save the project. If the conditions are mutually incompatible, they must be renegotiated before development begins. These checkpoints, while sometimes disappointing when they halt promising projects, save organizations from the far greater disappointment of failed deployments and wasted resources.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pseudocode</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> transition_to_planning(problem_understanding):</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Validate problem understanding completeness and generate planning inputs</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Creates structured handoff from understanding to solution design</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    planning_package <span class="op">=</span> {</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"algorithm_constraints"</span>: [],</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"architecture_requirements"</span>: [],</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"evaluation_strategy"</span>: {},</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"risk_mitigation"</span>: [],</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"success_criteria"</span>: {}</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Validate understanding completeness</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    completeness_check <span class="op">=</span> validate_understanding(problem_understanding)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    IF <span class="kw">not</span> completeness_check.is_complete:</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> {</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>            <span class="st">"ready"</span>: <span class="va">False</span>,</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>            <span class="st">"missing_elements"</span>: completeness_check.gaps,</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>            <span class="st">"recommendation"</span>: <span class="st">"Address gaps before proceeding"</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Extract algorithm constraints <span class="im">from</span> problem understanding</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>    IF problem_understanding.constraints.explainability <span class="op">==</span> <span class="st">"REQUIRED"</span>:</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>        planning_package.algorithm_constraints.append(<span class="st">"interpretable_models_only"</span>)</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>    IF problem_understanding.constraints.latency <span class="op">&lt;</span> <span class="dv">100</span>:</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>        planning_package.algorithm_constraints.append(<span class="st">"simple_features_only"</span>)</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>        planning_package.algorithm_constraints.append(<span class="st">"no_ensemble_methods"</span>)</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>    IF problem_understanding.data.sample_size <span class="op">&lt;</span> <span class="dv">10000</span>:</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>        planning_package.algorithm_constraints.append(<span class="st">"avoid_deep_learning"</span>)</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>        planning_package.algorithm_constraints.append(<span class="st">"consider_transfer_learning"</span>)</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Define architecture requirements</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>    IF problem_understanding.target.update_frequency <span class="op">==</span> <span class="st">"real_time"</span>:</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>        planning_package.architecture_requirements.append(<span class="st">"streaming_architecture"</span>)</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>        planning_package.architecture_requirements.append(<span class="st">"online_learning_capability"</span>)</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>    IF problem_understanding.data.volume <span class="op">&gt;</span> <span class="st">"1TB"</span>:</span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>        planning_package.architecture_requirements.append(<span class="st">"distributed_processing"</span>)</span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>        planning_package.architecture_requirements.append(<span class="st">"feature_store_needed"</span>)</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Create evaluation strategy</span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>    planning_package.evaluation_strategy <span class="op">=</span> {</span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>        <span class="st">"primary_metric"</span>: map_to_metric(problem_understanding.success_criteria.primary),</span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>        <span class="st">"guardrail_metrics"</span>: map_to_metrics(problem_understanding.success_criteria.guardrails),</span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>        <span class="st">"slice_evaluations"</span>: identify_critical_segments(problem_understanding.stakeholders),</span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>        <span class="st">"temporal_validation"</span>: design_time_based_splits(problem_understanding.data),</span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>        <span class="st">"production_simulation"</span>: create_production_test_plan(problem_understanding.constraints)</span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Risk mitigation planning</span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>    FOR each risk <span class="kw">in</span> problem_understanding.risks:</span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>        mitigation <span class="op">=</span> {</span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a>            <span class="st">"risk"</span>: risk.description,</span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>            <span class="st">"likelihood"</span>: risk.probability,</span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a>            <span class="st">"impact"</span>: risk.severity,</span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>            <span class="st">"mitigation_strategy"</span>: generate_mitigation_plan(risk),</span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>            <span class="st">"monitoring_approach"</span>: define_risk_monitoring(risk),</span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>            <span class="st">"contingency"</span>: create_fallback_plan(risk)</span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>        planning_package.risk_mitigation.append(mitigation)</span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Success criteria translation</span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a>    planning_package.success_criteria <span class="op">=</span> {</span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a>        <span class="st">"technical"</span>: translate_business_to_technical(problem_understanding.success_metrics),</span>
+<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a>        <span class="st">"business"</span>: problem_understanding.success_metrics,</span>
+<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a>        <span class="st">"deployment"</span>: define_deployment_criteria(problem_understanding.constraints),</span>
+<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a>        <span class="st">"maintenance"</span>: establish_monitoring_thresholds(problem_understanding)</span>
+<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {</span>
+<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ready"</span>: <span class="va">True</span>,</span>
+<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a>        <span class="st">"planning_package"</span>: planning_package,</span>
+<span id="cb8-78"><a href="#cb8-78" aria-hidden="true" tabindex="-1"></a>        <span class="st">"next_steps"</span>: generate_planning_roadmap(planning_package)</span>
+<span id="cb8-79"><a href="#cb8-79" aria-hidden="true" tabindex="-1"></a>    }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The documentation generated during problem understanding becomes the project’s north star, referenced throughout development when difficult decisions arise. Should we invest time in engineering this complex feature? The problem understanding tells us whether it addresses a core aspect of the unknown. Should we use a more complex model that slightly improves accuracy? The condition analysis tells us whether the added complexity violates our explainability or latency requirements. Should we delay deployment to gather more training data? The feasibility assessment tells us whether additional data will meaningfully improve our ability to solve the actual problem.</p>
+<p>Perhaps most importantly, thorough problem understanding creates aligned expectations among all stakeholders. Technical teams understand not just what to build but why it matters. Business stakeholders understand not just what the model will predict but what limitations and uncertainties remain. Users understand not just how to interpret predictions but when to trust them and when to apply human judgment. This shared understanding prevents the disappointment and distrust that often accompany machine learning deployments where different groups had different, unspoken expectations.</p>
+</section>
+<section id="conclusion-the-compound-returns-of-problem-understanding" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion-the-compound-returns-of-problem-understanding">Conclusion: The Compound Returns of Problem Understanding</h2>
+<p>Polya’s insight that understanding the problem is half the solution proves even more true in machine learning than in the mathematical contexts he originally addressed. The complexity of modern AI systems, the probabilistic nature of their outputs, and the organizational challenges of their deployment all amplify the importance of thorough problem understanding. Time invested in this phase pays compound returns throughout the project lifecycle.</p>
+<p>The cascade effect of problem misunderstanding that we examined at the beginning of this article works in reverse for problem understanding done well. Clear problem definition leads to appropriate technical choices, which enable efficient implementation, which results in successful deployment. Each phase builds naturally on the previous one rather than requiring constant revision and rework. The team proceeds with confidence rather than uncertainty, stakeholders remain aligned rather than developing divergent expectations, and the final solution actually solves the intended problem rather than an imagined one.</p>
+<p>As we proceed to Part 2 of this series, “Devising a Plan,” we’ll build on the foundation established through problem understanding. With a clear specification of the unknown, a thorough understanding of the data, and a complete picture of the constraints, we can explore how Polya’s strategies for finding connections to known problems, decomposing complex challenges, and working backward from desired outcomes translate into concrete approaches for algorithm selection, experiment design, and system architecture. The plan that emerges will be grounded in reality rather than wishful thinking, ambitious yet achievable, sophisticated where necessary but simple where possible.</p>
+<p>The discipline of problem understanding that Polya advocated requires patience in a field that celebrates rapid iteration and quick deployment. It requires humility in acknowledging what we don’t know before proclaiming what we can predict. It requires courage in telling stakeholders that their problem as stated cannot be solved rather than building something that appears to work but fails in practice. Yet this patience, humility, and courage are precisely what distinguish successful machine learning initiatives from the vast majority that fail to deliver value.</p>
+<p>In our age of readily available algorithms, powerful computing resources, and abundant data, the bottleneck in machine learning success is rarely technical capability. Instead, it’s the fundamental understanding of what problem we’re trying to solve, what information we have to solve it with, and what constraints bound our solution. Polya’s framework, developed in an era before computers, provides timeless wisdom for navigating these challenges. By truly understanding the problem before attempting to solve it, we transform machine learning from an exercise in technical sophistication to a practical tool for creating real value.</p>
+<p>The journey from vague business objectives to precise problem specifications, from raw data to understood information, from conflicting constraints to feasible solution spaces—this is the real work of data science. It’s less glamorous than training neural networks or optimizing hyperparameters, but it’s infinitely more valuable. For in the end, a perfectly executed solution to the wrong problem is worthless, while even an imperfect solution to the right problem creates value.</p>
+<p>As practitioners, we must resist the temptation to rush past problem understanding in our eagerness to build solutions. As leaders, we must create space and time for teams to deeply understand problems before expecting solutions. As an industry, we must recognize that the highest-leverage improvements in AI success rates will come not from better algorithms but from better problem understanding.</p>
+<p>Polya gave us the tools. The failures around us show the cost of ignoring them. The successes, though rarer, show the rewards of applying them diligently. The choice, and the responsibility, is ours.</p>
+<p><img src="images/ml-problem-understanding-framework.svg" class="img-fluid"></p>
+<hr>
+<p><em>This article is Part 1 of a four-part series on applying Polya’s problem-solving framework to data science and machine learning. Continue with [Part 2: Devising a Plan], where we explore how to transform problem understanding into concrete technical strategies, [Part 3: Carrying Out the Plan], which addresses implementation challenges and best practices, and [Part 4: Looking Back], which covers evaluation, iteration, and continuous improvement.</em></p>
+<p><em>The principles and frameworks presented here have been developed through analysis of hundreds of ML projects across industries. While each project is unique, the patterns of success and failure repeat with remarkable consistency. By learning from these patterns and applying Polya’s timeless wisdom, we can dramatically improve our chances of building ML systems that deliver real value.</em></p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Only add citation to post pages (not index, about, etc.)
+    if (window.location.pathname.includes('/posts/')) {
+        // Find the main content area
+        const mainContent = document.querySelector('main');
+        if (mainContent) {
+            // Get metadata from the page
+            const titleElement = document.querySelector('h1.title');
+            const dateElement = document.querySelector('.date');
+            
+            const title = titleElement ? titleElement.textContent : 'Untitled';
+            const dateText = dateElement ? dateElement.textContent : new Date().toLocaleDateString();
+            
+            // Get the current post URL - construct proper GitHub Pages URL
+            const postPath = window.location.pathname;
+            const postUrl = 'https://imaddabbura.github.io' + postPath;
+            
+            // Parse date and format it
+            const date = new Date(dateText);
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                               "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const formattedDate = monthNames[date.getMonth()] + " " + date.getFullYear();
+            const year = date.getFullYear();
+            const month = monthNames[date.getMonth()];
+            
+            // Create citation HTML
+            const citationHTML = '<hr>' +
+                '<div class="callout callout-style-default callout-note no-icon callout-titled">' +
+                    '<div class="callout-header d-flex align-content-center">' +
+                        '<div class="callout-icon-container">' +
+                            '<i class="callout-icon no-icon"></i>' +
+                        '</div>' +
+                        '<div class="callout-title-container flex-fill">' +
+                            'How to Cite This Post' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="callout-body-container callout-body">' +
+                        '<p>If you found this useful, please cite this write-up as:</p>' +
+                        '<blockquote class="blockquote">' +
+                            '<p>Dabbura, Imad. (' + formattedDate + '). ' + title + '. https://imaddabbura.github.io. ' + postUrl + '.</p>' +
+                        '</blockquote>' +
+                        '<p>or</p>' +
+                        '<div class="sourceCode"><pre class="sourceCode bibtex code-with-copy"><code class="sourceCode bibtex">@article{dabbura' + year + ',\n' +
+                        '  title   = {' + title + '},\n' +
+                        '  author  = {Dabbura, Imad},\n' +
+                        '  journal = {https://imaddabbura.github.io},\n' +
+                        '  year    = {' + year + '},\n' +
+                        '  month   = {' + month + '},\n' +
+                        '  url     = {' + postUrl + '}\n' +
+                        '}</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>' +
+                    '</div>' +
+                '</div>';
+            
+            // Insert citation at the end of main content, before closing tag
+            mainContent.insertAdjacentHTML('beforeend', citationHTML);
+        }
+    }
+});
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/imaddabbura\.github\.io\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<script src="https://giscus.app/client.js" data-repo="imaddabbura/imaddabbura.github.io" data-repo-id="R_kgDOIEwRMg" data-category="General" data-category-id="DIC_kwDOIEwRMs4CRprP" data-mapping="title" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
+</script>
+<input type="hidden" id="giscus-base-theme" value="light">
+<input type="hidden" id="giscus-alt-theme" value="dark">
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Blog made with Quarto, by Imad Dabbura</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/imaddabbura/">
+      <i class="bi bi-linkedin" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="mailto:imad.dabbura@hotmail.com">
+      <i class="bi bi-envelope" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/imaddabbura">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/imadphd">
+      <i class="bi bi-twitter" role="img">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
