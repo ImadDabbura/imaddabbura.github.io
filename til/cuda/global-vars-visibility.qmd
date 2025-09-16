@@ -1,5 +1,5 @@
 ---
-title: CUDA Kernels Are Functions with Restrictions
+title: "CUDA Memory: The Two Worlds of Host and Device"
 date: 2025-01-10
 categories: CUDA
 ---
@@ -25,7 +25,7 @@ int main(void) {
   // Get the memory address of the global variable
   cudaGetSymbolAddress((void **)&devPtr, devData)
   // Now we can use typical cudaMemcpy
-  cudaMemcpy(dptr, &value, cudaMemcpyHostToDevice);
+  cudaMemcpy(devPtr, &value, cudaMemcpyHostToDevice);
   return 0;
 }
 ```

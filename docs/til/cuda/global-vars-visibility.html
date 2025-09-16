@@ -9,7 +9,7 @@
 <meta name="author" content="Imad Dabbura">
 <meta name="dcterms.date" content="2025-01-10">
 
-<title>Imad Dabbura - CUDA Kernels Are Functions with Restrictions</title>
+<title>Imad Dabbura - CUDA Memory: The Two Worlds of Host and Device</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -144,10 +144,10 @@ ga('send', {
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Imad Dabbura - CUDA Kernels Are Functions with Restrictions">
+<meta property="og:title" content="Imad Dabbura - CUDA Memory: The Two Worlds of Host and Device">
 <meta property="og:description" content="">
 <meta property="og:site_name" content="Imad Dabbura">
-<meta name="twitter:title" content="Imad Dabbura - CUDA Kernels Are Functions with Restrictions">
+<meta name="twitter:title" content="Imad Dabbura - CUDA Memory: The Two Worlds of Host and Device">
 <meta name="twitter:description" content="">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
@@ -250,7 +250,7 @@ ga('send', {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">CUDA Kernels Are Functions with Restrictions</h1>
+      <h1 class="title">CUDA Memory: The Two Worlds of Host and Device</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">CUDA</div>
               </div>
@@ -300,7 +300,7 @@ ga('send', {
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Get the memory address of the global variable</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  cudaGetSymbolAddress<span class="op">((</span><span class="dt">void</span> <span class="op">**)&amp;</span>devPtr<span class="op">,</span> devData<span class="op">)</span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Now we can use typical cudaMemcpy</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  cudaMemcpy<span class="op">(</span>dptr<span class="op">,</span> <span class="op">&amp;</span>value<span class="op">,</span> cudaMemcpyHostToDevice<span class="op">);</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  cudaMemcpy<span class="op">(</span>devPtr<span class="op">,</span> <span class="op">&amp;</span>value<span class="op">,</span> cudaMemcpyHostToDevice<span class="op">);</span></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
