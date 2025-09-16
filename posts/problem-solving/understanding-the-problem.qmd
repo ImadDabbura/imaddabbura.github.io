@@ -1,11 +1,14 @@
 ---
 title: "Understand, Then Build"
 subtitle: "How Pólya’s Step 1 powers reliable DS/ML/AI systems under real-world limits."
-image: "images/feature.jpeg"
-date: "2025-03-05"
+image: "images/image.svg"
+date: "2025-03-09"
 date-modified: "2025-03-05"
 categories: [MLSys, Deep Learning, Machine Learning, Data Science]
 ---
+
+![](images/image.svg)
+
 *Part 1 of 4: Applying Polya's Problem-Solving Framework to Data Science, ML, and AI*
 
 *A Comprehensive Guide for Practitioners*
@@ -21,7 +24,7 @@ Consider the seemingly straightforward task of building a customer churn predict
 
 The compounding nature of misunderstanding in AI projects deserves particular attention. When a problem is misunderstood by even a small margin at the outset, this error doesn't simply add a proportional amount of waste to the project. Instead, it multiplies through each subsequent phase, creating an exponential cascade of inefficiency. A 10% misalignment in problem definition becomes a 20% misdirection in planning, as architects design systems for the wrong objectives. This doubles again during implementation, reaching 40% waste as engineers optimize for incorrect metrics. By the deployment phase, the cumulative effect can result in 80% waste—or complete project failure.
 
-![](images/cascading-cost.svg)
+![Figure 1: Compounding cost of misunderstanding](images/cascading-cost.svg)
 
 ## **The Three Pillars of Problem Understanding**
 
@@ -31,7 +34,7 @@ Polya's first fundamental question—"What is the unknown?"—appears deceptivel
 
 The specification of the unknown in a machine learning context requires us to think across multiple dimensions simultaneously. We must consider not only the technical nature of the prediction—whether it's a continuous value, a category, or a probability—but also its temporal characteristics, its intended use, and its relationship to business processes. A prediction that arrives too late to be actionable is worthless, regardless of its accuracy. A highly accurate model that requires data unavailable at inference time is an elaborate fiction. A probabilistic output that decision-makers don't understand how to interpret might as well be random noise.
 
-![](images/types-ml-unknowns.svg)
+![Figure 2: Spectrum of machine learning unknowns](images/types-ml-unknowns.svg)
 
 ```python
 # pseudocode
@@ -90,7 +93,7 @@ Polya's second question—"What are the data?"—requires us to understand not j
 
 The provenance of data—its origin and the process by which it was collected—fundamentally determines what problems it can solve. Data collected for one purpose often carries implicit assumptions that make it unsuitable for other uses. Customer service logs, for instance, only capture information about customers who contacted support, creating a selection bias that might invalidate models trying to understand overall customer satisfaction. Transaction data might only record completed purchases, missing the crucial information about abandoned carts that would be essential for understanding purchase intent. Understanding these collection mechanisms and their limitations is essential for determining whether available data can actually answer the questions being asked.
 
-![](images/data-understanding-iceberg.svg)
+![Figure 3: Data understanding iceberg](images/data-understanding-iceberg.svg)
 
 ```python
 # pseudocode
@@ -150,7 +153,7 @@ Data quality issues compound these challenges. Missing data rarely occurs random
 
 Polya's third question—"What is the condition?"—addresses the constraints that bound our solution space. In machine learning applications, these constraints form a complex ecosystem of technical, business, ethical, and regulatory requirements that often conflict with each other and always shape the feasible solution space in non-obvious ways.
 
-![](images/ml-constraint-ecosystem.svg)
+![Figure 4: ML constraint ecosystem](images/ml-constraint-ecosystem.svg)
 
 Technical constraints in modern machine learning systems extend well beyond simple computational limitations. Latency requirements for real-time systems must account not just for model inference time but for data retrieval, preprocessing, and post-processing. A fraud detection system that must respond within 100 milliseconds cannot use a model that requires complex feature engineering on historical data, regardless of how much that engineering might improve accuracy. Similarly, models deployed on edge devices face strict constraints on memory usage and computational complexity that eliminate entire classes of algorithms from consideration. These technical constraints must be understood not as implementation details to be addressed later but as fundamental aspects of the problem that shape what solutions are possible.
 
@@ -222,7 +225,7 @@ def analyze_constraint_interactions(constraints):
 
 Polya emphasized that complex problems become manageable when properly decomposed into smaller, more tractable components. In machine learning applications, this decomposition must occur across multiple dimensions simultaneously, breaking down the problem by temporal characteristics, functional components, data complexity, and stakeholder concerns.
 
-![](images/problem-decomposition-strategies.svg)
+![Figure 5: Four dimensions of problem decomposition](images/problem-decomposition-strategies.svg)
 
 Temporal decomposition recognizes that different aspects of a machine learning system operate on different time scales and have different latency requirements. Consider a recommendation system for an e-commerce platform. The real-time serving layer must respond within milliseconds, showing pre-computed recommendations to users as they browse. The batch processing layer might update user embeddings hourly, incorporating recent behavior while maintaining computational efficiency. The model retraining pipeline might run daily or weekly, incorporating new data and adapting to changing patterns. The fundamental model architecture might be revisited monthly or quarterly, based on accumulated performance data and changing business requirements. Each of these temporal components has different requirements, different constraints, and different success metrics, yet they must work together as a cohesive system.
 
@@ -314,7 +317,7 @@ Stakeholder decomposition recognizes that different groups have different perspe
 
 Before committing resources to solving a problem, Polya advocates for carefully assessing whether the conditions can actually be satisfied—whether the problem as stated is actually solvable with the available resources. In machine learning contexts, this feasibility assessment must examine statistical, technical, business, and ethical dimensions.
 
-![](images/ml-feasibility-assessment-matrix.svg)
+![Figure 6: ML project feasibility assessment matrix](images/ml-feasibility-assessment-matrix.svg)
 
 Statistical feasibility begins with the fundamental question of whether the available data contains sufficient signal to predict the target variable. This goes beyond simple correlation analysis to examine the theoretical limits of predictability. Some phenomena are inherently unpredictable beyond a certain accuracy level—no amount of data or model sophistication will predict truly random events. Other phenomena might be theoretically predictable but require data that doesn't exist or cannot be collected. A model attempting to predict customer satisfaction might fail not because of poor algorithms but because satisfaction is influenced by factors—personal circumstances, competitive offerings, unrecorded service interactions—that aren't captured in any available data.
 
@@ -440,7 +443,7 @@ Ethical feasibility has become increasingly critical as machine learning systems
 
 One of Polya's key insights was the importance of notation—creating a precise, shared language for discussing the problem. In machine learning projects, this shared understanding must bridge the gap between technical teams who think in terms of algorithms and metrics, and business stakeholders who think in terms of processes and outcomes.
 
-![](images/technical-business-bridge.svg)
+![Figure 7: Technical business bridge](images/technical-business-bridge.svg)
 
 The creation of this shared understanding begins with establishing clear definitions for all key terms. What exactly does "customer" mean in the context of this problem—someone who has ever made a purchase, someone who has purchased within the last year, or someone who currently has an active subscription? What constitutes "engagement"—any interaction with the platform, specific high-value actions, or sustained activity over time? These definitions might seem pedantic, but ambiguity at this stage cascades through the entire project, leading to misaligned efforts and failed deployments.
 
@@ -526,7 +529,7 @@ Regular communication rituals that bring together technical and business stakeho
 
 Experience across numerous failed machine learning projects reveals recurring patterns of problem misunderstanding. Recognizing these anti-patterns early can prevent significant waste and frustration.
 
-![](images/ml-problem-understanding-antipatterns.svg)
+![Figure 8: Anti-patterns in ML problem understanding](images/ml-problem-understanding-antipatterns.svg)
 
 The "solution in search of a problem" anti-pattern occurs when teams become enamored with a particular technology or approach and then look for ways to apply it, rather than starting with a clear problem and finding the appropriate solution. This might manifest as insistence on using deep learning for problems where simple linear models would suffice, or forcing all problems into a supervised learning framework when unsupervised or reinforcement learning might be more appropriate. The result is unnecessary complexity, increased development time, and solutions that poorly match actual needs.
 
@@ -612,7 +615,7 @@ Manufacturing and industrial applications bring unique constraints around reliab
 
 To support systematic problem understanding, practitioners benefit from structured tools and templates that guide thinking and ensure completeness. These tools shouldn't be treated as rigid forms to fill out but as frameworks that prompt the right questions and capture critical decisions.
 
-![](images/ml-problem-understanding-canva.svg)
+![Figure 9: ML problem unden canvas](images/ml-problem-understanding-canva.svg)
 
 The Problem Understanding Canvas serves as a central artifact for capturing and communicating problem definition. Unlike traditional requirements documents that often run to dozens of pages of prose, the canvas provides a single-page visual representation that all stakeholders can quickly grasp and reference. The canvas structures thinking around nine key areas: the core problem statement occupies the center, surrounded by stakeholders, success metrics, constraints, available data, target definition, assumptions, risks, and dependencies. This visual arrangement emphasizes the interconnected nature of these elements—changing the target definition might affect success metrics, new constraints might introduce additional risks, different stakeholders might have conflicting success criteria.
 
@@ -749,9 +752,6 @@ The journey from vague business objectives to precise problem specifications, fr
 As practitioners, we must resist the temptation to rush past problem understanding in our eagerness to build solutions. As leaders, we must create space and time for teams to deeply understand problems before expecting solutions. As an industry, we must recognize that the highest-leverage improvements in AI success rates will come not from better algorithms but from better problem understanding.
 
 Polya gave us the tools. The failures around us show the cost of ignoring them. The successes, though rarer, show the rewards of applying them diligently. The choice, and the responsibility, is ours.
-
-
-![](images/ml-problem-understanding-framework.svg)
 
 ---
 

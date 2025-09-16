@@ -1,0 +1,267 @@
+<svg viewBox="0 0 1600 800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Futuristic gradients -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0c29;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#302b63;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#24243e;stop-opacity:1" />
+    </linearGradient>
+    
+    <radialGradient id="brainGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#7b2ff7;stop-opacity:0.5" />
+      <stop offset="100%" style="stop-color:#f107a3;stop-opacity:0" />
+    </radialGradient>
+    
+    <linearGradient id="unknownGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f857a6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff5858;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="dataGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#090979;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="constraintGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00ff88;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00d4ff;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Glow filters -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="strongGlow">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Pattern for neural network -->
+    <pattern id="neural" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+      <circle cx="25" cy="25" r="2" fill="#00d4ff" opacity="0.3"/>
+      <circle cx="75" cy="25" r="2" fill="#00d4ff" opacity="0.3"/>
+      <circle cx="25" cy="75" r="2" fill="#00d4ff" opacity="0.3"/>
+      <circle cx="75" cy="75" r="2" fill="#00d4ff" opacity="0.3"/>
+      <line x1="25" y1="25" x2="75" y2="25" stroke="#00d4ff" stroke-width="0.5" opacity="0.2"/>
+      <line x1="25" y1="75" x2="75" y2="75" stroke="#00d4ff" stroke-width="0.5" opacity="0.2"/>
+      <line x1="25" y1="25" x2="25" y2="75" stroke="#00d4ff" stroke-width="0.5" opacity="0.2"/>
+      <line x1="75" y1="25" x2="75" y2="75" stroke="#00d4ff" stroke-width="0.5" opacity="0.2"/>
+    </pattern>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1600" height="800" fill="url(#bgGrad)"/>
+  
+  <!-- Neural network pattern overlay -->
+  <rect width="1600" height="800" fill="url(#neural)" opacity="0.5"/>
+  
+  <!-- Central Brain/Cognitive representation -->
+  <g transform="translate(800, 400)">
+    <!-- Brain outline with neural connections -->
+    <g filter="url(#strongGlow)">
+      <!-- Stylized brain shape -->
+      <path d="M -80,-60 C -80,-90 -60,-110 -30,-110 C -10,-110 0,-100 0,-100 C 0,-100 10,-110 30,-110 C 60,-110 80,-90 80,-60 C 80,-40 70,-20 60,0 C 50,20 30,40 0,40 C -30,40 -50,20 -60,0 C -70,-20 -80,-40 -80,-60 Z" 
+            fill="none" stroke="url(#brainGlow)" stroke-width="3" opacity="0.8"/>
+      
+      <!-- Internal neural pathways -->
+      <path d="M -40,-50 Q 0,-30 40,-50" stroke="#00d4ff" stroke-width="2" opacity="0.5"/>
+      <path d="M -30,-20 Q 0,0 30,-20" stroke="#7b2ff7" stroke-width="2" opacity="0.5"/>
+      <path d="M -20,10 Q 0,20 20,10" stroke="#f107a3" stroke-width="2" opacity="0.5"/>
+      
+      <!-- Pulsing glow effect -->
+      <circle cx="0" cy="-30" r="60" fill="url(#brainGlow)" opacity="0.3">
+        <animate attributeName="r" values="60;80;60" dur="3s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.3;0.1;0.3" dur="3s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+  </g>
+  
+  <!-- Three Pillars of Problem Understanding -->
+  
+  <!-- Pillar 1: UNKNOWN (Left) -->
+  <g transform="translate(400, 400)">
+    <!-- Rotating question marks representing unknowns -->
+    <g filter="url(#glow)">
+      <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 0 0" to="360 0 0" dur="20s" repeatCount="indefinite"/>
+      <text x="0" y="-80" font-family="Arial, sans-serif" font-size="48" font-weight="bold" text-anchor="middle" fill="url(#unknownGrad)" opacity="0.3">?</text>
+      <text x="-60" y="-40" font-family="Arial, sans-serif" font-size="36" font-weight="bold" text-anchor="middle" fill="url(#unknownGrad)" opacity="0.4">?</text>
+      <text x="60" y="-40" font-family="Arial, sans-serif" font-size="36" font-weight="bold" text-anchor="middle" fill="url(#unknownGrad)" opacity="0.4">?</text>
+    </g>
+    
+    <!-- Label -->
+    <text x="0" y="60" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#f857a6" filter="url(#glow)">
+      UNKNOWN
+    </text>
+    <text x="0" y="85" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#ff5858" opacity="0.8">
+      What to Predict?
+    </text>
+    
+    <!-- Examples floating around -->
+    <text x="-80" y="120" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#f857a6" opacity="0.5">
+      Classification
+    </text>
+    <text x="0" y="140" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#f857a6" opacity="0.5">
+      Regression
+    </text>
+    <text x="80" y="120" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#f857a6" opacity="0.5">
+      Clustering
+    </text>
+  </g>
+  
+  <!-- Pillar 2: DATA (Right) -->
+  <g transform="translate(1200, 400)">
+    <!-- Data visualization - flowing binary/matrix style -->
+    <g filter="url(#glow)">
+      <!-- Data streams -->
+      <g font-family="Courier, monospace" font-size="12" fill="url(#dataGrad)">
+        <text x="-40" y="-80" opacity="0.6">
+          01001
+          <animate attributeName="opacity" values="0.6;0.2;0.6" dur="2s" repeatCount="indefinite"/>
+        </text>
+        <text x="0" y="-60" opacity="0.7">
+          10110
+          <animate attributeName="opacity" values="0.7;0.3;0.7" dur="2.5s" repeatCount="indefinite"/>
+        </text>
+        <text x="40" y="-80" opacity="0.5">
+          11010
+          <animate attributeName="opacity" values="0.5;0.2;0.5" dur="3s" repeatCount="indefinite"/>
+        </text>
+        <text x="-20" y="-40" opacity="0.8">
+          00111
+          <animate attributeName="opacity" values="0.8;0.4;0.8" dur="2.2s" repeatCount="indefinite"/>
+        </text>
+        <text x="20" y="-40" opacity="0.6">
+          10101
+          <animate attributeName="opacity" values="0.6;0.3;0.6" dur="2.8s" repeatCount="indefinite"/>
+        </text>
+      </g>
+      
+      <!-- Data cube representation -->
+      <rect x="-30" y="-30" width="60" height="60" fill="none" stroke="url(#dataGrad)" stroke-width="2" opacity="0.8"/>
+      <rect x="-20" y="-20" width="60" height="60" fill="none" stroke="url(#dataGrad)" stroke-width="2" opacity="0.6"/>
+      <rect x="-10" y="-10" width="60" height="60" fill="none" stroke="url(#dataGrad)" stroke-width="2" opacity="0.4"/>
+    </g>
+    
+    <!-- Label -->
+    <text x="0" y="60" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#00d4ff" filter="url(#glow)">
+      DATA
+    </text>
+    <text x="0" y="85" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#090979" opacity="0.8">
+      What We Have
+    </text>
+    
+    <!-- Examples -->
+    <text x="-80" y="120" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#00d4ff" opacity="0.5">
+      Features
+    </text>
+    <text x="0" y="140" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#00d4ff" opacity="0.5">
+      Quality
+    </text>
+    <text x="80" y="120" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#00d4ff" opacity="0.5">
+      Volume
+    </text>
+  </g>
+  
+  <!-- Pillar 3: CONSTRAINTS (Bottom) -->
+  <g transform="translate(800, 600)">
+    <!-- Constraint boundaries - triangle/fence visualization -->
+    <g filter="url(#glow)">
+      <!-- Constraint triangle -->
+      <path d="M -80,0 L 0,-60 L 80,0 Z" fill="none" stroke="url(#constraintGrad)" stroke-width="2" opacity="0.8"/>
+      <path d="M -60,0 L 0,-45 L 60,0 Z" fill="none" stroke="url(#constraintGrad)" stroke-width="1.5" opacity="0.6"/>
+      <path d="M -40,0 L 0,-30 L 40,0 Z" fill="none" stroke="url(#constraintGrad)" stroke-width="1" opacity="0.4"/>
+      
+      <!-- Lock symbol in center -->
+      <rect x="-15" y="-20" width="30" height="20" rx="3" fill="none" stroke="#00ff88" stroke-width="2" opacity="0.7"/>
+      <path d="M -10,-20 L -10,-30 Q 0,-40 10,-30 L 10,-20" fill="none" stroke="#00ff88" stroke-width="2" opacity="0.7"/>
+    </g>
+    
+    <!-- Label -->
+    <text x="0" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#00ff88" filter="url(#glow)">
+      CONSTRAINTS
+    </text>
+    <text x="0" y="65" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#00d4ff" opacity="0.8">
+      Our Boundaries
+    </text>
+    
+    <!-- Examples -->
+    <text x="-100" y="100" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#00ff88" opacity="0.5">
+      Technical
+    </text>
+    <text x="0" y="100" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#00ff88" opacity="0.5">
+      Business
+    </text>
+    <text x="100" y="100" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#00ff88" opacity="0.5">
+      Ethical
+    </text>
+  </g>
+  
+  <!-- Connecting lines between elements (showing relationships) -->
+  <g opacity="0.3">
+    <line x1="400" y1="400" x2="800" y2="400" stroke="#00d4ff" stroke-width="2" stroke-dasharray="5,5"/>
+    <line x1="800" y1="400" x2="1200" y2="400" stroke="#00d4ff" stroke-width="2" stroke-dasharray="5,5"/>
+    <line x1="800" y1="400" x2="800" y2="600" stroke="#00d4ff" stroke-width="2" stroke-dasharray="5,5"/>
+  </g>
+  
+  <!-- Title text -->
+  <g filter="url(#strongGlow)">
+    <text x="800" y="100" font-family="Arial, sans-serif" font-size="52" font-weight="bold" text-anchor="middle" fill="white" opacity="0.95">
+      UNDERSTANDING THE PROBLEM
+    </text>
+    <text x="800" y="140" font-family="Arial, sans-serif" font-size="20" font-weight="300" text-anchor="middle" fill="#00d4ff" opacity="0.9">
+      The Cognitive Foundation of Machine Learning Success
+    </text>
+  </g>
+  
+  <!-- Polya's Framework subtitle -->
+  <g transform="translate(800, 180)">
+    <rect x="-180" y="-20" width="360" height="35" rx="17" fill="none" stroke="#7b2ff7" stroke-width="1" opacity="0.5"/>
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" font-weight="300" text-anchor="middle" fill="#f857a6" opacity="0.8">
+      Polya's Framework for AI &amp; Data Science
+    </text>
+  </g>
+  
+  <!-- Cognitive elements - synapses and connections -->
+  <g opacity="0.2">
+    <!-- Left side connections -->
+    <circle cx="200" cy="300" r="4" fill="#00d4ff">
+      <animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="250" cy="350" r="3" fill="#7b2ff7"/>
+    <circle cx="150" cy="380" r="3" fill="#f107a3"/>
+    <path d="M 200,300 Q 225,325 250,350" stroke="#00d4ff" stroke-width="1" fill="none"/>
+    <path d="M 200,300 Q 175,340 150,380" stroke="#f107a3" stroke-width="1" fill="none"/>
+    
+    <!-- Right side connections -->
+    <circle cx="1400" cy="300" r="4" fill="#00d4ff">
+      <animate attributeName="r" values="4;6;4" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="1350" cy="350" r="3" fill="#7b2ff7"/>
+    <circle cx="1450" cy="380" r="3" fill="#f107a3"/>
+    <path d="M 1400,300 Q 1375,325 1350,350" stroke="#00d4ff" stroke-width="1" fill="none"/>
+    <path d="M 1400,300 Q 1425,340 1450,380" stroke="#f107a3" stroke-width="1" fill="none"/>
+  </g>
+  
+  <!-- Formula/equation hints floating -->
+  <g font-family="Courier, monospace" font-size="14" fill="#00ff88" opacity="0.3">
+    <text x="100" y="250">f(x) → y</text>
+    <text x="1450" y="250">P(Y|X)</text>
+    <text x="300" y="550">min(loss)</text>
+    <text x="1300" y="550">∇θ</text>
+  </g>
+  
+  <!-- Scanning effect for dynamism -->
+  <rect x="0" y="0" width="1600" height="3" fill="#00d4ff" opacity="0.5" filter="url(#glow)">
+    <animate attributeName="y" values="0;800;0" dur="10s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0;0.5;0" dur="10s" repeatCount="indefinite"/>
+  </rect>
+</svg>

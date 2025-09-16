@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2025-03-05">
+<meta name="dcterms.date" content="2025-03-09">
 
 <title>Imad Dabbura - Understand, Then Build</title>
 <style>
@@ -146,11 +146,11 @@ ga('send', {
 <link rel="stylesheet" href="../../styles.css">
 <meta property="og:title" content="Imad Dabbura - Understand, Then Build">
 <meta property="og:description" content="How Pólya’s Step 1 powers reliable DS/ML/AI systems under real-world limits.">
-<meta property="og:image" content="https://imaddabbura.github.io/posts/problem-solving/images/feature.jpeg">
+<meta property="og:image" content="https://imaddabbura.github.io/posts/problem-solving/images/image.svg">
 <meta property="og:site_name" content="Imad Dabbura">
 <meta name="twitter:title" content="Imad Dabbura - Understand, Then Build">
 <meta name="twitter:description" content="How Pólya’s Step 1 powers reliable DS/ML/AI systems under real-world limits.">
-<meta name="twitter:image" content="https://imaddabbura.github.io/posts/problem-solving/images/feature.jpeg">
+<meta name="twitter:image" content="https://imaddabbura.github.io/posts/problem-solving/images/image.svg">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
 </head>
@@ -276,7 +276,7 @@ ga('send', {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">March 5, 2025</p>
+        <p class="date">March 9, 2025</p>
       </div>
     </div>
     
@@ -324,6 +324,7 @@ ga('send', {
 
 
 
+<p><img src="images/image.svg" class="img-fluid"></p>
 <p><em>Part 1 of 4: Applying Polya’s Problem-Solving Framework to Data Science, ML, and AI</em></p>
 <p><em>A Comprehensive Guide for Practitioners</em></p>
 <section id="introduction-the-hidden-crisis-in-ai-development" class="level2">
@@ -332,7 +333,12 @@ ga('send', {
 <p>The challenge of problem understanding in artificial intelligence extends far beyond the difficulties encountered in traditional software development. When building conventional systems, requirements typically manifest as concrete specifications—a form must capture specific fields, a report must display particular metrics, an API must return defined responses. These requirements, while sometimes complex, exist in the realm of the deterministic and the definable. Machine learning problems, however, inhabit a fundamentally different space. They deal with probabilities rather than certainties, with patterns rather than rules, with approximations rather than exact solutions.</p>
 <p>Consider the seemingly straightforward task of building a customer churn prediction model. The surface-level requirement appears simple: identify customers likely to cancel their subscriptions. Yet beneath this simplicity lies a web of critical questions that must be answered with precision. What exactly constitutes churn in this context? Is it the moment a customer clicks the cancellation button, the end of their billing period, or the point at which they stop engaging with the service? Over what time horizon should predictions be made—next week, next month, or next quarter? What level of confidence is required for the prediction to trigger an intervention? What are the relative costs of false positives versus false negatives? Each of these questions, if answered incorrectly or left unexamined, can render even the most sophisticated model useless in practice.</p>
 <p>The compounding nature of misunderstanding in AI projects deserves particular attention. When a problem is misunderstood by even a small margin at the outset, this error doesn’t simply add a proportional amount of waste to the project. Instead, it multiplies through each subsequent phase, creating an exponential cascade of inefficiency. A 10% misalignment in problem definition becomes a 20% misdirection in planning, as architects design systems for the wrong objectives. This doubles again during implementation, reaching 40% waste as engineers optimize for incorrect metrics. By the deployment phase, the cumulative effect can result in 80% waste—or complete project failure.</p>
-<p><img src="images/cascading-cost.svg" class="img-fluid"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/cascading-cost.svg" class="img-fluid figure-img"></p>
+<figcaption>Figure 1: Compounding cost of misunderstanding</figcaption>
+</figure>
+</div>
 </section>
 <section id="the-three-pillars-of-problem-understanding" class="level2">
 <h2 class="anchored" data-anchor-id="the-three-pillars-of-problem-understanding"><strong>The Three Pillars of Problem Understanding</strong></h2>
@@ -340,7 +346,12 @@ ga('send', {
 <h3 class="anchored" data-anchor-id="what-is-the-unknown-the-art-of-target-definition"><strong>What is the Unknown? The Art of Target Definition</strong></h3>
 <p>Polya’s first fundamental question—“What is the unknown?”—appears deceptively simple. In mathematical problems, the unknown might be a single variable or a proof to be demonstrated. In machine learning, however, the unknown encompasses not just what we’re predicting, but the entire context in which that prediction exists and will be used.</p>
 <p>The specification of the unknown in a machine learning context requires us to think across multiple dimensions simultaneously. We must consider not only the technical nature of the prediction—whether it’s a continuous value, a category, or a probability—but also its temporal characteristics, its intended use, and its relationship to business processes. A prediction that arrives too late to be actionable is worthless, regardless of its accuracy. A highly accurate model that requires data unavailable at inference time is an elaborate fiction. A probabilistic output that decision-makers don’t understand how to interpret might as well be random noise.</p>
-<p><img src="images/types-ml-unknowns.svg" class="img-fluid"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/types-ml-unknowns.svg" class="img-fluid figure-img"></p>
+<figcaption>Figure 2: Spectrum of machine learning unknowns</figcaption>
+</figure>
+</div>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pseudocode</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> validate_target_specification(target_spec):</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
@@ -391,7 +402,12 @@ ga('send', {
 <h3 class="anchored" data-anchor-id="what-are-the-data-beyond-simple-statistics">What are the Data? Beyond Simple Statistics</h3>
 <p>Polya’s second question—“What are the data?”—requires us to understand not just what information we have, but what that information truly represents, how it was generated, and what it can and cannot tell us about our unknown. In the context of machine learning, data understanding extends far beyond calculating summary statistics or visualizing distributions. It requires a deep investigation into the data’s provenance, its biases, its temporal characteristics, and its relationship to the phenomenon we’re trying to model.</p>
 <p>The provenance of data—its origin and the process by which it was collected—fundamentally determines what problems it can solve. Data collected for one purpose often carries implicit assumptions that make it unsuitable for other uses. Customer service logs, for instance, only capture information about customers who contacted support, creating a selection bias that might invalidate models trying to understand overall customer satisfaction. Transaction data might only record completed purchases, missing the crucial information about abandoned carts that would be essential for understanding purchase intent. Understanding these collection mechanisms and their limitations is essential for determining whether available data can actually answer the questions being asked.</p>
-<p><img src="images/data-understanding-iceberg.svg" class="img-fluid"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/data-understanding-iceberg.svg" class="img-fluid figure-img"></p>
+<figcaption>Figure 3: Data understanding iceberg</figcaption>
+</figure>
+</div>
 <div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pseudocode</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> assess_data_provenance(dataset):</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
@@ -444,7 +460,12 @@ ga('send', {
 <section id="what-is-the-condition-the-constraint-ecosystem" class="level3">
 <h3 class="anchored" data-anchor-id="what-is-the-condition-the-constraint-ecosystem">What is the Condition? The Constraint Ecosystem</h3>
 <p>Polya’s third question—“What is the condition?”—addresses the constraints that bound our solution space. In machine learning applications, these constraints form a complex ecosystem of technical, business, ethical, and regulatory requirements that often conflict with each other and always shape the feasible solution space in non-obvious ways.</p>
-<p><img src="images/ml-constraint-ecosystem.svg" class="img-fluid"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/ml-constraint-ecosystem.svg" class="img-fluid figure-img"></p>
+<figcaption>Figure 4: ML constraint ecosystem</figcaption>
+</figure>
+</div>
 <p>Technical constraints in modern machine learning systems extend well beyond simple computational limitations. Latency requirements for real-time systems must account not just for model inference time but for data retrieval, preprocessing, and post-processing. A fraud detection system that must respond within 100 milliseconds cannot use a model that requires complex feature engineering on historical data, regardless of how much that engineering might improve accuracy. Similarly, models deployed on edge devices face strict constraints on memory usage and computational complexity that eliminate entire classes of algorithms from consideration. These technical constraints must be understood not as implementation details to be addressed later but as fundamental aspects of the problem that shape what solutions are possible.</p>
 <p>Business constraints often prove even more restrictive than technical ones. Budget limitations don’t just affect the choice of infrastructure; they determine how much data can be labeled, how frequently models can be retrained, and how sophisticated the monitoring systems can be. Timeline constraints might force choices between building a comprehensive solution that arrives too late to capture value and a simpler solution that can be deployed while the opportunity still exists. Organizational constraints—the skills available on the team, the maturity of data infrastructure, the sophistication of end users—all fundamentally shape what kinds of solutions can be successfully deployed and maintained.</p>
 <p>The ethical and regulatory constraints on machine learning systems have rightfully become a central concern, yet they’re often treated as an afterthought rather than a fundamental aspect of problem definition. Requirements for model explainability, fairness across protected groups, privacy preservation, and regulatory compliance aren’t features to be added after the fact—they’re core constraints that must shape the solution from the beginning. A loan approval model that must provide adverse action notices under the Equal Credit Opportunity Act cannot use a black-box ensemble method, regardless of its superior predictive performance. A healthcare diagnostic system that must maintain patient privacy under HIPAA cannot use collaborative filtering approaches that might leak information between patients.</p>
@@ -509,7 +530,12 @@ ga('send', {
 <section id="the-process-of-problem-decomposition" class="level2">
 <h2 class="anchored" data-anchor-id="the-process-of-problem-decomposition">The Process of Problem Decomposition</h2>
 <p>Polya emphasized that complex problems become manageable when properly decomposed into smaller, more tractable components. In machine learning applications, this decomposition must occur across multiple dimensions simultaneously, breaking down the problem by temporal characteristics, functional components, data complexity, and stakeholder concerns.</p>
-<p><img src="images/problem-decomposition-strategies.svg" class="img-fluid"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/problem-decomposition-strategies.svg" class="img-fluid figure-img"></p>
+<figcaption>Figure 5: Four dimensions of problem decomposition</figcaption>
+</figure>
+</div>
 <p>Temporal decomposition recognizes that different aspects of a machine learning system operate on different time scales and have different latency requirements. Consider a recommendation system for an e-commerce platform. The real-time serving layer must respond within milliseconds, showing pre-computed recommendations to users as they browse. The batch processing layer might update user embeddings hourly, incorporating recent behavior while maintaining computational efficiency. The model retraining pipeline might run daily or weekly, incorporating new data and adapting to changing patterns. The fundamental model architecture might be revisited monthly or quarterly, based on accumulated performance data and changing business requirements. Each of these temporal components has different requirements, different constraints, and different success metrics, yet they must work together as a cohesive system.</p>
 <p>Functional decomposition breaks the overall prediction task into logical sub-problems that can be solved independently and then combined. A customer lifetime value prediction system might decompose into predicting whether a customer will make another purchase (a classification problem), how many purchases they’ll make (a count regression problem), and the average value of those purchases (a value regression problem). Each component can be optimized separately with appropriate techniques and then combined to produce the final prediction. This decomposition not only simplifies the modeling challenge but also provides interpretability and debugging advantages—when the system fails, it’s easier to identify which component is responsible.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pseudocode</span></span>
@@ -593,7 +619,12 @@ ga('send', {
 <section id="the-art-of-feasibility-assessment" class="level2">
 <h2 class="anchored" data-anchor-id="the-art-of-feasibility-assessment">The Art of Feasibility Assessment</h2>
 <p>Before committing resources to solving a problem, Polya advocates for carefully assessing whether the conditions can actually be satisfied—whether the problem as stated is actually solvable with the available resources. In machine learning contexts, this feasibility assessment must examine statistical, technical, business, and ethical dimensions.</p>
-<p><img src="images/ml-feasibility-assessment-matrix.svg" class="img-fluid"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/ml-feasibility-assessment-matrix.svg" class="img-fluid figure-img"></p>
+<figcaption>Figure 6: ML project feasibility assessment matrix</figcaption>
+</figure>
+</div>
 <p>Statistical feasibility begins with the fundamental question of whether the available data contains sufficient signal to predict the target variable. This goes beyond simple correlation analysis to examine the theoretical limits of predictability. Some phenomena are inherently unpredictable beyond a certain accuracy level—no amount of data or model sophistication will predict truly random events. Other phenomena might be theoretically predictable but require data that doesn’t exist or cannot be collected. A model attempting to predict customer satisfaction might fail not because of poor algorithms but because satisfaction is influenced by factors—personal circumstances, competitive offerings, unrecorded service interactions—that aren’t captured in any available data.</p>
 <p>The sample size requirements for machine learning often surprise stakeholders accustomed to traditional statistics. While classical statistical methods might require dozens or hundreds of samples, machine learning models, particularly deep learning approaches, might require thousands or millions of examples to achieve acceptable performance. Moreover, these samples must adequately represent all scenarios the model will encounter in production. A fraud detection model trained on historical data might fail catastrophically when fraudsters develop new techniques not represented in the training set. Understanding these sample requirements and their implications for data collection costs and timelines is essential for realistic project planning.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pseudocode</span></span>
@@ -710,7 +741,12 @@ ga('send', {
 <section id="creating-shared-understanding-across-teams" class="level2">
 <h2 class="anchored" data-anchor-id="creating-shared-understanding-across-teams">Creating Shared Understanding Across Teams</h2>
 <p>One of Polya’s key insights was the importance of notation—creating a precise, shared language for discussing the problem. In machine learning projects, this shared understanding must bridge the gap between technical teams who think in terms of algorithms and metrics, and business stakeholders who think in terms of processes and outcomes.</p>
-<p><img src="images/technical-business-bridge.svg" class="img-fluid"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/technical-business-bridge.svg" class="img-fluid figure-img"></p>
+<figcaption>Figure 7: Technical business bridge</figcaption>
+</figure>
+</div>
 <p>The creation of this shared understanding begins with establishing clear definitions for all key terms. What exactly does “customer” mean in the context of this problem—someone who has ever made a purchase, someone who has purchased within the last year, or someone who currently has an active subscription? What constitutes “engagement”—any interaction with the platform, specific high-value actions, or sustained activity over time? These definitions might seem pedantic, but ambiguity at this stage cascades through the entire project, leading to misaligned efforts and failed deployments.</p>
 <p>Visual representations play a crucial role in creating shared understanding. System diagrams that show how predictions flow through business processes help stakeholders understand not just what the model predicts but how those predictions create value. Confusion matrices translated into business terms—showing dollar impacts rather than abstract metrics—make model performance tangible for non-technical stakeholders. Process flow diagrams that highlight where human judgment intersects with model predictions clarify the boundaries of automation and the importance of human oversight.</p>
 <p>The translation between technical and business metrics requires particular care. A data scientist might celebrate achieving an AUC-ROC of 0.92, but this means nothing to a business stakeholder. Translating this into business terms—“the model correctly ranks risky customers 92% of the time, allowing us to focus retention efforts on those most likely to churn”—creates meaningful understanding. Similarly, technical constraints must be translated into business implications. A latency requirement of 100 milliseconds isn’t just a technical specification; it means the model must make predictions fast enough to influence the customer experience without causing frustrating delays.</p>
@@ -788,7 +824,12 @@ ga('send', {
 <section id="common-anti-patterns-in-problem-understanding" class="level2">
 <h2 class="anchored" data-anchor-id="common-anti-patterns-in-problem-understanding">Common Anti-Patterns in Problem Understanding</h2>
 <p>Experience across numerous failed machine learning projects reveals recurring patterns of problem misunderstanding. Recognizing these anti-patterns early can prevent significant waste and frustration.</p>
-<p><img src="images/ml-problem-understanding-antipatterns.svg" class="img-fluid"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/ml-problem-understanding-antipatterns.svg" class="img-fluid figure-img"></p>
+<figcaption>Figure 8: Anti-patterns in ML problem understanding</figcaption>
+</figure>
+</div>
 <p>The “solution in search of a problem” anti-pattern occurs when teams become enamored with a particular technology or approach and then look for ways to apply it, rather than starting with a clear problem and finding the appropriate solution. This might manifest as insistence on using deep learning for problems where simple linear models would suffice, or forcing all problems into a supervised learning framework when unsupervised or reinforcement learning might be more appropriate. The result is unnecessary complexity, increased development time, and solutions that poorly match actual needs.</p>
 <p>The “metric fixation” anti-pattern involves optimizing for easily measurable metrics while losing sight of actual business objectives. A recommendation system might achieve high click-through rates by recommending popular items everyone already knows about, failing in its actual purpose of discovery. A customer service bot might minimize average handling time by quickly closing conversations without actually resolving issues. The key to avoiding this anti-pattern is maintaining clear connection between model metrics and business outcomes, regularly validating that improvements in the former actually drive the latter.</p>
 <p>The “perfect prediction” anti-pattern assumes that if we just had enough data and sophisticated enough models, we could predict outcomes with near-perfect accuracy. This ignores the inherent uncertainty in many business processes, the influence of external factors not captured in any dataset, and the reflexive nature of predictions that influence the outcomes they’re trying to predict. Accepting the limits of predictability and designing systems that work well despite uncertainty is essential for practical success.</p>
@@ -862,7 +903,12 @@ ga('send', {
 <section id="practical-tools-and-templates" class="level2">
 <h2 class="anchored" data-anchor-id="practical-tools-and-templates">Practical Tools and Templates</h2>
 <p>To support systematic problem understanding, practitioners benefit from structured tools and templates that guide thinking and ensure completeness. These tools shouldn’t be treated as rigid forms to fill out but as frameworks that prompt the right questions and capture critical decisions.</p>
-<p><img src="images/ml-problem-understanding-canva.svg" class="img-fluid"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/ml-problem-understanding-canva.svg" class="img-fluid figure-img"></p>
+<figcaption>Figure 9: ML problem unden canvas</figcaption>
+</figure>
+</div>
 <p>The Problem Understanding Canvas serves as a central artifact for capturing and communicating problem definition. Unlike traditional requirements documents that often run to dozens of pages of prose, the canvas provides a single-page visual representation that all stakeholders can quickly grasp and reference. The canvas structures thinking around nine key areas: the core problem statement occupies the center, surrounded by stakeholders, success metrics, constraints, available data, target definition, assumptions, risks, and dependencies. This visual arrangement emphasizes the interconnected nature of these elements—changing the target definition might affect success metrics, new constraints might introduce additional risks, different stakeholders might have conflicting success criteria.</p>
 <p>The Feasibility Assessment Matrix provides a structured approach to evaluating whether a problem as defined can actually be solved. The matrix examines feasibility across multiple dimensions—statistical, technical, business, and ethical—with specific criteria for each. Statistical feasibility examines whether sufficient signal exists in the data, whether sample sizes are adequate, and whether the problem exhibits learnable patterns. Technical feasibility evaluates whether required latencies can be met, whether necessary infrastructure exists, and whether the team has appropriate skills. Business feasibility analyzes whether the expected value justifies the investment, whether the organization can act on predictions, and whether stakeholders will accept the solution. Ethical feasibility confirms whether fairness requirements can be met, whether privacy can be preserved, and whether decisions can be adequately explained.</p>
 <p>The Stakeholder Alignment Tracker helps manage the complex web of perspectives and requirements that characterize machine learning projects. Different stakeholders often have different mental models of the problem, different success criteria, and different constraints they consider non-negotiable. The tracker captures each stakeholder’s perspective, identifies areas of alignment and conflict, and documents resolution strategies. This tool proves particularly valuable when conflicts arise during development—having documented initial agreements prevents revisionist history and provides a basis for negotiation.</p>
@@ -975,7 +1021,6 @@ ga('send', {
 <p>The journey from vague business objectives to precise problem specifications, from raw data to understood information, from conflicting constraints to feasible solution spaces—this is the real work of data science. It’s less glamorous than training neural networks or optimizing hyperparameters, but it’s infinitely more valuable. For in the end, a perfectly executed solution to the wrong problem is worthless, while even an imperfect solution to the right problem creates value.</p>
 <p>As practitioners, we must resist the temptation to rush past problem understanding in our eagerness to build solutions. As leaders, we must create space and time for teams to deeply understand problems before expecting solutions. As an industry, we must recognize that the highest-leverage improvements in AI success rates will come not from better algorithms but from better problem understanding.</p>
 <p>Polya gave us the tools. The failures around us show the cost of ignoring them. The successes, though rarer, show the rewards of applying them diligently. The choice, and the responsibility, is ours.</p>
-<p><img src="images/ml-problem-understanding-framework.svg" class="img-fluid"></p>
 <hr>
 <p><em>This article is Part 1 of a four-part series on applying Polya’s problem-solving framework to data science and machine learning. Continue with [Part 2: Devising a Plan], where we explore how to transform problem understanding into concrete technical strategies, [Part 3: Carrying Out the Plan], which addresses implementation challenges and best practices, and [Part 4: Looking Back], which covers evaluation, iteration, and continuous improvement.</em></p>
 <p><em>The principles and frameworks presented here have been developed through analysis of hundreds of ML projects across industries. While each project is unique, the patterns of success and failure repeat with remarkable consistency. By learning from these patterns and applying Polya’s timeless wisdom, we can dramatically improve our chances of building ML systems that deliver real value.</em></p>
