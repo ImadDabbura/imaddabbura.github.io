@@ -418,9 +418,12 @@ Complete migration with old system as instant fallback. Document runbooks, estab
 
 Teams spend months improving model accuracy while system-level metrics stagnate. You achieve 96% AUC on test sets while production catches only 60% of incidents because feature extraction can't keep up.
 
+![](images/amdahl-law-optimization.svg)
+
 **In Our Case**: We spent three months experimenting with transformer architectures for 2% accuracy improvement, while missing 70% of traffic due to feature extraction bottlenecks. The transformer detected sophisticated attacks brilliantly—on the 30% of traffic it actually analyzed.
 
 **Prevention**:
+
 - Always validate the constraint before optimization
 - Measure end-to-end metrics, not just component metrics
 - Apply Amdahl's Law: improving non-constraint components yields minimal gain
@@ -433,6 +436,7 @@ Feature counts grow monotonically. Each new feature adds marginal model improvem
 **In Our Case**: We grew from 50 to 247 features over two years. Analysis showed 180 features contributed <0.1% to decisions but consumed 60% of computation. Feature removal was politically difficult—each had an advocate who remembered when it caught something.
 
 **Prevention**:
+
 - Require cost-benefit analysis for new features
 - Regular production-weighted importance analysis
 - Implement progressive analysis where expensive features are conditional
@@ -442,9 +446,12 @@ Feature counts grow monotonically. Each new feature adds marginal model improvem
 
 Facing missed incidents, teams lower thresholds to catch more attacks. This creates unsustainable alert volumes, overwhelming analysts who then ignore alerts, leading to more missed incidents.
 
+![](images/alert-fatigue.svg)
+
 **In Our Case**: After missing an APT, we lowered thresholds and generated 200+ daily alerts. Analysts could investigate only 50, randomly sampling and missing real threats. The "solution" made the problem worse.
 
 **Prevention**:
+
 - Use Little's Law to connect throughput and latency: L = λW
 - Maintain sustainable alert volumes based on team capacity
 - Weight alerts by incident impact, not just count
@@ -457,6 +464,7 @@ Teams optimize metrics that sound impressive but don't connect to business value
 **In Our Case**: We celebrated achieving 99% detection rate on port scans—which the SOC ignored anyway—while missing lateral movement using legitimate credentials. Our metrics looked great but failed to prevent actual breaches.
 
 **Prevention**:
+
 - Define SLOs tied to business outcomes
 - Use outcome-weighted metrics (incident-weighted recall, not raw recall)
 - Measure decision latency, not just throughput
@@ -467,6 +475,8 @@ Teams optimize metrics that sound impressive but don't connect to business value
 ### Starting Point: A System in Crisis
 
 Six months ago, our network anomaly detection system was failing on all fronts. The security team reported missed breaches—attackers dwelt in the network for weeks undetected. The SOC was overwhelmed, investigating 89 false positives daily while real threats slipped through. Infrastructure costs ballooned as we threw hardware at the problem without improvement.
+
+![](images/timeline-transformation-journey.svg)
 
 The team was demoralized. ML engineers added features that didn't help. Security analysts lost trust in alerts. Management questioned the entire investment. Traditional optimization—better models, more compute, refined thresholds—had been tried and failed.
 
@@ -486,7 +496,10 @@ The team was demoralized. ML engineers added features that didn't help. Security
 
 Today, our network anomaly detection system is a strategic asset rather than a cost center:
 
+![](images/before-after-dashboard-transformation.svg)
+
 The technical improvements are impressive, but the organizational transformation is profound:
+
 - ML and platform teams now collaborate from day one
 - Production constraints are part of development requirements
 - Feature additions require extraction cost analysis
@@ -497,6 +510,7 @@ The technical improvements are impressive, but the organizational transformation
 The framework creates a continuous improvement cycle. With Feature-Tier2 no longer the constraint, a new bottleneck emerges: alert investigation. SOC analysts take 45 minutes average to investigate Tier-3 alerts. This is now our constraint, limiting how many sophisticated attacks we can properly investigate.
 
 Applying the framework again:
+
 - **Goal**: Reduce investigation time to 15 minutes while maintaining decision quality
 - **Constraint**: Manual correlation across multiple tools and data sources
 - **Problem**: Analysts lack unified view of alert context
@@ -509,6 +523,8 @@ This cycle continues, each iteration improving the system. The constraint moves�
 ## Conclusion: Theory of Constraints as Your ML Operating System
 
 The Theory of Constraints transformed our network anomaly detection from a frustrating cost center to a strategic security asset. By focusing on the single most limiting factor—rather than trying to optimize everything—we achieved breakthrough improvements thought impossible.
+
+![](images/evolution-of-ml-systems-with-constraints.svg)
 
 This journey revealed crucial insights for ML practitioners:
 

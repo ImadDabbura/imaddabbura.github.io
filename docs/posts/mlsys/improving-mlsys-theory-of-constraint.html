@@ -67,7 +67,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <script src="../../site_libs/quarto-search/autocomplete-preset-algolia.umd.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../images/profile-pic.jpg" rel="icon" type="image/jpeg">
+<link href="../../images/profile-pic.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -167,7 +167,7 @@ ga('send', {
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a href="../../index.html" class="navbar-brand navbar-brand-logo">
-    <img src="../../images/profile-pic.jpg" alt="" class="navbar-logo">
+    <img src="../../images/profile-pic.png" alt="" class="navbar-logo">
     </a>
     <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Imad Dabbura</span>
@@ -785,26 +785,52 @@ T+30s: Full enrichment complete (detailed forensics, related events)</code></pre
 <section id="pitfall-1-premature-model-optimization" class="level3">
 <h3 class="anchored" data-anchor-id="pitfall-1-premature-model-optimization">Pitfall 1: Premature Model Optimization</h3>
 <p>Teams spend months improving model accuracy while system-level metrics stagnate. You achieve 96% AUC on test sets while production catches only 60% of incidents because feature extraction can’t keep up.</p>
+<p><img src="images/amdahl-law-optimization.svg" class="img-fluid"></p>
 <p><strong>In Our Case</strong>: We spent three months experimenting with transformer architectures for 2% accuracy improvement, while missing 70% of traffic due to feature extraction bottlenecks. The transformer detected sophisticated attacks brilliantly—on the 30% of traffic it actually analyzed.</p>
-<p><strong>Prevention</strong>: - Always validate the constraint before optimization - Measure end-to-end metrics, not just component metrics - Apply Amdahl’s Law: improving non-constraint components yields minimal gain - Ask: “If this component was perfect, would we meet our SLOs?”</p>
+<p><strong>Prevention</strong>:</p>
+<ul>
+<li>Always validate the constraint before optimization</li>
+<li>Measure end-to-end metrics, not just component metrics</li>
+<li>Apply Amdahl’s Law: improving non-constraint components yields minimal gain</li>
+<li>Ask: “If this component was perfect, would we meet our SLOs?”</li>
+</ul>
 </section>
 <section id="pitfall-2-feature-creep-without-cost-analysis" class="level3">
 <h3 class="anchored" data-anchor-id="pitfall-2-feature-creep-without-cost-analysis">Pitfall 2: Feature Creep Without Cost Analysis</h3>
 <p>Feature counts grow monotonically. Each new feature adds marginal model improvement but substantial computational cost. Soon you have hundreds of features where most contribute negligibly.</p>
 <p><strong>In Our Case</strong>: We grew from 50 to 247 features over two years. Analysis showed 180 features contributed &lt;0.1% to decisions but consumed 60% of computation. Feature removal was politically difficult—each had an advocate who remembered when it caught something.</p>
-<p><strong>Prevention</strong>: - Require cost-benefit analysis for new features - Regular production-weighted importance analysis - Implement progressive analysis where expensive features are conditional - Track feature value score: importance / computational_cost</p>
+<p><strong>Prevention</strong>:</p>
+<ul>
+<li>Require cost-benefit analysis for new features</li>
+<li>Regular production-weighted importance analysis</li>
+<li>Implement progressive analysis where expensive features are conditional</li>
+<li>Track feature value score: importance / computational_cost</li>
+</ul>
 </section>
 <section id="pitfall-3-alert-budget-myopia" class="level3">
 <h3 class="anchored" data-anchor-id="pitfall-3-alert-budget-myopia">Pitfall 3: Alert Budget Myopia</h3>
 <p>Facing missed incidents, teams lower thresholds to catch more attacks. This creates unsustainable alert volumes, overwhelming analysts who then ignore alerts, leading to more missed incidents.</p>
+<p><img src="images/alert-fatigue.svg" class="img-fluid"></p>
 <p><strong>In Our Case</strong>: After missing an APT, we lowered thresholds and generated 200+ daily alerts. Analysts could investigate only 50, randomly sampling and missing real threats. The “solution” made the problem worse.</p>
-<p><strong>Prevention</strong>: - Use Little’s Law to connect throughput and latency: L = λW - Maintain sustainable alert volumes based on team capacity - Weight alerts by incident impact, not just count - Implement progressive analysis to build confidence before alerting</p>
+<p><strong>Prevention</strong>:</p>
+<ul>
+<li>Use Little’s Law to connect throughput and latency: L = λW</li>
+<li>Maintain sustainable alert volumes based on team capacity</li>
+<li>Weight alerts by incident impact, not just count</li>
+<li>Implement progressive analysis to build confidence before alerting</li>
+</ul>
 </section>
 <section id="pitfall-4-vanity-metrics-over-business-outcomes" class="level3">
 <h3 class="anchored" data-anchor-id="pitfall-4-vanity-metrics-over-business-outcomes">Pitfall 4: Vanity Metrics Over Business Outcomes</h3>
 <p>Teams optimize metrics that sound impressive but don’t connect to business value. “99.9% precision” means nothing if you’re missing 90% of incidents. “Processing 1M events/second” is irrelevant if decisions take 30 minutes.</p>
 <p><strong>In Our Case</strong>: We celebrated achieving 99% detection rate on port scans—which the SOC ignored anyway—while missing lateral movement using legitimate credentials. Our metrics looked great but failed to prevent actual breaches.</p>
-<p><strong>Prevention</strong>: - Define SLOs tied to business outcomes - Use outcome-weighted metrics (incident-weighted recall, not raw recall) - Measure decision latency, not just throughput - Track realized value, not potential performance</p>
+<p><strong>Prevention</strong>:</p>
+<ul>
+<li>Define SLOs tied to business outcomes</li>
+<li>Use outcome-weighted metrics (incident-weighted recall, not raw recall)</li>
+<li>Measure decision latency, not just throughput</li>
+<li>Track realized value, not potential performance</li>
+</ul>
 </section>
 </section>
 <section id="applying-the-framework-complete-system-transformation" class="level2">
@@ -812,6 +838,7 @@ T+30s: Full enrichment complete (detailed forensics, related events)</code></pre
 <section id="starting-point-a-system-in-crisis" class="level3">
 <h3 class="anchored" data-anchor-id="starting-point-a-system-in-crisis">Starting Point: A System in Crisis</h3>
 <p>Six months ago, our network anomaly detection system was failing on all fronts. The security team reported missed breaches—attackers dwelt in the network for weeks undetected. The SOC was overwhelmed, investigating 89 false positives daily while real threats slipped through. Infrastructure costs ballooned as we threw hardware at the problem without improvement.</p>
+<p><img src="images/timeline-transformation-journey.svg" class="img-fluid"></p>
 <p>The team was demoralized. ML engineers added features that didn’t help. Security analysts lost trust in alerts. Management questioned the entire investment. Traditional optimization—better models, more compute, refined thresholds—had been tried and failed.</p>
 </section>
 <section id="stage-by-stage-transformation" class="level3">
@@ -825,18 +852,34 @@ T+30s: Full enrichment complete (detailed forensics, related events)</code></pre
 <section id="the-transformed-system" class="level3">
 <h3 class="anchored" data-anchor-id="the-transformed-system">The Transformed System</h3>
 <p>Today, our network anomaly detection system is a strategic asset rather than a cost center:</p>
-<p>The technical improvements are impressive, but the organizational transformation is profound: - ML and platform teams now collaborate from day one - Production constraints are part of development requirements - Feature additions require extraction cost analysis - Success is measured by business outcomes, not technical metrics</p>
+<p><img src="images/before-after-dashboard-transformation.svg" class="img-fluid"></p>
+<p>The technical improvements are impressive, but the organizational transformation is profound:</p>
+<ul>
+<li>ML and platform teams now collaborate from day one</li>
+<li>Production constraints are part of development requirements</li>
+<li>Feature additions require extraction cost analysis</li>
+<li>Success is measured by business outcomes, not technical metrics</li>
+</ul>
 </section>
 <section id="beyond-the-initial-success" class="level3">
 <h3 class="anchored" data-anchor-id="beyond-the-initial-success">Beyond the Initial Success</h3>
 <p>The framework creates a continuous improvement cycle. With Feature-Tier2 no longer the constraint, a new bottleneck emerges: alert investigation. SOC analysts take 45 minutes average to investigate Tier-3 alerts. This is now our constraint, limiting how many sophisticated attacks we can properly investigate.</p>
-<p>Applying the framework again: - <strong>Goal</strong>: Reduce investigation time to 15 minutes while maintaining decision quality - <strong>Constraint</strong>: Manual correlation across multiple tools and data sources - <strong>Problem</strong>: Analysts lack unified view of alert context - <strong>Conflict</strong>: Automated enrichment vs human judgment - <strong>Innovation</strong>: AI-assisted investigation that augments rather than replaces analysts - <strong>Experiment</strong>: Test on historical alerts with analyst feedback</p>
+<p>Applying the framework again:</p>
+<ul>
+<li><strong>Goal</strong>: Reduce investigation time to 15 minutes while maintaining decision quality</li>
+<li><strong>Constraint</strong>: Manual correlation across multiple tools and data sources</li>
+<li><strong>Problem</strong>: Analysts lack unified view of alert context</li>
+<li><strong>Conflict</strong>: Automated enrichment vs human judgment</li>
+<li><strong>Innovation</strong>: AI-assisted investigation that augments rather than replaces analysts</li>
+<li><strong>Experiment</strong>: Test on historical alerts with analyst feedback</li>
+</ul>
 <p>This cycle continues, each iteration improving the system. The constraint moves—from feature extraction to investigation to response automation—but always represents the next opportunity for breakthrough improvement.</p>
 </section>
 </section>
 <section id="conclusion-theory-of-constraints-as-your-ml-operating-system" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion-theory-of-constraints-as-your-ml-operating-system">Conclusion: Theory of Constraints as Your ML Operating System</h2>
 <p>The Theory of Constraints transformed our network anomaly detection from a frustrating cost center to a strategic security asset. By focusing on the single most limiting factor—rather than trying to optimize everything—we achieved breakthrough improvements thought impossible.</p>
+<p><img src="images/evolution-of-ml-systems-with-constraints.svg" class="img-fluid"></p>
 <p>This journey revealed crucial insights for ML practitioners:</p>
 <p><strong>Focus beats breadth</strong>: Addressing the Feature-Tier2 throughput constraint achieved more than years of model improvements, infrastructure investments, and threshold tuning combined. One constraint, properly addressed, unlocked everything.</p>
 <p><strong>Conflicts hide innovations</strong>: The tradeoff between rich features and processing efficiency seemed fundamental until we challenged underlying assumptions. Progressive analysis transcended rather than compromised.</p>
