@@ -1,0 +1,1532 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.553">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Imad Dabbura">
+<meta name="dcterms.date" content="2025-09-21">
+
+<title>Imad Dabbura - Make ML Systems Ship Again</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete-preset-algolia.umd.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../images/profile.jpg" rel="icon" type="image/jpeg">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "algolia": {
+    "application-id": "PVDXB8B7OS",
+    "search-only-api-key": "eb3007c200831c30465f8a5172690cf0",
+    "index-name": "Initial-Website-Search-Index",
+    "analytics-events": true,
+    "show-logo": true,
+    "libDir": "site_libs"
+  },
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdn.jsdelivr.net/npm/algoliasearch@4.5.1/dist/algoliasearch-lite.umd.js"></script>
+
+
+<script type="text/javascript">
+var ALGOLIA_INSIGHTS_SRC = "https://cdn.jsdelivr.net/npm/search-insights/dist/search-insights.iife.min.js";
+!function(e,a,t,n,s,i,c){e.AlgoliaAnalyticsObject=s,e[s]=e[s]||function(){
+(e[s].queue=e[s].queue||[]).push(arguments)},i=a.createElement(t),c=a.getElementsByTagName(t)[0],
+i.async=1,i.src=n,c.parentNode.insertBefore(i,c)
+}(window,document,"script",ALGOLIA_INSIGHTS_SRC,"aa");
+</script>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-plugin-algolia-insights">
+
+</script>
+
+<script type="text/javascript">
+
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-127825273-1', 'auto');
+
+ga('send', {
+  hitType: 'pageview',
+  'anonymizeIp': true,
+});
+</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+<meta property="og:title" content="Imad Dabbura - Make ML Systems Ship Again">
+<meta property="og:description" content="Use the Theory of Constraints to replace incremental tweaks with step-function wins.">
+<meta property="og:image" content="https://imaddabbura.github.io/posts/mlsys/images/network-anomaly-detection-toc.png">
+<meta property="og:site_name" content="Imad Dabbura">
+<meta property="og:image:height" content="959">
+<meta property="og:image:width" content="1028">
+<meta name="twitter:title" content="Imad Dabbura - Make ML Systems Ship Again">
+<meta name="twitter:description" content="Use the Theory of Constraints to replace incremental tweaks with step-function wins.">
+<meta name="twitter:image" content="https://imaddabbura.github.io/posts/mlsys/images/network-anomaly-detection-toc.png">
+<meta name="twitter:creator" content="@imaddabbura">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image-height" content="959">
+<meta name="twitter:image-width" content="1028">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../images/profile.jpg" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Imad Dabbura</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Posts</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../til.html"> <i class="bi bi-lightbulb" role="img">
+</i> 
+<span class="menu-text">TIL</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../papers-summaries.html"> 
+<span class="menu-text">Papers’ Summaries</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../dl-tips-tricks.html"> 
+<span class="menu-text">DL Tips &amp; Tricks</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../projects-index.html"> 
+<span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-more" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">More</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-more">    
+        <li>
+    <a class="dropdown-item" href="../../books-summaries.html">
+ <span class="dropdown-text">Books’ Summaries</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../misc-notes.html">
+ <span class="dropdown-text">Misc. Notes</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../reading-list.html">
+ <span class="dropdown-text">Reading List</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../resume.html">
+ <span class="dropdown-text">Resume</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/imaddabbura"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/imadphd"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Make ML Systems Ship Again</h1>
+            <p class="subtitle lead">Use the Theory of Constraints to replace incremental tweaks with step-function wins.</p>
+                                <div class="quarto-categories">
+                <div class="quarto-category">MLSys</div>
+                <div class="quarto-category">MLOps</div>
+                <div class="quarto-category">Machine Learning</div>
+                <div class="quarto-category">Data Science</div>
+                <div class="quarto-category">Deep Learning</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Imad Dabbura </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">September 21, 2025</p>
+      </div>
+    </div>
+    
+      <div>
+      <div class="quarto-title-meta-heading">Modified</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date-modified">September 21, 2025</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction-why-theory-of-constraints-matters-for-machine-learning" id="toc-introduction-why-theory-of-constraints-matters-for-machine-learning" class="nav-link active" data-scroll-target="#introduction-why-theory-of-constraints-matters-for-machine-learning">Introduction: Why Theory of Constraints Matters for Machine Learning</a></li>
+  <li><a href="#the-five-stage-framework-overview" id="toc-the-five-stage-framework-overview" class="nav-link" data-scroll-target="#the-five-stage-framework-overview">The Five-Stage Framework Overview</a></li>
+  <li><a href="#stage-1-goal-and-constraint---finding-your-systems-true-bottleneck" id="toc-stage-1-goal-and-constraint---finding-your-systems-true-bottleneck" class="nav-link" data-scroll-target="#stage-1-goal-and-constraint---finding-your-systems-true-bottleneck">Stage 1: Goal and Constraint - Finding Your System’s True Bottleneck</a>
+  <ul class="collapse">
+  <li><a href="#defining-goals-through-service-level-objectives" id="toc-defining-goals-through-service-level-objectives" class="nav-link" data-scroll-target="#defining-goals-through-service-level-objectives">Defining Goals Through Service Level Objectives</a></li>
+  <li><a href="#identifying-the-constraint-building-your-constraint-ledger" id="toc-identifying-the-constraint-building-your-constraint-ledger" class="nav-link" data-scroll-target="#identifying-the-constraint-building-your-constraint-ledger">Identifying the Constraint: Building Your Constraint Ledger</a></li>
+  <li><a href="#validating-the-constraint-through-temporary-relief" id="toc-validating-the-constraint-through-temporary-relief" class="nav-link" data-scroll-target="#validating-the-constraint-through-temporary-relief">Validating the Constraint Through Temporary Relief</a></li>
+  <li><a href="#constraint-types-in-ml-systems" id="toc-constraint-types-in-ml-systems" class="nav-link" data-scroll-target="#constraint-types-in-ml-systems">Constraint Types in ML Systems</a></li>
+  </ul></li>
+  <li><a href="#stage-2-from-constraint-to-problem---understanding-root-causes" id="toc-stage-2-from-constraint-to-problem---understanding-root-causes" class="nav-link" data-scroll-target="#stage-2-from-constraint-to-problem---understanding-root-causes">Stage 2: From Constraint to Problem - Understanding Root Causes</a>
+  <ul class="collapse">
+  <li><a href="#uncovering-the-real-problem" id="toc-uncovering-the-real-problem" class="nav-link" data-scroll-target="#uncovering-the-real-problem">Uncovering the Real Problem</a></li>
+  <li><a href="#applying-five-whys-to-surface-root-causes" id="toc-applying-five-whys-to-surface-root-causes" class="nav-link" data-scroll-target="#applying-five-whys-to-surface-root-causes">Applying Five Whys to Surface Root Causes</a></li>
+  <li><a href="#ml-specific-problem-patterns" id="toc-ml-specific-problem-patterns" class="nav-link" data-scroll-target="#ml-specific-problem-patterns">ML-Specific Problem Patterns</a></li>
+  </ul></li>
+  <li><a href="#stage-3-reframing-problems-as-conflicts" id="toc-stage-3-reframing-problems-as-conflicts" class="nav-link" data-scroll-target="#stage-3-reframing-problems-as-conflicts">Stage 3: Reframing Problems as Conflicts</a>
+  <ul class="collapse">
+  <li><a href="#the-core-conflict-in-ml-systems" id="toc-the-core-conflict-in-ml-systems" class="nav-link" data-scroll-target="#the-core-conflict-in-ml-systems">The Core Conflict in ML Systems</a></li>
+  <li><a href="#understanding-why-this-conflict-persists" id="toc-understanding-why-this-conflict-persists" class="nav-link" data-scroll-target="#understanding-why-this-conflict-persists">Understanding Why This Conflict Persists</a></li>
+  <li><a href="#ml-systems-characteristic-conflicts" id="toc-ml-systems-characteristic-conflicts" class="nav-link" data-scroll-target="#ml-systems-characteristic-conflicts">ML Systems’ Characteristic Conflicts</a></li>
+  </ul></li>
+  <li><a href="#stage-4-from-conflict-to-innovation---transcending-tradeoffs" id="toc-stage-4-from-conflict-to-innovation---transcending-tradeoffs" class="nav-link" data-scroll-target="#stage-4-from-conflict-to-innovation---transcending-tradeoffs">Stage 4: From Conflict to Innovation - Transcending Tradeoffs</a>
+  <ul class="collapse">
+  <li><a href="#innovation-criteria-for-ml-systems" id="toc-innovation-criteria-for-ml-systems" class="nav-link" data-scroll-target="#innovation-criteria-for-ml-systems">Innovation Criteria for ML Systems</a></li>
+  <li><a href="#the-progressive-analysis-innovation" id="toc-the-progressive-analysis-innovation" class="nav-link" data-scroll-target="#the-progressive-analysis-innovation">The Progressive Analysis Innovation</a></li>
+  <li><a href="#key-innovation-elements" id="toc-key-innovation-elements" class="nav-link" data-scroll-target="#key-innovation-elements">Key Innovation Elements</a></li>
+  <li><a href="#how-this-transcends-the-original-conflict" id="toc-how-this-transcends-the-original-conflict" class="nav-link" data-scroll-target="#how-this-transcends-the-original-conflict">How This Transcends the Original Conflict</a></li>
+  </ul></li>
+  <li><a href="#stage-5-from-innovation-to-experiment---validating-solutions" id="toc-stage-5-from-innovation-to-experiment---validating-solutions" class="nav-link" data-scroll-target="#stage-5-from-innovation-to-experiment---validating-solutions">Stage 5: From Innovation to Experiment - Validating Solutions</a>
+  <ul class="collapse">
+  <li><a href="#designing-the-minimum-viable-experiment-mve" id="toc-designing-the-minimum-viable-experiment-mve" class="nav-link" data-scroll-target="#designing-the-minimum-viable-experiment-mve">Designing the Minimum Viable Experiment (MVE)</a></li>
+  <li><a href="#implementation-and-testing" id="toc-implementation-and-testing" class="nav-link" data-scroll-target="#implementation-and-testing">Implementation and Testing</a></li>
+  <li><a href="#results-and-key-insights" id="toc-results-and-key-insights" class="nav-link" data-scroll-target="#results-and-key-insights">Results and Key Insights</a></li>
+  <li><a href="#iteration-based-on-findings" id="toc-iteration-based-on-findings" class="nav-link" data-scroll-target="#iteration-based-on-findings">Iteration Based on Findings</a></li>
+  <li><a href="#production-rollout-strategy" id="toc-production-rollout-strategy" class="nav-link" data-scroll-target="#production-rollout-strategy">Production Rollout Strategy</a></li>
+  </ul></li>
+  <li><a href="#common-pitfalls-and-prevention-strategies" id="toc-common-pitfalls-and-prevention-strategies" class="nav-link" data-scroll-target="#common-pitfalls-and-prevention-strategies">Common Pitfalls and Prevention Strategies</a>
+  <ul class="collapse">
+  <li><a href="#pitfall-1-premature-model-optimization" id="toc-pitfall-1-premature-model-optimization" class="nav-link" data-scroll-target="#pitfall-1-premature-model-optimization">Pitfall 1: Premature Model Optimization</a></li>
+  <li><a href="#pitfall-2-feature-creep-without-cost-analysis" id="toc-pitfall-2-feature-creep-without-cost-analysis" class="nav-link" data-scroll-target="#pitfall-2-feature-creep-without-cost-analysis">Pitfall 2: Feature Creep Without Cost Analysis</a></li>
+  <li><a href="#pitfall-3-alert-budget-myopia" id="toc-pitfall-3-alert-budget-myopia" class="nav-link" data-scroll-target="#pitfall-3-alert-budget-myopia">Pitfall 3: Alert Budget Myopia</a></li>
+  <li><a href="#pitfall-4-vanity-metrics-over-business-outcomes" id="toc-pitfall-4-vanity-metrics-over-business-outcomes" class="nav-link" data-scroll-target="#pitfall-4-vanity-metrics-over-business-outcomes">Pitfall 4: Vanity Metrics Over Business Outcomes</a></li>
+  </ul></li>
+  <li><a href="#applying-the-framework-complete-system-transformation" id="toc-applying-the-framework-complete-system-transformation" class="nav-link" data-scroll-target="#applying-the-framework-complete-system-transformation">Applying the Framework: Complete System Transformation</a>
+  <ul class="collapse">
+  <li><a href="#starting-point-a-system-in-crisis" id="toc-starting-point-a-system-in-crisis" class="nav-link" data-scroll-target="#starting-point-a-system-in-crisis">Starting Point: A System in Crisis</a></li>
+  <li><a href="#stage-by-stage-transformation" id="toc-stage-by-stage-transformation" class="nav-link" data-scroll-target="#stage-by-stage-transformation">Stage-by-Stage Transformation</a></li>
+  <li><a href="#the-transformed-system" id="toc-the-transformed-system" class="nav-link" data-scroll-target="#the-transformed-system">The Transformed System</a></li>
+  <li><a href="#beyond-the-initial-success" id="toc-beyond-the-initial-success" class="nav-link" data-scroll-target="#beyond-the-initial-success">Beyond the Initial Success</a></li>
+  </ul></li>
+  <li><a href="#conclusion-theory-of-constraints-as-your-ml-operating-system" id="toc-conclusion-theory-of-constraints-as-your-ml-operating-system" class="nav-link" data-scroll-target="#conclusion-theory-of-constraints-as-your-ml-operating-system">Conclusion: Theory of Constraints as Your ML Operating System</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<div class="callout callout-style-default callout-note callout-titled" title="Work in Progress — Feedback Welcome">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Work in Progress — Feedback Welcome
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This article is actively evolving. If you spot gaps, disagree with a take, or have better patterns, I’d love to hear it. Suggestions and critiques are welcome.</p>
+</div>
+</div>
+<section id="introduction-why-theory-of-constraints-matters-for-machine-learning" class="level2">
+<h2 class="anchored" data-anchor-id="introduction-why-theory-of-constraints-matters-for-machine-learning">Introduction: Why Theory of Constraints Matters for Machine Learning</h2>
+<p>You burn six months “optimizing.” Swap in transformers. Squeeze another +0.5% accuracy. Rewrite the feature pipeline. Add a shiny GPU cluster. And still: alert fatigue, missed incidents, and latency that kills real-time response.</p>
+<p>That’s optimization theater.</p>
+<p>The Theory of Constraints (ToC) cuts through the noise. Every system has a single, dominant bottleneck at any moment. Find it. Exploit it. Elevate it. Then repeat. For ML teams juggling models, features, infra, and data plumbing, this isn’t philosophy—it’s an operating system. Stop tuning everything. Start fixing the one thing that governs end-to-end throughput, quality, and cost.</p>
+<p>Take network anomaly detection at enterprise scale. Security wants higher recall on stealthy attacks. Ops wants fewer false alarms. Infra wants lower spend. The ML team tries to please everyone: new features, tighter thresholds, fancier models. Results? Nobody’s happy. Because the work targets components, not the constraint that sets the system’s performance ceiling—maybe label latency in feedback loops, maybe stream processing backpressure, maybe human triage capacity. This pattern repeats across fraud, recsys, and forecasting. Parts get optimized. Systems don’t.</p>
+<p><img src="images/ml-pipeline-weak-constraint.svg" class="img-fluid"></p>
+<p>We’ll track a network anomaly detector as it moves through the five ToC stages. It watches enterprise traffic for everything from port scans to exfiltration—and wrestles with the usual security-ML pain: too many false positives, missed low-and-slow attacks, and compute that melts budgets. The domain is network security; the playbook is universal. If you run ML in production, the patterns—and the fixes—apply.</p>
+</section>
+<section id="the-five-stage-framework-overview" class="level2">
+<h2 class="anchored" data-anchor-id="the-five-stage-framework-overview">The Five-Stage Framework Overview</h2>
+<p>The Theory of Constraints framework for ML systems consists of five interconnected stages, each building upon insights from the previous stage. We’ll see how each stage applies to our network anomaly detection system, transforming it from a source of frustration to a strategic asset.</p>
+<p><img src="images/circular-flow-5-stages.svg" class="img-fluid"></p>
+<p><strong>Stage 1: Goal and Constraint</strong> - We’ll establish Service Level Objectives (SLOs) for our anomaly detection system (not just “detect anomalies” but specific, measurable outcomes) and identify the primary bottleneck preventing success.</p>
+<p><strong>Stage 2: Constraint to Problem</strong> - We’ll dig deeper to understand why our detection system faces this constraint, moving beyond surface symptoms to root causes.</p>
+<p><strong>Stage 3: Problem as Conflict</strong> - We’ll reframe the problem as a fundamental conflict between competing approaches, understanding why simple solutions haven’t worked.</p>
+<p><strong>Stage 4: Conflict to Innovation</strong> - We’ll develop a breakthrough solution using progressive analysis that transcends traditional tradeoffs.</p>
+<p><strong>Stage 5: Innovation to Experiment</strong> - We’ll validate our solution through carefully designed experiments before full deployment.</p>
+</section>
+<section id="stage-1-goal-and-constraint---finding-your-systems-true-bottleneck" class="level2">
+<h2 class="anchored" data-anchor-id="stage-1-goal-and-constraint---finding-your-systems-true-bottleneck">Stage 1: Goal and Constraint - Finding Your System’s True Bottleneck</h2>
+<section id="defining-goals-through-service-level-objectives" class="level3">
+<h3 class="anchored" data-anchor-id="defining-goals-through-service-level-objectives">Defining Goals Through Service Level Objectives</h3>
+<p>Our enterprise network anomaly detection system was initially deployed with a vague goal: “detect malicious network activity.” This ambiguous objective led to unfocused development—the team added every possible feature, tried every new algorithm, yet stakeholders remained unsatisfied. Security incidents still occurred, the operations team was overwhelmed with alerts, and costs spiraled out of control.</p>
+<p>Through stakeholder analysis, we establish clear Service Level Objectives (SLOs):</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode md code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="an">Generic ML System SLO Template:</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>• Time-to-Decision (TTD): 95th percentile ≤ X seconds/minutes</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>• Decision Budget: ≤ N actionable outputs per day</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>• Outcome-Weighted Performance: ≥ Y%</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>• Coverage: ≥ Z% of relevant events processed</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>• Data Loss: ≤ ε% effective drop rate</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>Our NTA System SLOs (evaluated weekly):</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>• TTD (P1 incidents): 95th ≤ 5 minutes from event → alert</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>• Alert Budget: ≤ 10 analyst-actionable alerts/day</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>• Incident-Weighted Recall: ≥ 90%</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>• Flow Coverage: ≥ 95% of relevant events</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>• Data Loss: ≤ 1% effective drop</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>Measurement: synchronized clocks, shared tap, incident-level labels, </span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>deduped correlated alerts</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This specific goal immediately clarifies priorities. A model that detects 99% of anomalies but generates 500 alerts per day fails our goal. A model with perfect precision but 30-minute detection latency fails our goal. The SLOs define success and, crucially, reveal what constrains us from achieving them.</p>
+</section>
+<section id="identifying-the-constraint-building-your-constraint-ledger" class="level3">
+<h3 class="anchored" data-anchor-id="identifying-the-constraint-building-your-constraint-ledger">Identifying the Constraint: Building Your Constraint Ledger</h3>
+<p>With our SLOs defined, we systematically analyze our anomaly detection pipeline to identify the constraint. We measure capacity and utilization at each stage:</p>
+<table class="table">
+<colgroup>
+<col style="width: 8%">
+<col style="width: 24%">
+<col style="width: 15%">
+<col style="width: 15%">
+<col style="width: 16%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Stage</th>
+<th>Capacity (records/s)</th>
+<th>Utilization</th>
+<th>p95 Latency</th>
+<th>Queue Length</th>
+<th>Top Failure Mode</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Ingest</td>
+<td>100K</td>
+<td>60%</td>
+<td>2ms</td>
+<td>0</td>
+<td>burst loss</td>
+</tr>
+<tr class="even">
+<td>Feature-Tier1</td>
+<td>100K</td>
+<td>65%</td>
+<td>5ms</td>
+<td>0</td>
+<td>cache miss</td>
+</tr>
+<tr class="odd">
+<td><strong>Feature-Tier2</strong></td>
+<td><strong>30K</strong></td>
+<td><strong>95%</strong></td>
+<td><strong>50ms</strong></td>
+<td><strong>1.2K</strong></td>
+<td><strong>window skew</strong></td>
+</tr>
+<tr class="even">
+<td>Feature-Tier3</td>
+<td>10K</td>
+<td>20%</td>
+<td>200ms</td>
+<td>0</td>
+<td>cold start</td>
+</tr>
+<tr class="odd">
+<td>Inference</td>
+<td>50K</td>
+<td>40%</td>
+<td>10ms</td>
+<td>0</td>
+<td>batch sizing</td>
+</tr>
+<tr class="even">
+<td>Alerting</td>
+<td>1K</td>
+<td>10%</td>
+<td>100ms</td>
+<td>0</td>
+<td>dedup thrash</td>
+</tr>
+</tbody>
+</table>
+<blockquote class="blockquote">
+<p><strong>Capacity Conversion</strong>: For those working in different domains:</p>
+<ul>
+<li>Network traffic: 10 Gbps ≈ 100K flows/sec (assuming ~10KB median flow)</li>
+<li>E-commerce: 1M daily orders ≈ 12 orders/sec average, 50/sec peak</li>
+<li>IoT sensors: 10K devices @ 1Hz ≈ 10K records/sec</li>
+</ul>
+</blockquote>
+<p>The constraint is Feature-Tier2 (moderate-cost feature extraction)—it’s at 95% utilization with a growing queue. During peak periods, we’re forced to either:</p>
+<ol type="1">
+<li>Sample traffic (missing potential attacks, violating coverage SLO)</li>
+<li>Queue records (increasing detection time beyond 5 minutes, violating TTD SLO)</li>
+<li>Drop features (reducing model accuracy, violating incident recall SLO)</li>
+</ol>
+<p>This explains why our detection system fails despite having a highly accurate model. The model never sees complete feature representations during peak times because Tier-2 feature extraction can’t keep pace. We’ve been optimizing model accuracy when the real constraint is feature computation throughput.</p>
+</section>
+<section id="validating-the-constraint-through-temporary-relief" class="level3">
+<h3 class="anchored" data-anchor-id="validating-the-constraint-through-temporary-relief">Validating the Constraint Through Temporary Relief</h3>
+<p>Before investing in solving Feature-Tier2 bottleneck, we validate it’s truly the constraint. We temporarily provision 3x more compute for Feature-Tier2, enabling processing of 90K records/sec.&nbsp;The results are dramatic:</p>
+<p>The validation confirms Feature-Tier2 as the primary constraint. With this bottleneck relieved, the system nearly meets our SLOs. Interestingly, false positives decreased—the model makes better decisions when it sees complete feature sets rather than sampled fragments. This demonstrates a crucial point: no other improvement—not model accuracy, not infrastructure, not threshold tuning—would have achieved this impact.</p>
+</section>
+<section id="constraint-types-in-ml-systems" class="level3">
+<h3 class="anchored" data-anchor-id="constraint-types-in-ml-systems">Constraint Types in ML Systems</h3>
+<p>Our detection system faces different constraint types over its lifecycle:</p>
+<p>Currently, we face a <strong>Technical Process Constraint</strong>—the Tier-2 feature extraction algorithm is inefficient. But understanding the constraint type helps predict solution categories. Technical process constraints often yield to algorithmic improvements or architectural changes. Our feature extraction bottleneck likely requires both.</p>
+</section>
+</section>
+<section id="stage-2-from-constraint-to-problem---understanding-root-causes" class="level2">
+<h2 class="anchored" data-anchor-id="stage-2-from-constraint-to-problem---understanding-root-causes">Stage 2: From Constraint to Problem - Understanding Root Causes</h2>
+<section id="uncovering-the-real-problem" class="level3">
+<h3 class="anchored" data-anchor-id="uncovering-the-real-problem">Uncovering the Real Problem</h3>
+<p>Our constraint is clear: Feature-Tier2 can only process 30K records/second. But why? The surface answer—“the algorithm is slow”—doesn’t help. We need to understand the specific problem causing this slowness.</p>
+<p>Initial investigation reveals Feature-Tier2 performs complex aggregations on every record, computing 47 moderate-cost features including:</p>
+<ul>
+<li>Windowed statistics (counts, rates, unique values over 1min, 5min, 15min windows)</li>
+<li>Behavioral comparisons (deviation from hourly, daily baselines)</li>
+<li>Entity aggregations (per-source, per-destination, per-service rollups)</li>
+<li>Contextual lookups (reputation scores, geo-location, service profiles)</li>
+</ul>
+<p>The real problem emerges: the feature extraction was designed for offline research with unlimited computation time. When deployed to production, the same comprehensive feature set that enabled high accuracy in research became a bottleneck at scale. The team kept adding features to improve accuracy metrics without considering extraction cost or production constraints.</p>
+</section>
+<section id="applying-five-whys-to-surface-root-causes" class="level3">
+<h3 class="anchored" data-anchor-id="applying-five-whys-to-surface-root-causes">Applying Five Whys to Surface Root Causes</h3>
+<p>We systematically analyze why Feature-Tier2 became the bottleneck:</p>
+<p><img src="images/five-whys.svg" class="img-fluid"></p>
+<p>Each “why” is validated with evidence: - Performance profiling shows 89% of computation time spent on 12% of features - Feature importance analysis reveals 31 features contribute &lt;0.1% to decisions - Git history shows features added incrementally without removal (247 total → 47 in Tier2) - Team interviews reveal no awareness of production throughput requirements during development</p>
+<p>The root problem isn’t technical—it’s organizational. The ML team optimized for accuracy in isolation from production constraints. The platform team handled deployment without understanding model requirements. No one owned end-to-end system performance.</p>
+</section>
+<section id="ml-specific-problem-patterns" class="level3">
+<h3 class="anchored" data-anchor-id="ml-specific-problem-patterns">ML-Specific Problem Patterns</h3>
+<p>ML systems exhibit characteristic problems that create constraints. In our anomaly detection system:</p>
+<p><strong>Feature Explosion</strong>: Every record could generate hundreds of features. Teams extract every conceivable signal because “it might help,” leading to computational bottlenecks. Our system computes duration, counts, rates, averages, variances, percentiles, unique values—most providing redundant information.</p>
+<p><strong>Time Window Confusion</strong>: Different patterns appear at different timescales. Port scans manifest in seconds, data exfiltration over hours. Our system computes features at every timescale simultaneously, multiplying computational cost. A single network flow generates features for 1-second, 10-second, 1-minute, 10-minute, and 1-hour windows.</p>
+<p><strong>Baseline Computation Overhead</strong>: Anomaly detection often involves comparing current behavior to historical baselines. Our system maintains 30-day rolling baselines for thousands of entities. Updating these baselines consumes 40% of Tier-2 compute, yet most baselines change negligibly day-to-day.</p>
+<p>These patterns aren’t unique to network anomaly detection. Fraud detection systems face similar explosions with transaction features. Recommendation systems struggle with user-item interaction matrices. Forecasting systems wrestle with multiple seasonality computations.</p>
+</section>
+</section>
+<section id="stage-3-reframing-problems-as-conflicts" class="level2">
+<h2 class="anchored" data-anchor-id="stage-3-reframing-problems-as-conflicts">Stage 3: Reframing Problems as Conflicts</h2>
+<section id="the-core-conflict-in-ml-systems" class="level3">
+<h3 class="anchored" data-anchor-id="the-core-conflict-in-ml-systems">The Core Conflict in ML Systems</h3>
+<p>Our Feature-Tier2 problem isn’t just “slow feature computation”—it’s a fundamental conflict between two necessary approaches, each essential for different reasons:</p>
+<p>We’ve been stuck in this conflict for two years. When attacks slip through, we add features (moving left). When performance degrades, we remove features (moving right). The ML team pushes for accuracy while the platform team demands efficiency. Neither side is wrong—we need both capabilities.</p>
+</section>
+<section id="understanding-why-this-conflict-persists" class="level3">
+<h3 class="anchored" data-anchor-id="understanding-why-this-conflict-persists">Understanding Why This Conflict Persists</h3>
+<p>The conflict persists because our assumptions make it seem unresolvable. Let’s examine each assumption:</p>
+<p><strong>“All records need the same analysis depth”</strong> - We treat a routine DNS query the same as an unusual connection to a never-before-seen external IP. This assumption stems from not wanting to miss attacks, but it ignores that different traffic has different risk profiles.</p>
+<p><strong>“Features must be computed synchronously”</strong> - We extract all features in real-time before making any decision. This assumption comes from traditional streaming architecture, but not all features need immediate computation. Historical comparisons could be asynchronous.</p>
+<p><strong>“One model handles all decisions”</strong> - Our single model tries to detect everything from port scans to advanced persistent threats. This assumption simplifies deployment but forces feature extraction to support diverse detection needs simultaneously.</p>
+<p>These assumptions create a zero-sum game where any improvement in one dimension degrades another. The team’s frustration stems from optimizing within these constraints rather than challenging them.</p>
+</section>
+<section id="ml-systems-characteristic-conflicts" class="level3">
+<h3 class="anchored" data-anchor-id="ml-systems-characteristic-conflicts">ML Systems’ Characteristic Conflicts</h3>
+<p>Every ML system faces similar fundamental conflicts:</p>
+<p><strong>Accuracy vs Latency</strong>: Complex models achieve better accuracy but increase inference time. Simple models respond quickly but miss subtle patterns. This manifests in fraud detection (comprehensive analysis vs instant decisions), recommendations (deep personalization vs page load time), and forecasting (complex models vs planning deadlines).</p>
+<p><strong>Precision vs Coverage</strong>: High precision reduces false positives but misses edge cases. High coverage catches more events but overwhelms human review. With millions of events, even 99.9% precision means thousands of false alerts.</p>
+<p><strong>Real-time vs Historical Context</strong>: Real-time processing enables immediate response but lacks historical perspective. Batch analysis provides rich context but delays decisions. Many patterns require both immediate indicators and long-term trends.</p>
+<p><strong>Generic vs Specific Models</strong>: Generic models handle broad patterns but miss environment-specific signals. Specific models excel at known patterns but miss novel attacks. Every environment has unique “normal” behavior.</p>
+</section>
+</section>
+<section id="stage-4-from-conflict-to-innovation---transcending-tradeoffs" class="level2">
+<h2 class="anchored" data-anchor-id="stage-4-from-conflict-to-innovation---transcending-tradeoffs">Stage 4: From Conflict to Innovation - Transcending Tradeoffs</h2>
+<section id="innovation-criteria-for-ml-systems" class="level3">
+<h3 class="anchored" data-anchor-id="innovation-criteria-for-ml-systems">Innovation Criteria for ML Systems</h3>
+<p>Our innovation must achieve both rich feature analysis AND efficient processing without the drawbacks of either approach. This isn’t about finding a middle ground—it’s about transcending the tradeoff entirely.</p>
+<p>The innovation must be implementable with existing infrastructure and team capabilities. We can’t wait for quantum computers or hire 50 PhDs. The solution must work with commodity hardware, standard ML frameworks, and our current team’s skills.</p>
+</section>
+<section id="the-progressive-analysis-innovation" class="level3">
+<h3 class="anchored" data-anchor-id="the-progressive-analysis-innovation">The Progressive Analysis Innovation</h3>
+<p>Challenging our assumptions leads to a breakthrough: <strong>Progressive Analysis Architecture</strong>. Instead of analyzing all records uniformly, we process them in progressive stages, with each stage determining if deeper analysis is warranted.</p>
+<p><strong>Tier-1: Wire-speed Triage</strong> uses just 5 cheap features computable from basic record attributes (source, destination, port, protocol, size). A lightweight model identifies obviously benign traffic (regular HTTPS to known services, DNS queries to corporate servers). This processes at line rate with minimal compute.</p>
+<p><strong>Tier-2: Fast Analysis</strong> applies to traffic passing triage. Using 25 efficiently-computed features (connection patterns, volume metrics, simple statistics), it identifies additional normal traffic and flags potential concerns. This stage handles most legitimate but unusual traffic.</p>
+<p><strong>Tier-3: Deep Analysis</strong> examines suspicious traffic with 100 features including behavioral analysis and complex aggregations. This stage detects sophisticated attacks while maintaining manageable compute requirements by processing only 4% of traffic.</p>
+<p><strong>Forensic: Full Analysis</strong> performs exhaustive analysis on high-risk traffic, extracting all available features and correlating with historical patterns. This stage processes &lt;1% of traffic but provides comprehensive detection and rich context for analyst investigation.</p>
+</section>
+<section id="key-innovation-elements" class="level3">
+<h3 class="anchored" data-anchor-id="key-innovation-elements">Key Innovation Elements</h3>
+<p>The progressive architecture includes several crucial design elements:</p>
+<p><strong>Confidence-Based Routing</strong>: Each stage outputs not just a prediction but a confidence score. High-confidence benign traffic exits immediately. Low-confidence requires deeper analysis. This ensures we never miss attacks due to premature filtering while maintaining efficiency.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Routing Logic (simplified for clarity)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> route_record(record, stage_results):</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    risk_score <span class="op">=</span> stage_results.risk</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    confidence <span class="op">=</span> stage_results.confidence</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> confidence <span class="op">&gt;</span> <span class="fl">0.95</span> <span class="kw">and</span> risk_score <span class="op">&lt;</span> <span class="fl">0.1</span>:</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"exit_benign"</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> confidence <span class="op">&gt;</span> <span class="fl">0.90</span> <span class="kw">and</span> risk_score <span class="op">&gt;</span> <span class="fl">0.9</span>:</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"alert_and_deep_analysis"</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> confidence <span class="op">&lt;</span> <span class="fl">0.50</span>:</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"next_stage_priority"</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"next_stage_normal"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Feature Caching and Reuse</strong>: Features computed in early stages are cached and reused in later stages. We never compute the same feature twice. Fast stages compute prerequisite features for deeper stages, amortizing extraction cost.</p>
+<p><strong>Backpressure-Aware Adaptation</strong>: When stages experience backlog, the system adapts:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> adaptive_routing(record, stage_backlogs):</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    calibrated_risk <span class="op">=</span> assess_risk(record)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> stage <span class="kw">in</span> [tier1, tier2, tier3]:</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> stage.backlog <span class="op">&gt;</span> HIGH_WATERMARK:</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Raise confidence threshold during congestion</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>            stage.confidence_threshold <span class="op">+=</span> <span class="fl">0.05</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> calibrated_risk <span class="op">&lt;</span> stage.risk_threshold:</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> defer_to_async(record)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        result <span class="op">=</span> stage.process(record)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> result.confidence <span class="op">&gt;</span> stage.confidence_threshold:</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> result</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># High risk always gets full analysis</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> forensic.process(record)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Asynchronous Enrichment</strong>: Initial alerts are generated quickly with basic information, then asynchronously enhanced with deeper analysis. Analysts see alerts immediately but gain additional context as forensic analysis completes.</p>
+<pre><code>Timeline of Alert Evolution:
+T+0s: Basic alert generated (IPs, port, initial risk score)
+T+1s: Connection context added (frequency, duration, volume)
+T+5s: Historical patterns added (baseline comparison, past incidents)
+T+30s: Full enrichment complete (detailed forensics, related events)</code></pre>
+</section>
+<section id="how-this-transcends-the-original-conflict" class="level3">
+<h3 class="anchored" data-anchor-id="how-this-transcends-the-original-conflict">How This Transcends the Original Conflict</h3>
+<p>Our progressive architecture achieves comprehensive detection—the deep analysis stages examine sophisticated attacks with full feature sets when needed. It simultaneously achieves efficient processing—most traffic is handled by lightweight stages. The innovation eliminates previous drawbacks:</p>
+<ul>
+<li><strong>No missed attacks</strong>: Suspicious traffic always reaches appropriate analysis depth</li>
+<li><strong>No overwhelming compute</strong>: Only traffic needing deep analysis receives it</li>
+<li><strong>Reduced false positives</strong>: Progressive confidence building improves precision</li>
+<li><strong>No blind spots</strong>: Every record is analyzed at an appropriate depth</li>
+</ul>
+<p>The pattern applies broadly to ML systems. Fraud detection can cheaply filter normal transactions before expensive analysis. Recommendation systems can use simple heuristics before deep personalization. Forecasting can identify stable series before complex modeling.</p>
+</section>
+</section>
+<section id="stage-5-from-innovation-to-experiment---validating-solutions" class="level2">
+<h2 class="anchored" data-anchor-id="stage-5-from-innovation-to-experiment---validating-solutions">Stage 5: From Innovation to Experiment - Validating Solutions</h2>
+<section id="designing-the-minimum-viable-experiment-mve" class="level3">
+<h3 class="anchored" data-anchor-id="designing-the-minimum-viable-experiment-mve">Designing the Minimum Viable Experiment (MVE)</h3>
+<p>Before implementing progressive analysis across our entire system, we design a Minimum Viable Experiment to validate core assumptions. The experiment must test whether traffic can be accurately triaged and whether progressive analysis maintains detection quality while improving throughput.</p>
+<p>The MVE focuses on the riskiest assumption: that Tier-1 triage can accurately identify benign traffic without missing attacks. If this fails, the entire architecture fails. We’ll test with realistic data containing known attacks to ensure we don’t create security holes.</p>
+</section>
+<section id="implementation-and-testing" class="level3">
+<h3 class="anchored" data-anchor-id="implementation-and-testing">Implementation and Testing</h3>
+<p>We implement a prototype progressive analysis system using standard ML tools and public datasets:</p>
+<p><strong>Week 1: Feature Engineering and Model Training</strong></p>
+<p>We start with the simplest possible Tier-1 model:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tier-1: Minimal features for maximum speed</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>tier1_features <span class="op">=</span> [</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'src_reputation_score'</span>,  <span class="co"># Pre-computed reputation</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'dst_port'</span>,              <span class="co"># Destination port number</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'protocol'</span>,              <span class="co"># TCP/UDP/ICMP</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'packet_rate'</span>,           <span class="co"># Packets per second</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'byte_rate'</span>              <span class="co"># Bytes per second</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Train lightweight model (logistic regression for speed)</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>tier1_model <span class="op">=</span> LogisticRegression(C<span class="op">=</span><span class="fl">1.0</span>)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>tier1_model.fit(X_train[tier1_features], y_train_benign)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Validation on test set with injected attacks</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> {</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">'triage_rate'</span>: <span class="fl">0.68</span>,        <span class="co"># 68% identified as benign</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">'false_negative_rate'</span>: <span class="dv">0</span>,    <span class="co"># No attacks missed</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">'latency_p95'</span>: <span class="dv">3</span>,            <span class="co"># 3ms per record</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">'throughput'</span>: <span class="dv">95000</span>          <span class="co"># Records per second</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Week 2: Pipeline Integration</strong></p>
+<p>We build the full progressive pipeline and test on recorded traffic with synthetic attack injection:</p>
+<p>Testing uses a combination of public datasets (UNSW-NB15, CIC-IDS2017) with known limitations, augmented with synthetic attacks to ensure coverage of sophisticated threats:</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Dataset</th>
+<th>Purpose</th>
+<th>Records</th>
+<th>Attacks</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>UNSW-NB15</td>
+<td>Baseline behavior</td>
+<td>2M</td>
+<td>321K</td>
+</tr>
+<tr class="even">
+<td>CIC-IDS2017</td>
+<td>Modern attacks</td>
+<td>3M</td>
+<td>558K</td>
+</tr>
+<tr class="odd">
+<td>Synthetic</td>
+<td>Targeted scenarios</td>
+<td>500K</td>
+<td>50K</td>
+</tr>
+<tr class="even">
+<td>Production Sample</td>
+<td>Real patterns</td>
+<td>1M</td>
+<td>Unknown</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="results-and-key-insights" class="level3">
+<h3 class="anchored" data-anchor-id="results-and-key-insights">Results and Key Insights</h3>
+<p>The MVE reveals both successes and necessary adjustments:</p>
+<p><strong>Key Insights:</strong></p>
+<ol type="1">
+<li><p><strong>Triage Effectiveness</strong>: The 5-feature triage successfully identifies benign traffic without missing attacks. Attack patterns consistently differ enough from normal traffic to trigger deeper analysis.</p></li>
+<li><p><strong>Staged Specialization</strong>: Each tier naturally specializes. Tier-1 excels at filtering normal traffic. Tier-2 catches volume-based attacks. Tier-3 detects sophisticated, low-signal attacks. The ensemble effect improves overall detection.</p></li>
+<li><p><strong>Cache Criticality</strong>: Feature caching between stages proved essential. Without caching, redundant computation would negate throughput gains. The 84% cache hit rate suggests further optimization potential.</p></li>
+<li><p><strong>Temporal Patterns</strong>: Traffic distribution varies predictably. Business hours see 75% triage rate (regular applications). Nights drop to 45% (unusual patterns), naturally adapting analysis depth to risk.</p></li>
+</ol>
+</section>
+<section id="iteration-based-on-findings" class="level3">
+<h3 class="anchored" data-anchor-id="iteration-based-on-findings">Iteration Based on Findings</h3>
+<p>The experiment reveals necessary adjustments before production deployment:</p>
+<p><strong>Iteration 1: Confidence Calibration</strong> Initial triage was too conservative, passing 32% of traffic unnecessarily. Analysis shows the model lacks confidence on legitimate but unusual ports. We retrain with expanded examples, achieving 71% triage rate without missing attacks.</p>
+<p><strong>Iteration 2: Dynamic Resource Allocation</strong> Fixed compute allocation causes bottlenecks when traffic patterns shift. We implement dynamic allocation—stages borrow compute from idle stages:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> dynamic_allocation(stages, current_loads):</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    total_capacity <span class="op">=</span> <span class="bu">sum</span>(s.capacity <span class="cf">for</span> s <span class="kw">in</span> stages)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> stage <span class="kw">in</span> stages:</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> stage.load <span class="op">&gt;</span> <span class="fl">0.8</span>:  <span class="co"># Stage under pressure</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Find donor stage with low load</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>            donor <span class="op">=</span> <span class="bu">min</span>(stages, key<span class="op">=</span><span class="kw">lambda</span> s: s.load)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> donor.load <span class="op">&lt;</span> <span class="fl">0.3</span>:</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Transfer capacity</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>                transfer <span class="op">=</span> <span class="bu">min</span>(donor.capacity <span class="op">*</span> <span class="fl">0.3</span>, </span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>                             stage.demand <span class="op">-</span> stage.capacity)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>                stage.capacity <span class="op">+=</span> transfer</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>                donor.capacity <span class="op">-=</span> transfer</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Iteration 3: Feature Pruning</strong> Production-weighted feature importance shows 15 Tier-3 features never influence decisions. Removing them increases throughput 30% without affecting detection:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> prune_features(features, importance_scores, cost_scores):</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Value = importance / cost</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    feature_value <span class="op">=</span> importance_scores <span class="op">/</span> cost_scores</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Keep features that contribute 95% of total importance</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    sorted_features <span class="op">=</span> <span class="bu">sorted</span>(features, </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>                           key<span class="op">=</span><span class="kw">lambda</span> f: feature_value[f], </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>                           reverse<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    cumulative_importance <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    selected <span class="op">=</span> []</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> feature <span class="kw">in</span> sorted_features:</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> cumulative_importance <span class="op">&lt;</span> <span class="fl">0.95</span>:</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>            selected.append(feature)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>            cumulative_importance <span class="op">+=</span> importance_scores[feature]</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> selected  <span class="co"># Typically 20-30% of original features</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="production-rollout-strategy" class="level3">
+<h3 class="anchored" data-anchor-id="production-rollout-strategy">Production Rollout Strategy</h3>
+<p>With MVE success and iterations complete, we plan production rollout:</p>
+<p><strong>Phase 1: Shadow Mode Validation</strong> Run progressive pipeline parallel to existing system without taking actions. Compare decisions, measure divergence, validate no regressions. Success criteria: No P1 incidents missed for one week.</p>
+<p><strong>Phase 2: Canary Deployment</strong> Route 10% of traffic through progressive pipeline. A/B test alert quality with analysts—do they prefer the new alerts? Monitor all SLOs closely. Success: SLOs maintained, analyst preference ≥ baseline.</p>
+<p><strong>Phase 3: Gradual Expansion</strong> Increase traffic percentage: 10% → 25% → 50% → 75%, holding each level for 48 hours. Automated rollback triggers on any SLO violation. Success: All SLOs met at each level.</p>
+<p><strong>Phase 4: Full Production</strong> Complete migration with old system as instant fallback. Document runbooks, establish monitoring, train operations team. Success: One week at 100% with all SLOs met.</p>
+</section>
+</section>
+<section id="common-pitfalls-and-prevention-strategies" class="level2">
+<h2 class="anchored" data-anchor-id="common-pitfalls-and-prevention-strategies">Common Pitfalls and Prevention Strategies</h2>
+<section id="pitfall-1-premature-model-optimization" class="level3">
+<h3 class="anchored" data-anchor-id="pitfall-1-premature-model-optimization">Pitfall 1: Premature Model Optimization</h3>
+<p>Teams spend months improving model accuracy while system-level metrics stagnate. You achieve 96% AUC on test sets while production catches only 60% of incidents because feature extraction can’t keep up.</p>
+<p><strong>In Our Case</strong>: We spent three months experimenting with transformer architectures for 2% accuracy improvement, while missing 70% of traffic due to feature extraction bottlenecks. The transformer detected sophisticated attacks brilliantly—on the 30% of traffic it actually analyzed.</p>
+<p><strong>Prevention</strong>: - Always validate the constraint before optimization - Measure end-to-end metrics, not just component metrics - Apply Amdahl’s Law: improving non-constraint components yields minimal gain - Ask: “If this component was perfect, would we meet our SLOs?”</p>
+</section>
+<section id="pitfall-2-feature-creep-without-cost-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="pitfall-2-feature-creep-without-cost-analysis">Pitfall 2: Feature Creep Without Cost Analysis</h3>
+<p>Feature counts grow monotonically. Each new feature adds marginal model improvement but substantial computational cost. Soon you have hundreds of features where most contribute negligibly.</p>
+<p><strong>In Our Case</strong>: We grew from 50 to 247 features over two years. Analysis showed 180 features contributed &lt;0.1% to decisions but consumed 60% of computation. Feature removal was politically difficult—each had an advocate who remembered when it caught something.</p>
+<p><strong>Prevention</strong>: - Require cost-benefit analysis for new features - Regular production-weighted importance analysis - Implement progressive analysis where expensive features are conditional - Track feature value score: importance / computational_cost</p>
+</section>
+<section id="pitfall-3-alert-budget-myopia" class="level3">
+<h3 class="anchored" data-anchor-id="pitfall-3-alert-budget-myopia">Pitfall 3: Alert Budget Myopia</h3>
+<p>Facing missed incidents, teams lower thresholds to catch more attacks. This creates unsustainable alert volumes, overwhelming analysts who then ignore alerts, leading to more missed incidents.</p>
+<p><strong>In Our Case</strong>: After missing an APT, we lowered thresholds and generated 200+ daily alerts. Analysts could investigate only 50, randomly sampling and missing real threats. The “solution” made the problem worse.</p>
+<p><strong>Prevention</strong>: - Use Little’s Law to connect throughput and latency: L = λW - Maintain sustainable alert volumes based on team capacity - Weight alerts by incident impact, not just count - Implement progressive analysis to build confidence before alerting</p>
+</section>
+<section id="pitfall-4-vanity-metrics-over-business-outcomes" class="level3">
+<h3 class="anchored" data-anchor-id="pitfall-4-vanity-metrics-over-business-outcomes">Pitfall 4: Vanity Metrics Over Business Outcomes</h3>
+<p>Teams optimize metrics that sound impressive but don’t connect to business value. “99.9% precision” means nothing if you’re missing 90% of incidents. “Processing 1M events/second” is irrelevant if decisions take 30 minutes.</p>
+<p><strong>In Our Case</strong>: We celebrated achieving 99% detection rate on port scans—which the SOC ignored anyway—while missing lateral movement using legitimate credentials. Our metrics looked great but failed to prevent actual breaches.</p>
+<p><strong>Prevention</strong>: - Define SLOs tied to business outcomes - Use outcome-weighted metrics (incident-weighted recall, not raw recall) - Measure decision latency, not just throughput - Track realized value, not potential performance</p>
+</section>
+</section>
+<section id="applying-the-framework-complete-system-transformation" class="level2">
+<h2 class="anchored" data-anchor-id="applying-the-framework-complete-system-transformation">Applying the Framework: Complete System Transformation</h2>
+<section id="starting-point-a-system-in-crisis" class="level3">
+<h3 class="anchored" data-anchor-id="starting-point-a-system-in-crisis">Starting Point: A System in Crisis</h3>
+<p>Six months ago, our network anomaly detection system was failing on all fronts. The security team reported missed breaches—attackers dwelt in the network for weeks undetected. The SOC was overwhelmed, investigating 89 false positives daily while real threats slipped through. Infrastructure costs ballooned as we threw hardware at the problem without improvement.</p>
+<p>The team was demoralized. ML engineers added features that didn’t help. Security analysts lost trust in alerts. Management questioned the entire investment. Traditional optimization—better models, more compute, refined thresholds—had been tried and failed.</p>
+</section>
+<section id="stage-by-stage-transformation" class="level3">
+<h3 class="anchored" data-anchor-id="stage-by-stage-transformation">Stage-by-Stage Transformation</h3>
+<p><strong>Stage 1 Discovery</strong>: By clearly defining SLOs (incident-weighted recall ≥90%, ≤10 alerts/day, p95 TTD ≤5 min) and building our constraint ledger, we identified Feature-Tier2 as the bottleneck. This focus immediately stopped wasteful efforts on model accuracy and infrastructure scaling.</p>
+<p><strong>Stage 2 Understanding</strong>: The Five Whys revealed the true problem: development disconnected from production constraints. The feature set optimized for research accuracy, not production throughput. This organizational insight shifted our approach from technical fixes to systemic changes.</p>
+<p><strong>Stage 3 Reframing</strong>: Mapping the conflict between rich and minimal features showed why two years of optimization failed. We were trapped choosing between accuracy and efficiency. Identifying hidden assumptions—uniform analysis, synchronous processing, monolithic model—opened solution paths.</p>
+<p><strong>Stage 4 Innovation</strong>: Progressive analysis transcended the conflict by applying different analysis depths to different traffic. This wasn’t compromise but transformation—achieving better detection AND efficiency by challenging the assumption that all records need identical processing.</p>
+<p><strong>Stage 5 Validation</strong>: The MVE proved progressive analysis viable while revealing necessary adjustments. Iteration refined the approach based on real-world behavior. Phased rollout managed risk while building confidence.</p>
+</section>
+<section id="the-transformed-system" class="level3">
+<h3 class="anchored" data-anchor-id="the-transformed-system">The Transformed System</h3>
+<p>Today, our network anomaly detection system is a strategic asset rather than a cost center:</p>
+<p>The technical improvements are impressive, but the organizational transformation is profound: - ML and platform teams now collaborate from day one - Production constraints are part of development requirements - Feature additions require extraction cost analysis - Success is measured by business outcomes, not technical metrics</p>
+</section>
+<section id="beyond-the-initial-success" class="level3">
+<h3 class="anchored" data-anchor-id="beyond-the-initial-success">Beyond the Initial Success</h3>
+<p>The framework creates a continuous improvement cycle. With Feature-Tier2 no longer the constraint, a new bottleneck emerges: alert investigation. SOC analysts take 45 minutes average to investigate Tier-3 alerts. This is now our constraint, limiting how many sophisticated attacks we can properly investigate.</p>
+<p>Applying the framework again: - <strong>Goal</strong>: Reduce investigation time to 15 minutes while maintaining decision quality - <strong>Constraint</strong>: Manual correlation across multiple tools and data sources - <strong>Problem</strong>: Analysts lack unified view of alert context - <strong>Conflict</strong>: Automated enrichment vs human judgment - <strong>Innovation</strong>: AI-assisted investigation that augments rather than replaces analysts - <strong>Experiment</strong>: Test on historical alerts with analyst feedback</p>
+<p>This cycle continues, each iteration improving the system. The constraint moves—from feature extraction to investigation to response automation—but always represents the next opportunity for breakthrough improvement.</p>
+</section>
+</section>
+<section id="conclusion-theory-of-constraints-as-your-ml-operating-system" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion-theory-of-constraints-as-your-ml-operating-system">Conclusion: Theory of Constraints as Your ML Operating System</h2>
+<p>The Theory of Constraints transformed our network anomaly detection from a frustrating cost center to a strategic security asset. By focusing on the single most limiting factor—rather than trying to optimize everything—we achieved breakthrough improvements thought impossible.</p>
+<p>This journey revealed crucial insights for ML practitioners:</p>
+<p><strong>Focus beats breadth</strong>: Addressing the Feature-Tier2 throughput constraint achieved more than years of model improvements, infrastructure investments, and threshold tuning combined. One constraint, properly addressed, unlocked everything.</p>
+<p><strong>Conflicts hide innovations</strong>: The tradeoff between rich features and processing efficiency seemed fundamental until we challenged underlying assumptions. Progressive analysis transcended rather than compromised.</p>
+<p><strong>Experiments accelerate learning</strong>: Our two-week MVE taught us more than two years of production experience. Controlled experiments with clear success criteria cut through opinions with data.</p>
+<p><strong>Organizational constraints matter</strong>: Technical solutions fail when organizational problems persist. Our root cause—development disconnected from production—required process changes not algorithms.</p>
+<p>For ML teams facing similar challenges—whether in fraud detection, recommendations, forecasting, or any complex domain—the framework offers a systematic path through complexity. Instead of drowning in features, models, and metrics, focus on the one thing preventing success right now. Instead of accepting that performance requires unmanageable complexity, challenge the assumptions creating that tradeoff.</p>
+<p>The progressive analysis architecture we developed isn’t universally applicable—your constraint and solution will differ. But the process—Goal → Constraint → Problem → Conflict → Innovation → Experiment—provides a repeatable approach to finding your breakthrough.</p>
+<p>As our system continues evolving, new constraints emerge. Alert investigation efficiency is our current focus. After that, perhaps automated response, threat hunting capability, or predictive defense. Each constraint addressed reveals the next opportunity. This isn’t frustrating—it’s liberating. We always know exactly what to work on next.</p>
+<p>The Theory of Constraints isn’t just another optimization technique—it’s an operating system for continuous improvement in ML systems. Each cycle makes our system more capable, our team more effective, and our organization more resilient. The constraint will keep moving, but so will our performance, always upward, always improving, always focused on what matters most.</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<p><strong>Theory of Constraints &amp; ML Systems:</strong></p>
+<ul>
+<li>Goldratt, E. M. (1984). “The Goal: A Process of Ongoing Improvement.” North River Press.</li>
+<li>Sculley, D., et al.&nbsp;(2015). “Hidden Technical Debt in Machine Learning Systems.” NIPS 2015.</li>
+<li>Paleyes, A., et al.&nbsp;(2022). “Challenges in Deploying Machine Learning: A Survey of Case Studies.” ACM Computing Surveys.</li>
+</ul>
+<p><strong>Production ML Engineering:</strong></p>
+<ul>
+<li>Kleppmann, M. (2017). “Designing Data-Intensive Applications.” O’Reilly Media.</li>
+<li>Polyzotis, N., et al.&nbsp;(2018). “Data Lifecycle Challenges in Production Machine Learning.” SIGMOD Record.</li>
+</ul>
+<p><strong>Anomaly Detection &amp; Streaming:</strong></p>
+<ul>
+<li>Chandola, V., et al.&nbsp;(2009). “Anomaly Detection: A Survey.” ACM Computing Surveys.</li>
+<li>Ahmed, M., et al.&nbsp;(2016). “A Survey of Network Anomaly Detection Techniques.” Journal of Network and Computer Applications.</li>
+<li>Sommer, R., &amp; Paxson, V. (2010). “Outside the Closed World: On Using Machine Learning for Network Intrusion Detection.” IEEE S&amp;P.</li>
+<li>Cormode, G., &amp; Muthukrishnan, S. (2005). “An Improved Data Stream Summary: The Count-Min Sketch.” Journal of Algorithms.</li>
+</ul>
+<p><strong>Public Datasets:</strong></p>
+<ul>
+<li>UNSW-NB15, CIC-IDS2017/2018, CTU-13 (Note: Known biases; augment with synthetic attacks for production use)</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Only add citation to post pages (not index, about, etc.)
+    if (window.location.pathname.includes('/posts/')) {
+        // Find the main content area
+        const mainContent = document.querySelector('main');
+        if (mainContent) {
+            // Get metadata from the page
+            const titleElement = document.querySelector('h1.title');
+            const dateElement = document.querySelector('.date');
+            
+            const title = titleElement ? titleElement.textContent : 'Untitled';
+            const dateText = dateElement ? dateElement.textContent : new Date().toLocaleDateString();
+            
+            // Get the current post URL - construct proper GitHub Pages URL
+            const postPath = window.location.pathname;
+            const postUrl = 'https://imaddabbura.github.io' + postPath;
+            
+            // Parse date and format it
+            const date = new Date(dateText);
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                               "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const formattedDate = monthNames[date.getMonth()] + " " + date.getFullYear();
+            const year = date.getFullYear();
+            const month = monthNames[date.getMonth()];
+            
+            // Create citation HTML
+            const citationHTML = '<hr>' +
+                '<div class="callout callout-style-default callout-note no-icon callout-titled">' +
+                    '<div class="callout-header d-flex align-content-center">' +
+                        '<div class="callout-icon-container">' +
+                            '<i class="callout-icon no-icon"></i>' +
+                        '</div>' +
+                        '<div class="callout-title-container flex-fill">' +
+                            'How to Cite This Post' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="callout-body-container callout-body">' +
+                        '<p>If you found this useful, please cite this write-up as:</p>' +
+                        '<blockquote class="blockquote">' +
+                            '<p>Dabbura, Imad. (' + formattedDate + '). ' + title + '. https://imaddabbura.github.io. ' + postUrl + '.</p>' +
+                        '</blockquote>' +
+                        '<p>or</p>' +
+                        '<div class="sourceCode"><pre class="sourceCode bibtex code-with-copy"><code class="sourceCode bibtex">@article{dabbura' + year + ',\n' +
+                        '  title   = {' + title + '},\n' +
+                        '  author  = {Dabbura, Imad},\n' +
+                        '  journal = {https://imaddabbura.github.io},\n' +
+                        '  year    = {' + year + '},\n' +
+                        '  month   = {' + month + '},\n' +
+                        '  url     = {' + postUrl + '}\n' +
+                        '}</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>' +
+                    '</div>' +
+                '</div>';
+            
+            // Insert citation at the end of main content, before closing tag
+            mainContent.insertAdjacentHTML('beforeend', citationHTML);
+        }
+    }
+});
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/imaddabbura\.github\.io\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<script src="https://giscus.app/client.js" data-repo="imaddabbura/imaddabbura.github.io" data-repo-id="R_kgDOIEwRMg" data-category="General" data-category-id="DIC_kwDOIEwRMs4CRprP" data-mapping="title" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
+</script>
+<input type="hidden" id="giscus-base-theme" value="light">
+<input type="hidden" id="giscus-alt-theme" value="dark">
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Blog made with Quarto, by Imad Dabbura</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/imaddabbura/">
+      <i class="bi bi-linkedin" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="mailto:imad.dabbura@hotmail.com">
+      <i class="bi bi-envelope" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/imaddabbura">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/imadphd">
+      <i class="bi bi-twitter" role="img">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

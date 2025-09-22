@@ -1,0 +1,84 @@
+<svg viewBox="0 0 700 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Title -->
+  <text x="350" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold">Progressive Analysis Architecture</text>
+  
+  <!-- Funnel shape -->
+  <path d="M 100 80 L 600 80 L 500 420 L 200 420 Z" fill="#E3F2FD" stroke="#1976D2" stroke-width="2"/>
+  
+  <!-- Tier 1: Wire-speed Triage -->
+  <rect x="120" y="90" width="460" height="70" fill="#4CAF50" fill-opacity="0.8" rx="5"/>
+  <text x="150" y="115" font-size="14" font-weight="bold" fill="white">Tier-1: Wire-speed Triage (100K rec/s)</text>
+  <text x="150" y="135" font-size="11" fill="white">• 5 features: src_reputation, dst_port, protocol, packet_rate, byte_rate</text>
+  <text x="150" y="150" font-size="11" fill="white">• Lightweight model (logistic regression)</text>
+  <text x="480" y="125" font-size="12" fill="white" font-weight="bold">70% exits</text>
+  <text x="480" y="140" font-size="10" fill="white">(benign)</text>
+  
+  <!-- Tier 2: Fast Analysis -->
+  <rect x="170" y="180" width="360" height="70" fill="#FF9800" fill-opacity="0.8" rx="5"/>
+  <text x="190" y="205" font-size="14" font-weight="bold" fill="white">Tier-2: Fast Analysis (30K rec/s)</text>
+  <text x="190" y="225" font-size="11" fill="white">• 25 features: windowed stats, counts, uniques</text>
+  <text x="190" y="240" font-size="11" fill="white">• Gradient boosting model</text>
+  <text x="450" y="215" font-size="12" fill="white" font-weight="bold">25% exits</text>
+  <text x="450" y="230" font-size="10" fill="white">(normal)</text>
+  
+  <!-- Tier 3: Deep Analysis -->
+  <rect x="220" y="270" width="260" height="70" fill="#F44336" fill-opacity="0.8" rx="5"/>
+  <text x="240" y="295" font-size="14" font-weight="bold" fill="white">Tier-3: Deep Analysis (5K rec/s)</text>
+  <text x="240" y="315" font-size="11" fill="white">• 100 features: behavioral, historical</text>
+  <text x="240" y="330" font-size="11" fill="white">• Neural network</text>
+  <text x="420" y="305" font-size="12" fill="white" font-weight="bold">4%</text>
+  <text x="410" y="320" font-size="10" fill="white">(suspicious)</text>
+  
+  <!-- Forensic: Full Analysis -->
+  <rect x="270" y="360" width="160" height="50" fill="#9C27B0" fill-opacity="0.8" rx="5"/>
+  <text x="350" y="380" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Forensic (500 rec/s)</text>
+  <text x="350" y="395" text-anchor="middle" font-size="10" fill="white">All features + enrichment</text>
+  <text x="350" y="405" text-anchor="middle" font-size="10" fill="white">1% high-risk</text>
+  
+  <!-- Exit arrows -->
+  <path d="M 580 125 L 620 125 L 620 150" stroke="#4CAF50" stroke-width="2" fill="none" marker-end="url(#arrow-green)"/>
+  <text x="625" y="165" font-size="11" fill="#4CAF50">Benign</text>
+  
+  <path d="M 530 215 L 620 215 L 620 230" stroke="#FF9800" stroke-width="2" fill="none" marker-end="url(#arrow-orange)"/>
+  <text x="625" y="245" font-size="11" fill="#FF9800">Normal</text>
+  
+  <path d="M 480 305 L 620 305 L 620 320" stroke="#F44336" stroke-width="2" fill="none" marker-end="url(#arrow-red)"/>
+  <text x="625" y="335" font-size="11" fill="#F44336">Alert</text>
+  
+  <path d="M 430 385 L 620 385 L 620 400" stroke="#9C27B0" stroke-width="2" fill="none" marker-end="url(#arrow-purple)"/>
+  <text x="625" y="415" font-size="11" fill="#9C27B0">Critical Alert</text>
+  
+  <!-- Cache boundaries -->
+  <line x1="100" y1="165" x2="600" y2="165" stroke="#2196F3" stroke-width="1" stroke-dasharray="5,5"/>
+  <text x="105" y="175" font-size="9" fill="#2196F3">Cache boundary</text>
+  
+  <line x1="150" y1="255" x2="550" y2="255" stroke="#2196F3" stroke-width="1" stroke-dasharray="5,5"/>
+  <text x="155" y="265" font-size="9" fill="#2196F3">Cache boundary</text>
+  
+  <line x1="200" y1="345" x2="500" y2="345" stroke="#2196F3" stroke-width="1" stroke-dasharray="5,5"/>
+  <text x="205" y="355" font-size="9" fill="#2196F3">Cache boundary</text>
+  
+  <!-- Key metrics -->
+  <rect x="50" y="440" width="600" height="40" fill="#ECEFF1" rx="5"/>
+  <text x="70" y="460" font-size="12" font-weight="bold" fill="#333">Results:</text>
+  <text x="150" y="460" font-size="11" fill="#333">96% detection rate</text>
+  <text x="280" y="460" font-size="11" fill="#333">95K rec/s throughput</text>
+  <text x="410" y="460" font-size="11" fill="#333">8 alerts/day</text>
+  <text x="510" y="460" font-size="11" fill="#333">4 servers total</text>
+  
+  <!-- Arrow markers -->
+  <defs>
+    <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#4CAF50"/>
+    </marker>
+    <marker id="arrow-orange" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#FF9800"/>
+    </marker>
+    <marker id="arrow-red" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#F44336"/>
+    </marker>
+    <marker id="arrow-purple" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#9C27B0"/>
+    </marker>
+  </defs>
+</svg>

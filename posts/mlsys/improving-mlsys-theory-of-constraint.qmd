@@ -1,0 +1,540 @@
+---
+title: "Make ML Systems Ship Again"
+subtitle: "Use the Theory of Constraints to replace incremental tweaks with step-function wins."
+image: "images/network-anomaly-detection-toc.png"
+date: "2025-09-21"
+date-modified: "2025-09-21"
+categories: [MLSys, MLOps, Machine Learning, Data Science, Deep Learning]
+---
+
+::: {.callout-note title="Work in Progress — Feedback Welcome"}
+This article is actively evolving. If you spot gaps, disagree with a take, or have better patterns, I’d love to hear it. Suggestions and critiques are welcome.
+:::
+
+## Introduction: Why Theory of Constraints Matters for Machine Learning
+
+
+You burn six months “optimizing.” Swap in transformers. Squeeze another +0.5% accuracy. Rewrite the feature pipeline. Add a shiny GPU cluster. And still: alert fatigue, missed incidents, and latency that kills real-time response.
+
+That’s optimization theater.
+
+The Theory of Constraints (ToC) cuts through the noise. Every system has a single, dominant bottleneck at any moment. Find it. Exploit it. Elevate it. Then repeat. For ML teams juggling models, features, infra, and data plumbing, this isn’t philosophy—it’s an operating system. Stop tuning everything. Start fixing the one thing that governs end-to-end throughput, quality, and cost.
+
+Take network anomaly detection at enterprise scale. Security wants higher recall on stealthy attacks. Ops wants fewer false alarms. Infra wants lower spend. The ML team tries to please everyone: new features, tighter thresholds, fancier models. Results? Nobody’s happy. Because the work targets components, not the constraint that sets the system’s performance ceiling—maybe label latency in feedback loops, maybe stream processing backpressure, maybe human triage capacity. This pattern repeats across fraud, recsys, and forecasting. Parts get optimized. Systems don’t.
+
+![](images/ml-pipeline-weak-constraint.svg)
+
+We’ll track a network anomaly detector as it moves through the five ToC stages. It watches enterprise traffic for everything from port scans to exfiltration—and wrestles with the usual security-ML pain: too many false positives, missed low-and-slow attacks, and compute that melts budgets. The domain is network security; the playbook is universal. If you run ML in production, the patterns—and the fixes—apply.
+
+## The Five-Stage Framework Overview
+
+The Theory of Constraints framework for ML systems consists of five interconnected stages, each building upon insights from the previous stage. We'll see how each stage applies to our network anomaly detection system, transforming it from a source of frustration to a strategic asset.
+
+![](images/circular-flow-5-stages.svg)
+
+**Stage 1: Goal and Constraint** - We'll establish Service Level Objectives (SLOs) for our anomaly detection system (not just "detect anomalies" but specific, measurable outcomes) and identify the primary bottleneck preventing success.
+
+**Stage 2: Constraint to Problem** - We'll dig deeper to understand why our detection system faces this constraint, moving beyond surface symptoms to root causes.
+
+**Stage 3: Problem as Conflict** - We'll reframe the problem as a fundamental conflict between competing approaches, understanding why simple solutions haven't worked.
+
+**Stage 4: Conflict to Innovation** - We'll develop a breakthrough solution using progressive analysis that transcends traditional tradeoffs.
+
+**Stage 5: Innovation to Experiment** - We'll validate our solution through carefully designed experiments before full deployment.
+
+## Stage 1: Goal and Constraint - Finding Your System's True Bottleneck
+
+### Defining Goals Through Service Level Objectives
+
+Our enterprise network anomaly detection system was initially deployed with a vague goal: "detect malicious network activity." This ambiguous objective led to unfocused development—the team added every possible feature, tried every new algorithm, yet stakeholders remained unsatisfied. Security incidents still occurred, the operations team was overwhelmed with alerts, and costs spiraled out of control.
+
+Through stakeholder analysis, we establish clear Service Level Objectives (SLOs):
+
+```md
+Generic ML System SLO Template:
+• Time-to-Decision (TTD): 95th percentile ≤ X seconds/minutes
+• Decision Budget: ≤ N actionable outputs per day
+• Outcome-Weighted Performance: ≥ Y%
+• Coverage: ≥ Z% of relevant events processed
+• Data Loss: ≤ ε% effective drop rate
+
+Our NTA System SLOs (evaluated weekly):
+• TTD (P1 incidents): 95th ≤ 5 minutes from event → alert
+• Alert Budget: ≤ 10 analyst-actionable alerts/day
+• Incident-Weighted Recall: ≥ 90%
+• Flow Coverage: ≥ 95% of relevant events
+• Data Loss: ≤ 1% effective drop
+
+Measurement: synchronized clocks, shared tap, incident-level labels, 
+deduped correlated alerts
+```
+
+This specific goal immediately clarifies priorities. A model that detects 99% of anomalies but generates 500 alerts per day fails our goal. A model with perfect precision but 30-minute detection latency fails our goal. The SLOs define success and, crucially, reveal what constrains us from achieving them.
+
+### Identifying the Constraint: Building Your Constraint Ledger
+
+With our SLOs defined, we systematically analyze our anomaly detection pipeline to identify the constraint. We measure capacity and utilization at each stage:
+
+| Stage | Capacity (records/s) | Utilization | p95 Latency | Queue Length | Top Failure Mode |
+|-------|---------------------|-------------|-------------|--------------|------------------|
+| Ingest | 100K | 60% | 2ms | 0 | burst loss |
+| Feature-Tier1 | 100K | 65% | 5ms | 0 | cache miss |
+| **Feature-Tier2** | **30K** | **95%** | **50ms** | **1.2K** | **window skew** |
+| Feature-Tier3 | 10K | 20% | 200ms | 0 | cold start |
+| Inference | 50K | 40% | 10ms | 0 | batch sizing |
+| Alerting | 1K | 10% | 100ms | 0 | dedup thrash |
+
+> **Capacity Conversion**: For those working in different domains:
+>
+> - Network traffic: 10 Gbps ≈ 100K flows/sec (assuming ~10KB median flow)
+> - E-commerce: 1M daily orders ≈ 12 orders/sec average, 50/sec peak
+> - IoT sensors: 10K devices @ 1Hz ≈ 10K records/sec
+
+The constraint is Feature-Tier2 (moderate-cost feature extraction)—it's at 95% utilization with a growing queue. During peak periods, we're forced to either:
+
+1. Sample traffic (missing potential attacks, violating coverage SLO)
+2. Queue records (increasing detection time beyond 5 minutes, violating TTD SLO)
+3. Drop features (reducing model accuracy, violating incident recall SLO)
+
+This explains why our detection system fails despite having a highly accurate model. The model never sees complete feature representations during peak times because Tier-2 feature extraction can't keep pace. We've been optimizing model accuracy when the real constraint is feature computation throughput.
+
+### Validating the Constraint Through Temporary Relief
+
+Before investing in solving Feature-Tier2 bottleneck, we validate it's truly the constraint. We temporarily provision 3x more compute for Feature-Tier2, enabling processing of 90K records/sec. The results are dramatic:
+
+The validation confirms Feature-Tier2 as the primary constraint. With this bottleneck relieved, the system nearly meets our SLOs. Interestingly, false positives decreased—the model makes better decisions when it sees complete feature sets rather than sampled fragments. This demonstrates a crucial point: no other improvement—not model accuracy, not infrastructure, not threshold tuning—would have achieved this impact.
+
+### Constraint Types in ML Systems
+
+Our detection system faces different constraint types over its lifecycle:
+
+Currently, we face a **Technical Process Constraint**—the Tier-2 feature extraction algorithm is inefficient. But understanding the constraint type helps predict solution categories. Technical process constraints often yield to algorithmic improvements or architectural changes. Our feature extraction bottleneck likely requires both.
+
+## Stage 2: From Constraint to Problem - Understanding Root Causes
+
+### Uncovering the Real Problem
+
+Our constraint is clear: Feature-Tier2 can only process 30K records/second. But why? The surface answer—"the algorithm is slow"—doesn't help. We need to understand the specific problem causing this slowness.
+
+Initial investigation reveals Feature-Tier2 performs complex aggregations on every record, computing 47 moderate-cost features including:
+
+- Windowed statistics (counts, rates, unique values over 1min, 5min, 15min windows)
+- Behavioral comparisons (deviation from hourly, daily baselines)
+- Entity aggregations (per-source, per-destination, per-service rollups)
+- Contextual lookups (reputation scores, geo-location, service profiles)
+
+The real problem emerges: the feature extraction was designed for offline research with unlimited computation time. When deployed to production, the same comprehensive feature set that enabled high accuracy in research became a bottleneck at scale. The team kept adding features to improve accuracy metrics without considering extraction cost or production constraints.
+
+### Applying Five Whys to Surface Root Causes
+
+We systematically analyze why Feature-Tier2 became the bottleneck:
+
+![](images/five-whys.svg)
+
+Each "why" is validated with evidence:
+- Performance profiling shows 89% of computation time spent on 12% of features
+- Feature importance analysis reveals 31 features contribute <0.1% to decisions
+- Git history shows features added incrementally without removal (247 total → 47 in Tier2)
+- Team interviews reveal no awareness of production throughput requirements during development
+
+The root problem isn't technical—it's organizational. The ML team optimized for accuracy in isolation from production constraints. The platform team handled deployment without understanding model requirements. No one owned end-to-end system performance.
+
+### ML-Specific Problem Patterns
+
+ML systems exhibit characteristic problems that create constraints. In our anomaly detection system:
+
+**Feature Explosion**: Every record could generate hundreds of features. Teams extract every conceivable signal because "it might help," leading to computational bottlenecks. Our system computes duration, counts, rates, averages, variances, percentiles, unique values—most providing redundant information.
+
+**Time Window Confusion**: Different patterns appear at different timescales. Port scans manifest in seconds, data exfiltration over hours. Our system computes features at every timescale simultaneously, multiplying computational cost. A single network flow generates features for 1-second, 10-second, 1-minute, 10-minute, and 1-hour windows.
+
+**Baseline Computation Overhead**: Anomaly detection often involves comparing current behavior to historical baselines. Our system maintains 30-day rolling baselines for thousands of entities. Updating these baselines consumes 40% of Tier-2 compute, yet most baselines change negligibly day-to-day.
+
+These patterns aren't unique to network anomaly detection. Fraud detection systems face similar explosions with transaction features. Recommendation systems struggle with user-item interaction matrices. Forecasting systems wrestle with multiple seasonality computations.
+
+## Stage 3: Reframing Problems as Conflicts
+
+### The Core Conflict in ML Systems
+
+Our Feature-Tier2 problem isn't just "slow feature computation"—it's a fundamental conflict between two necessary approaches, each essential for different reasons:
+
+We've been stuck in this conflict for two years. When attacks slip through, we add features (moving left). When performance degrades, we remove features (moving right). The ML team pushes for accuracy while the platform team demands efficiency. Neither side is wrong—we need both capabilities.
+
+### Understanding Why This Conflict Persists
+
+The conflict persists because our assumptions make it seem unresolvable. Let's examine each assumption:
+
+**"All records need the same analysis depth"** - We treat a routine DNS query the same as an unusual connection to a never-before-seen external IP. This assumption stems from not wanting to miss attacks, but it ignores that different traffic has different risk profiles.
+
+**"Features must be computed synchronously"** - We extract all features in real-time before making any decision. This assumption comes from traditional streaming architecture, but not all features need immediate computation. Historical comparisons could be asynchronous.
+
+**"One model handles all decisions"** - Our single model tries to detect everything from port scans to advanced persistent threats. This assumption simplifies deployment but forces feature extraction to support diverse detection needs simultaneously.
+
+These assumptions create a zero-sum game where any improvement in one dimension degrades another. The team's frustration stems from optimizing within these constraints rather than challenging them.
+
+### ML Systems' Characteristic Conflicts
+
+Every ML system faces similar fundamental conflicts:
+
+**Accuracy vs Latency**: Complex models achieve better accuracy but increase inference time. Simple models respond quickly but miss subtle patterns. This manifests in fraud detection (comprehensive analysis vs instant decisions), recommendations (deep personalization vs page load time), and forecasting (complex models vs planning deadlines).
+
+**Precision vs Coverage**: High precision reduces false positives but misses edge cases. High coverage catches more events but overwhelms human review. With millions of events, even 99.9% precision means thousands of false alerts.
+
+**Real-time vs Historical Context**: Real-time processing enables immediate response but lacks historical perspective. Batch analysis provides rich context but delays decisions. Many patterns require both immediate indicators and long-term trends.
+
+**Generic vs Specific Models**: Generic models handle broad patterns but miss environment-specific signals. Specific models excel at known patterns but miss novel attacks. Every environment has unique "normal" behavior.
+
+## Stage 4: From Conflict to Innovation - Transcending Tradeoffs
+
+### Innovation Criteria for ML Systems
+
+Our innovation must achieve both rich feature analysis AND efficient processing without the drawbacks of either approach. This isn't about finding a middle ground—it's about transcending the tradeoff entirely.
+
+The innovation must be implementable with existing infrastructure and team capabilities. We can't wait for quantum computers or hire 50 PhDs. The solution must work with commodity hardware, standard ML frameworks, and our current team's skills.
+
+### The Progressive Analysis Innovation
+
+Challenging our assumptions leads to a breakthrough: **Progressive Analysis Architecture**. Instead of analyzing all records uniformly, we process them in progressive stages, with each stage determining if deeper analysis is warranted.
+
+**Tier-1: Wire-speed Triage** uses just 5 cheap features computable from basic record attributes (source, destination, port, protocol, size). A lightweight model identifies obviously benign traffic (regular HTTPS to known services, DNS queries to corporate servers). This processes at line rate with minimal compute.
+
+**Tier-2: Fast Analysis** applies to traffic passing triage. Using 25 efficiently-computed features (connection patterns, volume metrics, simple statistics), it identifies additional normal traffic and flags potential concerns. This stage handles most legitimate but unusual traffic.
+
+**Tier-3: Deep Analysis** examines suspicious traffic with 100 features including behavioral analysis and complex aggregations. This stage detects sophisticated attacks while maintaining manageable compute requirements by processing only 4% of traffic.
+
+**Forensic: Full Analysis** performs exhaustive analysis on high-risk traffic, extracting all available features and correlating with historical patterns. This stage processes <1% of traffic but provides comprehensive detection and rich context for analyst investigation.
+
+### Key Innovation Elements
+
+The progressive architecture includes several crucial design elements:
+
+**Confidence-Based Routing**: Each stage outputs not just a prediction but a confidence score. High-confidence benign traffic exits immediately. Low-confidence requires deeper analysis. This ensures we never miss attacks due to premature filtering while maintaining efficiency.
+
+```python
+# Routing Logic (simplified for clarity)
+def route_record(record, stage_results):
+    risk_score = stage_results.risk
+    confidence = stage_results.confidence
+    
+    if confidence > 0.95 and risk_score < 0.1:
+        return "exit_benign"
+    elif confidence > 0.90 and risk_score > 0.9:
+        return "alert_and_deep_analysis"
+    elif confidence < 0.50:
+        return "next_stage_priority"
+    else:
+        return "next_stage_normal"
+```
+
+**Feature Caching and Reuse**: Features computed in early stages are cached and reused in later stages. We never compute the same feature twice. Fast stages compute prerequisite features for deeper stages, amortizing extraction cost.
+
+**Backpressure-Aware Adaptation**: When stages experience backlog, the system adapts:
+
+```python
+def adaptive_routing(record, stage_backlogs):
+    calibrated_risk = assess_risk(record)
+    
+    for stage in [tier1, tier2, tier3]:
+        if stage.backlog > HIGH_WATERMARK:
+            # Raise confidence threshold during congestion
+            stage.confidence_threshold += 0.05
+            if calibrated_risk < stage.risk_threshold:
+                return defer_to_async(record)
+        
+        result = stage.process(record)
+        if result.confidence > stage.confidence_threshold:
+            return result
+    
+    # High risk always gets full analysis
+    return forensic.process(record)
+```
+
+**Asynchronous Enrichment**: Initial alerts are generated quickly with basic information, then asynchronously enhanced with deeper analysis. Analysts see alerts immediately but gain additional context as forensic analysis completes.
+
+```
+Timeline of Alert Evolution:
+T+0s: Basic alert generated (IPs, port, initial risk score)
+T+1s: Connection context added (frequency, duration, volume)
+T+5s: Historical patterns added (baseline comparison, past incidents)
+T+30s: Full enrichment complete (detailed forensics, related events)
+```
+
+### How This Transcends the Original Conflict
+
+Our progressive architecture achieves comprehensive detection—the deep analysis stages examine sophisticated attacks with full feature sets when needed. It simultaneously achieves efficient processing—most traffic is handled by lightweight stages. The innovation eliminates previous drawbacks:
+
+- **No missed attacks**: Suspicious traffic always reaches appropriate analysis depth
+- **No overwhelming compute**: Only traffic needing deep analysis receives it
+- **Reduced false positives**: Progressive confidence building improves precision
+- **No blind spots**: Every record is analyzed at an appropriate depth
+
+The pattern applies broadly to ML systems. Fraud detection can cheaply filter normal transactions before expensive analysis. Recommendation systems can use simple heuristics before deep personalization. Forecasting can identify stable series before complex modeling.
+
+## Stage 5: From Innovation to Experiment - Validating Solutions
+
+### Designing the Minimum Viable Experiment (MVE)
+
+Before implementing progressive analysis across our entire system, we design a Minimum Viable Experiment to validate core assumptions. The experiment must test whether traffic can be accurately triaged and whether progressive analysis maintains detection quality while improving throughput.
+
+The MVE focuses on the riskiest assumption: that Tier-1 triage can accurately identify benign traffic without missing attacks. If this fails, the entire architecture fails. We'll test with realistic data containing known attacks to ensure we don't create security holes.
+
+### Implementation and Testing
+
+We implement a prototype progressive analysis system using standard ML tools and public datasets:
+
+**Week 1: Feature Engineering and Model Training**
+
+We start with the simplest possible Tier-1 model:
+```python
+# Tier-1: Minimal features for maximum speed
+tier1_features = [
+    'src_reputation_score',  # Pre-computed reputation
+    'dst_port',              # Destination port number
+    'protocol',              # TCP/UDP/ICMP
+    'packet_rate',           # Packets per second
+    'byte_rate'              # Bytes per second
+]
+
+# Train lightweight model (logistic regression for speed)
+tier1_model = LogisticRegression(C=1.0)
+tier1_model.fit(X_train[tier1_features], y_train_benign)
+
+# Validation on test set with injected attacks
+results = {
+    'triage_rate': 0.68,        # 68% identified as benign
+    'false_negative_rate': 0,    # No attacks missed
+    'latency_p95': 3,            # 3ms per record
+    'throughput': 95000          # Records per second
+}
+```
+
+**Week 2: Pipeline Integration**
+
+We build the full progressive pipeline and test on recorded traffic with synthetic attack injection:
+
+Testing uses a combination of public datasets (UNSW-NB15, CIC-IDS2017) with known limitations, augmented with synthetic attacks to ensure coverage of sophisticated threats:
+
+| Dataset | Purpose | Records | Attacks |
+|---------|---------|---------|---------|
+| UNSW-NB15 | Baseline behavior | 2M | 321K |
+| CIC-IDS2017 | Modern attacks | 3M | 558K |
+| Synthetic | Targeted scenarios | 500K | 50K |
+| Production Sample | Real patterns | 1M | Unknown |
+
+### Results and Key Insights
+
+The MVE reveals both successes and necessary adjustments:
+
+**Key Insights:**
+
+1. **Triage Effectiveness**: The 5-feature triage successfully identifies benign traffic without missing attacks. Attack patterns consistently differ enough from normal traffic to trigger deeper analysis.
+
+2. **Staged Specialization**: Each tier naturally specializes. Tier-1 excels at filtering normal traffic. Tier-2 catches volume-based attacks. Tier-3 detects sophisticated, low-signal attacks. The ensemble effect improves overall detection.
+
+3. **Cache Criticality**: Feature caching between stages proved essential. Without caching, redundant computation would negate throughput gains. The 84% cache hit rate suggests further optimization potential.
+
+4. **Temporal Patterns**: Traffic distribution varies predictably. Business hours see 75% triage rate (regular applications). Nights drop to 45% (unusual patterns), naturally adapting analysis depth to risk.
+
+### Iteration Based on Findings
+
+The experiment reveals necessary adjustments before production deployment:
+
+**Iteration 1: Confidence Calibration**
+Initial triage was too conservative, passing 32% of traffic unnecessarily. Analysis shows the model lacks confidence on legitimate but unusual ports. We retrain with expanded examples, achieving 71% triage rate without missing attacks.
+
+**Iteration 2: Dynamic Resource Allocation**
+Fixed compute allocation causes bottlenecks when traffic patterns shift. We implement dynamic allocation—stages borrow compute from idle stages:
+
+```python
+def dynamic_allocation(stages, current_loads):
+    total_capacity = sum(s.capacity for s in stages)
+    
+    for stage in stages:
+        if stage.load > 0.8:  # Stage under pressure
+            # Find donor stage with low load
+            donor = min(stages, key=lambda s: s.load)
+            if donor.load < 0.3:
+                # Transfer capacity
+                transfer = min(donor.capacity * 0.3, 
+                             stage.demand - stage.capacity)
+                stage.capacity += transfer
+                donor.capacity -= transfer
+```
+
+**Iteration 3: Feature Pruning**
+Production-weighted feature importance shows 15 Tier-3 features never influence decisions. Removing them increases throughput 30% without affecting detection:
+
+```python
+def prune_features(features, importance_scores, cost_scores):
+    # Value = importance / cost
+    feature_value = importance_scores / cost_scores
+    
+    # Keep features that contribute 95% of total importance
+    sorted_features = sorted(features, 
+                           key=lambda f: feature_value[f], 
+                           reverse=True)
+    
+    cumulative_importance = 0
+    selected = []
+    for feature in sorted_features:
+        if cumulative_importance < 0.95:
+            selected.append(feature)
+            cumulative_importance += importance_scores[feature]
+    
+    return selected  # Typically 20-30% of original features
+```
+
+### Production Rollout Strategy
+
+With MVE success and iterations complete, we plan production rollout:
+
+**Phase 1: Shadow Mode Validation**
+Run progressive pipeline parallel to existing system without taking actions. Compare decisions, measure divergence, validate no regressions. Success criteria: No P1 incidents missed for one week.
+
+**Phase 2: Canary Deployment**
+Route 10% of traffic through progressive pipeline. A/B test alert quality with analysts—do they prefer the new alerts? Monitor all SLOs closely. Success: SLOs maintained, analyst preference ≥ baseline.
+
+**Phase 3: Gradual Expansion**
+Increase traffic percentage: 10% → 25% → 50% → 75%, holding each level for 48 hours. Automated rollback triggers on any SLO violation. Success: All SLOs met at each level.
+
+**Phase 4: Full Production**
+Complete migration with old system as instant fallback. Document runbooks, establish monitoring, train operations team. Success: One week at 100% with all SLOs met.
+
+## Common Pitfalls and Prevention Strategies
+
+### Pitfall 1: Premature Model Optimization
+
+Teams spend months improving model accuracy while system-level metrics stagnate. You achieve 96% AUC on test sets while production catches only 60% of incidents because feature extraction can't keep up.
+
+**In Our Case**: We spent three months experimenting with transformer architectures for 2% accuracy improvement, while missing 70% of traffic due to feature extraction bottlenecks. The transformer detected sophisticated attacks brilliantly—on the 30% of traffic it actually analyzed.
+
+**Prevention**:
+- Always validate the constraint before optimization
+- Measure end-to-end metrics, not just component metrics
+- Apply Amdahl's Law: improving non-constraint components yields minimal gain
+- Ask: "If this component was perfect, would we meet our SLOs?"
+
+### Pitfall 2: Feature Creep Without Cost Analysis
+
+Feature counts grow monotonically. Each new feature adds marginal model improvement but substantial computational cost. Soon you have hundreds of features where most contribute negligibly.
+
+**In Our Case**: We grew from 50 to 247 features over two years. Analysis showed 180 features contributed <0.1% to decisions but consumed 60% of computation. Feature removal was politically difficult—each had an advocate who remembered when it caught something.
+
+**Prevention**:
+- Require cost-benefit analysis for new features
+- Regular production-weighted importance analysis
+- Implement progressive analysis where expensive features are conditional
+- Track feature value score: importance / computational_cost
+
+### Pitfall 3: Alert Budget Myopia
+
+Facing missed incidents, teams lower thresholds to catch more attacks. This creates unsustainable alert volumes, overwhelming analysts who then ignore alerts, leading to more missed incidents.
+
+**In Our Case**: After missing an APT, we lowered thresholds and generated 200+ daily alerts. Analysts could investigate only 50, randomly sampling and missing real threats. The "solution" made the problem worse.
+
+**Prevention**:
+- Use Little's Law to connect throughput and latency: L = λW
+- Maintain sustainable alert volumes based on team capacity
+- Weight alerts by incident impact, not just count
+- Implement progressive analysis to build confidence before alerting
+
+### Pitfall 4: Vanity Metrics Over Business Outcomes
+
+Teams optimize metrics that sound impressive but don't connect to business value. "99.9% precision" means nothing if you're missing 90% of incidents. "Processing 1M events/second" is irrelevant if decisions take 30 minutes.
+
+**In Our Case**: We celebrated achieving 99% detection rate on port scans—which the SOC ignored anyway—while missing lateral movement using legitimate credentials. Our metrics looked great but failed to prevent actual breaches.
+
+**Prevention**:
+- Define SLOs tied to business outcomes
+- Use outcome-weighted metrics (incident-weighted recall, not raw recall)
+- Measure decision latency, not just throughput
+- Track realized value, not potential performance
+
+## Applying the Framework: Complete System Transformation
+
+### Starting Point: A System in Crisis
+
+Six months ago, our network anomaly detection system was failing on all fronts. The security team reported missed breaches—attackers dwelt in the network for weeks undetected. The SOC was overwhelmed, investigating 89 false positives daily while real threats slipped through. Infrastructure costs ballooned as we threw hardware at the problem without improvement.
+
+The team was demoralized. ML engineers added features that didn't help. Security analysts lost trust in alerts. Management questioned the entire investment. Traditional optimization—better models, more compute, refined thresholds—had been tried and failed.
+
+### Stage-by-Stage Transformation
+
+**Stage 1 Discovery**: By clearly defining SLOs (incident-weighted recall ≥90%, ≤10 alerts/day, p95 TTD ≤5 min) and building our constraint ledger, we identified Feature-Tier2 as the bottleneck. This focus immediately stopped wasteful efforts on model accuracy and infrastructure scaling.
+
+**Stage 2 Understanding**: The Five Whys revealed the true problem: development disconnected from production constraints. The feature set optimized for research accuracy, not production throughput. This organizational insight shifted our approach from technical fixes to systemic changes.
+
+**Stage 3 Reframing**: Mapping the conflict between rich and minimal features showed why two years of optimization failed. We were trapped choosing between accuracy and efficiency. Identifying hidden assumptions—uniform analysis, synchronous processing, monolithic model—opened solution paths.
+
+**Stage 4 Innovation**: Progressive analysis transcended the conflict by applying different analysis depths to different traffic. This wasn't compromise but transformation—achieving better detection AND efficiency by challenging the assumption that all records need identical processing.
+
+**Stage 5 Validation**: The MVE proved progressive analysis viable while revealing necessary adjustments. Iteration refined the approach based on real-world behavior. Phased rollout managed risk while building confidence.
+
+### The Transformed System
+
+Today, our network anomaly detection system is a strategic asset rather than a cost center:
+
+The technical improvements are impressive, but the organizational transformation is profound:
+- ML and platform teams now collaborate from day one
+- Production constraints are part of development requirements
+- Feature additions require extraction cost analysis
+- Success is measured by business outcomes, not technical metrics
+
+### Beyond the Initial Success
+
+The framework creates a continuous improvement cycle. With Feature-Tier2 no longer the constraint, a new bottleneck emerges: alert investigation. SOC analysts take 45 minutes average to investigate Tier-3 alerts. This is now our constraint, limiting how many sophisticated attacks we can properly investigate.
+
+Applying the framework again:
+- **Goal**: Reduce investigation time to 15 minutes while maintaining decision quality
+- **Constraint**: Manual correlation across multiple tools and data sources
+- **Problem**: Analysts lack unified view of alert context
+- **Conflict**: Automated enrichment vs human judgment
+- **Innovation**: AI-assisted investigation that augments rather than replaces analysts
+- **Experiment**: Test on historical alerts with analyst feedback
+
+This cycle continues, each iteration improving the system. The constraint moves—from feature extraction to investigation to response automation—but always represents the next opportunity for breakthrough improvement.
+
+## Conclusion: Theory of Constraints as Your ML Operating System
+
+The Theory of Constraints transformed our network anomaly detection from a frustrating cost center to a strategic security asset. By focusing on the single most limiting factor—rather than trying to optimize everything—we achieved breakthrough improvements thought impossible.
+
+This journey revealed crucial insights for ML practitioners:
+
+**Focus beats breadth**: Addressing the Feature-Tier2 throughput constraint achieved more than years of model improvements, infrastructure investments, and threshold tuning combined. One constraint, properly addressed, unlocked everything.
+
+**Conflicts hide innovations**: The tradeoff between rich features and processing efficiency seemed fundamental until we challenged underlying assumptions. Progressive analysis transcended rather than compromised.
+
+**Experiments accelerate learning**: Our two-week MVE taught us more than two years of production experience. Controlled experiments with clear success criteria cut through opinions with data.
+
+**Organizational constraints matter**: Technical solutions fail when organizational problems persist. Our root cause—development disconnected from production—required process changes not algorithms.
+
+For ML teams facing similar challenges—whether in fraud detection, recommendations, forecasting, or any complex domain—the framework offers a systematic path through complexity. Instead of drowning in features, models, and metrics, focus on the one thing preventing success right now. Instead of accepting that performance requires unmanageable complexity, challenge the assumptions creating that tradeoff.
+
+The progressive analysis architecture we developed isn't universally applicable—your constraint and solution will differ. But the process—Goal → Constraint → Problem → Conflict → Innovation → Experiment—provides a repeatable approach to finding your breakthrough.
+
+As our system continues evolving, new constraints emerge. Alert investigation efficiency is our current focus. After that, perhaps automated response, threat hunting capability, or predictive defense. Each constraint addressed reveals the next opportunity. This isn't frustrating—it's liberating. We always know exactly what to work on next.
+
+The Theory of Constraints isn't just another optimization technique—it's an operating system for continuous improvement in ML systems. Each cycle makes our system more capable, our team more effective, and our organization more resilient. The constraint will keep moving, but so will our performance, always upward, always improving, always focused on what matters most.
+
+## References
+
+**Theory of Constraints & ML Systems:**
+
+- Goldratt, E. M. (1984). "The Goal: A Process of Ongoing Improvement." North River Press.
+- Sculley, D., et al. (2015). "Hidden Technical Debt in Machine Learning Systems." NIPS 2015.
+- Paleyes, A., et al. (2022). "Challenges in Deploying Machine Learning: A Survey of Case Studies." ACM Computing Surveys.
+
+**Production ML Engineering:**
+
+- Kleppmann, M. (2017). "Designing Data-Intensive Applications." O'Reilly Media.
+- Polyzotis, N., et al. (2018). "Data Lifecycle Challenges in Production Machine Learning." SIGMOD Record.
+
+**Anomaly Detection & Streaming:**
+
+- Chandola, V., et al. (2009). "Anomaly Detection: A Survey." ACM Computing Surveys.
+- Ahmed, M., et al. (2016). "A Survey of Network Anomaly Detection Techniques." Journal of Network and Computer Applications.
+- Sommer, R., & Paxson, V. (2010). "Outside the Closed World: On Using Machine Learning for Network Intrusion Detection." IEEE S&P.
+- Cormode, G., & Muthukrishnan, S. (2005). "An Improved Data Stream Summary: The Count-Min Sketch." Journal of Algorithms.
+
+**Public Datasets:**
+
+- UNSW-NB15, CIC-IDS2017/2018, CTU-13 (Note: Known biases; augment with synthetic attacks for production use)

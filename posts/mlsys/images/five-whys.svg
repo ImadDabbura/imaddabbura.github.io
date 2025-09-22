@@ -1,0 +1,98 @@
+<svg viewBox="0 0 700 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Title -->
+  <text x="350" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold">Five Whys: Finding the Root Cause</text>
+  
+  <!-- Tree structure -->
+  <!-- Level 1: Surface Problem -->
+  <rect x="200" y="60" width="300" height="40" fill="#F44336" stroke="#C62828" stroke-width="2" rx="5"/>
+  <text x="350" y="85" text-anchor="middle" font-size="12" fill="white" font-weight="bold">Can only process 30K records/second</text>
+  
+  <!-- Arrow and Why 1 -->
+  <line x1="350" y1="100" x2="350" y2="130" stroke="#333" stroke-width="2" marker-end="url(#arrow-down)"/>
+  <text x="360" y="120" font-size="11" fill="#666" font-weight="bold">Why?</text>
+  
+  <!-- Level 2 -->
+  <rect x="200" y="130" width="300" height="40" fill="#FF7043" stroke="#D84315" stroke-width="2" rx="5"/>
+  <text x="350" y="148" text-anchor="middle" font-size="11" fill="white">Computing 47 features per record</text>
+  <text x="350" y="162" text-anchor="middle" font-size="10" fill="white">(89% time on 12% of features)</text>
+  
+  <!-- Arrow and Why 2 -->
+  <line x1="350" y1="170" x2="350" y2="200" stroke="#333" stroke-width="2" marker-end="url(#arrow-down)"/>
+  <text x="360" y="190" font-size="11" fill="#666" font-weight="bold">Why?</text>
+  
+  <!-- Level 3 -->
+  <rect x="200" y="200" width="300" height="40" fill="#FF8A65" stroke="#D84315" stroke-width="2" rx="5"/>
+  <text x="350" y="218" text-anchor="middle" font-size="11" fill="white">Model trained on all available features</text>
+  <text x="350" y="232" text-anchor="middle" font-size="10" fill="white">(No feature selection in training)</text>
+  
+  <!-- Arrow and Why 3 -->
+  <line x1="350" y1="240" x2="350" y2="270" stroke="#333" stroke-width="2" marker-end="url(#arrow-down)"/>
+  <text x="360" y="260" font-size="11" fill="#666" font-weight="bold">Why?</text>
+  
+  <!-- Level 4 -->
+  <rect x="200" y="270" width="300" height="40" fill="#FFAB91" stroke="#D84315" stroke-width="2" rx="5"/>
+  <text x="350" y="288" text-anchor="middle" font-size="11" fill="white">Maximized offline accuracy metrics</text>
+  <text x="350" y="302" text-anchor="middle" font-size="10" fill="white">(2% improvement seemed worth it)</text>
+  
+  <!-- Arrow and Why 4 -->
+  <line x1="350" y1="310" x2="350" y2="340" stroke="#333" stroke-width="2" marker-end="url(#arrow-down)"/>
+  <text x="360" y="330" font-size="11" fill="#666" font-weight="bold">Why?</text>
+  
+  <!-- Level 5 -->
+  <rect x="200" y="340" width="300" height="40" fill="#FFCCBC" stroke="#D84315" stroke-width="2" rx="5"/>
+  <text x="350" y="358" text-anchor="middle" font-size="11" fill="#333">No production SLOs during development</text>
+  <text x="350" y="372" text-anchor="middle" font-size="10" fill="#333">(ML team unaware of throughput needs)</text>
+  
+  <!-- Arrow and Why 5 -->
+  <line x1="350" y1="380" x2="350" y2="410" stroke="#333" stroke-width="2" marker-end="url(#arrow-down)"/>
+  <text x="360" y="400" font-size="11" fill="#666" font-weight="bold">Why?</text>
+  
+  <!-- Root Cause -->
+  <rect x="150" y="410" width="400" height="60" fill="#FFF9C4" stroke="#F57C00" stroke-width="3" rx="5"/>
+  <text x="350" y="430" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">ROOT CAUSE:</text>
+  <text x="350" y="450" text-anchor="middle" font-size="12" fill="#333">ML and platform teams work in isolation</text>
+  <text x="350" y="465" text-anchor="middle" font-size="11" fill="#666">(Development disconnected from production constraints)</text>
+  
+  <!-- Side annotations with evidence -->
+  <g transform="translate(520, 145)">
+    <text x="0" y="0" font-size="9" fill="#666" font-style="italic">Evidence: Performance</text>
+    <text x="0" y="12" font-size="9" fill="#666" font-style="italic">profiling logs</text>
+  </g>
+  
+  <g transform="translate(520, 215)">
+    <text x="0" y="0" font-size="9" fill="#666" font-style="italic">Evidence: Git history</text>
+    <text x="0" y="12" font-size="9" fill="#666" font-style="italic">shows incremental adds</text>
+  </g>
+  
+  <g transform="translate(520, 285)">
+    <text x="0" y="0" font-size="9" fill="#666" font-style="italic">Evidence: Design</text>
+    <text x="0" y="12" font-size="9" fill="#666" font-style="italic">documents</text>
+  </g>
+  
+  <g transform="translate(520, 355)">
+    <text x="0" y="0" font-size="9" fill="#666" font-style="italic">Evidence: Team</text>
+    <text x="0" y="12" font-size="9" fill="#666" font-style="italic">interviews</text>
+  </g>
+  
+  <g transform="translate(30, 145)">
+    <text x="0" y="0" font-size="9" fill="#666">Symptom:</text>
+    <text x="0" y="12" font-size="9" fill="#666">Technical</text>
+  </g>
+  
+  <g transform="translate(30, 355)">
+    <text x="0" y="0" font-size="9" fill="#666">Problem:</text>
+    <text x="0" y="12" font-size="9" fill="#666">Process</text>
+  </g>
+  
+  <g transform="translate(30, 440)">
+    <text x="0" y="0" font-size="9" fill="#666">Root:</text>
+    <text x="0" y="12" font-size="9" fill="#666">Organizational</text>
+  </g>
+  
+  <!-- Arrow marker -->
+  <defs>
+    <marker id="arrow-down" markerWidth="10" markerHeight="10" refX="5" refY="9" orient="auto">
+      <path d="M0,0 L10,0 L5,9 z" fill="#333"/>
+    </marker>
+  </defs>
+</svg>
