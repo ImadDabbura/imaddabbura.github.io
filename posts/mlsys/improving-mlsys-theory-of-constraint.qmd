@@ -68,6 +68,7 @@ Our NTA System SLOs (evaluated weekly):
 Measurement: synchronized clocks, shared tap, incident-level labels, 
 deduped correlated alerts
 ```
+![](images/slo-hierarchy.svg)
 
 This specific goal immediately clarifies priorities. A model that detects 99% of anomalies but generates 500 alerts per day fails our goal. A model with perfect precision but 30-minute detection latency fails our goal. The SLOs define success and, crucially, reveal what constrains us from achieving them.
 
@@ -102,11 +103,15 @@ This explains why our detection system fails despite having a highly accurate mo
 
 Before investing in solving Feature-Tier2 bottleneck, we validate it's truly the constraint. We temporarily provision 3x more compute for Feature-Tier2, enabling processing of 90K records/sec. The results are dramatic:
 
+![](images/before-after-dashboard.svg)
+
 The validation confirms Feature-Tier2 as the primary constraint. With this bottleneck relieved, the system nearly meets our SLOs. Interestingly, false positives decreased—the model makes better decisions when it sees complete feature sets rather than sampled fragments. This demonstrates a crucial point: no other improvement—not model accuracy, not infrastructure, not threshold tuning—would have achieved this impact.
 
 ### Constraint Types in ML Systems
 
 Our detection system faces different constraint types over its lifecycle:
+
+![](images/constraints-types-matrix.svg)
 
 Currently, we face a **Technical Process Constraint**—the Tier-2 feature extraction algorithm is inefficient. But understanding the constraint type helps predict solution categories. Technical process constraints often yield to algorithmic improvements or architectural changes. Our feature extraction bottleneck likely requires both.
 
@@ -122,6 +127,8 @@ Initial investigation reveals Feature-Tier2 performs complex aggregations on eve
 - Behavioral comparisons (deviation from hourly, daily baselines)
 - Entity aggregations (per-source, per-destination, per-service rollups)
 - Contextual lookups (reputation scores, geo-location, service profiles)
+
+![](images/iceberg-visible-constraint.svg)
 
 The real problem emerges: the feature extraction was designed for offline research with unlimited computation time. When deployed to production, the same comprehensive feature set that enabled high accuracy in research became a bottleneck at scale. The team kept adding features to improve accuracy metrics without considering extraction cost or production constraints.
 

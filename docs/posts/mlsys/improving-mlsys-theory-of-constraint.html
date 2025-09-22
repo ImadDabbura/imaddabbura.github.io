@@ -419,6 +419,7 @@ Work in Progress — Feedback Welcome
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>Measurement: synchronized clocks, shared tap, incident-level labels, </span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>deduped correlated alerts</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="images/slo-hierarchy.svg" class="img-fluid"></p>
 <p>This specific goal immediately clarifies priorities. A model that detects 99% of anomalies but generates 500 alerts per day fails our goal. A model with perfect precision but 30-minute detection latency fails our goal. The SLOs define success and, crucially, reveal what constrains us from achieving them.</p>
 </section>
 <section id="identifying-the-constraint-building-your-constraint-ledger" class="level3">
@@ -513,11 +514,13 @@ Work in Progress — Feedback Welcome
 <section id="validating-the-constraint-through-temporary-relief" class="level3">
 <h3 class="anchored" data-anchor-id="validating-the-constraint-through-temporary-relief">Validating the Constraint Through Temporary Relief</h3>
 <p>Before investing in solving Feature-Tier2 bottleneck, we validate it’s truly the constraint. We temporarily provision 3x more compute for Feature-Tier2, enabling processing of 90K records/sec.&nbsp;The results are dramatic:</p>
+<p><img src="images/before-after-dashboard.svg" class="img-fluid"></p>
 <p>The validation confirms Feature-Tier2 as the primary constraint. With this bottleneck relieved, the system nearly meets our SLOs. Interestingly, false positives decreased—the model makes better decisions when it sees complete feature sets rather than sampled fragments. This demonstrates a crucial point: no other improvement—not model accuracy, not infrastructure, not threshold tuning—would have achieved this impact.</p>
 </section>
 <section id="constraint-types-in-ml-systems" class="level3">
 <h3 class="anchored" data-anchor-id="constraint-types-in-ml-systems">Constraint Types in ML Systems</h3>
 <p>Our detection system faces different constraint types over its lifecycle:</p>
+<p><img src="images/constraints-types-matrix.svg" class="img-fluid"></p>
 <p>Currently, we face a <strong>Technical Process Constraint</strong>—the Tier-2 feature extraction algorithm is inefficient. But understanding the constraint type helps predict solution categories. Technical process constraints often yield to algorithmic improvements or architectural changes. Our feature extraction bottleneck likely requires both.</p>
 </section>
 </section>
@@ -533,6 +536,7 @@ Work in Progress — Feedback Welcome
 <li>Entity aggregations (per-source, per-destination, per-service rollups)</li>
 <li>Contextual lookups (reputation scores, geo-location, service profiles)</li>
 </ul>
+<p><img src="images/iceberg-visible-constraint.svg" class="img-fluid"></p>
 <p>The real problem emerges: the feature extraction was designed for offline research with unlimited computation time. When deployed to production, the same comprehensive feature set that enabled high accuracy in research became a bottleneck at scale. The team kept adding features to improve accuracy metrics without considering extraction cost or production constraints.</p>
 </section>
 <section id="applying-five-whys-to-surface-root-causes" class="level3">
