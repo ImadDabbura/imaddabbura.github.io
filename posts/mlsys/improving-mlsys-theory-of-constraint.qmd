@@ -154,6 +154,8 @@ ML systems exhibit characteristic problems that create constraints. In our anoma
 
 **Time Window Confusion**: Different patterns appear at different timescales. Port scans manifest in seconds, data exfiltration over hours. Our system computes features at every timescale simultaneously, multiplying computational cost. A single network flow generates features for 1-second, 10-second, 1-minute, 10-minute, and 1-hour windows.
 
+![](images/multiscale-timeline.svg)
+
 **Baseline Computation Overhead**: Anomaly detection often involves comparing current behavior to historical baselines. Our system maintains 30-day rolling baselines for thousands of entities. Updating these baselines consumes 40% of Tier-2 compute, yet most baselines change negligibly day-to-day.
 
 These patterns aren't unique to network anomaly detection. Fraud detection systems face similar explosions with transaction features. Recommendation systems struggle with user-item interaction matrices. Forecasting systems wrestle with multiple seasonality computations.
@@ -163,6 +165,8 @@ These patterns aren't unique to network anomaly detection. Fraud detection syste
 ### The Core Conflict in ML Systems
 
 Our Feature-Tier2 problem isn't just "slow feature computation"—it's a fundamental conflict between two necessary approaches, each essential for different reasons:
+
+![](images/feature-extraction-conflict.svg)
 
 We've been stuck in this conflict for two years. When attacks slip through, we add features (moving left). When performance degrades, we remove features (moving right). The ML team pushes for accuracy while the platform team demands efficiency. Neither side is wrong—we need both capabilities.
 
@@ -201,6 +205,8 @@ The innovation must be implementable with existing infrastructure and team capab
 ### The Progressive Analysis Innovation
 
 Challenging our assumptions leads to a breakthrough: **Progressive Analysis Architecture**. Instead of analyzing all records uniformly, we process them in progressive stages, with each stage determining if deeper analysis is warranted.
+
+![](images/progressive-analysis-architecture.svg)
 
 **Tier-1: Wire-speed Triage** uses just 5 cheap features computable from basic record attributes (source, destination, port, protocol, size). A lightweight model identifies obviously benign traffic (regular HTTPS to known services, DNS queries to corporate servers). This processes at line rate with minimal compute.
 

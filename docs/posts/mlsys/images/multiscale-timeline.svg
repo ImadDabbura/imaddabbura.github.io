@@ -1,0 +1,236 @@
+<svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Multi-scale timeline of attack patterns and detection windows">
+  <title>Multi-scale timeline of attack patterns and detection windows</title>
+  <desc>
+    Three aligned time bands (seconds, minutes, hours) with rectangles indicating detection windows:
+    Port scan 1–10s, DDoS 10–60s, Lateral movement 5–30m, Data exfiltration 1–24h.
+  </desc>
+<!--============ DEFS ============-->
+  <defs>
+<!--Arrow marker-->
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/>
+    </marker>
+<!--Soft card shadow-->
+    <filter id="cardShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="b"/>
+      <feOffset in="b" dx="0" dy="1" result="o"/>
+      <feComponentTransfer in="o">
+        <feFuncA type="linear" slope="0.22"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+<!--Light grid pattern-->
+    <pattern id="grid" width="25" height="25" patternUnits="userSpaceOnUse">
+      <path d="M25 0 H0 V25" fill="none" stroke="#eeeeee" stroke-width="1"/>
+    </pattern>
+<!--Palette-->
+    <linearGradient id="bandGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#fafafa"/>
+      <stop offset="100%" stop-color="#ffffff"/>
+    </linearGradient>
+<!--Attack fills-->
+    <linearGradient id="gScan" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#93c5fd"/>
+      <stop offset="100%" stop-color="#60a5fa"/>
+    </linearGradient>
+    <linearGradient id="gDDoS" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#fca5a5"/>
+      <stop offset="100%" stop-color="#f87171"/>
+    </linearGradient>
+    <linearGradient id="gLateral" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#86efac"/>
+      <stop offset="100%" stop-color="#34d399"/>
+    </linearGradient>
+    <linearGradient id="gExfil" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#fcd34d"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+  </defs>
+<!--============ TITLE ============-->
+  <g filter="url(#cardShadow)">
+    <rect x="220" y="30" width="460" height="50" rx="10" fill="#fff"/>
+  </g>
+  <text x="450" y="54" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="700" fill="#111827">
+    Multi-Scale Detection Timeline
+  </text>
+  <text x="450" y="72" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="12" fill="#6b7280">
+    Aligning seconds, minutes, and hours to visualize different attack windows
+  </text>
+<!--============ LAYOUT REFS ============-->
+<!--Left margin, right edge, width-->
+<!--We will use xLeft=120, xRight=800 (width=680) for all bands-->
+  <g id="layout" visibility="hidden">
+    <rect x="120" y="0" width="680" height="1" fill="none"/>
+  </g>
+<!--============ BANDS BACKDROP ============-->
+<!--Band heights and y positions-->
+<!--Seconds band (0–60s)-->
+  <g filter="url(#cardShadow)">
+    <rect x="100" y="110" width="700" height="90" rx="12" fill="url(#bandGrad)"/>
+  </g>
+  <rect x="120" y="120" width="680" height="70" fill="url(#grid)"/>
+  <text x="110" y="110" text-anchor="start" font-family="Inter, Arial, sans-serif" font-size="12" fill="#374151">Seconds (0–60s)</text>
+<!--Minutes band (0–60m)-->
+  <g filter="url(#cardShadow)">
+    <rect x="100" y="230" width="700" height="90" rx="12" fill="url(#bandGrad)"/>
+  </g>
+  <rect x="120" y="240" width="680" height="70" fill="url(#grid)"/>
+  <text x="110" y="230" text-anchor="start" font-family="Inter, Arial, sans-serif" font-size="12" fill="#374151">Minutes (0–60m)</text>
+<!--Hours band (0–24h)-->
+  <g filter="url(#cardShadow)">
+    <rect x="100" y="350" width="700" height="90" rx="12" fill="url(#bandGrad)"/>
+  </g>
+  <rect x="120" y="360" width="680" height="70" fill="url(#grid)"/>
+  <text x="110" y="350" text-anchor="start" font-family="Inter, Arial, sans-serif" font-size="12" fill="#374151">Hours (0–24h)</text>
+<!--============ AXES ============-->
+<!--Seconds axis-->
+  <line x1="120" y1="192" x2="800" y2="192" stroke="#9ca3af" stroke-width="2" marker-end="url(#arrow)"/>
+<!--Ticks every 10s-->
+  <g font-family="Inter, Arial, sans-serif" font-size="10" fill="#6b7280">
+<!--0 to 60 step 10-->
+    <g>
+      <line x1="120" y1="192" x2="120" y2="188" stroke="#9ca3af"/>
+      <text x="120" y="204" text-anchor="middle">0s</text>
+    </g>
+    <g>
+      <line x1="233.333" y1="192" x2="233.333" y2="188" stroke="#9ca3af"/>
+      <text x="233.333" y="204" text-anchor="middle">10s</text>
+    </g>
+    <g>
+      <line x1="346.667" y1="192" x2="346.667" y2="188" stroke="#9ca3af"/>
+      <text x="346.667" y="204" text-anchor="middle">20s</text>
+    </g>
+    <g>
+      <line x1="460" y1="192" x2="460" y2="188" stroke="#9ca3af"/>
+      <text x="460" y="204" text-anchor="middle">30s</text>
+    </g>
+    <g>
+      <line x1="573.333" y1="192" x2="573.333" y2="188" stroke="#9ca3af"/>
+      <text x="573.333" y="204" text-anchor="middle">40s</text>
+    </g>
+    <g>
+      <line x1="686.667" y1="192" x2="686.667" y2="188" stroke="#9ca3af"/>
+      <text x="686.667" y="204" text-anchor="middle">50s</text>
+    </g>
+    <g>
+      <line x1="800" y1="192" x2="800" y2="188" stroke="#9ca3af"/>
+      <text x="800" y="204" text-anchor="middle">60s</text>
+    </g>
+  </g>
+<!--Minutes axis-->
+  <line x1="120" y1="312" x2="800" y2="312" stroke="#9ca3af" stroke-width="2" marker-end="url(#arrow)"/>
+<!--Ticks every 15m-->
+  <g font-family="Inter, Arial, sans-serif" font-size="10" fill="#6b7280">
+    <g>
+      <line x1="120" y1="312" x2="120" y2="308" stroke="#9ca3af"/>
+      <text x="120" y="324" text-anchor="middle">0m</text>
+    </g>
+    <g>
+      <line x1="300" y1="312" x2="300" y2="308" stroke="#9ca3af"/>
+      <text x="300" y="324" text-anchor="middle">15m</text>
+    </g>
+    <g>
+      <line x1="460" y1="312" x2="460" y2="308" stroke="#9ca3af"/>
+      <text x="460" y="324" text-anchor="middle">30m</text>
+    </g>
+    <g>
+      <line x1="620" y1="312" x2="620" y2="308" stroke="#9ca3af"/>
+      <text x="620" y="324" text-anchor="middle">45m</text>
+    </g>
+    <g>
+      <line x1="800" y1="312" x2="800" y2="308" stroke="#9ca3af"/>
+      <text x="800" y="324" text-anchor="middle">60m</text>
+    </g>
+  </g>
+<!--Hours axis-->
+  <line x1="120" y1="432" x2="800" y2="432" stroke="#9ca3af" stroke-width="2" marker-end="url(#arrow)"/>
+<!--Ticks every 6h-->
+  <g font-family="Inter, Arial, sans-serif" font-size="10" fill="#6b7280">
+    <g>
+      <line x1="120" y1="432" x2="120" y2="428" stroke="#9ca3af"/>
+      <text x="120" y="444" text-anchor="middle">0h</text>
+    </g>
+    <g>
+      <line x1="300" y1="432" x2="300" y2="428" stroke="#9ca3af"/>
+      <text x="300" y="444" text-anchor="middle">6h</text>
+    </g>
+    <g>
+      <line x1="460" y1="432" x2="460" y2="428" stroke="#9ca3af"/>
+      <text x="460" y="444" text-anchor="middle">12h</text>
+    </g>
+    <g>
+      <line x1="620" y1="432" x2="620" y2="428" stroke="#9ca3af"/>
+      <text x="620" y="444" text-anchor="middle">18h</text>
+    </g>
+    <g>
+      <line x1="800" y1="432" x2="800" y2="428" stroke="#9ca3af"/>
+      <text x="800" y="444" text-anchor="middle">24h</text>
+    </g>
+  </g>
+<!--============ ATTACK WINDOWS ============-->
+<!--Helpers: band y spans-->
+<!--Seconds band content area: y=120..190-->
+<!--Minutes band content area: y=240..310-->
+<!--Hours band content area:   y=360..430-->
+<!--Port scan: 1–10s-->
+<!--x = 120 + (t/60)*680-->
+  <g>
+    <rect x="121.333" y="170" width="110.000" height="20" rx="6" fill="url(#gScan)" stroke="#2563eb"/>
+    <title>Port scan: 1–10 seconds (rapid connection attempts)</title>
+    <text x="172.333" y="184" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="11" fill="#0b1a33" font-weight="600">Port scan</text>
+  </g>
+<!--Callout-->
+  <line x1="230.333" y1="175" x2="290" y2="128" stroke="#2563eb" stroke-dasharray="3 3"/>
+  <text x="294" y="124" font-family="Inter, Arial, sans-serif" font-size="10" fill="#374151">1–10s • bursts of SYNs</text>
+<!--DDoS: 10–60s-->
+  <g>
+    <rect x="233.333" y="170" width="566.667" height="20" rx="6" fill="url(#gDDoS)" stroke="#ef4444"/>
+    <title>DDoS: 10–60 seconds (traffic surge)</title>
+    <text x="516.667" y="189" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="10" fill="#3b0a0a" font-weight="600">DDoS</text>
+  </g>
+<!--Lateral movement: 5–30 minutes-->
+<!--x = 120 + (min/60)*680 => 5m->176.667, 30m->460-->
+  <g>
+    <rect x="176.667" y="260" width="283.333" height="30" rx="6" fill="url(#gLateral)" stroke="#10b981"/>
+    <title>Lateral movement: 5–30 minutes (authenticated access patterns)</title>
+    <text x="318.333" y="280" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="11" fill="#053321" font-weight="600">Lateral movement</text>
+  </g>
+<!--Callout-->
+  <line x1="460" y1="275" x2="520" y2="250" stroke="#10b981" stroke-dasharray="3 3"/>
+  <text x="524" y="246" font-family="Inter, Arial, sans-serif" font-size="10" fill="#374151">5–30m • privilege reuse</text>
+<!--Data exfiltration: 1–24 hours-->
+<!--x = 120 + (h/24)*680 => 1h->148.333, 24h->800-->
+  <g>
+    <rect x="148.333" y="380" width="651.667" height="30" rx="6" fill="url(#gExfil)" stroke="#f59e0b"/>
+    <title>Data exfiltration: 1–24 hours (sustained unusual outbound traffic)</title>
+    <text x="474.166" y="400" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="11" fill="#3b2402" font-weight="600">Data exfiltration</text>
+  </g>
+<!--Callout-->
+  <line x1="148.333" y1="395" x2="120" y2="365" stroke="#f59e0b" stroke-dasharray="3 3"/>
+  <text x="116" y="360" text-anchor="end" font-family="Inter, Arial, sans-serif" font-size="10" fill="#374151">starts ≥ 1h</text>
+<!--============ LEGEND ============-->
+  <g font-family="Inter, Arial, sans-serif" font-size="11" fill="#111827">
+    <g transform="translate(110,480)">
+      <rect x="0" y="-14" width="690" height="28" rx="8" fill="#fff" filter="url(#cardShadow)"/>
+      <g transform="translate(16,0)">
+        <rect x="0" y="-8" width="24" height="16" rx="4" fill="url(#gScan)" stroke="#2563eb"/>
+        <text x="32" y="4">Port scan (1–10s)</text>
+      </g>
+      <g transform="translate(190,0)">
+        <rect x="0" y="-8" width="24" height="16" rx="4" fill="url(#gDDoS)" stroke="#ef4444"/>
+        <text x="32" y="4">DDoS (10–60s)</text>
+      </g>
+      <g transform="translate(350,0)">
+        <rect x="0" y="-8" width="24" height="16" rx="4" fill="url(#gLateral)" stroke="#10b981"/>
+        <text x="32" y="4">Lateral movement (5–30m)</text>
+      </g>
+      <g transform="translate(550,0)">
+        <rect x="0" y="-8" width="24" height="16" rx="4" fill="url(#gExfil)" stroke="#f59e0b"/>
+        <text x="32" y="4">Exfiltration (1–24h)</text>
+      </g>
+    </g>
+  </g>
+</svg>

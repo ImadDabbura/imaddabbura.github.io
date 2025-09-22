@@ -551,6 +551,7 @@ Work in Progress — Feedback Welcome
 <p>ML systems exhibit characteristic problems that create constraints. In our anomaly detection system:</p>
 <p><strong>Feature Explosion</strong>: Every record could generate hundreds of features. Teams extract every conceivable signal because “it might help,” leading to computational bottlenecks. Our system computes duration, counts, rates, averages, variances, percentiles, unique values—most providing redundant information.</p>
 <p><strong>Time Window Confusion</strong>: Different patterns appear at different timescales. Port scans manifest in seconds, data exfiltration over hours. Our system computes features at every timescale simultaneously, multiplying computational cost. A single network flow generates features for 1-second, 10-second, 1-minute, 10-minute, and 1-hour windows.</p>
+<p><img src="images/multiscale-timeline.svg" class="img-fluid"></p>
 <p><strong>Baseline Computation Overhead</strong>: Anomaly detection often involves comparing current behavior to historical baselines. Our system maintains 30-day rolling baselines for thousands of entities. Updating these baselines consumes 40% of Tier-2 compute, yet most baselines change negligibly day-to-day.</p>
 <p>These patterns aren’t unique to network anomaly detection. Fraud detection systems face similar explosions with transaction features. Recommendation systems struggle with user-item interaction matrices. Forecasting systems wrestle with multiple seasonality computations.</p>
 </section>
@@ -560,6 +561,7 @@ Work in Progress — Feedback Welcome
 <section id="the-core-conflict-in-ml-systems" class="level3">
 <h3 class="anchored" data-anchor-id="the-core-conflict-in-ml-systems">The Core Conflict in ML Systems</h3>
 <p>Our Feature-Tier2 problem isn’t just “slow feature computation”—it’s a fundamental conflict between two necessary approaches, each essential for different reasons:</p>
+<p><img src="images/feature-extraction-conflict.svg" class="img-fluid"></p>
 <p>We’ve been stuck in this conflict for two years. When attacks slip through, we add features (moving left). When performance degrades, we remove features (moving right). The ML team pushes for accuracy while the platform team demands efficiency. Neither side is wrong—we need both capabilities.</p>
 </section>
 <section id="understanding-why-this-conflict-persists" class="level3">
@@ -589,7 +591,7 @@ Work in Progress — Feedback Welcome
 <section id="the-progressive-analysis-innovation" class="level3">
 <h3 class="anchored" data-anchor-id="the-progressive-analysis-innovation">The Progressive Analysis Innovation</h3>
 <p>Challenging our assumptions leads to a breakthrough: <strong>Progressive Analysis Architecture</strong>. Instead of analyzing all records uniformly, we process them in progressive stages, with each stage determining if deeper analysis is warranted.</p>
-<p><strong>Tier-1: Wire-speed Triage</strong> uses just 5 cheap features computable from basic record attributes (source, destination, port, protocol, size). A lightweight model identifies obviously benign traffic (regular HTTPS to known services, DNS queries to corporate servers). This processes at line rate with minimal compute.</p>
+<p><img src="images/progressive-analysis-architecture.svg" class="img-fluid"> <strong>Tier-1: Wire-speed Triage</strong> uses just 5 cheap features computable from basic record attributes (source, destination, port, protocol, size). A lightweight model identifies obviously benign traffic (regular HTTPS to known services, DNS queries to corporate servers). This processes at line rate with minimal compute.</p>
 <p><strong>Tier-2: Fast Analysis</strong> applies to traffic passing triage. Using 25 efficiently-computed features (connection patterns, volume metrics, simple statistics), it identifies additional normal traffic and flags potential concerns. This stage handles most legitimate but unusual traffic.</p>
 <p><strong>Tier-3: Deep Analysis</strong> examines suspicious traffic with 100 features including behavioral analysis and complex aggregations. This stage detects sophisticated attacks while maintaining manageable compute requirements by processing only 4% of traffic.</p>
 <p><strong>Forensic: Full Analysis</strong> performs exhaustive analysis on high-risk traffic, extracting all available features and correlating with historical patterns. This stage processes &lt;1% of traffic but provides comprehensive detection and rich context for analyst investigation.</p>
