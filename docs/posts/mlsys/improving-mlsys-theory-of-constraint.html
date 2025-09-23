@@ -615,7 +615,7 @@ Work in Progress — Feedback Welcome
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"next_stage_normal"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><strong>Feature Caching and Reuse</strong>: Features computed in early stages are cached and reused in later stages. We never compute the same feature twice. Fast stages compute prerequisite features for deeper stages, amortizing extraction cost.</p>
-<p><strong>Backpressure-Aware Adaptation</strong>: When stages experience backlog, the system adapts:</p>
+<p><img src="images/feature-dependency.svg" class="img-fluid"> <strong>Backpressure-Aware Adaptation</strong>: When stages experience backlog, the system adapts:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> adaptive_routing(record, stage_backlogs):</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    calibrated_risk <span class="op">=</span> assess_risk(record)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -656,6 +656,7 @@ T+30s: Full enrichment complete (detailed forensics, related events)</code></pre
 <section id="designing-the-minimum-viable-experiment-mve" class="level3">
 <h3 class="anchored" data-anchor-id="designing-the-minimum-viable-experiment-mve">Designing the Minimum Viable Experiment (MVE)</h3>
 <p>Before implementing progressive analysis across our entire system, we design a Minimum Viable Experiment to validate core assumptions. The experiment must test whether traffic can be accurately triaged and whether progressive analysis maintains detection quality while improving throughput.</p>
+<p><img src="images/experiment-design-pyramid.svg" class="img-fluid"></p>
 <p>The MVE focuses on the riskiest assumption: that Tier-1 triage can accurately identify benign traffic without missing attacks. If this fails, the entire architecture fails. We’ll test with realistic data containing known attacks to ensure we don’t create security holes.</p>
 </section>
 <section id="implementation-and-testing" class="level3">
@@ -685,6 +686,7 @@ T+30s: Full enrichment complete (detailed forensics, related events)</code></pre
 <span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><strong>Week 2: Pipeline Integration</strong></p>
 <p>We build the full progressive pipeline and test on recorded traffic with synthetic attack injection:</p>
+<p><img src="images/mve-experiment-timeline.svg" class="img-fluid"></p>
 <p>Testing uses a combination of public datasets (UNSW-NB15, CIC-IDS2017) with known limitations, augmented with synthetic attacks to ensure coverage of sophisticated threats:</p>
 <table class="table">
 <thead>
@@ -774,10 +776,15 @@ T+30s: Full enrichment complete (detailed forensics, related events)</code></pre
 <section id="production-rollout-strategy" class="level3">
 <h3 class="anchored" data-anchor-id="production-rollout-strategy">Production Rollout Strategy</h3>
 <p>With MVE success and iterations complete, we plan production rollout:</p>
-<p><strong>Phase 1: Shadow Mode Validation</strong> Run progressive pipeline parallel to existing system without taking actions. Compare decisions, measure divergence, validate no regressions. Success criteria: No P1 incidents missed for one week.</p>
-<p><strong>Phase 2: Canary Deployment</strong> Route 10% of traffic through progressive pipeline. A/B test alert quality with analysts—do they prefer the new alerts? Monitor all SLOs closely. Success: SLOs maintained, analyst preference ≥ baseline.</p>
-<p><strong>Phase 3: Gradual Expansion</strong> Increase traffic percentage: 10% → 25% → 50% → 75%, holding each level for 48 hours. Automated rollback triggers on any SLO violation. Success: All SLOs met at each level.</p>
-<p><strong>Phase 4: Full Production</strong> Complete migration with old system as instant fallback. Document runbooks, establish monitoring, train operations team. Success: One week at 100% with all SLOs met.</p>
+<p><img src="images/production-rollout-plan.svg" class="img-fluid"></p>
+<p><strong>Phase 1: Shadow Mode Validation</strong></p>
+<p>Run progressive pipeline parallel to existing system without taking actions. Compare decisions, measure divergence, validate no regressions. Success criteria: No P1 incidents missed for one week.</p>
+<p><strong>Phase 2: Canary Deployment</strong></p>
+<p>Route 10% of traffic through progressive pipeline. A/B test alert quality with analysts—do they prefer the new alerts? Monitor all SLOs closely. Success: SLOs maintained, analyst preference ≥ baseline.</p>
+<p><strong>Phase 3: Gradual Expansion</strong></p>
+<p>Increase traffic percentage: 10% → 25% → 50% → 75%, holding each level for 48 hours. Automated rollback triggers on any SLO violation. Success: All SLOs met at each level.</p>
+<p><strong>Phase 4: Full Production</strong></p>
+<p>Complete migration with old system as instant fallback. Document runbooks, establish monitoring, train operations team. Success: One week at 100% with all SLOs met.</p>
 </section>
 </section>
 <section id="common-pitfalls-and-prevention-strategies" class="level2">

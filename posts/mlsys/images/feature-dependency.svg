@@ -1,0 +1,89 @@
+<svg viewBox="0 0 700 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Title -->
+  <text x="350" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold">Feature Dependencies: Build Once, Reuse Many</text>
+  
+  <!-- Tier 1 Features -->
+  <g transform="translate(350, 100)">
+    <text x="0" y="-15" text-anchor="middle" font-size="14" font-weight="bold" fill="#2E7D32">TIER 1: Base Features (5ms)</text>
+    
+    <!-- Feature boxes -->
+    <rect x="-250" y="0" width="60" height="30" fill="#4CAF50" rx="3"/>
+    <text x="-220" y="20" text-anchor="middle" font-size="11" fill="white">src_ip</text>
+    
+    <rect x="-170" y="0" width="60" height="30" fill="#4CAF50" rx="3"/>
+    <text x="-140" y="20" text-anchor="middle" font-size="11" fill="white">dst_ip</text>
+    
+    <rect x="-90" y="0" width="60" height="30" fill="#4CAF50" rx="3"/>
+    <text x="-60" y="20" text-anchor="middle" font-size="11" fill="white">src_port</text>
+    
+    <rect x="-10" y="0" width="60" height="30" fill="#4CAF50" rx="3"/>
+    <text x="20" y="20" text-anchor="middle" font-size="11" fill="white">dst_port</text>
+    
+    <rect x="70" y="0" width="60" height="30" fill="#4CAF50" rx="3"/>
+    <text x="100" y="20" text-anchor="middle" font-size="11" fill="white">protocol</text>
+    
+    <rect x="150" y="0" width="70" height="30" fill="#4CAF50" rx="3"/>
+    <text x="185" y="20" text-anchor="middle" font-size="11" fill="white">timestamp</text>
+  </g>
+  
+  <!-- Cache Layer 1 -->
+  <rect x="100" y="160" width="500" height="35" fill="#FFF9C4" stroke="#F57C00" stroke-width="2" rx="5"/>
+  <text x="350" y="182" text-anchor="middle" font-size="12" fill="#E65100" font-weight="bold">CACHE: Tier-1 features stored (no recomputation)</text>
+  
+  <!-- Arrows showing dependencies -->
+  <path d="M 130 130 L 200 230" stroke="#666" stroke-width="2" opacity="0.5"/>
+  <path d="M 210 130 L 200 230" stroke="#666" stroke-width="2" opacity="0.5"/>
+  
+  <path d="M 290 130 L 320 230" stroke="#666" stroke-width="2" opacity="0.5"/>
+  <path d="M 370 130 L 320 230" stroke="#666" stroke-width="2" opacity="0.5"/>
+  
+  <path d="M 450 130 L 440 230" stroke="#666" stroke-width="2" opacity="0.5"/>
+  <path d="M 535 130 L 500 230" stroke="#666" stroke-width="2" opacity="0.5"/>
+  
+  <!-- Tier 2 Features -->
+  <g transform="translate(350, 250)">
+    <text x="0" y="-15" text-anchor="middle" font-size="14" font-weight="bold" fill="#E65100">TIER 2: Aggregated Features (50ms)</text>
+    
+    <rect x="-180" y="0" width="110" height="30" fill="#FF9800" rx="3"/>
+    <text x="-125" y="20" text-anchor="middle" font-size="11" fill="white">conn_count</text>
+    
+    <rect x="-50" y="0" width="100" height="30" fill="#FF9800" rx="3"/>
+    <text x="0" y="20" text-anchor="middle" font-size="11" fill="white">byte_rate</text>
+    
+    <rect x="70" y="0" width="100" height="30" fill="#FF9800" rx="3"/>
+    <text x="120" y="20" text-anchor="middle" font-size="11" fill="white">packet_rate</text>
+  </g>
+  
+  <!-- Cache Layer 2 -->
+  <rect x="100" y="310" width="500" height="35" fill="#FFF9C4" stroke="#F57C00" stroke-width="2" rx="5"/>
+  <text x="350" y="332" text-anchor="middle" font-size="12" fill="#E65100" font-weight="bold">CACHE: Tier-1 + Tier-2 features available</text>
+  
+  <!-- More arrows -->
+  <path d="M 225 280 L 280 380" stroke="#666" stroke-width="2" opacity="0.5"/>
+  <path d="M 350 280 L 350 380" stroke="#666" stroke-width="2" opacity="0.5"/>
+  <path d="M 470 280 L 420 380" stroke="#666" stroke-width="2" opacity="0.5"/>
+  
+  <!-- Tier 3 Features -->
+  <g transform="translate(350, 400)">
+    <text x="0" y="-15" text-anchor="middle" font-size="14" font-weight="bold" fill="#C62828">TIER 3: Behavioral Features (200ms)</text>
+    
+    <rect x="-90" y="0" width="120" height="30" fill="#F44336" rx="3"/>
+    <text x="-30" y="20" text-anchor="middle" font-size="11" fill="white">baseline_dev</text>
+    
+    <rect x="50" y="0" width="110" height="30" fill="#F44336" rx="3"/>
+    <text x="105" y="20" text-anchor="middle" font-size="11" fill="white">anomaly_score</text>
+  </g>
+  
+  <!-- Performance comparison -->
+  <g transform="translate(50, 460)">
+    <rect x="0" y="0" width="280" height="30" fill="#FFEBEE" stroke="#F44336" stroke-width="1" rx="5"/>
+    <text x="10" y="20" font-size="11" fill="#C62828" font-weight="bold">Without Cache:</text>
+    <text x="120" y="20" font-size="11" fill="#333">255ms total (recompute all)</text>
+  </g>
+  
+  <g transform="translate(370, 460)">
+    <rect x="0" y="0" width="280" height="30" fill="#E8F5E9" stroke="#4CAF50" stroke-width="1" rx="5"/>
+    <text x="10" y="20" font-size="11" fill="#2E7D32" font-weight="bold">With Cache:</text>
+    <text x="100" y="20" font-size="11" fill="#333">85ms (3x faster, 84% hit rate)</text>
+  </g>
+</svg>

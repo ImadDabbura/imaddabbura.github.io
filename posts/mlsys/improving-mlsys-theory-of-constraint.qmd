@@ -240,6 +240,8 @@ def route_record(record, stage_results):
 
 **Feature Caching and Reuse**: Features computed in early stages are cached and reused in later stages. We never compute the same feature twice. Fast stages compute prerequisite features for deeper stages, amortizing extraction cost.
 
+![](images/feature-dependency.svg)
+
 **Backpressure-Aware Adaptation**: When stages experience backlog, the system adapts:
 
 ```python
@@ -288,6 +290,8 @@ The pattern applies broadly to ML systems. Fraud detection can cheaply filter no
 
 Before implementing progressive analysis across our entire system, we design a Minimum Viable Experiment to validate core assumptions. The experiment must test whether traffic can be accurately triaged and whether progressive analysis maintains detection quality while improving throughput.
 
+![](images/experiment-design-pyramid.svg)
+
 The MVE focuses on the riskiest assumption: that Tier-1 triage can accurately identify benign traffic without missing attacks. If this fails, the entire architecture fails. We'll test with realistic data containing known attacks to ensure we don't create security holes.
 
 ### Implementation and Testing
@@ -323,6 +327,8 @@ results = {
 **Week 2: Pipeline Integration**
 
 We build the full progressive pipeline and test on recorded traffic with synthetic attack injection:
+
+![](images/mve-experiment-timeline.svg)
 
 Testing uses a combination of public datasets (UNSW-NB15, CIC-IDS2017) with known limitations, augmented with synthetic attacks to ensure coverage of sophisticated threats:
 
@@ -400,16 +406,22 @@ def prune_features(features, importance_scores, cost_scores):
 
 With MVE success and iterations complete, we plan production rollout:
 
+![](images/production-rollout-plan.svg)
+
 **Phase 1: Shadow Mode Validation**
+
 Run progressive pipeline parallel to existing system without taking actions. Compare decisions, measure divergence, validate no regressions. Success criteria: No P1 incidents missed for one week.
 
 **Phase 2: Canary Deployment**
+
 Route 10% of traffic through progressive pipeline. A/B test alert quality with analysts—do they prefer the new alerts? Monitor all SLOs closely. Success: SLOs maintained, analyst preference ≥ baseline.
 
 **Phase 3: Gradual Expansion**
+
 Increase traffic percentage: 10% → 25% → 50% → 75%, holding each level for 48 hours. Automated rollback triggers on any SLO violation. Success: All SLOs met at each level.
 
 **Phase 4: Full Production**
+
 Complete migration with old system as instant fallback. Document runbooks, establish monitoring, train operations team. Success: One week at 100% with all SLOs met.
 
 ## Common Pitfalls and Prevention Strategies
