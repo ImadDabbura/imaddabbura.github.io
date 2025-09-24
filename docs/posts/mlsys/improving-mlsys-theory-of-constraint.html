@@ -146,17 +146,13 @@ ga('send', {
 <link rel="stylesheet" href="../../styles.css">
 <meta property="og:title" content="Imad Dabbura - Make ML Systems Ship Again">
 <meta property="og:description" content="Use the Theory of Constraints to replace incremental tweaks with step-function wins.">
-<meta property="og:image" content="https://imaddabbura.github.io/posts/mlsys/images/network-anomaly-detection-toc.png">
+<meta property="og:image" content="https://imaddabbura.github.io/posts/mlsys/images/network-anomaly-detection-toc.svg">
 <meta property="og:site_name" content="Imad Dabbura">
-<meta property="og:image:height" content="959">
-<meta property="og:image:width" content="1028">
 <meta name="twitter:title" content="Imad Dabbura - Make ML Systems Ship Again">
 <meta name="twitter:description" content="Use the Theory of Constraints to replace incremental tweaks with step-function wins.">
-<meta name="twitter:image" content="https://imaddabbura.github.io/posts/mlsys/images/network-anomaly-detection-toc.png">
+<meta name="twitter:image" content="https://imaddabbura.github.io/posts/mlsys/images/network-anomaly-detection-toc.svg">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image-height" content="959">
-<meta name="twitter:image-width" content="1028">
 </head>
 
 <body class="nav-fixed">
@@ -288,7 +284,7 @@ ga('send', {
       <div>
       <div class="quarto-title-meta-heading">Modified</div>
       <div class="quarto-title-meta-contents">
-        <p class="date-modified">September 21, 2025</p>
+        <p class="date-modified">September 24, 2025</p>
       </div>
     </div>
       
@@ -365,19 +361,7 @@ ga('send', {
 
 
 
-<div class="callout callout-style-default callout-note callout-titled" title="Work in Progress — Feedback Welcome">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Work in Progress — Feedback Welcome
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>This article is actively evolving. If you spot gaps, disagree with a take, or have better patterns, I’d love to hear it. Suggestions and critiques are welcome.</p>
-</div>
-</div>
+<p><img src="images/network-anomaly-detection-toc.svg" class="img-fluid"></p>
 <section id="introduction-why-theory-of-constraints-matters-for-machine-learning" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-why-theory-of-constraints-matters-for-machine-learning">Introduction: Why Theory of Constraints Matters for Machine Learning</h2>
 <p>You burn six months “optimizing.” Swap in transformers. Squeeze another +0.5% accuracy. Rewrite the feature pipeline. Add a shiny GPU cluster. And still: alert fatigue, missed incidents, and latency that kills real-time response.</p>
@@ -615,7 +599,8 @@ Work in Progress — Feedback Welcome
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"next_stage_normal"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><strong>Feature Caching and Reuse</strong>: Features computed in early stages are cached and reused in later stages. We never compute the same feature twice. Fast stages compute prerequisite features for deeper stages, amortizing extraction cost.</p>
-<p><img src="images/feature-dependency.svg" class="img-fluid"> <strong>Backpressure-Aware Adaptation</strong>: When stages experience backlog, the system adapts:</p>
+<p><img src="images/feature-dependency.svg" class="img-fluid"></p>
+<p><strong>Backpressure-Aware Adaptation</strong>: When stages experience backlog, the system adapts:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> adaptive_routing(record, stage_backlogs):</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    calibrated_risk <span class="op">=</span> assess_risk(record)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    </span>
