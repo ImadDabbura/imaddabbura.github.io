@@ -1,0 +1,14 @@
+---
+title: "Activations, Not Parameters, Are the Memory Bottleneck in CNNs"
+date: 2025-04-26
+categories: Deep Learning, Efficient-ML
+---
+
+In CNN training/inference, activations are the memory bottleneck, not parameters. Early layers have high-resolution feature maps (high activation memory, low parameter count) while later layers have many channels but small spatial dimensions (high parameter count, low activation memory).
+
+Examples:
+
+- **Early layer:** 224×224×64 feature map = ~3.2M activations, but a 3×3 conv (3→64 channels) has only ~1.7K parameters
+- **Late layer:** 7×7×512 feature map = ~25K activations, but a 3×3 conv (512→512 channels) has ~2.4M parameters
+
+During training with batch size 32, that early layer needs ~400MB just for activations (for backprop), while its weights need <1MB!
