@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2025-04-26">
+<meta name="dcterms.date" content="2025-06-16">
 
-<title>Imad Dabbura - Activations, Not Parameters, Are the Memory Bottleneck in CNNs</title>
+<title>Imad Dabbura - Overparameterization Smooth Optimization</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -110,10 +110,10 @@ ga('send', {
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Imad Dabbura - Activations, Not Parameters, Are the Memory Bottleneck in CNNs">
+<meta property="og:title" content="Imad Dabbura - Overparameterization Smooth Optimization">
 <meta property="og:description" content="">
 <meta property="og:site_name" content="Imad Dabbura">
-<meta name="twitter:title" content="Imad Dabbura - Activations, Not Parameters, Are the Memory Bottleneck in CNNs">
+<meta name="twitter:title" content="Imad Dabbura - Overparameterization Smooth Optimization">
 <meta name="twitter:description" content="">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
@@ -216,7 +216,7 @@ ga('send', {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Activations, Not Parameters, Are the Memory Bottleneck in CNNs</h1>
+      <h1 class="title">Overparameterization Smooth Optimization</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">Deep Learning</div>
                 <div class="quarto-category">Efficient-ML</div>
@@ -237,7 +237,7 @@ ga('send', {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">April 26, 2025</p>
+        <p class="date">June 16, 2025</p>
       </div>
     </div>
     
@@ -256,13 +256,7 @@ ga('send', {
 
 
 
-<p>In CNN training/inference, activations are the memory bottleneck, not parameters. Early layers have high-resolution feature maps (high activation memory, low parameter count) while later layers have many channels but small spatial dimensions (high parameter count, low activation memory).</p>
-<p>Examples:</p>
-<ul>
-<li><strong>Early layer:</strong> 224×224×64 feature map = ~3.2M activations, but a 3×3 conv (3→64 channels) has only ~1.7K parameters</li>
-<li><strong>Late layer:</strong> 7×7×512 feature map = ~25K activations, but a 3×3 conv (512→512 channels) has ~2.4M parameters</li>
-</ul>
-<p>During training with batch size 32, that early layer needs ~400MB just for activations (for backprop), while its weights need &lt;1MB!</p>
+<p>Training with more parameters than seemingly necessary makes deep networks easier to optimize. Extra parameters smooth the loss landscape, improve gradient flow, and provide many redundant pathways, so gradient descent is less likely to get stuck in poor minima. Even though large models can interpolate data, optimizers like SGD tend to find simple, generalizable solutions. After training, the redundant parameters can be pruned, leaving a smaller, efficient model without losing accuracy.</p>
 
 
 
