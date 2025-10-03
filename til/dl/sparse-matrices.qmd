@@ -1,0 +1,82 @@
+
+---
+title: "Sparse Matrix Formats and the Cost of Data-Dependent Memory Access"
+date: 2025-04-03
+categories: ["Deep Learning", "Efficient-ML"]
+---
+
+When dealing with large sparse matrices — matrices where most entries are
+zero — storing and computing with them in dense form wastes memory and compute.
+That’s why specialized **sparse formats** (in-memory only) exist. Three of the most common are
+**CSR (Compressed Sparse Row)**, **CSC (Compressed Sparse Column)**, and **COO
+(Coordinate format).**
+
+## Sparse Storage Formats
+
+Let’s use the following matrix as a running example:
+
+$$
+A =
+\begin{bmatrix}
+1 & 0 & 0 & 2 \\
+0 & 0 & 3 & 0 \\
+4 & 0 & 5 & 6
+\end{bmatrix}
+$$
+
+**1. CSR (Compressed Sparse Row)**
+
+Stores nonzeros row by row:
+
+* `values`: nonzeros in row order -> $[1, 2, 3, 4, 5, 6]$
+* `col_idx`: column index for each nonzero -> $[0, 3, 2, 0, 2, 3]$
+* `row_ptr`: where each row starts in values with the last value equal to the
+  total number of nonzero values in the matrix -> $[0, 2, 3, 6]$
+    - In other words, each number in `row_ptr` tells us the cumulative number of
+      nonzeros up to that row. The last value (sentinel) is needed to know how
+      to slice the last row correctly
+    - Each row has an entry in row_ptr even if it is all zeros -> `len(row_ptr) = number of rows + 1`
+
+Quickly jump to all nonzeros in a given row.
+
+**2. CSC (Compressed Sparse Column)**
+
+Stores values column by column:
+
+* `values`: nonzeros in column order -> $[1, 4, 3, 5, 2, 6]$
+* `row_idx`: row index for each nonzero -> $[0, 2, 1, 2, 0, 2]$
+* `col_ptr`: where each column starts in values -> $[0, 2, 2, 4, 6]$
+
+Quickly jump to all nonzeros in a given column.
+
+**3. COO (Coordinate format)**
+
+Stores each nonzero explicitly as a tuple:
+
+* row indices: row index of each nonzero -> $[0, 0, 1, 2, 2, 2]$
+* col indices: column index of each nonzero -> $[0, 3, 2, 0, 2, 3]$
+* values: nonzero values -> $[1, 2, 3, 4, 5, 6]$
+
+Very flexible, simple to construct, but less efficient for arithmetic.
+
+## Data-Dependent Memory Access
+
+While these formats save memory and avoid wasted computation on zeros, they introduce a new problem: **irregular memory access.**
+
+* In dense matrices, elements are stored in predictable row-major or column-major order. Access is **regular** and cache-friendly.
+* In sparse formats, operations require **following index arrays**. For example, in CSR sparse-matrix–vector multiply:
+
+```python
+for row in range(len(row_ptr) - 1):
+    start = row_ptr[row]
+    end = row_ptr[row + 1]
+    for idx in range(start, end):
+        y[row] += values[idx] * x[col_idx[idx]]
+```
+
+Notice the indirect access: `x[col_idx[idx]]`. The position depends on the sparsity pattern, which means you can’t rely on fixed strides or sequential memory access (for the `x` vector ONLY since `values` are accessed sequentially).
+
+## Takeaway
+
+Sparse formats like CSR, CSC, and COO are essential to handle large sparse matrices efficiently. They compress storage and reduce computation — but the cost is **data-dependent memory access**, which can bottleneck performance. This is why modern research often pushes for **structured sparsity patterns**: they strike a balance between compression and predictable, hardware-friendly memory access.
+
