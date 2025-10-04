@@ -1,0 +1,104 @@
+<svg viewBox="0 0 1000 850" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1000" height="850" fill="#f8f9fa"/>
+  
+  <!-- Title -->
+  <text x="500" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#2c3e50">Error Analysis Workflow: Understanding Why Your Model Fails</text>
+  <text x="500" y="55" text-anchor="middle" font-size="14" fill="#7f8c8d">A systematic approach to breaking through performance plateaus</text>
+  
+  <!-- Starting point -->
+  <ellipse cx="500" cy="110" rx="110" ry="35" fill="#e67e22" opacity="0.9"/>
+  <text x="500" y="105" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Model Plateaued</text>
+  <text x="500" y="122" text-anchor="middle" font-size="11" fill="white">75% accuracy, need 85%</text>
+  
+  <defs>
+    <marker id="arrow-error" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#7f8c8d"/>
+    </marker>
+  </defs>
+  
+  <!-- Step 1: Collect errors -->
+  <path d="M 500 145 L 500 185" stroke="#7f8c8d" stroke-width="2" marker-end="url(#arrow-error)"/>
+  
+  <rect x="360" y="195" width="280" height="70" fill="#3498db" opacity="0.85" rx="10"/>
+  <text x="500" y="218" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Step 1: Collect All Errors</text>
+  <text x="500" y="237" text-anchor="middle" font-size="11" fill="white">For each validation example where</text>
+  <text x="500" y="253" text-anchor="middle" font-size="11" fill="white">prediction ≠ true_label, save full details</text>
+  
+  <!-- Step 2: Quantitative Analysis -->
+  <path d="M 500 265 L 500 305" stroke="#7f8c8d" stroke-width="2" marker-end="url(#arrow-error)"/>
+  
+  <rect x="320" y="315" width="360" height="110" fill="#9b59b6" opacity="0.85" rx="10"/>
+  <text x="500" y="338" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Step 2: Quantitative Analysis</text>
+  
+  <g id="quantitative">
+    <rect x="340" y="350" width="140" height="60" fill="white" opacity="0.9" rx="5"/>
+    <text x="410" y="368" text-anchor="middle" font-size="11" font-weight="bold" fill="#8e44ad">Confusion Matrix</text>
+    <text x="345" y="385" font-size="9" fill="#2c3e50">Which classes confused?</text>
+    <text x="345" y="398" font-size="9" fill="#2c3e50">e.g., Cat ↔ Dog: 45 errors</text>
+    
+    <rect x="500" y="350" width="160" height="60" fill="white" opacity="0.9" rx="5"/>
+    <text x="580" y="368" text-anchor="middle" font-size="11" font-weight="bold" fill="#8e44ad">Confidence Analysis</text>
+    <text x="505" y="385" font-size="9" fill="#2c3e50">High confidence errors?</text>
+    <text x="505" y="398" font-size="9" fill="#2c3e50">→ Model is systematically wrong</text>
+  </g>
+  
+  <!-- Step 3: Qualitative Analysis -->
+  <path d="M 500 425 L 500 465" stroke="#7f8c8d" stroke-width="2" marker-end="url(#arrow-error)"/>
+  
+  <rect x="320" y="475" width="360" height="90" fill="#16a085" opacity="0.85" rx="10"/>
+  <text x="500" y="498" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Step 3: Manual Inspection</text>
+  <text x="500" y="517" text-anchor="middle" font-size="11" fill="white">Look at 20-50 random errors yourself</text>
+  <text x="330" y="537" font-size="10" fill="white">Ask: "If I were the model, could I get this right?"</text>
+  <text x="330" y="552" font-size="10" fill="white">Look for patterns: similar backgrounds? edge cases?</text>
+  
+  <!-- Branches based on findings -->
+  <path d="M 380 565 L 220 630" stroke="#7f8c8d" stroke-width="2" marker-end="url(#arrow-error)"/>
+  <path d="M 500 565 L 500 630" stroke="#7f8c8d" stroke-width="2" marker-end="url(#arrow-error)"/>
+  <path d="M 620 565 L 780 630" stroke="#7f8c8d" stroke-width="2" marker-end="url(#arrow-error)"/>
+  
+  <!-- Finding 1: Missing Information -->
+  <rect x="40" y="640" width="260" height="90" fill="#e74c3c" opacity="0.2" rx="8" stroke="#e74c3c" stroke-width="2"/>
+  <text x="170" y="663" text-anchor="middle" font-size="12" font-weight="bold" fill="#c0392b">Finding: Model Lacks Info</text>
+  <text x="50" y="683" font-size="10" fill="#2c3e50">"I can't tell the difference either without</text>
+  <text x="50" y="698" font-size="10" fill="#2c3e50">feature X" → Need better features</text>
+  <text x="50" y="718" font-size="9" fill="#27ae60" font-weight="bold">→ Action: Add discriminative features</text>
+  
+  <!-- Finding 2: Data Issue -->
+  <rect x="330" y="640" width="260" height="90" fill="#f39c12" opacity="0.2" rx="8" stroke="#f39c12" stroke-width="2"/>
+  <text x="460" y="663" text-anchor="middle" font-size="12" font-weight="bold" fill="#d68910">Finding: Data Problems</text>
+  <text x="340" y="683" font-size="10" fill="#2c3e50">Label noise: "This label is wrong!"</text>
+  <text x="340" y="698" font-size="10" fill="#2c3e50">Class imbalance: rare cases always wrong</text>
+  <text x="340" y="718" font-size="9" fill="#27ae60" font-weight="bold">→ Action: Clean data, balance classes</text>
+  
+  <!-- Finding 3: Model Capacity -->
+  <rect x="620" y="640" width="260" height="90" fill="#9b59b6" opacity="0.2" rx="8" stroke="#9b59b6" stroke-width="2"/>
+  <text x="750" y="663" text-anchor="middle" font-size="12" font-weight="bold" fill="#7d3c98">Finding: Capacity Issue</text>
+  <text x="630" y="683" font-size="10" fill="#2c3e50">Errors on complex patterns model</text>
+  <text x="630" y="698" font-size="10" fill="#2c3e50">can't represent with current architecture</text>
+  <text x="630" y="718" font-size="9" fill="#27ae60" font-weight="bold">→ Action: Use more powerful model</text>
+  
+  <!-- Step 4: Feature Analysis -->
+  <rect x="30" y="750" width="280" height="80" fill="#fff3cd" stroke="#f39c12" stroke-width="2" rx="8"/>
+  <text x="170" y="773" text-anchor="middle" font-size="12" font-weight="bold" fill="#856404">Feature Analysis Deep Dive</text>
+  <text x="40" y="793" font-size="9" fill="#2c3e50">Group errors by feature values:</text>
+  <text x="45" y="808" font-size="9" fill="#7f8c8d">• Do errors share age range?</text>
+  <text x="45" y="821" font-size="9" fill="#7f8c8d">• All from specific region?</text>
+  
+  <!-- Step 5: Iterative refinement -->
+  <rect x="350" y="750" width="300" height="80" fill="#e8f4f8" stroke="#3498db" stroke-width="2" rx="8"/>
+  <text x="500" y="773" text-anchor="middle" font-size="12" font-weight="bold" fill="#2c3e50">Test Your Hypothesis</text>
+  <text x="360" y="793" font-size="10" fill="#2c3e50">Based on error analysis, make targeted fix:</text>
+  <text x="365" y="808" font-size="9" fill="#7f8c8d">1. Implement the fix (e.g., add feature)</text>
+  <text x="365" y="821" font-size="9" fill="#7f8c8d">2. Re-train and re-evaluate errors</text>
+  
+  <!-- Example case study box -->
+  <rect x="690" y="750" width="280" height="80" fill="#d5f4e6" stroke="#27ae60" stroke-width="2" rx="8"/>
+  <text x="830" y="773" text-anchor="middle" font-size="12" font-weight="bold" fill="#196f3d">Real Example</text>
+  <text x="700" y="790" font-size="9" fill="#2c3e50">Fraud detection: errors on new merchants</text>
+  <text x="700" y="803" font-size="9" fill="#2c3e50">→ Added "merchant_age" feature</text>
+  <text x="700" y="816" font-size="9" fill="#2c3e50">→ Accuracy: 75% → 82%</text>
+  
+  <!-- Bottom insight -->
+  <rect x="50" y="845" width="900" height="1" fill="#bdc3c7"/>
+</svg>

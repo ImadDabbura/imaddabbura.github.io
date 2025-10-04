@@ -1,0 +1,117 @@
+<svg viewBox="0 0 900 700" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="900" height="700" fill="#f8f9fa"/>
+  
+  <!-- Title -->
+  <text x="450" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#2c3e50">Problem Reformulation: Customer Lifetime Value Prediction</text>
+  <text x="450" y="55" text-anchor="middle" font-size="14" fill="#7f8c8d">Same business goal, different ML framings</text>
+  
+  <!-- Central Problem -->
+  <ellipse cx="450" cy="120" rx="120" ry="45" fill="#e94b3c" opacity="0.9"/>
+  <text x="450" y="115" text-anchor="middle" font-size="14" font-weight="bold" fill="white">Business Problem:</text>
+  <text x="450" y="133" text-anchor="middle" font-size="13" fill="white">Predict Customer Value</text>
+  
+  <!-- Classification Framing (top-left) -->
+  <g id="classification">
+    <rect x="50" y="200" width="280" height="210" fill="white" stroke="#4a90e2" stroke-width="3" rx="10"/>
+    <text x="190" y="230" text-anchor="middle" font-size="16" font-weight="bold" fill="#4a90e2">Classification</text>
+    
+    <!-- Content -->
+    <text x="60" y="260" font-size="12" fill="#2c3e50" font-weight="bold">Framing:</text>
+    <text x="60" y="280" font-size="11" fill="#2c3e50">Predict customer segment:</text>
+    <text x="70" y="297" font-size="10" fill="#7f8c8d">• Low value (&lt;$100)</text>
+    <text x="70" y="312" font-size="10" fill="#7f8c8d">• Medium ($100-$1000)</text>
+    <text x="70" y="327" font-size="10" fill="#7f8c8d">• High (&gt;$1000)</text>
+    
+    <text x="60" y="350" font-size="11" fill="#27ae60" font-weight="bold">✓ Pros:</text>
+    <text x="70" y="365" font-size="9" fill="#7f8c8d">Simple, interpretable</text>
+    
+    <text x="60" y="380" font-size="11" fill="#e74c3c" font-weight="bold">✗ Cons:</text>
+    <text x="70" y="395" font-size="9" fill="#7f8c8d">Loses granularity, arbitrary buckets</text>
+  </g>
+  
+  <!-- Regression Framing (top-right) -->
+  <g id="regression">
+    <rect x="570" y="200" width="280" height="210" fill="white" stroke="#9b59b6" stroke-width="3" rx="10"/>
+    <text x="710" y="230" text-anchor="middle" font-size="16" font-weight="bold" fill="#9b59b6">Regression</text>
+    
+    <!-- Content -->
+    <text x="580" y="260" font-size="12" fill="#2c3e50" font-weight="bold">Framing:</text>
+    <text x="580" y="280" font-size="11" fill="#2c3e50">Predict exact dollar amount:</text>
+    <text x="590" y="297" font-size="10" fill="#7f8c8d">CLV = Σ(revenue) over lifetime</text>
+    <text x="590" y="312" font-size="10" fill="#7f8c8d">Output: continuous $0-$10,000+</text>
+    
+    <text x="580" y="340" font-size="11" fill="#27ae60" font-weight="bold">✓ Pros:</text>
+    <text x="590" y="355" font-size="9" fill="#7f8c8d">Precise predictions</text>
+    
+    <text x="580" y="370" font-size="11" fill="#e74c3c" font-weight="bold">✗ Cons:</text>
+    <text x="590" y="385" font-size="9" fill="#7f8c8d">Long-tailed distribution problematic,</text>
+    <text x="590" y="397" font-size="9" fill="#7f8c8d">sensitive to outliers</text>
+  </g>
+  
+  <!-- Survival Analysis Framing (bottom-left) -->
+  <g id="survival">
+    <rect x="50" y="440" width="280" height="225" fill="white" stroke="#50c878" stroke-width="3" rx="10"/>
+    <text x="190" y="470" text-anchor="middle" font-size="16" font-weight="bold" fill="#50c878">Survival Analysis</text>
+    
+    <!-- Content -->
+    <text x="60" y="500" font-size="12" fill="#2c3e50" font-weight="bold">Framing:</text>
+    <text x="60" y="520" font-size="11" fill="#2c3e50">Model two aspects:</text>
+    <text x="70" y="537" font-size="10" fill="#7f8c8d">1. Time until churn (hazard)</text>
+    <text x="70" y="552" font-size="10" fill="#7f8c8d">2. Revenue per period</text>
+    <text x="60" y="572" font-size="10" fill="#7f8c8d">CLV = Revenue × P(active | time)</text>
+    
+    <text x="60" y="595" font-size="11" fill="#27ae60" font-weight="bold">✓ Pros:</text>
+    <text x="70" y="610" font-size="9" fill="#7f8c8d">Natural framing, handles censoring,</text>
+    <text x="70" y="622" font-size="9" fill="#7f8c8d">models underlying process</text>
+    
+    <text x="60" y="640" font-size="11" fill="#e74c3c" font-weight="bold">✗ Cons:</text>
+    <text x="70" y="655" font-size="9" fill="#7f8c8d">More complex to implement</text>
+  </g>
+  
+  <!-- Reinforcement Learning Framing (bottom-right) -->
+  <g id="reinforcement">
+    <rect x="570" y="440" width="280" height="225" fill="white" stroke="#f39c12" stroke-width="3" rx="10"/>
+    <text x="710" y="470" text-anchor="middle" font-size="16" font-weight="bold" fill="#f39c12">Reinforcement Learning</text>
+    
+    <!-- Content -->
+    <text x="580" y="500" font-size="12" fill="#2c3e50" font-weight="bold">Framing:</text>
+    <text x="580" y="520" font-size="11" fill="#2c3e50">Optimize intervention policy:</text>
+    <text x="590" y="537" font-size="10" fill="#7f8c8d">State: customer behavior</text>
+    <text x="590" y="552" font-size="10" fill="#7f8c8d">Actions: discounts, emails, offers</text>
+    <text x="590" y="567" font-size="10" fill="#7f8c8d">Reward: incremental revenue</text>
+    
+    <text x="580" y="590" font-size="11" fill="#27ae60" font-weight="bold">✓ Pros:</text>
+    <text x="590" y="605" font-size="9" fill="#7f8c8d">Action-oriented, optimizes for</text>
+    <text x="590" y="617" font-size="9" fill="#7f8c8d">business objective directly</text>
+    
+    <text x="580" y="635" font-size="11" fill="#e74c3c" font-weight="bold">✗ Cons:</text>
+    <text x="590" y="650" font-size="9" fill="#7f8c8d">Requires experimentation infra,</text>
+    <text x="590" y="662" font-size="9" fill="#7f8c8d">sample inefficient</text>
+  </g>
+  
+  <!-- Transformation arrows -->
+  <defs>
+    <marker id="arrow-transform" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#7f8c8d"/>
+    </marker>
+  </defs>
+  
+  <!-- From center to approaches -->
+  <path d="M 370 140 L 190 200" stroke="#7f8c8d" stroke-width="2" marker-end="url(#arrow-transform)"/>
+  <path d="M 530 140 L 710 200" stroke="#7f8c8d" stroke-width="2" marker-end="url(#arrow-transform)"/>
+  <path d="M 400 155 L 190 440" stroke="#7f8c8d" stroke-width="2" marker-end="url(#arrow-transform)"/>
+  <path d="M 500 155 L 710 440" stroke="#7f8c8d" stroke-width="2" marker-end="url(#arrow-transform)"/>
+  
+  <!-- Cross-connections (showing you can transform between framings) -->
+  <path d="M 330 300 L 570 300" stroke="#95a5a6" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.5"/>
+  <path d="M 330 550 L 570 550" stroke="#95a5a6" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.5"/>
+  <path d="M 190 400 L 190 440" stroke="#95a5a6" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.5"/>
+  <path d="M 710 400 L 710 440" stroke="#95a5a6" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.5"/>
+  
+  <!-- Key Insight Box -->
+  <rect x="350" y="175" width="200" height="50" fill="#fff3cd" stroke="#f39c12" stroke-width="2" rx="5"/>
+  <text x="450" y="195" text-anchor="middle" font-size="11" font-weight="bold" fill="#856404">Each framing enables</text>
+  <text x="450" y="210" text-anchor="middle" font-size="11" fill="#856404">different techniques and</text>
+  <text x="450" y="222" text-anchor="middle" font-size="11" fill="#856404">reveals different aspects</text>
+</svg>

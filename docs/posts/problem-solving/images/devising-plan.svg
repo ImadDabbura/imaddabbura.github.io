@@ -1,0 +1,254 @@
+<svg viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f0f4ff;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#fef5ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f0fff4;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="brainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:0.8" />
+    </linearGradient>
+    
+    <linearGradient id="networkGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f093fb;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#f5576c;stop-opacity:0.6" />
+    </linearGradient>
+    
+    <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4facfe;stop-opacity:0.3" />
+      <stop offset="50%" style="stop-color:#00f2fe;stop-opacity:0.5" />
+      <stop offset="100%" style="stop-color:#43e97b;stop-opacity:0.3" />
+    </linearGradient>
+    
+    <radialGradient id="glowGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#4facfe;stop-opacity:0" />
+    </radialGradient>
+    
+    <!-- Filters for effects -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="softShadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="2" dy="2" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="600" fill="url(#bgGradient)"/>
+  
+  <!-- Decorative geometric shapes in background -->
+  <circle cx="100" cy="100" r="80" fill="#667eea" opacity="0.05"/>
+  <circle cx="1100" cy="500" r="100" fill="#f5576c" opacity="0.05"/>
+  <rect x="800" y="50" width="150" height="150" fill="#43e97b" opacity="0.03" transform="rotate(45 875 125)"/>
+  <circle cx="200" cy="500" r="60" fill="#00f2fe" opacity="0.06"/>
+  
+  <!-- Grid pattern overlay -->
+  <g opacity="0.03">
+    <path d="M 0 0 L 1200 0 L 1200 600 L 0 600 Z" fill="none" stroke="#667eea" stroke-width="1" stroke-dasharray="20,20"/>
+    <line x1="0" y1="150" x2="1200" y2="150" stroke="#667eea" stroke-width="0.5"/>
+    <line x1="0" y1="300" x2="1200" y2="300" stroke="#667eea" stroke-width="0.5"/>
+    <line x1="0" y1="450" x2="1200" y2="450" stroke="#667eea" stroke-width="0.5"/>
+    <line x1="300" y1="0" x2="300" y2="600" stroke="#667eea" stroke-width="0.5"/>
+    <line x1="600" y1="0" x2="600" y2="600" stroke="#667eea" stroke-width="0.5"/>
+    <line x1="900" y1="0" x2="900" y2="600" stroke="#667eea" stroke-width="0.5"/>
+  </g>
+  
+  <!-- Left side: Strategic Mind/Brain -->
+  <g id="strategic-mind" transform="translate(150, 200)">
+    <!-- Abstract brain representation -->
+    <ellipse cx="0" cy="0" rx="90" ry="100" fill="url(#brainGradient)" opacity="0.2" filter="url(#softShadow)"/>
+    
+    <!-- Neural pathways inside brain -->
+    <g opacity="0.6">
+      <path d="M -50 -40 Q -20 -30 0 -50 Q 20 -30 50 -40" stroke="#667eea" stroke-width="2" fill="none"/>
+      <path d="M -60 0 Q -30 10 0 0 Q 30 10 60 0" stroke="#764ba2" stroke-width="2" fill="none"/>
+      <path d="M -50 40 Q -20 30 0 50 Q 20 30 50 40" stroke="#667eea" stroke-width="2" fill="none"/>
+      <circle cx="-50" cy="-40" r="4" fill="#667eea"/>
+      <circle cx="0" cy="-50" r="4" fill="#764ba2"/>
+      <circle cx="50" cy="-40" r="4" fill="#667eea"/>
+      <circle cx="-60" cy="0" r="4" fill="#764ba2"/>
+      <circle cx="0" cy="0" r="5" fill="#667eea" filter="url(#glow)"/>
+      <circle cx="60" cy="0" r="4" fill="#764ba2"/>
+      <circle cx="-50" cy="40" r="4" fill="#667eea"/>
+      <circle cx="0" cy="50" r="4" fill="#764ba2"/>
+      <circle cx="50" cy="40" r="4" fill="#667eea"/>
+    </g>
+    
+    <!-- Orbiting particles suggesting thinking -->
+    <circle cx="-70" cy="-60" r="3" fill="#4facfe" opacity="0.6">
+      <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="70" cy="-60" r="3" fill="#f093fb" opacity="0.6">
+      <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="-360 0 0" dur="10s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="-70" cy="60" r="3" fill="#43e97b" opacity="0.6">
+      <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="12s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- Center: Flowing connections (the planning process) -->
+  <g id="flow-connections">
+    <!-- Main flow paths -->
+    <path d="M 250 200 Q 400 180 550 200" stroke="url(#flowGradient)" stroke-width="3" fill="none" opacity="0.6">
+      <animate attributeName="stroke-dasharray" from="0,1000" to="1000,0" dur="3s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 250 250 Q 400 250 550 250" stroke="url(#flowGradient)" stroke-width="4" fill="none" opacity="0.7">
+      <animate attributeName="stroke-dasharray" from="0,1000" to="1000,0" dur="2.5s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 250 300 Q 400 320 550 300" stroke="url(#flowGradient)" stroke-width="3" fill="none" opacity="0.6">
+      <animate attributeName="stroke-dasharray" from="0,1000" to="1000,0" dur="3.5s" repeatCount="indefinite"/>
+    </path>
+    
+    <!-- Data particles flowing -->
+    <circle cx="250" cy="200" r="4" fill="#4facfe" opacity="0.8">
+      <animate attributeName="cx" from="250" to="550" dur="3s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.2;0.8;0.2" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="250" cy="250" r="5" fill="#00f2fe" opacity="0.9">
+      <animate attributeName="cx" from="250" to="550" dur="2.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.3;0.9;0.3" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="250" cy="300" r="4" fill="#43e97b" opacity="0.8">
+      <animate attributeName="cx" from="250" to="550" dur="3.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.2;0.8;0.2" dur="3.5s" repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- Intermediate nodes -->
+    <g opacity="0.4">
+      <circle cx="350" cy="200" r="6" fill="#667eea"/>
+      <circle cx="400" cy="250" r="8" fill="#764ba2"/>
+      <circle cx="450" cy="300" r="6" fill="#667eea"/>
+    </g>
+  </g>
+  
+  <!-- Right side: ML Architecture/Network -->
+  <g id="ml-architecture" transform="translate(850, 250)">
+    <!-- Neural network layers -->
+    <g id="input-layer">
+      <circle cx="-100" cy="-80" r="8" fill="#f093fb" opacity="0.7"/>
+      <circle cx="-100" cy="-40" r="8" fill="#f093fb" opacity="0.7"/>
+      <circle cx="-100" cy="0" r="8" fill="#f093fb" opacity="0.7"/>
+      <circle cx="-100" cy="40" r="8" fill="#f093fb" opacity="0.7"/>
+      <circle cx="-100" cy="80" r="8" fill="#f093fb" opacity="0.7"/>
+    </g>
+    
+    <g id="hidden-layer-1">
+      <circle cx="-30" cy="-60" r="10" fill="#667eea" opacity="0.6"/>
+      <circle cx="-30" cy="-20" r="10" fill="#667eea" opacity="0.6"/>
+      <circle cx="-30" cy="20" r="10" fill="#667eea" opacity="0.6"/>
+      <circle cx="-30" cy="60" r="10" fill="#667eea" opacity="0.6"/>
+    </g>
+    
+    <g id="hidden-layer-2">
+      <circle cx="40" cy="-40" r="10" fill="#4facfe" opacity="0.6"/>
+      <circle cx="40" cy="0" r="10" fill="#4facfe" opacity="0.6"/>
+      <circle cx="40" cy="40" r="10" fill="#4facfe" opacity="0.6"/>
+    </g>
+    
+    <g id="output-layer">
+      <circle cx="110" cy="-20" r="12" fill="#43e97b" opacity="0.8" filter="url(#glow)"/>
+      <circle cx="110" cy="20" r="12" fill="#43e97b" opacity="0.8" filter="url(#glow)"/>
+    </g>
+    
+    <!-- Connections between layers -->
+    <g stroke="#667eea" stroke-width="1" opacity="0.2">
+      <line x1="-100" y1="-80" x2="-30" y2="-60"/>
+      <line x1="-100" y1="-80" x2="-30" y2="-20"/>
+      <line x1="-100" y1="-40" x2="-30" y2="-60"/>
+      <line x1="-100" y1="-40" x2="-30" y2="-20"/>
+      <line x1="-100" y1="0" x2="-30" y2="20"/>
+      <line x1="-100" y1="40" x2="-30" y2="20"/>
+      <line x1="-100" y1="40" x2="-30" y2="60"/>
+      <line x1="-100" y1="80" x2="-30" y2="60"/>
+      
+      <line x1="-30" y1="-60" x2="40" y2="-40"/>
+      <line x1="-30" y1="-60" x2="40" y2="0"/>
+      <line x1="-30" y1="-20" x2="40" y2="-40"/>
+      <line x1="-30" y1="-20" x2="40" y2="0"/>
+      <line x1="-30" y1="20" x2="40" y2="0"/>
+      <line x1="-30" y1="20" x2="40" y2="40"/>
+      <line x1="-30" y1="60" x2="40" y2="40"/>
+      
+      <line x1="40" y1="-40" x2="110" y2="-20"/>
+      <line x1="40" y1="0" x2="110" y2="-20"/>
+      <line x1="40" y1="0" x2="110" y2="20"/>
+      <line x1="40" y1="40" x2="110" y2="20"/>
+    </g>
+    
+    <!-- Activation visualization -->
+    <g opacity="0.3">
+      <circle cx="-30" cy="-20" r="15" fill="#667eea" opacity="0.2">
+        <animate attributeName="r" values="15;18;15" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="40" cy="0" r="15" fill="#4facfe" opacity="0.2">
+        <animate attributeName="r" values="15;18;15" dur="2.5s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+  </g>
+  
+  <!-- Floating code snippets/symbols -->
+  <g id="code-elements" font-family="'Courier New', monospace" font-size="12" fill="#667eea" opacity="0.3">
+    <text x="400" y="120">if pattern_match():</text>
+    <text x="420" y="140" font-size="10">return solution</text>
+    <text x="380" y="400">def devise_plan():</text>
+    <text x="400" y="420" font-size="10"># creative leap</text>
+  </g>
+  
+  <!-- Icons representing concepts -->
+  <g id="concept-icons" opacity="0.4">
+    <!-- Pattern recognition icon -->
+    <g transform="translate(280, 120)">
+      <circle cx="0" cy="0" r="15" fill="none" stroke="#667eea" stroke-width="2"/>
+      <path d="M -8 0 L -4 4 L 8 -8" stroke="#667eea" stroke-width="2" fill="none"/>
+    </g>
+    
+    <!-- Transformation icon -->
+    <g transform="translate(600, 380)">
+      <rect x="-10" y="-10" width="20" height="20" fill="none" stroke="#4facfe" stroke-width="2" rx="3"/>
+      <path d="M -6 -6 L 6 6 M -6 6 L 6 -6" stroke="#4facfe" stroke-width="2"/>
+    </g>
+  </g>
+  
+  <!-- Title and subtitle -->
+  <g id="title-text">
+    <text x="600" y="100" text-anchor="middle" font-size="56" font-weight="bold" fill="#2c3e50" letter-spacing="-1">
+      Devising a Plan
+    </text>
+    <text x="600" y="140" text-anchor="middle" font-size="24" fill="#667eea" font-weight="500">
+      The Creative Heart of ML Problem Solving
+    </text>
+    <text x="600" y="170" text-anchor="middle" font-size="16" fill="#7f8c8d" font-style="italic">
+      Applying Pólya's Framework to AI/ML Engineering
+    </text>
+  </g>
+  
+  <!-- Bottom decorative elements -->
+  <g id="bottom-decoration" opacity="0.15">
+    <circle cx="100" cy="550" r="3" fill="#667eea"/>
+    <circle cx="300" cy="560" r="2" fill="#4facfe"/>
+    <circle cx="500" cy="555" r="3" fill="#f093fb"/>
+    <circle cx="700" cy="560" r="2" fill="#43e97b"/>
+    <circle cx="900" cy="550" r="3" fill="#00f2fe"/>
+    <circle cx="1100" cy="560" r="2" fill="#f5576c"/>
+  </g>
+  
+  <!-- Glowing center focal point -->
+  <circle cx="600" cy="300" r="150" fill="url(#glowGradient)" opacity="0.3"/>
+</svg>

@@ -1,0 +1,126 @@
+<svg viewBox="0 0 1200 700" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="700" fill="#f8f9fa"/>
+  
+  <!-- Title -->
+  <text x="600" y="35" text-anchor="middle" font-size="22" font-weight="bold" fill="#2c3e50">Recursive Planning: The Zoom-In Concept</text>
+  <text x="600" y="60" text-anchor="middle" font-size="15" fill="#7f8c8d">Each component contains its own detailed plan</text>
+  
+  <!-- LEFT: High-level view -->
+  <g id="high-level">
+    <rect x="50" y="100" width="450" height="550" rx="12" fill="white" stroke="#3498db" stroke-width="3"/>
+    <text x="275" y="135" text-anchor="middle" font-size="16" font-weight="bold" fill="#3498db">HIGH-LEVEL PLAN</text>
+    <text x="275" y="158" text-anchor="middle" font-size="13" fill="#7f8c8d">Content Moderation System</text>
+    
+    <!-- Component boxes -->
+    <rect x="80" y="190" width="370" height="80" rx="8" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+    <text x="265" y="220" text-anchor="middle" font-size="14" font-weight="600" fill="#1976d2">1. Text Moderation Pipeline</text>
+    <text x="265" y="242" text-anchor="middle" font-size="12" fill="#64748b">Multi-task transformer for text content</text>
+    
+    <rect x="80" y="290" width="370" height="80" rx="8" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2"/>
+    <text x="265" y="320" text-anchor="middle" font-size="14" font-weight="600" fill="#7b1fa2">2. Image Moderation Pipeline</text>
+    <text x="265" y="342" text-anchor="middle" font-size="12" fill="#64748b">CNN for visual content detection</text>
+    
+    <rect x="80" y="390" width="370" height="80" rx="8" fill="#e8f5e9" stroke="#4caf50" stroke-width="2"/>
+    <text x="265" y="420" text-anchor="middle" font-size="14" font-weight="600" fill="#388e3c">3. Human-in-the-Loop System</text>
+    <text x="265" y="442" text-anchor="middle" font-size="12" fill="#64748b">Active learning &amp; review queue</text>
+    
+    <rect x="80" y="490" width="370" height="80" rx="8" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+    <text x="265" y="520" text-anchor="middle" font-size="14" font-weight="600" fill="#f57c00">4. Deployment Infrastructure</text>
+    <text x="265" y="542" text-anchor="middle" font-size="12" fill="#64748b">Serving, monitoring, A/B testing</text>
+  </g>
+  
+  <!-- CENTER: Zoom indicator -->
+  <g id="zoom-indicator">
+    <circle cx="580" cy="230" r="35" fill="#fbbf24" opacity="0.2"/>
+    <text x="580" y="240" text-anchor="middle" font-size="40" fill="#f59e0b">🔍</text>
+    
+    <path d="M 450 230 L 540 230" stroke="#f59e0b" stroke-width="3" stroke-dasharray="6 4" marker-end="url(#arrow-zoom)"/>
+    <path d="M 620 230 L 680 230" stroke="#f59e0b" stroke-width="3" stroke-dasharray="6 4" marker-end="url(#arrow-zoom)"/>
+    
+    <text x="580" y="290" text-anchor="middle" font-size="13" font-weight="bold" fill="#f59e0b">ZOOM IN</text>
+    <text x="580" y="308" text-anchor="middle" font-size="11" fill="#94a3b8">Expand Component #1</text>
+  </g>
+  
+  <!-- RIGHT: Zoomed-in detailed view -->
+  <g id="detailed-view">
+    <rect x="700" y="100" width="450" height="550" rx="12" fill="white" stroke="#2196f3" stroke-width="3"/>
+    <text x="925" y="135" text-anchor="middle" font-size="16" font-weight="bold" fill="#2196f3">DETAILED PLAN</text>
+    <text x="925" y="158" text-anchor="middle" font-size="13" fill="#7f8c8d">Text Moderation Pipeline (expanded)</text>
+    
+    <!-- Sub-components -->
+    <g id="sub-level-1">
+      <text x="730" y="188" font-size="12" font-weight="bold" fill="#8b5cf6">Level 2: Architecture</text>
+      <rect x="730" y="195" width="380" height="55" rx="6" fill="#f3e8ff" stroke="#8b5cf6" stroke-width="2"/>
+      <text x="740" y="215" font-size="11" fill="#2c3e50">• Choose base model (BERT vs RoBERTa)</text>
+      <text x="740" y="232" font-size="11" fill="#2c3e50">• Design task-specific heads</text>
+    </g>
+    
+    <g id="sub-level-2">
+      <text x="730" y="270" font-size="12" font-weight="bold" fill="#8b5cf6">Level 3: Training Strategy</text>
+      <rect x="730" y="277" width="380" height="72" rx="6" fill="#f3e8ff" stroke="#8b5cf6" stroke-width="2"/>
+      <text x="740" y="297" font-size="11" fill="#2c3e50">• Learning rate schedule: warmup + decay</text>
+      <text x="740" y="314" font-size="11" fill="#2c3e50">• Batch size: 16 → 64 (gradual increase)</text>
+      <text x="740" y="331" font-size="11" fill="#2c3e50">• Loss function: focal loss for imbalance</text>
+    </g>
+    
+    <g id="sub-level-3">
+      <text x="730" y="369" font-size="12" font-weight="bold" fill="#8b5cf6">Level 4: Data Preparation</text>
+      <rect x="730" y="376" width="380" height="72" rx="6" fill="#f3e8ff" stroke="#8b5cf6" stroke-width="2"/>
+      <text x="740" y="396" font-size="11" fill="#2c3e50">• Handle class imbalance (oversample minority)</text>
+      <text x="740" y="413" font-size="11" fill="#2c3e50">• Data augmentation: back-translation</text>
+      <text x="740" y="430" font-size="11" fill="#2c3e50">• Train/val/test split: 70/15/15</text>
+    </g>
+    
+    <g id="sub-level-4">
+      <text x="730" y="468" font-size="12" font-weight="bold" fill="#10b981">Level 5: Actionable Tasks</text>
+      <rect x="730" y="475" width="380" height="160" rx="6" fill="#ecfdf5" stroke="#10b981" stroke-width="2"/>
+      
+      <circle cx="745" cy="495" r="4" fill="#10b981"/>
+      <text x="755" y="498" font-size="10" fill="#2c3e50">✓ Download BERT checkpoint</text>
+      
+      <circle cx="745" cy="515" r="4" fill="#10b981"/>
+      <text x="755" y="518" font-size="10" fill="#2c3e50">✓ Set up PyTorch DataLoader</text>
+      
+      <circle cx="745" cy="535" r="4" fill="#10b981"/>
+      <text x="755" y="538" font-size="10" fill="#2c3e50">✓ Implement focal loss function</text>
+      
+      <circle cx="745" cy="555" r="4" fill="#fbbf24"/>
+      <text x="755" y="558" font-size="10" fill="#2c3e50">⧗ Run hyperparameter sweep</text>
+      
+      <circle cx="745" cy="575" r="4" fill="#fbbf24"/>
+      <text x="755" y="578" font-size="10" fill="#2c3e50">⧗ Train baseline (frozen BERT)</text>
+      
+      <circle cx="745" cy="595" r="4" fill="#fbbf24"/>
+      <text x="755" y="598" font-size="10" fill="#2c3e50">⧗ Analyze validation errors</text>
+      
+      <circle cx="745" cy="615" r="4" fill="#94a3b8"/>
+      <text x="755" y="618" font-size="10" fill="#64748b">○ Fine-tune full model (next phase)</text>
+    </g>
+  </g>
+  
+  <!-- Arrow markers -->
+  <defs>
+    <marker id="arrow-zoom" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#f59e0b"/>
+    </marker>
+  </defs>
+  
+  <!-- Bottom insight box -->
+  <rect x="100" y="665" width="1000" height="1" fill="#cbd5e1"/>
+  
+  <g id="legend">
+    <circle cx="120" cy="685" r="4" fill="#10b981"/>
+    <text x="130" y="688" font-size="11" fill="#64748b">Completed</text>
+    
+    <circle cx="220" cy="685" r="4" fill="#fbbf24"/>
+    <text x="230" y="688" font-size="11" fill="#64748b">In Progress</text>
+    
+    <circle cx="330" cy="685" r="4" fill="#94a3b8"/>
+    <text x="340" y="688" font-size="11" fill="#64748b">Future</text>
+    
+    <text x="600" y="688" text-anchor="middle" font-size="11" font-weight="600" fill="#2c3e50">
+      Planning stops when you reach actionable tasks you can execute immediately
+    </text>
+  </g>
+</svg>
