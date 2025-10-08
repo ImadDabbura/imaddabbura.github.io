@@ -298,7 +298,9 @@ ga('send', {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#introduction-standing-at-the-threshold" id="toc-introduction-standing-at-the-threshold" class="nav-link active" data-scroll-target="#introduction-standing-at-the-threshold"><strong>Introduction: Standing at the Threshold</strong></a></li>
+  <li><a href="#before-we-begin-where-we-are-in-pólyas-framework" id="toc-before-we-begin-where-we-are-in-pólyas-framework" class="nav-link active" data-scroll-target="#before-we-begin-where-we-are-in-pólyas-framework">Before We Begin: Where We Are in Pólya’s Framework</a></li>
+  <li><a href="#introduction-standing-at-the-threshold" id="toc-introduction-standing-at-the-threshold" class="nav-link" data-scroll-target="#introduction-standing-at-the-threshold"><strong>Introduction: Standing at the Threshold</strong></a></li>
+  <li><a href="#the-six-essential-questions-your-planning-toolkit" id="toc-the-six-essential-questions-your-planning-toolkit" class="nav-link" data-scroll-target="#the-six-essential-questions-your-planning-toolkit">The Six Essential Questions: Your Planning Toolkit</a></li>
   <li><a href="#the-architecture-of-strategic-thinking-building-your-bridge" id="toc-the-architecture-of-strategic-thinking-building-your-bridge" class="nav-link" data-scroll-target="#the-architecture-of-strategic-thinking-building-your-bridge"><strong>The Architecture of Strategic Thinking: Building Your Bridge</strong></a></li>
   <li><a href="#the-first-question-have-you-seen-this-before" id="toc-the-first-question-have-you-seen-this-before" class="nav-link" data-scroll-target="#the-first-question-have-you-seen-this-before"><strong>The First Question: “Have You Seen This Before?”</strong></a></li>
   <li><a href="#the-second-question-do-you-know-a-related-problem" id="toc-the-second-question-do-you-know-a-related-problem" class="nav-link" data-scroll-target="#the-second-question-do-you-know-a-related-problem"><strong>The Second Question: “Do You Know a Related Problem?”</strong></a>
@@ -390,6 +392,12 @@ Work in Progress — Feedback Welcome
 <p>This article is actively evolving. If you spot gaps, disagree with a take, or have bette r patterns, I’d love to hear it. Suggestions and critiques are welcome.</p>
 </div>
 </div>
+<section id="before-we-begin-where-we-are-in-pólyas-framework" class="level2">
+<h2 class="anchored" data-anchor-id="before-we-begin-where-we-are-in-pólyas-framework">Before We Begin: Where We Are in Pólya’s Framework</h2>
+<p>Let me start with something crucial. If you’ve been following this series, you’ve already completed Step 1: Understanding the Problem. You’ve identified your unknown (what you’re trying to predict), examined your data (what you have to work with), and mapped your conditions (constraints like latency, interpretability, data size). You know what success looks like.</p>
+<p>If you haven’t done that work yet—if you’re unclear about your exact objective or haven’t truly examined your data—stop now. Go back to the first article in this series. Understanding must come first. Pólya is emphatic about this: you cannot devise a good plan without first understanding what you’re trying to solve.</p>
+<p>But if you have done that work, then welcome. You’re ready for Step 2: Devising a Plan.</p>
+</section>
 <section id="introduction-standing-at-the-threshold" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-standing-at-the-threshold"><strong>Introduction: Standing at the Threshold</strong></h2>
 <p>Picture yourself in this moment. You’re sitting at your desk, perhaps with a cup of coffee growing cold beside your keyboard. You’ve spent the last few days—maybe weeks—immersed in your data. You’ve run <code>df.describe()</code> more times than you can count. You’ve created distribution plots, correlation matrices, and t-SNE visualizations. You’ve identified the outliers, understood the class imbalance, and discovered that one column that’s leaking future information. You’ve documented your findings, noting that 15% of your labels might be noisy, that your features have wildly different scales, and that production latency can’t exceed 50 milliseconds.</p>
@@ -398,6 +406,19 @@ Work in Progress — Feedback Welcome
 <p><strong>This is the moment of devising a plan.</strong></p>
 <p>George Pólya, the mathematician who crystallized the art of problem-solving into teachable principles, understood that this stage represents the most profoundly human aspect of our work. It’s where <strong>intuition dances with logic</strong>, where your past projects—the successes and the failures—suddenly illuminate possibilities for this new challenge. It’s where you become an artist, sketching pathways through the vast, often intimidating landscape of model architectures, training strategies, and deployment constraints.</p>
 <p>Let me walk with you through this process. Not as a distant lecturer, but as a colleague who’s been in your shoes, who’s felt that mix of excitement and uncertainty that comes with starting a new ML project.</p>
+</section>
+<section id="the-six-essential-questions-your-planning-toolkit" class="level2">
+<h2 class="anchored" data-anchor-id="the-six-essential-questions-your-planning-toolkit">The Six Essential Questions: Your Planning Toolkit</h2>
+<p>Pólya identified specific questions that, when asked systematically, guide you toward a good plan. These aren’t meant to be asked once and forgotten. They’re a toolkit you return to repeatedly throughout the planning process. Let me introduce them first, then we’ll explore each in depth:</p>
+<ul>
+<li><strong>“Have you seen it before?”</strong> - Pattern recognition from your experience</li>
+<li><strong>“Do you know a related problem?”</strong> - Leveraging structural similarities</li>
+<li><strong>“Could you restate the problem?”</strong> - Transformation and reformulation</li>
+<li><strong>“Could you introduce an auxiliary element?”</strong> - Creative additions that unlock solutions</li>
+<li><strong>“Go back to definitions”</strong> - Returning to first principles</li>
+<li><strong>“Could you work backwards from the goal?”</strong> - Reverse engineering your approach</li>
+</ul>
+<p>These questions work together. The answer to one often leads you to another. They form a dynamic system of exploration, not a linear checklist. But let’s examine each one carefully.</p>
 </section>
 <section id="the-architecture-of-strategic-thinking-building-your-bridge" class="level2">
 <h2 class="anchored" data-anchor-id="the-architecture-of-strategic-thinking-building-your-bridge"><strong>The Architecture of Strategic Thinking: Building Your Bridge</strong></h2>
@@ -509,7 +530,14 @@ Work in Progress — Feedback Welcome
 </ul>
 <p>By recognizing these patterns, they could build on years of ML progress rather than starting from scratch. Their plan emerged from pattern recognition across multiple domains.</p>
 <p>Now, let me be honest with you about something: <strong>This pattern recognition isn’t instantaneous</strong>. When you’re early in your ML career, your library of patterns is still being built. That’s okay. That’s expected. Every project you complete, every paper you deeply understand, every architecture you implement from scratch—these are all deposits in your pattern bank.</p>
-<p>But here’s the secret that accelerates this process: <strong>Deliberately reflect on your projects</strong>. After you finish a model, don’t just move on. Ask yourself: - What was the essential structure of this problem? - What made it hard? - What architectural choices were crucial? - What would I do differently next time? - What other problems share this structure?</p>
+<p>But here’s the secret that accelerates this process: <strong>Deliberately reflect on your projects</strong>. After you finish a model, don’t just move on. Ask yourself:</p>
+<ul>
+<li>What was the essential structure of this problem?</li>
+<li>What made it hard?</li>
+<li>What architectural choices were crucial?</li>
+<li>What would I do differently next time?</li>
+<li>What other problems share this structure?</li>
+</ul>
 <p>Write this down. Seriously. Keep a personal wiki, a notion page, a markdown file—whatever works for you. Future you will thank present you when you can search “problems with extreme class imbalance” and find three previous approaches that worked.</p>
 </section>
 <section id="the-second-question-do-you-know-a-related-problem" class="level2">
@@ -544,7 +572,16 @@ Work in Progress — Feedback Welcome
 <p>Let me tell you about a real situation where understanding related problems saved a project. A team was building a model to predict equipment failure in a manufacturing plant. They struggled for weeks with direct time-series forecasting approaches. Then someone on the team had worked on a related problem: network intrusion detection.</p>
 <p>The insight? Both problems are fundamentally about <strong>anomaly detection</strong>. Normal equipment has normal patterns; equipment about to fail shows anomalies. Instead of trying to predict “time until failure,” they reframed it as “detect when behavior becomes anomalous.” This shift—learned from a related problem in a completely different domain—changed everything. They achieved much better results and the model was easier to explain to plant managers.</p>
 <p>Here’s a practical exercise I want you to do: <strong>Build your own related problems network.</strong></p>
-<p>Take a problem you’re currently working on or one you worked on recently. On a piece of paper (or Excalidraw, or whatever tool you like), put that problem in the center. Now draw connections to related problems. For each connection, label it: - Same architecture? - Same challenge? - Same domain? - Same data type? - Simpler version? - More general version? - Analogous in another domain?</p>
+<p>Take a problem you’re currently working on or one you worked on recently. On a piece of paper (or Excalidraw, or whatever tool you like), put that problem in the center. Now draw connections to related problems. For each connection, label it:</p>
+<ul>
+<li>Same architecture?</li>
+<li>Same challenge?</li>
+<li>Same domain?</li>
+<li>Same data type?</li>
+<li>Simpler version?</li>
+<li>More general version?</li>
+<li>Analogous in another domain?</li>
+</ul>
 <p>Don’t stop at your own experience. Include problems you’ve read about in papers, projects your colleagues have done, systems you’ve heard about at conferences. This web of connections is your strategic map. When you’re stuck on one problem, you can traverse these connections to find inspiration.</p>
 </section>
 </section>
@@ -559,9 +596,19 @@ Work in Progress — Feedback Welcome
 <section id="auxiliary-tasks-multi-task-learning" class="level3">
 <h3 class="anchored" data-anchor-id="auxiliary-tasks-multi-task-learning"><strong>Auxiliary Tasks (Multi-Task Learning)</strong></h3>
 <p>This is probably the most common type. You add additional prediction tasks that aren’t your ultimate goal but help you learn better representations.</p>
-<p><strong>Real scenario</strong>: You’re building a model for medical image analysis to detect lung cancer. Your main task is binary classification: cancer or no cancer. But you introduce auxiliary tasks: - Predict the patient’s age (forces the model to learn biological indicators) - Segment out the lung regions (forces spatial understanding) - Predict whether the patient is a smoker (forces learning of texture patterns)</p>
+<p><strong>Real scenario</strong>: You’re building a model for medical image analysis to detect lung cancer. Your main task is binary classification: cancer or no cancer. But you introduce auxiliary tasks:</p>
+<ul>
+<li>Predict the patient’s age (forces the model to learn biological indicators)</li>
+<li>Segment out the lung regions (forces spatial understanding)</li>
+<li>Predict whether the patient is a smoker (forces learning of texture patterns)</li>
+</ul>
 <p>None of these auxiliary tasks is your goal. But together, they shape your model’s learned representations, making it better at the main task.</p>
-<p>Here’s the fascinating part: <strong>There’s no algorithm for choosing auxiliary tasks</strong>. This requires intuition, domain knowledge, creativity. You might ask yourself: - What else could this model predict from the same data? - What intermediate understanding would help the main task? - What related information does the data contain?</p>
+<p>Here’s the fascinating part: <strong>There’s no algorithm for choosing auxiliary tasks</strong>. This requires intuition, domain knowledge, creativity. You might ask yourself:</p>
+<ul>
+<li>What else could this model predict from the same data?</li>
+<li>What intermediate understanding would help the main task?</li>
+<li>What related information does the data contain?</li>
+</ul>
 </section>
 <section id="auxiliary-losses-regularization-through-learning" class="level3">
 <h3 class="anchored" data-anchor-id="auxiliary-losses-regularization-through-learning"><strong>Auxiliary Losses (Regularization Through Learning)</strong></h3>
@@ -670,7 +717,11 @@ Work in Progress — Feedback Welcome
 <section id="formulation-3-survival-analysis" class="level3">
 <h3 class="anchored" data-anchor-id="formulation-3-survival-analysis"><strong>Formulation 3: Survival Analysis</strong></h3>
 <p>Now you step back and think differently. “Wait,” you say, “what if I frame this as two separate things: HOW LONG will the customer stay (time until churn), and WHAT’S THE RATE of their spending?”</p>
-<p>This is survival analysis. You’re modeling: 1. The hazard function: probability of churn at each time point 2. Expected revenue per time period while active</p>
+<p>This is survival analysis. You’re modeling:</p>
+<ol type="1">
+<li>The hazard function: probability of churn at each time point</li>
+<li>Expected revenue per time period while active</li>
+</ol>
 <p>Then CLV = (revenue per period) × (expected lifetime)</p>
 <p><strong>Pros</strong>: This is more natural! It explicitly models the time dimension. It handles censored data gracefully (customers who haven’t churned yet). It lets you answer questions like “What’s the probability this customer is still active after 2 years?” The model structure matches the actual process.</p>
 <p><strong>Cons</strong>: It’s more complex to implement. You need to understand survival analysis (Cox models, Kaplan-Meier curves). It requires more careful data preparation. Your stakeholders might need education on what hazard ratios mean.</p>
@@ -680,12 +731,25 @@ Work in Progress — Feedback Welcome
 <h3 class="anchored" data-anchor-id="formulation-4-reinforcement-learning"><strong>Formulation 4: Reinforcement Learning</strong></h3>
 <p>Now let’s get really creative. What if you reframe the entire problem?</p>
 <p>“Actually,” you say, “I don’t just want to <em>predict</em> customer value. I want to <em>maximize</em> it through interventions. What if I frame this as: learn a policy that decides what actions to take (send discount, send email, do nothing) to maximize lifetime revenue?”</p>
-<p>This is a reinforcement learning formulation: - <strong>State</strong>: Customer behavior, engagement metrics, recent activity - <strong>Actions</strong>: Various interventions you can take - <strong>Reward</strong>: Incremental revenue generated - <strong>Goal</strong>: Learn policy π that maximizes expected cumulative reward</p>
+<p>This is a reinforcement learning formulation:</p>
+<ul>
+<li><strong>State</strong>: Customer behavior, engagement metrics, recent activity</li>
+<li><strong>Actions</strong>: Various interventions you can take</li>
+<li><strong>Reward</strong>: Incremental revenue generated</li>
+<li><strong>Goal</strong>: Learn policy π that maximizes expected cumulative reward</li>
+</ul>
 <p><strong>Pros</strong>: This is action-oriented. You’re not just predicting, you’re optimizing. It directly aligns with the business goal (maximize revenue). It can discover non-obvious intervention strategies. It learns from online feedback.</p>
 <p><strong>Cons</strong>: It requires an experimentation infrastructure—you need to try actions and observe results. It’s sample inefficient—you need lots of data. It’s complex to implement and debug. You need to be careful about exploration vs.&nbsp;exploitation. There are ethical considerations around treating customers as experimental subjects.</p>
 <p>Would I jump straight to RL? Probably not. But for a mature business with existing A/B testing infrastructure and lots of data, this framing might unlock significant value.</p>
 <hr>
-<p>Now, here’s the crucial lesson: <strong>These are all the same business problem, but completely different ML problems.</strong> Each formulation: - Enables different techniques - Requires different data structures - Makes different assumptions - Reveals different insights - Has different pros and cons</p>
+<p>Now, here’s the crucial lesson: <strong>These are all the same business problem, but completely different ML problems.</strong> Each formulation:</p>
+<ul>
+<li>Enables different techniques</li>
+<li>Requires different data structures</li>
+<li>Makes different assumptions</li>
+<li>Reveals different insights</li>
+<li>Has different pros and cons</li>
+</ul>
 <p>The formulation you choose shapes everything that follows. It’s not just a technical decision—it’s a strategic one.</p>
 <p>Let me share how to think about this systematically:</p>
 <p><strong>When to consider reformulation:</strong></p>
@@ -701,7 +765,14 @@ Work in Progress — Feedback Welcome
 <p><strong>Instance-Level → Set-Level</strong>: Struggling with individual predictions? Maybe Multiple Instance Learning is better. Example: Instead of classifying individual frames in a video, classify the entire video and let the model figure out which frames matter.</p>
 <p><strong>Time-Domain → Frequency-Domain</strong>: Stuck on time-series patterns? Apply FFT and work in frequency space. Sometimes patterns invisible in time domain are obvious in frequency domain.</p>
 <p><strong>Generative → Discriminative</strong>: Can’t directly model P(y|x)? Sometimes modeling P(x|y) and using Bayes rule works better. This is how Naive Bayes classifiers work.</p>
-<p>Here’s a practical exercise: <strong>Take a problem you’re working on right now. Write down three completely different ways to frame it as an ML problem.</strong> Don’t just think it—actually write them down. For each framing, note: - What techniques does this enable? - What assumptions does it make? - What are the pros and cons? - What would the data need to look like? - How would you evaluate success?</p>
+<p>Here’s a practical exercise: <strong>Take a problem you’re working on right now. Write down three completely different ways to frame it as an ML problem.</strong> Don’t just think it—actually write them down. For each framing, note:</p>
+<ul>
+<li>What techniques does this enable?</li>
+<li>What assumptions does it make?</li>
+<li>What are the pros and cons?</li>
+<li>What would the data need to look like?</li>
+<li>How would you evaluate success?</li>
+</ul>
 <p>You might be surprised. Often, the formulation you started with isn’t the best one. But you won’t discover alternatives unless you actively look for them.</p>
 </section>
 </section>
@@ -719,7 +790,13 @@ Work in Progress — Feedback Welcome
 <p>Not “multi-class classification with cross-entropy loss.” But: <strong>“Given a customer service inquiry, route it to the right department.”</strong></p>
 <p>Not “sequence-to-sequence generation with attention.” But: <strong>“Given a bug description, suggest relevant code files for the engineer to check.”</strong></p>
 <p>Not “unsupervised clustering with k-means.” But: <strong>“Group these customer behaviors so we can design targeted interventions.”</strong></p>
-<p>When you state it this way, clearly and simply, you can ask better questions: - What’s the actual impact of being right vs.&nbsp;wrong? - What’s the cost of different types of errors? - What does “good enough” actually mean? - What do we need the model to learn to accomplish this?</p>
+<p>When you state it this way, clearly and simply, you can ask better questions:</p>
+<ul>
+<li>What’s the actual impact of being right vs.&nbsp;wrong?</li>
+<li>What’s the cost of different types of errors?</li>
+<li>What does “good enough” actually mean?</li>
+<li>What do we need the model to learn to accomplish this?</li>
+</ul>
 </section>
 <section id="question-your-metrics" class="level3">
 <h3 class="anchored" data-anchor-id="question-your-metrics"><strong>Question Your Metrics</strong></h3>
@@ -736,18 +813,49 @@ Work in Progress — Feedback Welcome
 <p>Other times, teams use simple models for problems that fundamentally require complex pattern recognition. A logistic regression can’t learn hierarchical feature interactions no matter how much data you give it. You need the capacity of deeper models.</p>
 <p>Returning to definitions means understanding: <strong>“What’s the inherent complexity of this problem?”</strong></p>
 <p>Let me give you a framework for thinking about this:</p>
-<p><strong>Simple problems</strong> (low complexity, clear rules): - Could be solved by a human with a checklist - Examples: Filtering spam emails based on keywords, flagging duplicate records - Don’t need deep learning—often decision trees or even rule-based systems work better</p>
-<p><strong>Medium complexity</strong> (pattern recognition, but not too deep): - Requires learning combinations of features but patterns are relatively straightforward - Examples: Credit scoring, customer churn prediction with engineered features - Gradient boosted trees, random forests, or shallow neural nets work well</p>
-<p><strong>High complexity</strong> (hierarchical patterns, rich structure): - Requires learning features from raw data, or very complex feature interactions - Examples: Image classification, natural language understanding, speech recognition - Deep learning shines here</p>
-<p><strong>Very high complexity</strong> (reasoning, planning, long-term dependencies): - Requires sequential decision-making or complex reasoning chains - Examples: Playing Go, theorem proving, long-form text generation - Might need specialized architectures, RL, or hybrid approaches</p>
+<p><strong>Simple problems</strong> (low complexity, clear rules):</p>
+<ul>
+<li>Could be solved by a human with a checklist</li>
+<li>Examples: Filtering spam emails based on keywords, flagging duplicate records</li>
+<li>Don’t need deep learning—often decision trees or even rule-based systems work better</li>
+</ul>
+<p><strong>Medium complexity</strong> (pattern recognition, but not too deep):</p>
+<ul>
+<li>Requires learning combinations of features but patterns are relatively straightforward</li>
+<li>Examples: Credit scoring, customer churn prediction with engineered features</li>
+<li>Gradient boosted trees, random forests, or shallow neural nets work well</li>
+</ul>
+<p><strong>High complexity</strong> (hierarchical patterns, rich structure):</p>
+<ul>
+<li>Requires learning features from raw data, or very complex feature interactions</li>
+<li>Examples: Image classification, natural language understanding, speech recognition</li>
+<li>Deep learning shines here</li>
+</ul>
+<p><strong>Very high complexity</strong> (reasoning, planning, long-term dependencies):</p>
+<ul>
+<li>Requires sequential decision-making or complex reasoning chains</li>
+<li>Examples: Playing Go, theorem proving, long-form text generation</li>
+<li>Might need specialized architectures, RL, or hybrid approaches</li>
+</ul>
 <p>Going back to definitions means honestly assessing which category your problem falls into. Don’t use a cannon to kill a fly. Don’t bring a knife to a gunfight.</p>
 </section>
 <section id="revisit-your-assumptions" class="level3">
 <h3 class="anchored" data-anchor-id="revisit-your-assumptions"><strong>Revisit Your Assumptions</strong></h3>
 <p>Every ML approach makes assumptions. Going back to definitions means making these assumptions explicit and checking if they hold.</p>
-<p>You’re using linear regression. Implicit assumptions: - The relationship is linear - Errors are normally distributed - Features are independent (or you’ve handled multicollinearity) - No significant outliers</p>
+<p>You’re using linear regression. Implicit assumptions:</p>
+<ul>
+<li>The relationship is linear</li>
+<li>Errors are normally distributed</li>
+<li>Features are independent (or you’ve handled multicollinearity)</li>
+<li>No significant outliers</li>
+</ul>
 <p>Do these hold for your data? If not, you’re building on a shaky foundation.</p>
-<p>You’re using collaborative filtering for recommendations. Implicit assumption: - Users who agreed in the past will agree in the future - The rating matrix is static - You have enough historical data</p>
+<p>You’re using collaborative filtering for recommendations. Implicit assumption:</p>
+<ul>
+<li>Users who agreed in the past will agree in the future</li>
+<li>The rating matrix is static</li>
+<li>You have enough historical data</li>
+</ul>
 <p>What if user preferences drift over time? What about cold-start users?</p>
 <p>Going back to definitions means questioning: <strong>“What am I taking for granted?”</strong></p>
 <p>Let me share a real example. A team was building a fraud detection model using historical transaction data. They were getting good cross-validation scores but terrible production performance. When they went back to first principles, they realized their implicit assumption: “fraudulent patterns don’t change over time.”</p>
@@ -784,18 +892,44 @@ Work in Progress — Feedback Welcome
 <p>Well, if I have 50ms total budget for latency, and I need to do feature lookup, model inference, and post-processing…</p>
 <p>That means model inference can take at most… let’s say 20ms (leaving room for everything else).</p>
 <p><strong>Step 3: Ask again “What does this imply?”</strong></p>
-<p>20ms for inference. That rules out: - Large transformer models (would take 100+ms) - Ensemble of multiple heavy models (too slow) - Complex feature engineering at inference time (no time)</p>
+<p>20ms for inference. That rules out:</p>
+<ul>
+<li>Large transformer models (would take 100+ms)</li>
+<li>Ensemble of multiple heavy models (too slow)</li>
+<li>Complex feature engineering at inference time (no time)</li>
+</ul>
 <p>So I need a lightweight model architecture.</p>
 <p><strong>Step 4: Keep going backwards</strong></p>
 <p>If I need a lightweight model but still need good performance, what does that imply?</p>
-<p>I need to do the heavy lifting offline: - Pre-compute embeddings - Use approximate nearest neighbor search for candidate generation - Only use the lightweight model for final re-ranking</p>
+<p>I need to do the heavy lifting offline:</p>
+<ul>
+<li>Pre-compute embeddings</li>
+<li>Use approximate nearest neighbor search for candidate generation</li>
+<li>Only use the lightweight model for final re-ranking</li>
+</ul>
 <p><strong>Step 5: One more step back</strong></p>
 <p>If I’m doing candidate generation with ANN search, what does that imply?</p>
-<p>I need: - A good embedding space (so similar items are close together) - Efficient indexing (FAISS or similar) - The embedding model can be heavy (it runs offline)</p>
+<p>I need:</p>
+<ul>
+<li>A good embedding space (so similar items are close together)</li>
+<li>Efficient indexing (FAISS or similar)</li>
+<li>The embedding model can be heavy (it runs offline)</li>
+</ul>
 <p><strong>Step 6: And finally…</strong></p>
 <p>If I need a good embedding space, what does that imply for training?</p>
-<p>I should use: - Contrastive learning or metric learning objectives - Large batch sizes (to get good negatives) - Training data focused on user-item interactions</p>
-<p>Now I can work forward with this plan: 1. Train an embedding model (can be complex, runs offline) 2. Use embeddings to build ANN index 3. Train lightweight ranking model (must be fast) 4. Deploy as two-stage: ANN candidate generation → neural re-ranking</p>
+<p>I should use:</p>
+<ul>
+<li>Contrastive learning or metric learning objectives</li>
+<li>Large batch sizes (to get good negatives)</li>
+<li>Training data focused on user-item interactions</li>
+</ul>
+<p>Now I can work forward with this plan:</p>
+<ol type="1">
+<li>Train an embedding model (can be complex, runs offline)</li>
+<li>Use embeddings to build ANN index</li>
+<li>Train lightweight ranking model (must be fast)</li>
+<li>Deploy as two-stage: ANN candidate generation → neural re-ranking</li>
+</ol>
 <p>This entire plan emerged from working backwards from the constraint.</p>
 <p>Let me show you the code structure for this thinking:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># PSEUDOCODE: Working Backwards Planning</span></span>
@@ -913,7 +1047,15 @@ Work in Progress — Feedback Welcome
 <p>What does self-play imply? → “I need Monte Carlo Tree Search (MCTS) to generate high-quality training data.”</p>
 <p>What does MCTS imply? → “I need a way to simulate games quickly to explore the tree.”</p>
 <p>What does learning from expert games imply? → “I need a large database of professional games.”</p>
-<p>Now work forward with this plan: 1. Start: Collect database of expert games 2. Train initial policy network by supervised learning on expert moves 3. Use that policy in MCTS to generate self-play games 4. Train value network on self-play outcomes 5. Improve policy through reinforcement learning on self-play 6. Iterate: better policy → better self-play → better training → better policy</p>
+<p>Now work forward with this plan:</p>
+<ol type="1">
+<li>Start: Collect database of expert games</li>
+<li>Train initial policy network by supervised learning on expert moves</li>
+<li>Use that policy in MCTS to generate self-play games</li>
+<li>Train value network on self-play outcomes</li>
+<li>Improve policy through reinforcement learning on self-play</li>
+<li>Iterate: better policy → better self-play → better training → better policy</li>
+</ol>
 <p>This plan emerged from working backwards from “beat the world champion” through all the implications.</p>
 </section>
 <section id="when-working-backwards-really-shines" class="level3">
@@ -930,16 +1072,35 @@ Work in Progress — Feedback Welcome
 </section>
 <section id="practical-exercise" class="level3">
 <h3 class="anchored" data-anchor-id="practical-exercise"><strong>Practical Exercise</strong></h3>
-<p>Take a project you’re working on. Write down the final state you need to achieve. Be specific: - Performance metrics - Latency requirements<br>
-- Scale (QPS, data volume) - Other constraints (interpretability, fairness, etc.)</p>
-<p>Now work backwards. For each requirement, ask “What does this imply?” Keep a chain of reasoning. You might discover: - Assumptions you’re making that might not hold - Components you’ll need that you hadn’t thought about - Architectural choices that are forced by your constraints - Things that seemed necessary but actually aren’t</p>
+<p>Take a project you’re working on. Write down the final state you need to achieve. Be specific:</p>
+<ul>
+<li>Performance metrics</li>
+<li>Latency requirements<br>
+</li>
+<li>Scale (QPS, data volume)</li>
+<li>Other constraints (interpretability, fairness, etc.)</li>
+</ul>
+<p>Now work backwards. For each requirement, ask “What does this imply?” Keep a chain of reasoning. You might discover:</p>
+<ul>
+<li>Assumptions you’re making that might not hold</li>
+<li>Components you’ll need that you hadn’t thought about</li>
+<li>Architectural choices that are forced by your constraints</li>
+<li>Things that seemed necessary but actually aren’t</li>
+</ul>
 <p>This backwards planning often reveals a simpler, more direct path than forward planning would have.</p>
 </section>
 </section>
 <section id="getting-stuck-the-fertile-ground-of-frustration" class="level2">
 <h2 class="anchored" data-anchor-id="getting-stuck-the-fertile-ground-of-frustration"><strong>Getting Stuck: The Fertile Ground of Frustration</strong></h2>
 <p>Let me be completely honest with you: <strong>You’re going to get stuck.</strong> Not occasionally. Regularly. On every challenging project.</p>
-<p>You’ll hit moments where: - Every architecture you try overfits terribly - Your model learns spurious correlations no matter what you do - Performance plateaus far below where it needs to be - The production constraints seem physically impossible to meet - You’ve tried everything you can think of and nothing works</p>
+<p>You’ll hit moments where:</p>
+<ul>
+<li>Every architecture you try overfits terribly</li>
+<li>Your model learns spurious correlations no matter what you do</li>
+<li>Performance plateaus far below where it needs to be</li>
+<li>The production constraints seem physically impossible to meet</li>
+<li>You’ve tried everything you can think of and nothing works</li>
+</ul>
 <p>I want to tell you something important: <strong>These moments aren’t failures. They’re signals.</strong></p>
 <p>They’re your problem telling you: “The way you’re thinking about this isn’t quite right. You need a different lens, a different angle, a new perspective.”</p>
 <p>Some of my best ML solutions came <em>after</em> weeks of being stuck. The breakthrough came not from trying harder with the same approach, but from changing how I thought about the problem.</p>
@@ -977,9 +1138,24 @@ Work in Progress — Feedback Welcome
 <span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="va">False</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>If your model can’t even overfit 10 examples, you have a bug or fundamental architecture problem. Fix that before anything else.</p>
 <p><strong>If it CAN overfit a tiny batch but won’t train on full data</strong>:</p>
-<p>Check your data: - Are labels correct? (Print some examples manually) - Is there a label-feature mismatch? (e.g., predicting tomorrow’s price but features include tomorrow’s price) - Are you preprocessing wrong? (e.g., normalizing test data with train stats)</p>
-<p>Check your architecture: - Are gradients flowing? (Add gradient logging) - Is anything saturating? (sigmoid/tanh outputs at extremes?) - Are skip connections working if you have them?</p>
-<p>Check your training setup: - Learning rate too high (causing divergence) or too low (no learning)? - Batch size inappropriate for problem? - Are you training the right parameters? (Check param.requires_grad)</p>
+<p>Check your data:</p>
+<ul>
+<li>Are labels correct? (Print some examples manually)</li>
+<li>Is there a label-feature mismatch? (e.g., predicting tomorrow’s price but features include tomorrow’s price)</li>
+<li>Are you preprocessing wrong? (e.g., normalizing test data with train stats)</li>
+</ul>
+<p>Check your architecture:</p>
+<ul>
+<li>Are gradients flowing? (Add gradient logging)</li>
+<li>Is anything saturating? (sigmoid/tanh outputs at extremes?)</li>
+<li>Are skip connections working if you have them?</li>
+</ul>
+<p>Check your training setup:</p>
+<ul>
+<li>Learning rate too high (causing divergence) or too low (no learning)?</li>
+<li>Batch size inappropriate for problem?</li>
+<li>Are you training the right parameters? (Check param.requires_grad)</li>
+</ul>
 </section>
 <section id="type-2-my-model-overfits-immediately" class="level3">
 <h3 class="anchored" data-anchor-id="type-2-my-model-overfits-immediately"><strong>Type 2: “My Model Overfits Immediately”</strong></h3>
@@ -1077,7 +1253,12 @@ Work in Progress — Feedback Welcome
 <span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Example: </span><span class="sc">{</span>error[<span class="st">'example'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Why did model fail here?"</span>)</span>
 <span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>        <span class="bu">input</span>(<span class="st">"Press enter for next..."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>This error analysis often reveals the issue: - “Oh, the model confuses class A and B because we don’t have a feature that distinguishes them” - “The model fails on rare edge cases—we need more data for those” - “The model is learning a spurious pattern in the background, not the actual object”</p>
+<p>This error analysis often reveals the issue:</p>
+<ul>
+<li>“Oh, the model confuses class A and B because we don’t have a feature that distinguishes them”</li>
+<li>“The model fails on rare edge cases—we need more data for those”</li>
+<li>“The model is learning a spurious pattern in the background, not the actual object”</li>
+</ul>
 <p><strong>Based on error analysis, you might</strong>:</p>
 <ol type="1">
 <li><strong>Add features</strong>: The model needs information it doesn’t have</li>
@@ -1090,7 +1271,13 @@ Work in Progress — Feedback Welcome
 <section id="type-4-my-architectureapproach-fundamentally-cant-work" class="level3">
 <h3 class="anchored" data-anchor-id="type-4-my-architectureapproach-fundamentally-cant-work"><strong>Type 4: “My Architecture/Approach Fundamentally Can’t Work”</strong></h3>
 <p>This is the hardest kind of stuck, because the problem isn’t in the details—it’s in the approach.</p>
-<p>Signs you’re in this situation: - Simple baselines work better than your complex model - The approach works in papers but not on your data - Every variation you try fails in the same way - Domain experts say “that shouldn’t work for this problem”</p>
+<p>Signs you’re in this situation:</p>
+<ul>
+<li>Simple baselines work better than your complex model</li>
+<li>The approach works in papers but not on your data</li>
+<li>Every variation you try fails in the same way</li>
+<li>Domain experts say “that shouldn’t work for this problem”</li>
+</ul>
 <p><strong>When this happens, you need to</strong>:</p>
 <ol type="1">
 <li><strong>Go back to first principles</strong> (we covered this)
@@ -1137,55 +1324,163 @@ Work in Progress — Feedback Welcome
 <section id="the-hierarchy-of-planning" class="level3">
 <h3 class="anchored" data-anchor-id="the-hierarchy-of-planning"><strong>The Hierarchy of Planning</strong></h3>
 <p>Let me walk you through a real example. You’re tasked with building a content moderation system for a social media platform. Your high-level plan might be:</p>
-<p><strong>Level 0 (Top Level): Production Content Moderation System</strong> - Detect harmful content in user posts - Achieve 95% precision (very few false positives) - Achieve 90% recall (catch most harmful content) - Latency &lt; 100ms - Handle 50K posts per second</p>
+<p><strong>Level 0 (Top Level): Production Content Moderation System</strong></p>
+<ul>
+<li>Detect harmful content in user posts</li>
+<li>Achieve 95% precision (very few false positives)</li>
+<li>Achieve 90% recall (catch most harmful content)</li>
+<li>Latency &lt; 100ms</li>
+<li>Handle 50K posts per second</li>
+</ul>
 <p>This is your top-level goal. Now you need to devise a plan. Let’s say you decide:</p>
-<p><strong>Level 1 (System Architecture Plan):</strong> 1. Multi-task transformer model for text 2. CNN for image/video moderation 3. Ensemble combining both for multi-modal posts 4. Human-in-the-loop for borderline cases 5. Active learning to improve over time 6. A/B testing infrastructure</p>
+<p><strong>Level 1 (System Architecture Plan):</strong></p>
+<ol type="1">
+<li>Multi-task transformer model for text</li>
+<li>CNN for image/video moderation</li>
+<li>Ensemble combining both for multi-modal posts</li>
+<li>Human-in-the-loop for borderline cases</li>
+<li>Active learning to improve over time</li>
+<li>A/B testing infrastructure</li>
+</ol>
 <p>Good! But now each of these components is itself a problem requiring a plan. Let’s drill into just one: “Multi-task transformer model for text.”</p>
-<p><strong>Level 2 (Model Architecture Plan):</strong> - Base: Pre-trained BERT (or RoBERTa or similar) - Task-specific heads for each policy violation type: - Hate speech detection - Misinformation detection - Spam detection - Harassment detection - Shared encoder for efficiency - Separate calibration for each task</p>
+<p><strong>Level 2 (Model Architecture Plan):</strong></p>
+<ul>
+<li>Base: Pre-trained BERT (or RoBERTa or similar)</li>
+<li>Task-specific heads for each policy violation type:
+<ul>
+<li>Hate speech detection</li>
+<li>Misinformation detection</li>
+<li>Spam detection</li>
+<li>Harassment detection</li>
+</ul></li>
+<li>Shared encoder for efficiency</li>
+<li>Separate calibration for each task</li>
+</ul>
 <p>Okay, but how do you train this? That’s another planning problem:</p>
-<p><strong>Level 3 (Training Strategy Plan):</strong> - Start with frozen BERT, train only classification heads (1 epoch) - Unfreeze and fine-tune full model (5 epochs) - Use weighted loss to handle label imbalance - Augment training data with back-translation - Implement curriculum learning (start with clear examples, gradually add hard ones)</p>
+<p><strong>Level 3 (Training Strategy Plan):</strong></p>
+<ul>
+<li>Start with frozen BERT, train only classification heads (1 epoch)</li>
+<li>Unfreeze and fine-tune full model (5 epochs)</li>
+<li>Use weighted loss to handle label imbalance</li>
+<li>Augment training data with back-translation</li>
+<li>Implement curriculum learning (start with clear examples, gradually add hard ones)</li>
+</ul>
 <p>And how do you handle the label imbalance? Another plan:</p>
-<p><strong>Level 4 (Class Imbalance Plan):</strong> - Oversample minority classes - Use focal loss to focus on hard examples - Class weights in loss function - Synthetic example generation using GPT-2 - Hard negative mining (examples model gets wrong)</p>
+<p><strong>Level 4 (Class Imbalance Plan):</strong></p>
+<ul>
+<li>Oversample minority classes</li>
+<li>Use focal loss to focus on hard examples</li>
+<li>Class weights in loss function</li>
+<li>Synthetic example generation using GPT-2</li>
+<li>Hard negative mining (examples model gets wrong)</li>
+</ul>
 <p>You see how this works? Each level of planning creates sub-problems that need their own plans. And this isn’t a sign of poor planning—this is <strong>necessary decomposition</strong>.</p>
 </section>
 <section id="managing-the-recursion-practical-strategies" class="level3">
 <h3 class="anchored" data-anchor-id="managing-the-recursion-practical-strategies"><strong>Managing the Recursion: Practical Strategies</strong></h3>
 <p>This recursion can feel overwhelming. “How deep do I need to plan? When do I stop?” Here are strategies I use:</p>
 <p><strong>1. Plan depth matches uncertainty</strong></p>
-<p>For components you understand well, plan shallowly: - “Use standard data augmentation” (you know how to do this, don’t need detailed planning)</p>
-<p>For components with uncertainty, plan deeply: - “Handle multi-lingual content” (you haven’t done this before, need detailed plan)</p>
+<p>For components you understand well, plan shallowly:</p>
+<ul>
+<li>“Use standard data augmentation” (you know how to do this, don’t need detailed planning)</li>
+</ul>
+<p>For components with uncertainty, plan deeply:</p>
+<ul>
+<li>“Handle multi-lingual content” (you haven’t done this before, need detailed plan)</li>
+</ul>
 <p><strong>2. Plan until you hit actionable tasks</strong></p>
-<p>Keep recursing until you reach tasks where you know the next concrete action: - ❌ “Improve model performance” (not actionable—how?) - ✓ “Run hyperparameter sweep over learning rates [1e-5, 1e-4, 1e-3]” (actionable!)</p>
+<p>Keep recursing until you reach tasks where you know the next concrete action:</p>
+<ul>
+<li>❌ “Improve model performance” (not actionable—how?)</li>
+<li>✓ “Run hyperparameter sweep over learning rates [1e-5, 1e-4, 1e-3]” (actionable!)</li>
+</ul>
 <p><strong>3. Plan top-down, execute bottom-up</strong></p>
-<p>Make your high-level plan first. Then recursively expand the uncertain parts. But when implementing, start from the bottom: - First: Get data loading working - Then: Get baseline model training - Then: Add complexity - Finally: Deploy complete system</p>
+<p>Make your high-level plan first. Then recursively expand the uncertain parts. But when implementing, start from the bottom:</p>
+<ul>
+<li>First: Get data loading working</li>
+<li>Then: Get baseline model training</li>
+<li>Then: Add complexity</li>
+<li>Finally: Deploy complete system</li>
+</ul>
 <p>This way you always have something working at each stage.</p>
 <p><strong>4. Document the hierarchy</strong></p>
 <p>I literally draw this out. Example:</p>
 <p><img src="images/ml-recursive-planning.svg" class="img-fluid"></p>
-<p>This visual hierarchy helps me: - See the full scope - Identify what I’ve planned and what’s still vague - Communicate with team members - Track progress</p>
+<p>This visual hierarchy helps me:</p>
+<ul>
+<li>See the full scope</li>
+<li>Identify what I’ve planned and what’s still vague</li>
+<li>Communicate with team members</li>
+<li>Track progress</li>
+</ul>
 </section>
 <section id="the-wisdom-of-deferred-planning" class="level3">
 <h3 class="anchored" data-anchor-id="the-wisdom-of-deferred-planning"><strong>The Wisdom of Deferred Planning</strong></h3>
 <p>Here’s a counterintuitive insight: <strong>You don’t need to plan everything upfront.</strong></p>
 <p>In fact, planning too deeply too early is often wasteful. Why? Because your early experiments will teach you things that change your plan.</p>
-<p>The pattern I follow: 1. <strong>Plan the first phase in detail</strong> (enough to start) 2. <strong>Plan subsequent phases at high level only</strong> (rough sketch) 3. <strong>Refine the plan as you learn</strong> (based on what works)</p>
-<p>Example: For that content moderation system, I might plan in detail: - Data pipeline setup - Baseline model (simple BERT fine-tuning) - Evaluation framework</p>
-<p>But I’d only sketch: - Multi-task learning (might not be needed if single-task works) - Ensemble strategy (depends on baseline results) - Active learning (Phase 2, depends on Phase 1 results)</p>
+<p>The pattern I follow:</p>
+<ol type="1">
+<li><strong>Plan the first phase in detail</strong> (enough to start)</li>
+<li><strong>Plan subsequent phases at high level only</strong> (rough sketch)</li>
+<li><strong>Refine the plan as you learn</strong> (based on what works)</li>
+</ol>
+<p>Example: For that content moderation system, I might plan in detail:</p>
+<ul>
+<li>Data pipeline setup</li>
+<li>Baseline model (simple BERT fine-tuning)</li>
+<li>Evaluation framework</li>
+</ul>
+<p>But I’d only sketch:</p>
+<ul>
+<li>Multi-task learning (might not be needed if single-task works)</li>
+<li>Ensemble strategy (depends on baseline results)</li>
+<li>Active learning (Phase 2, depends on Phase 1 results)</li>
+</ul>
 <p>Why? Because maybe my baseline achieves 93% and I realize I don’t need the complexity of multi-task learning. Or maybe I discover that hate speech and misinformation share a lot of features, suggesting multi-task learning is crucial. <strong>I don’t know until I try the baseline.</strong></p>
 <p>This is “agile planning” for ML. Plan enough to make progress, but stay flexible to adapt as you learn.</p>
 </section>
 <section id="knowing-when-to-replan" class="level3">
 <h3 class="anchored" data-anchor-id="knowing-when-to-replan"><strong>Knowing When to Replan</strong></h3>
 <p>Plans need to change. How do you know when?</p>
-<p><strong>Strong signals to replan:</strong> - Your assumptions were wrong (data is different than expected) - Constraints changed (now you need 10ms latency, not 100ms) - Baseline experiments show completely different results than expected - New technology/paper makes your approach obsolete - Team/timeline/resources changed significantly</p>
-<p><strong>Weak signals (don’t replan yet):</strong> - One experiment didn’t work (try a few variations first) - Someone suggests a different approach (evaluate if it’s actually better) - A paper claims better results (might not transfer to your setting)</p>
+<p><strong>Strong signals to replan:</strong></p>
+<ul>
+<li>Your assumptions were wrong (data is different than expected)</li>
+<li>Constraints changed (now you need 10ms latency, not 100ms)</li>
+<li>Baseline experiments show completely different results than expected</li>
+<li>New technology/paper makes your approach obsolete</li>
+<li>Team/timeline/resources changed significantly</li>
+</ul>
+<p><strong>Weak signals (don’t replan yet):</strong></p>
+<ul>
+<li>One experiment didn’t work (try a few variations first)</li>
+<li>Someone suggests a different approach (evaluate if it’s actually better)</li>
+<li>A paper claims better results (might not transfer to your setting)</li>
+</ul>
 <p>The art is knowing when to persist with your plan (not every failure means the plan is wrong) vs.&nbsp;when to pivot (when evidence clearly shows a different path is better).</p>
 </section>
 <section id="practice-draw-your-planning-hierarchy" class="level3">
 <h3 class="anchored" data-anchor-id="practice-draw-your-planning-hierarchy"><strong>Practice: Draw Your Planning Hierarchy</strong></h3>
-<p>Take a project you’re working on. Draw it as a hierarchy: - Top level: The production goal - Second level: Major components - Third level: Sub-components of each - Keep going until you hit “I know how to implement this”</p>
-<p>For each node, note: - Is this planned in detail or just sketched? - What’s the main uncertainty here? - What’s the risk if this part fails? - What’s the next action to make progress?</p>
-<p>This exercise often reveals: - Parts you thought were planned but are actually vague - Unnecessary complexity you can cut - Critical paths where you need more planning - Opportunities for parallelization</p>
+<p>Take a project you’re working on. Draw it as a hierarchy:</p>
+<ul>
+<li>Top level: The production goal</li>
+<li>Second level: Major components</li>
+<li>Third level: Sub-components of each</li>
+<li>Keep going until you hit “I know how to implement this”</li>
+</ul>
+<p>For each node, note:</p>
+<ul>
+<li>Is this planned in detail or just sketched?</li>
+<li>What’s the main uncertainty here?</li>
+<li>What’s the risk if this part fails?</li>
+<li>What’s the next action to make progress?</li>
+</ul>
+<p>This exercise often reveals:</p>
+<ul>
+<li>Parts you thought were planned but are actually vague</li>
+<li>Unnecessary complexity you can cut</li>
+<li>Critical paths where you need more planning</li>
+<li>Opportunities for parallelization</li>
+</ul>
 <p>The hierarchy is your map. Use it to navigate your project.</p>
 </section>
 </section>
@@ -1312,14 +1607,65 @@ Work in Progress — Feedback Welcome
 <section id="your-planning-toolkit-a-summary" class="level3">
 <h3 class="anchored" data-anchor-id="your-planning-toolkit-a-summary"><strong>Your Planning Toolkit: A Summary</strong></h3>
 <p>Let me give you a checklist to return to when you’re devising plans:</p>
-<p><strong>Pattern Recognition:</strong> - Have I seen this problem before? - What similar problems do I know? - What patterns in my experience match this? - What architectures have worked for similar tasks?</p>
-<p><strong>Related Problems:</strong> - What problems share the same architecture? - What problems share the same challenges? - What problems are in the same domain? - Can I transfer results, methods, or insights?</p>
-<p><strong>Auxiliary Elements:</strong> - What additional tasks could help learning? - What intermediate representations might help? - What auxiliary losses could guide training? - What creative additions might unlock progress?</p>
-<p><strong>Problem Transformation:</strong> - How else could I frame this problem? - What assumptions am I making that I could change? - What different ML task types could solve this? - What different representations could I use?</p>
-<p><strong>First Principles:</strong> - What am I really trying to do? (Plain language) - What does success actually mean? - What does my model need to know? - What assumptions am I making? - What’s the simplest approach?</p>
-<p><strong>Working Backwards:</strong> - What are my hard constraints? - What do these constraints imply? - What components do I need? - What does each component require? - What’s the data and compute budget?</p>
-<p><strong>When Stuck:</strong> - Can my model overfit a tiny batch? (Capacity check) - Where and why is it failing? (Error analysis) - Am I solving the right problem? (Problem check) - Have I tried simpler approaches? (Baseline check) - Do I need to reframe entirely? (Strategic pivot)</p>
-<p><strong>Aesthetic Judgment:</strong> - Is this elegant? (Appropriate complexity) - Is this robust? (Handles uncertainty) - Is this clear? (Understandable and debuggable) - Does this feel inevitable? (Aligned with problem structure)</p>
+<p><strong>Pattern Recognition:</strong></p>
+<ul>
+<li>Have I seen this problem before?</li>
+<li>What similar problems do I know?</li>
+<li>What patterns in my experience match this?</li>
+<li>What architectures have worked for similar tasks?</li>
+</ul>
+<p><strong>Related Problems:</strong></p>
+<ul>
+<li>What problems share the same architecture?</li>
+<li>What problems share the same challenges?</li>
+<li>What problems are in the same domain?</li>
+<li>Can I transfer results, methods, or insights?</li>
+</ul>
+<p><strong>Auxiliary Elements:</strong></p>
+<ul>
+<li>What additional tasks could help learning?</li>
+<li>What intermediate representations might help?</li>
+<li>What auxiliary losses could guide training?</li>
+<li>What creative additions might unlock progress?</li>
+</ul>
+<p><strong>Problem Transformation:</strong></p>
+<ul>
+<li>How else could I frame this problem?</li>
+<li>What assumptions am I making that I could change?</li>
+<li>What different ML task types could solve this?</li>
+<li>What different representations could I use?</li>
+</ul>
+<p><strong>First Principles:</strong></p>
+<ul>
+<li>What am I really trying to do? (Plain language)</li>
+<li>What does success actually mean?</li>
+<li>What does my model need to know?</li>
+<li>What assumptions am I making?</li>
+<li>What’s the simplest approach?</li>
+</ul>
+<p><strong>Working Backwards:</strong></p>
+<ul>
+<li>What are my hard constraints?</li>
+<li>What do these constraints imply?</li>
+<li>What components do I need?</li>
+<li>What does each component require?</li>
+<li>What’s the data and compute budget?</li>
+</ul>
+<p><strong>When Stuck:</strong></p>
+<ul>
+<li>Can my model overfit a tiny batch? (Capacity check)</li>
+<li>Where and why is it failing? (Error analysis)</li>
+<li>Am I solving the right problem? (Problem check)</li>
+<li>Have I tried simpler approaches? (Baseline check)</li>
+<li>Do I need to reframe entirely? (Strategic pivot)</li>
+</ul>
+<p><strong>Aesthetic Judgment:</strong></p>
+<ul>
+<li>Is this elegant? (Appropriate complexity)</li>
+<li>Is this robust? (Handles uncertainty)</li>
+<li>Is this clear? (Understandable and debuggable)</li>
+<li>Does this feel inevitable? (Aligned with problem structure)</li>
+</ul>
 </section>
 <section id="practice-your-personal-reflection" class="level3">
 <h3 class="anchored" data-anchor-id="practice-your-personal-reflection"><strong>Practice: Your Personal Reflection</strong></h3>

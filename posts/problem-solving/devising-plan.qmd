@@ -18,6 +18,14 @@ This article is actively evolving. If you spot gaps, disagree with a take, or ha
 r patterns, I’d love to hear it. Suggestions and critiques are welcome.
 :::
 
+## Before We Begin: Where We Are in Pólya's Framework
+
+Let me start with something crucial. If you've been following this series, you've already completed Step 1: Understanding the Problem. You've identified your unknown (what you're trying to predict), examined your data (what you have to work with), and mapped your conditions (constraints like latency, interpretability, data size). You know what success looks like.
+
+If you haven't done that work yet—if you're unclear about your exact objective or haven't truly examined your data—stop now. Go back to the first article in this series. Understanding must come first. Pólya is emphatic about this: you cannot devise a good plan without first understanding what you're trying to solve.
+
+But if you have done that work, then welcome. You're ready for Step 2: Devising a Plan.
+
 ## **Introduction: Standing at the Threshold**
 
 Picture yourself in this moment. You're sitting at your desk, perhaps with a cup of coffee growing cold beside your keyboard. You've spent the last few days—maybe weeks—immersed in your data. You've run `df.describe()` more times than you can count. You've created distribution plots, correlation matrices, and t-SNE visualizations. You've identified the outliers, understood the class imbalance, and discovered that one column that's leaking future information. You've documented your findings, noting that 15% of your labels might be noisy, that your features have wildly different scales, and that production latency can't exceed 50 milliseconds.
@@ -31,6 +39,19 @@ But now comes something different. Now comes the moment where all that careful a
 George Pólya, the mathematician who crystallized the art of problem-solving into teachable principles, understood that this stage represents the most profoundly human aspect of our work. It's where **intuition dances with logic**, where your past projects—the successes and the failures—suddenly illuminate possibilities for this new challenge. It's where you become an artist, sketching pathways through the vast, often intimidating landscape of model architectures, training strategies, and deployment constraints.
 
 Let me walk with you through this process. Not as a distant lecturer, but as a colleague who's been in your shoes, who's felt that mix of excitement and uncertainty that comes with starting a new ML project.
+
+## The Six Essential Questions: Your Planning Toolkit
+Pólya identified specific questions that, when asked systematically, guide you toward a good plan. These aren't meant to be asked once and forgotten. They're a toolkit you return to repeatedly throughout the planning process.
+Let me introduce them first, then we'll explore each in depth:
+
+- **"Have you seen it before?"** - Pattern recognition from your experience
+- **"Do you know a related problem?"** - Leveraging structural similarities
+- **"Could you restate the problem?"** - Transformation and reformulation
+- **"Could you introduce an auxiliary element?"** - Creative additions that unlock solutions
+- **"Go back to definitions"** - Returning to first principles
+- **"Could you work backwards from the goal?"** - Reverse engineering your approach
+
+These questions work together. The answer to one often leads you to another. They form a dynamic system of exploration, not a linear checklist. But let's examine each one carefully.
 
 ## **The Architecture of Strategic Thinking: Building Your Bridge**
 
@@ -163,6 +184,7 @@ By recognizing these patterns, they could build on years of ML progress rather t
 Now, let me be honest with you about something: **This pattern recognition isn't instantaneous**. When you're early in your ML career, your library of patterns is still being built. That's okay. That's expected. Every project you complete, every paper you deeply understand, every architecture you implement from scratch—these are all deposits in your pattern bank.
 
 But here's the secret that accelerates this process: **Deliberately reflect on your projects**. After you finish a model, don't just move on. Ask yourself:
+
 - What was the essential structure of this problem?
 - What made it hard?
 - What architectural choices were crucial?
@@ -224,6 +246,7 @@ The insight? Both problems are fundamentally about **anomaly detection**. Normal
 Here's a practical exercise I want you to do: **Build your own related problems network.** 
 
 Take a problem you're currently working on or one you worked on recently. On a piece of paper (or Excalidraw, or whatever tool you like), put that problem in the center. Now draw connections to related problems. For each connection, label it:
+
 - Same architecture?
 - Same challenge?
 - Same domain?
@@ -253,6 +276,7 @@ Let me walk you through different types of auxiliary elements you might introduc
 This is probably the most common type. You add additional prediction tasks that aren't your ultimate goal but help you learn better representations.
 
 **Real scenario**: You're building a model for medical image analysis to detect lung cancer. Your main task is binary classification: cancer or no cancer. But you introduce auxiliary tasks:
+
 - Predict the patient's age (forces the model to learn biological indicators)
 - Segment out the lung regions (forces spatial understanding)
 - Predict whether the patient is a smoker (forces learning of texture patterns)
@@ -260,6 +284,7 @@ This is probably the most common type. You add additional prediction tasks that 
 None of these auxiliary tasks is your goal. But together, they shape your model's learned representations, making it better at the main task.
 
 Here's the fascinating part: **There's no algorithm for choosing auxiliary tasks**. This requires intuition, domain knowledge, creativity. You might ask yourself:
+
 - What else could this model predict from the same data?
 - What intermediate understanding would help the main task?
 - What related information does the data contain?
@@ -399,6 +424,7 @@ Workable? Yes. Ideal? Maybe not.
 Now you step back and think differently. "Wait," you say, "what if I frame this as two separate things: HOW LONG will the customer stay (time until churn), and WHAT'S THE RATE of their spending?"
 
 This is survival analysis. You're modeling:
+
 1. The hazard function: probability of churn at each time point
 2. Expected revenue per time period while active
 
@@ -417,6 +443,7 @@ Now let's get really creative. What if you reframe the entire problem?
 "Actually," you say, "I don't just want to *predict* customer value. I want to *maximize* it through interventions. What if I frame this as: learn a policy that decides what actions to take (send discount, send email, do nothing) to maximize lifetime revenue?"
 
 This is a reinforcement learning formulation:
+
 - **State**: Customer behavior, engagement metrics, recent activity
 - **Actions**: Various interventions you can take
 - **Reward**: Incremental revenue generated
@@ -431,6 +458,7 @@ Would I jump straight to RL? Probably not. But for a mature business with existi
 ---
 
 Now, here's the crucial lesson: **These are all the same business problem, but completely different ML problems.** Each formulation:
+
 - Enables different techniques
 - Requires different data structures
 - Makes different assumptions
@@ -464,6 +492,7 @@ Here are some common transformations to have in your toolkit:
 **Generative → Discriminative**: Can't directly model P(y|x)? Sometimes modeling P(x|y) and using Bayes rule works better. This is how Naive Bayes classifiers work.
 
 Here's a practical exercise: **Take a problem you're working on right now. Write down three completely different ways to frame it as an ML problem.** Don't just think it—actually write them down. For each framing, note:
+
 - What techniques does this enable?
 - What assumptions does it make?
 - What are the pros and cons?
@@ -497,6 +526,7 @@ Not "sequence-to-sequence generation with attention." But: **"Given a bug descri
 Not "unsupervised clustering with k-means." But: **"Group these customer behaviors so we can design targeted interventions."**
 
 When you state it this way, clearly and simply, you can ask better questions:
+
 - What's the actual impact of being right vs. wrong?
 - What's the cost of different types of errors?
 - What does "good enough" actually mean?
@@ -527,21 +557,25 @@ Returning to definitions means understanding: **"What's the inherent complexity 
 Let me give you a framework for thinking about this:
 
 **Simple problems** (low complexity, clear rules):
+
 - Could be solved by a human with a checklist
 - Examples: Filtering spam emails based on keywords, flagging duplicate records
 - Don't need deep learning—often decision trees or even rule-based systems work better
 
 **Medium complexity** (pattern recognition, but not too deep):
+
 - Requires learning combinations of features but patterns are relatively straightforward
 - Examples: Credit scoring, customer churn prediction with engineered features
 - Gradient boosted trees, random forests, or shallow neural nets work well
 
 **High complexity** (hierarchical patterns, rich structure):
+
 - Requires learning features from raw data, or very complex feature interactions
 - Examples: Image classification, natural language understanding, speech recognition
 - Deep learning shines here
 
 **Very high complexity** (reasoning, planning, long-term dependencies):
+
 - Requires sequential decision-making or complex reasoning chains
 - Examples: Playing Go, theorem proving, long-form text generation
 - Might need specialized architectures, RL, or hybrid approaches
@@ -553,6 +587,7 @@ Going back to definitions means honestly assessing which category your problem f
 Every ML approach makes assumptions. Going back to definitions means making these assumptions explicit and checking if they hold.
 
 You're using linear regression. Implicit assumptions:
+
 - The relationship is linear
 - Errors are normally distributed
 - Features are independent (or you've handled multicollinearity)
@@ -561,6 +596,7 @@ You're using linear regression. Implicit assumptions:
 Do these hold for your data? If not, you're building on a shaky foundation.
 
 You're using collaborative filtering for recommendations. Implicit assumption:
+
 - Users who agreed in the past will agree in the future
 - The rating matrix is static
 - You have enough historical data
@@ -621,6 +657,7 @@ That means model inference can take at most... let's say 20ms (leaving room for 
 **Step 3: Ask again "What does this imply?"**
 
 20ms for inference. That rules out:
+
 - Large transformer models (would take 100+ms)
 - Ensemble of multiple heavy models (too slow)
 - Complex feature engineering at inference time (no time)
@@ -632,6 +669,7 @@ So I need a lightweight model architecture.
 If I need a lightweight model but still need good performance, what does that imply?
 
 I need to do the heavy lifting offline:
+
 - Pre-compute embeddings
 - Use approximate nearest neighbor search for candidate generation
 - Only use the lightweight model for final re-ranking
@@ -641,6 +679,7 @@ I need to do the heavy lifting offline:
 If I'm doing candidate generation with ANN search, what does that imply?
 
 I need:
+
 - A good embedding space (so similar items are close together)
 - Efficient indexing (FAISS or similar)
 - The embedding model can be heavy (it runs offline)
@@ -650,11 +689,13 @@ I need:
 If I need a good embedding space, what does that imply for training?
 
 I should use:
+
 - Contrastive learning or metric learning objectives
 - Large batch sizes (to get good negatives)
 - Training data focused on user-item interactions
 
 Now I can work forward with this plan:
+
 1. Train an embedding model (can be complex, runs offline)
 2. Use embeddings to build ANN index
 3. Train lightweight ranking model (must be fast)
@@ -800,6 +841,7 @@ What does learning from expert games imply?
 → "I need a large database of professional games."
 
 Now work forward with this plan:
+
 1. Start: Collect database of expert games
 2. Train initial policy network by supervised learning on expert moves
 3. Use that policy in MCTS to generate self-play games
@@ -832,12 +874,14 @@ You have 3 months and 2 engineers. Working backwards from the deadline helps you
 ### **Practical Exercise**
 
 Take a project you're working on. Write down the final state you need to achieve. Be specific:
+
 - Performance metrics
 - Latency requirements  
 - Scale (QPS, data volume)
 - Other constraints (interpretability, fairness, etc.)
 
 Now work backwards. For each requirement, ask "What does this imply?" Keep a chain of reasoning. You might discover:
+
 - Assumptions you're making that might not hold
 - Components you'll need that you hadn't thought about
 - Architectural choices that are forced by your constraints
@@ -850,6 +894,7 @@ This backwards planning often reveals a simpler, more direct path than forward p
 Let me be completely honest with you: **You're going to get stuck.** Not occasionally. Regularly. On every challenging project.
 
 You'll hit moments where:
+
 - Every architecture you try overfits terribly
 - Your model learns spurious correlations no matter what you do
 - Performance plateaus far below where it needs to be
@@ -906,16 +951,19 @@ If your model can't even overfit 10 examples, you have a bug or fundamental arch
 **If it CAN overfit a tiny batch but won't train on full data**:
 
 Check your data:
+
 - Are labels correct? (Print some examples manually)
 - Is there a label-feature mismatch? (e.g., predicting tomorrow's price but features include tomorrow's price)
 - Are you preprocessing wrong? (e.g., normalizing test data with train stats)
 
 Check your architecture:
+
 - Are gradients flowing? (Add gradient logging)
 - Is anything saturating? (sigmoid/tanh outputs at extremes?)
 - Are skip connections working if you have them?
 
 Check your training setup:
+
 - Learning rate too high (causing divergence) or too low (no learning)?
 - Batch size inappropriate for problem?
 - Are you training the right parameters? (Check param.requires_grad)
@@ -1027,6 +1075,7 @@ def deep_error_analysis(model, dataset):
 ```
 
 This error analysis often reveals the issue:
+
 - "Oh, the model confuses class A and B because we don't have a feature that distinguishes them"
 - "The model fails on rare edge cases—we need more data for those"
 - "The model is learning a spurious pattern in the background, not the actual object"
@@ -1044,6 +1093,7 @@ This error analysis often reveals the issue:
 This is the hardest kind of stuck, because the problem isn't in the details—it's in the approach.
 
 Signs you're in this situation:
+
 - Simple baselines work better than your complex model
 - The approach works in papers but not on your data
 - Every variation you try fails in the same way
@@ -1106,6 +1156,7 @@ ML planning works the same way, but we need to be more systematic about it.
 Let me walk you through a real example. You're tasked with building a content moderation system for a social media platform. Your high-level plan might be:
 
 **Level 0 (Top Level): Production Content Moderation System**
+
 - Detect harmful content in user posts
 - Achieve 95% precision (very few false positives)
 - Achieve 90% recall (catch most harmful content)
@@ -1115,6 +1166,7 @@ Let me walk you through a real example. You're tasked with building a content mo
 This is your top-level goal. Now you need to devise a plan. Let's say you decide:
 
 **Level 1 (System Architecture Plan):**
+
 1. Multi-task transformer model for text
 2. CNN for image/video moderation
 3. Ensemble combining both for multi-modal posts
@@ -1125,6 +1177,7 @@ This is your top-level goal. Now you need to devise a plan. Let's say you decide
 Good! But now each of these components is itself a problem requiring a plan. Let's drill into just one: "Multi-task transformer model for text."
 
 **Level 2 (Model Architecture Plan):**
+
 - Base: Pre-trained BERT (or RoBERTa or similar)
 - Task-specific heads for each policy violation type:
   - Hate speech detection
@@ -1137,6 +1190,7 @@ Good! But now each of these components is itself a problem requiring a plan. Let
 Okay, but how do you train this? That's another planning problem:
 
 **Level 3 (Training Strategy Plan):**
+
 - Start with frozen BERT, train only classification heads (1 epoch)
 - Unfreeze and fine-tune full model (5 epochs)
 - Use weighted loss to handle label imbalance
@@ -1146,6 +1200,7 @@ Okay, but how do you train this? That's another planning problem:
 And how do you handle the label imbalance? Another plan:
 
 **Level 4 (Class Imbalance Plan):**
+
 - Oversample minority classes
 - Use focal loss to focus on hard examples
 - Class weights in loss function
@@ -1161,20 +1216,24 @@ This recursion can feel overwhelming. "How deep do I need to plan? When do I sto
 **1. Plan depth matches uncertainty**
 
 For components you understand well, plan shallowly:
+
 - "Use standard data augmentation" (you know how to do this, don't need detailed planning)
 
 For components with uncertainty, plan deeply:
+
 - "Handle multi-lingual content" (you haven't done this before, need detailed plan)
 
 **2. Plan until you hit actionable tasks**
 
 Keep recursing until you reach tasks where you know the next concrete action:
+
 - ❌ "Improve model performance" (not actionable—how?)
 - ✓ "Run hyperparameter sweep over learning rates [1e-5, 1e-4, 1e-3]" (actionable!)
 
 **3. Plan top-down, execute bottom-up**
 
 Make your high-level plan first. Then recursively expand the uncertain parts. But when implementing, start from the bottom:
+
 - First: Get data loading working
 - Then: Get baseline model training
 - Then: Add complexity
@@ -1189,6 +1248,7 @@ I literally draw this out. Example:
 ![](images/ml-recursive-planning.svg)
 
 This visual hierarchy helps me:
+
 - See the full scope
 - Identify what I've planned and what's still vague
 - Communicate with team members
@@ -1201,16 +1261,19 @@ Here's a counterintuitive insight: **You don't need to plan everything upfront.*
 In fact, planning too deeply too early is often wasteful. Why? Because your early experiments will teach you things that change your plan.
 
 The pattern I follow:
+
 1. **Plan the first phase in detail** (enough to start)
 2. **Plan subsequent phases at high level only** (rough sketch)
 3. **Refine the plan as you learn** (based on what works)
 
 Example: For that content moderation system, I might plan in detail:
+
 - Data pipeline setup
 - Baseline model (simple BERT fine-tuning)
 - Evaluation framework
 
 But I'd only sketch:
+
 - Multi-task learning (might not be needed if single-task works)
 - Ensemble strategy (depends on baseline results)
 - Active learning (Phase 2, depends on Phase 1 results)
@@ -1224,6 +1287,7 @@ This is "agile planning" for ML. Plan enough to make progress, but stay flexible
 Plans need to change. How do you know when?
 
 **Strong signals to replan:**
+
 - Your assumptions were wrong (data is different than expected)
 - Constraints changed (now you need 10ms latency, not 100ms)
 - Baseline experiments show completely different results than expected
@@ -1231,6 +1295,7 @@ Plans need to change. How do you know when?
 - Team/timeline/resources changed significantly
 
 **Weak signals (don't replan yet):**
+
 - One experiment didn't work (try a few variations first)
 - Someone suggests a different approach (evaluate if it's actually better)
 - A paper claims better results (might not transfer to your setting)
@@ -1240,18 +1305,21 @@ The art is knowing when to persist with your plan (not every failure means the p
 ### **Practice: Draw Your Planning Hierarchy**
 
 Take a project you're working on. Draw it as a hierarchy:
+
 - Top level: The production goal
 - Second level: Major components
 - Third level: Sub-components of each
 - Keep going until you hit "I know how to implement this"
 
 For each node, note:
+
 - Is this planned in detail or just sketched?
 - What's the main uncertainty here?
 - What's the risk if this part fails?
 - What's the next action to make progress?
 
 This exercise often reveals:
+
 - Parts you thought were planned but are actually vague
 - Unnecessary complexity you can cut
 - Critical paths where you need more planning
@@ -1484,30 +1552,35 @@ You make constant small adjustments to your course. That's execution with adapta
 Let me give you a checklist to return to when you're devising plans:
 
 **Pattern Recognition:**
+
 - Have I seen this problem before?
 - What similar problems do I know?
 - What patterns in my experience match this?
 - What architectures have worked for similar tasks?
 
 **Related Problems:**
+
 - What problems share the same architecture?
 - What problems share the same challenges?
 - What problems are in the same domain?
 - Can I transfer results, methods, or insights?
 
 **Auxiliary Elements:**
+
 - What additional tasks could help learning?
 - What intermediate representations might help?
 - What auxiliary losses could guide training?
 - What creative additions might unlock progress?
 
 **Problem Transformation:**
+
 - How else could I frame this problem?
 - What assumptions am I making that I could change?
 - What different ML task types could solve this?
 - What different representations could I use?
 
 **First Principles:**
+
 - What am I really trying to do? (Plain language)
 - What does success actually mean?
 - What does my model need to know?
@@ -1515,6 +1588,7 @@ Let me give you a checklist to return to when you're devising plans:
 - What's the simplest approach?
 
 **Working Backwards:**
+
 - What are my hard constraints?
 - What do these constraints imply?
 - What components do I need?
@@ -1522,6 +1596,7 @@ Let me give you a checklist to return to when you're devising plans:
 - What's the data and compute budget?
 
 **When Stuck:**
+
 - Can my model overfit a tiny batch? (Capacity check)
 - Where and why is it failing? (Error analysis)
 - Am I solving the right problem? (Problem check)
@@ -1529,6 +1604,7 @@ Let me give you a checklist to return to when you're devising plans:
 - Do I need to reframe entirely? (Strategic pivot)
 
 **Aesthetic Judgment:**
+
 - Is this elegant? (Appropriate complexity)
 - Is this robust? (Handles uncertainty)
 - Is this clear? (Understandable and debuggable)
