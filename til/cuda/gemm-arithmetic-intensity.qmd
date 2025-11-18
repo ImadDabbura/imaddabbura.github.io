@@ -1,0 +1,12 @@
+
+---
+title: Arithmetic Intensity for GEMM
+date: 2025-08-11
+categories: CUDA
+---
+
+1. AI = $\frac{MNK}{MK + KN + MN}$. This assumes *perfect* reuse and is theoretical, not what hardware actually achieves.
+2. Hidden Assumption: Infinite-cache model → every tile of (A, B, C) is loaded once and fully reused by all thread blocks.
+3. Edge Cases: If M=1 or N=1 -> GEMV -> less data reuse → AI < 1 → always memory-bound.
+4. GEMM becomes compute-bound only when all dimensions are reasonably large. NVIDIA guideline: any dimension $≤ 128a$ → likely memory-bound.
+
