@@ -79,6 +79,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -141,9 +144,16 @@ ga('send', {
   'anonymizeIp': true,
 });
 </script>
+<style>
+
+      .quarto-title-block .quarto-title-banner {
+        background-image: url(images/network-anomaly-detection-toc.svg);
+background-size: cover;
+      }
+</style>
 
 
-<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="../../assets/posts.css">
 <meta property="og:title" content="Imad Dabbura - Make ML Systems Ship Again">
 <meta property="og:description" content="Use the Theory of Constraints to replace incremental tweaks with step-function wins.">
 <meta property="og:image" content="https://imaddabbura.github.io/posts/mlsys/images/network-anomaly-detection-toc.svg">
@@ -210,16 +220,16 @@ ga('send', {
  <span class="dropdown-text">Books’ Summaries</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../misc-notes.html">
- <span class="dropdown-text">Misc. Notes</span></a>
-  </li>  
-        <li>
     <a class="dropdown-item" href="../../reading-list.html">
  <span class="dropdown-text">Reading List</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../../resume.html">
  <span class="dropdown-text">Resume</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../misc-notes.html">
+ <span class="dropdown-text">Misc. Notes</span></a>
   </li>  
     </ul>
   </li>
@@ -361,20 +371,20 @@ ga('send', {
 
 
 
-<p><img src="images/network-anomaly-detection-toc.svg" class="img-fluid"></p>
+<p><a href="images/network-anomaly-detection-toc.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="images/network-anomaly-detection-toc.svg" class="img-fluid"></a></p>
 <section id="introduction-why-theory-of-constraints-matters-for-machine-learning" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-why-theory-of-constraints-matters-for-machine-learning">Introduction: Why Theory of Constraints Matters for Machine Learning</h2>
 <p>You burn six months “optimizing.” Swap in transformers. Squeeze another +0.5% accuracy. Rewrite the feature pipeline. Add a shiny GPU cluster. And still: alert fatigue, missed incidents, and latency that kills real-time response.</p>
 <p>That’s optimization theater.</p>
 <p>The Theory of Constraints (ToC) cuts through the noise. Every system has a single, dominant bottleneck at any moment. Find it. Exploit it. Elevate it. Then repeat. For ML teams juggling models, features, infra, and data plumbing, this isn’t philosophy—it’s an operating system. Stop tuning everything. Start fixing the one thing that governs end-to-end throughput, quality, and cost.</p>
 <p>Take network anomaly detection at enterprise scale. Security wants higher recall on stealthy attacks. Ops wants fewer false alarms. Infra wants lower spend. The ML team tries to please everyone: new features, tighter thresholds, fancier models. Results? Nobody’s happy. Because the work targets components, not the constraint that sets the system’s performance ceiling—maybe label latency in feedback loops, maybe stream processing backpressure, maybe human triage capacity. This pattern repeats across fraud, recsys, and forecasting. Parts get optimized. Systems don’t.</p>
-<p><img src="images/ml-pipeline-weak-constraint.svg" class="img-fluid"></p>
+<p><a href="images/ml-pipeline-weak-constraint.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="images/ml-pipeline-weak-constraint.svg" class="img-fluid"></a></p>
 <p>We’ll track a network anomaly detector as it moves through the five ToC stages. It watches enterprise traffic for everything from port scans to exfiltration—and wrestles with the usual security-ML pain: too many false positives, missed low-and-slow attacks, and compute that melts budgets. The domain is network security; the playbook is universal. If you run ML in production, the patterns—and the fixes—apply.</p>
 </section>
 <section id="the-five-stage-framework-overview" class="level2">
 <h2 class="anchored" data-anchor-id="the-five-stage-framework-overview">The Five-Stage Framework Overview</h2>
 <p>The Theory of Constraints framework for ML systems consists of five interconnected stages, each building upon insights from the previous stage. We’ll see how each stage applies to our network anomaly detection system, transforming it from a source of frustration to a strategic asset.</p>
-<p><img src="images/circular-flow-5-stages.svg" class="img-fluid"></p>
+<p><a href="images/circular-flow-5-stages.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="images/circular-flow-5-stages.svg" class="img-fluid"></a></p>
 <p><strong>Stage 1: Goal and Constraint</strong> - We’ll establish Service Level Objectives (SLOs) for our anomaly detection system (not just “detect anomalies” but specific, measurable outcomes) and identify the primary bottleneck preventing success.</p>
 <p><strong>Stage 2: Constraint to Problem</strong> - We’ll dig deeper to understand why our detection system faces this constraint, moving beyond surface symptoms to root causes.</p>
 <p><strong>Stage 3: Problem as Conflict</strong> - We’ll reframe the problem as a fundamental conflict between competing approaches, understanding why simple solutions haven’t worked.</p>
@@ -403,7 +413,7 @@ ga('send', {
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>Measurement: synchronized clocks, shared tap, incident-level labels, </span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>deduped correlated alerts</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><img src="images/slo-hierarchy.svg" class="img-fluid"></p>
+<p><a href="images/slo-hierarchy.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="images/slo-hierarchy.svg" class="img-fluid"></a></p>
 <p>This specific goal immediately clarifies priorities. A model that detects 99% of anomalies but generates 500 alerts per day fails our goal. A model with perfect precision but 30-minute detection latency fails our goal. The SLOs define success and, crucially, reveal what constrains us from achieving them.</p>
 </section>
 <section id="identifying-the-constraint-building-your-constraint-ledger" class="level3">
@@ -498,13 +508,13 @@ ga('send', {
 <section id="validating-the-constraint-through-temporary-relief" class="level3">
 <h3 class="anchored" data-anchor-id="validating-the-constraint-through-temporary-relief">Validating the Constraint Through Temporary Relief</h3>
 <p>Before investing in solving Feature-Tier2 bottleneck, we validate it’s truly the constraint. We temporarily provision 3x more compute for Feature-Tier2, enabling processing of 90K records/sec.&nbsp;The results are dramatic:</p>
-<p><img src="images/before-after-dashboard.svg" class="img-fluid"></p>
+<p><a href="images/before-after-dashboard.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="images/before-after-dashboard.svg" class="img-fluid"></a></p>
 <p>The validation confirms Feature-Tier2 as the primary constraint. With this bottleneck relieved, the system nearly meets our SLOs. Interestingly, false positives decreased—the model makes better decisions when it sees complete feature sets rather than sampled fragments. This demonstrates a crucial point: no other improvement—not model accuracy, not infrastructure, not threshold tuning—would have achieved this impact.</p>
 </section>
 <section id="constraint-types-in-ml-systems" class="level3">
 <h3 class="anchored" data-anchor-id="constraint-types-in-ml-systems">Constraint Types in ML Systems</h3>
 <p>Our detection system faces different constraint types over its lifecycle:</p>
-<p><img src="images/constraints-types-matrix.svg" class="img-fluid"></p>
+<p><a href="images/constraints-types-matrix.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="images/constraints-types-matrix.svg" class="img-fluid"></a></p>
 <p>Currently, we face a <strong>Technical Process Constraint</strong>—the Tier-2 feature extraction algorithm is inefficient. But understanding the constraint type helps predict solution categories. Technical process constraints often yield to algorithmic improvements or architectural changes. Our feature extraction bottleneck likely requires both.</p>
 </section>
 </section>
@@ -520,13 +530,13 @@ ga('send', {
 <li>Entity aggregations (per-source, per-destination, per-service rollups)</li>
 <li>Contextual lookups (reputation scores, geo-location, service profiles)</li>
 </ul>
-<p><img src="images/iceberg-visible-constraint.svg" class="img-fluid"></p>
+<p><a href="images/iceberg-visible-constraint.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="images/iceberg-visible-constraint.svg" class="img-fluid"></a></p>
 <p>The real problem emerges: the feature extraction was designed for offline research with unlimited computation time. When deployed to production, the same comprehensive feature set that enabled high accuracy in research became a bottleneck at scale. The team kept adding features to improve accuracy metrics without considering extraction cost or production constraints.</p>
 </section>
 <section id="applying-five-whys-to-surface-root-causes" class="level3">
 <h3 class="anchored" data-anchor-id="applying-five-whys-to-surface-root-causes">Applying Five Whys to Surface Root Causes</h3>
 <p>We systematically analyze why Feature-Tier2 became the bottleneck:</p>
-<p><img src="images/five-whys.svg" class="img-fluid"></p>
+<p><a href="images/five-whys.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-8"><img src="images/five-whys.svg" class="img-fluid"></a></p>
 <p>Each “why” is validated with evidence: - Performance profiling shows 89% of computation time spent on 12% of features - Feature importance analysis reveals 31 features contribute &lt;0.1% to decisions - Git history shows features added incrementally without removal (247 total → 47 in Tier2) - Team interviews reveal no awareness of production throughput requirements during development</p>
 <p>The root problem isn’t technical—it’s organizational. The ML team optimized for accuracy in isolation from production constraints. The platform team handled deployment without understanding model requirements. No one owned end-to-end system performance.</p>
 </section>
@@ -535,7 +545,7 @@ ga('send', {
 <p>ML systems exhibit characteristic problems that create constraints. In our anomaly detection system:</p>
 <p><strong>Feature Explosion</strong>: Every record could generate hundreds of features. Teams extract every conceivable signal because “it might help,” leading to computational bottlenecks. Our system computes duration, counts, rates, averages, variances, percentiles, unique values—most providing redundant information.</p>
 <p><strong>Time Window Confusion</strong>: Different patterns appear at different timescales. Port scans manifest in seconds, data exfiltration over hours. Our system computes features at every timescale simultaneously, multiplying computational cost. A single network flow generates features for 1-second, 10-second, 1-minute, 10-minute, and 1-hour windows.</p>
-<p><img src="images/multiscale-timeline.svg" class="img-fluid"></p>
+<p><a href="images/multiscale-timeline.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-9"><img src="images/multiscale-timeline.svg" class="img-fluid"></a></p>
 <p><strong>Baseline Computation Overhead</strong>: Anomaly detection often involves comparing current behavior to historical baselines. Our system maintains 30-day rolling baselines for thousands of entities. Updating these baselines consumes 40% of Tier-2 compute, yet most baselines change negligibly day-to-day.</p>
 <p>These patterns aren’t unique to network anomaly detection. Fraud detection systems face similar explosions with transaction features. Recommendation systems struggle with user-item interaction matrices. Forecasting systems wrestle with multiple seasonality computations.</p>
 </section>
@@ -545,7 +555,7 @@ ga('send', {
 <section id="the-core-conflict-in-ml-systems" class="level3">
 <h3 class="anchored" data-anchor-id="the-core-conflict-in-ml-systems">The Core Conflict in ML Systems</h3>
 <p>Our Feature-Tier2 problem isn’t just “slow feature computation”—it’s a fundamental conflict between two necessary approaches, each essential for different reasons:</p>
-<p><img src="images/feature-extraction-conflict.svg" class="img-fluid"></p>
+<p><a href="images/feature-extraction-conflict.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-10"><img src="images/feature-extraction-conflict.svg" class="img-fluid"></a></p>
 <p>We’ve been stuck in this conflict for two years. When attacks slip through, we add features (moving left). When performance degrades, we remove features (moving right). The ML team pushes for accuracy while the platform team demands efficiency. Neither side is wrong—we need both capabilities.</p>
 </section>
 <section id="understanding-why-this-conflict-persists" class="level3">
@@ -575,7 +585,7 @@ ga('send', {
 <section id="the-progressive-analysis-innovation" class="level3">
 <h3 class="anchored" data-anchor-id="the-progressive-analysis-innovation">The Progressive Analysis Innovation</h3>
 <p>Challenging our assumptions leads to a breakthrough: <strong>Progressive Analysis Architecture</strong>. Instead of analyzing all records uniformly, we process them in progressive stages, with each stage determining if deeper analysis is warranted.</p>
-<p><img src="images/progressive-analysis-architecture.svg" class="img-fluid"></p>
+<p><a href="images/progressive-analysis-architecture.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-11"><img src="images/progressive-analysis-architecture.svg" class="img-fluid"></a></p>
 <p><strong>Tier-1: Wire-speed Triage</strong> uses just 5 cheap features computable from basic record attributes (source, destination, port, protocol, size). A lightweight model identifies obviously benign traffic (regular HTTPS to known services, DNS queries to corporate servers). This processes at line rate with minimal compute.</p>
 <p><strong>Tier-2: Fast Analysis</strong> applies to traffic passing triage. Using 25 efficiently-computed features (connection patterns, volume metrics, simple statistics), it identifies additional normal traffic and flags potential concerns. This stage handles most legitimate but unusual traffic.</p>
 <p><strong>Tier-3: Deep Analysis</strong> examines suspicious traffic with 100 features including behavioral analysis and complex aggregations. This stage detects sophisticated attacks while maintaining manageable compute requirements by processing only 4% of traffic.</p>
@@ -599,7 +609,7 @@ ga('send', {
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"next_stage_normal"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><strong>Feature Caching and Reuse</strong>: Features computed in early stages are cached and reused in later stages. We never compute the same feature twice. Fast stages compute prerequisite features for deeper stages, amortizing extraction cost.</p>
-<p><img src="images/feature-dependency.svg" class="img-fluid"></p>
+<p><a href="images/feature-dependency.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-12"><img src="images/feature-dependency.svg" class="img-fluid"></a></p>
 <p><strong>Backpressure-Aware Adaptation</strong>: When stages experience backlog, the system adapts:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> adaptive_routing(record, stage_backlogs):</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    calibrated_risk <span class="op">=</span> assess_risk(record)</span>
@@ -641,7 +651,7 @@ T+30s: Full enrichment complete (detailed forensics, related events)</code></pre
 <section id="designing-the-minimum-viable-experiment-mve" class="level3">
 <h3 class="anchored" data-anchor-id="designing-the-minimum-viable-experiment-mve">Designing the Minimum Viable Experiment (MVE)</h3>
 <p>Before implementing progressive analysis across our entire system, we design a Minimum Viable Experiment to validate core assumptions. The experiment must test whether traffic can be accurately triaged and whether progressive analysis maintains detection quality while improving throughput.</p>
-<p><img src="images/experiment-design-pyramid.svg" class="img-fluid"></p>
+<p><a href="images/experiment-design-pyramid.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-13"><img src="images/experiment-design-pyramid.svg" class="img-fluid"></a></p>
 <p>The MVE focuses on the riskiest assumption: that Tier-1 triage can accurately identify benign traffic without missing attacks. If this fails, the entire architecture fails. We’ll test with realistic data containing known attacks to ensure we don’t create security holes.</p>
 </section>
 <section id="implementation-and-testing" class="level3">
@@ -671,7 +681,7 @@ T+30s: Full enrichment complete (detailed forensics, related events)</code></pre
 <span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><strong>Week 2: Pipeline Integration</strong></p>
 <p>We build the full progressive pipeline and test on recorded traffic with synthetic attack injection:</p>
-<p><img src="images/mve-experiment-timeline.svg" class="img-fluid"></p>
+<p><a href="images/mve-experiment-timeline.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-14"><img src="images/mve-experiment-timeline.svg" class="img-fluid"></a></p>
 <p>Testing uses a combination of public datasets (UNSW-NB15, CIC-IDS2017) with known limitations, augmented with synthetic attacks to ensure coverage of sophisticated threats:</p>
 <table class="table">
 <thead>
@@ -761,7 +771,7 @@ T+30s: Full enrichment complete (detailed forensics, related events)</code></pre
 <section id="production-rollout-strategy" class="level3">
 <h3 class="anchored" data-anchor-id="production-rollout-strategy">Production Rollout Strategy</h3>
 <p>With MVE success and iterations complete, we plan production rollout:</p>
-<p><img src="images/production-rollout-plan.svg" class="img-fluid"></p>
+<p><a href="images/production-rollout-plan.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-15"><img src="images/production-rollout-plan.svg" class="img-fluid"></a></p>
 <p><strong>Phase 1: Shadow Mode Validation</strong></p>
 <p>Run progressive pipeline parallel to existing system without taking actions. Compare decisions, measure divergence, validate no regressions. Success criteria: No P1 incidents missed for one week.</p>
 <p><strong>Phase 2: Canary Deployment</strong></p>
@@ -777,7 +787,7 @@ T+30s: Full enrichment complete (detailed forensics, related events)</code></pre
 <section id="pitfall-1-premature-model-optimization" class="level3">
 <h3 class="anchored" data-anchor-id="pitfall-1-premature-model-optimization">Pitfall 1: Premature Model Optimization</h3>
 <p>Teams spend months improving model accuracy while system-level metrics stagnate. You achieve 96% AUC on test sets while production catches only 60% of incidents because feature extraction can’t keep up.</p>
-<p><img src="images/amdahl-law-optimization.svg" class="img-fluid"></p>
+<p><a href="images/amdahl-law-optimization.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-16"><img src="images/amdahl-law-optimization.svg" class="img-fluid"></a></p>
 <p><strong>In Our Case</strong>: We spent three months experimenting with transformer architectures for 2% accuracy improvement, while missing 70% of traffic due to feature extraction bottlenecks. The transformer detected sophisticated attacks brilliantly—on the 30% of traffic it actually analyzed.</p>
 <p><strong>Prevention</strong>:</p>
 <ul>
@@ -802,7 +812,7 @@ T+30s: Full enrichment complete (detailed forensics, related events)</code></pre
 <section id="pitfall-3-alert-budget-myopia" class="level3">
 <h3 class="anchored" data-anchor-id="pitfall-3-alert-budget-myopia">Pitfall 3: Alert Budget Myopia</h3>
 <p>Facing missed incidents, teams lower thresholds to catch more attacks. This creates unsustainable alert volumes, overwhelming analysts who then ignore alerts, leading to more missed incidents.</p>
-<p><img src="images/alert-fatigue.svg" class="img-fluid"></p>
+<p><a href="images/alert-fatigue.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-17"><img src="images/alert-fatigue.svg" class="img-fluid"></a></p>
 <p><strong>In Our Case</strong>: After missing an APT, we lowered thresholds and generated 200+ daily alerts. Analysts could investigate only 50, randomly sampling and missing real threats. The “solution” made the problem worse.</p>
 <p><strong>Prevention</strong>:</p>
 <ul>
@@ -830,7 +840,7 @@ T+30s: Full enrichment complete (detailed forensics, related events)</code></pre
 <section id="starting-point-a-system-in-crisis" class="level3">
 <h3 class="anchored" data-anchor-id="starting-point-a-system-in-crisis">Starting Point: A System in Crisis</h3>
 <p>Six months ago, our network anomaly detection system was failing on all fronts. The security team reported missed breaches—attackers dwelt in the network for weeks undetected. The SOC was overwhelmed, investigating 89 false positives daily while real threats slipped through. Infrastructure costs ballooned as we threw hardware at the problem without improvement.</p>
-<p><img src="images/timeline-transformation-journey.svg" class="img-fluid"></p>
+<p><a href="images/timeline-transformation-journey.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-18"><img src="images/timeline-transformation-journey.svg" class="img-fluid"></a></p>
 <p>The team was demoralized. ML engineers added features that didn’t help. Security analysts lost trust in alerts. Management questioned the entire investment. Traditional optimization—better models, more compute, refined thresholds—had been tried and failed.</p>
 </section>
 <section id="stage-by-stage-transformation" class="level3">
@@ -844,7 +854,7 @@ T+30s: Full enrichment complete (detailed forensics, related events)</code></pre
 <section id="the-transformed-system" class="level3">
 <h3 class="anchored" data-anchor-id="the-transformed-system">The Transformed System</h3>
 <p>Today, our network anomaly detection system is a strategic asset rather than a cost center:</p>
-<p><img src="images/before-after-dashboard-transformation.svg" class="img-fluid"></p>
+<p><a href="images/before-after-dashboard-transformation.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-19"><img src="images/before-after-dashboard-transformation.svg" class="img-fluid"></a></p>
 <p>The technical improvements are impressive, but the organizational transformation is profound:</p>
 <ul>
 <li>ML and platform teams now collaborate from day one</li>
@@ -871,7 +881,7 @@ T+30s: Full enrichment complete (detailed forensics, related events)</code></pre
 <section id="conclusion-theory-of-constraints-as-your-ml-operating-system" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion-theory-of-constraints-as-your-ml-operating-system">Conclusion: Theory of Constraints as Your ML Operating System</h2>
 <p>The Theory of Constraints transformed our network anomaly detection from a frustrating cost center to a strategic security asset. By focusing on the single most limiting factor—rather than trying to optimize everything—we achieved breakthrough improvements thought impossible.</p>
-<p><img src="images/evolution-of-ml-systems-with-constraints.svg" class="img-fluid"></p>
+<p><a href="images/evolution-of-ml-systems-with-constraints.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-20"><img src="images/evolution-of-ml-systems-with-constraints.svg" class="img-fluid"></a></p>
 <p>This journey revealed crucial insights for ML practitioners:</p>
 <p><strong>Focus beats breadth</strong>: Addressing the Feature-Tier2 throughput constraint achieved more than years of model improvements, infrastructure investments, and threshold tuning combined. One constraint, properly addressed, unlocked everything.</p>
 <p><strong>Conflicts hide innovations</strong>: The tradeoff between rich features and processing efficiency seemed fundamental until we challenged underlying assumptions. Progressive analysis transcended rather than compromised.</p>
@@ -910,7 +920,7 @@ T+30s: Full enrichment complete (detailed forensics, related events)</code></pre
 
 </section>
 
-</main> <!-- /main -->
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     // Only add citation to post pages (not index, about, etc.)
@@ -1567,6 +1577,31 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","descPosition":"bottom","openEffect":"zoom","loop":false,"closeEffect":"zoom"});
+window.onload = () => {
+  lightboxQuarto.on('slide_before_load', (data) => {
+    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+    const href = trigger.getAttribute('href');
+    if (href !== null) {
+      const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+      if (imgEl !== null) {
+        const srcAttr = imgEl.getAttribute("src");
+        if (srcAttr && srcAttr.startsWith("data:")) {
+          slideConfig.href = srcAttr;
+        }
+      }
+    } 
+  });
+
+  lightboxQuarto.on('slide_after_load', (data) => {
+    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+    if (window.Quarto?.typesetMath) {
+      window.Quarto.typesetMath(slideNode);
+    }
+  });
+
+};
+          </script>
 
 
 

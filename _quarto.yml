@@ -12,6 +12,7 @@ website:
   favicon: images/profile-pic.png
   page-navigation: true
   reader-mode: true
+  back-to-top-navigation: true
   page-footer:
     left: "Blog made with Quarto, by Imad Dabbura"
     right:
@@ -37,11 +38,12 @@ website:
       show-logo: true
       analytics-events: true
   navbar:
-    background: primary
-    forground: primary
+    background: transparent
+    foreground: dark
     logo: images/profile-pic.png
     left:
-      - about.qmd
+      - text: About
+        file: about.qmd
       - text: Posts
         file: index.qmd
       - text: "TIL"
@@ -57,12 +59,12 @@ website:
         menu:
           - text: "Books' Summaries"
             file: books-summaries.qmd
-          - text: "Misc. Notes"
-            file: misc-notes.qmd
           - text: "Reading List"
             file: reading-list.qmd
           - text: Resume
             file: resume.qmd
+          - text: "Misc. Notes"
+            file: misc-notes.qmd
 
     right:
       - icon: github
@@ -79,9 +81,14 @@ format:
       theme: default
     code-overflow: wrap
     theme:
-      light: yeti
-      dark: darkly
-    css: styles.css
+      light:
+        - cosmo
+        - assets/theme-light.scss
+      dark:
+        - cosmo
+        - assets/theme-dark.scss
+    lightbox: true
+    code-link: true
 comments:
   giscus:
     repo: imaddabbura/imaddabbura.github.io

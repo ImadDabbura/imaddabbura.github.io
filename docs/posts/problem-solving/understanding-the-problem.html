@@ -79,6 +79,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -141,9 +144,16 @@ ga('send', {
   'anonymizeIp': true,
 });
 </script>
+<style>
+
+      .quarto-title-block .quarto-title-banner {
+        background-image: url(images/image.svg);
+background-size: cover;
+      }
+</style>
 
 
-<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="../../assets/posts.css">
 <meta property="og:title" content="Imad Dabbura - Understand, Then Build">
 <meta property="og:description" content="How Pólya’s Step 1 powers reliable DS/ML/AI systems under real-world limits.">
 <meta property="og:image" content="https://imaddabbura.github.io/posts/problem-solving/images/image.svg">
@@ -177,7 +187,7 @@ ga('send', {
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="../../about.html"> 
-<span class="menu-text">About</span></a>
+<span class="menu-text">Imad Dabbura</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../index.html"> 
@@ -210,16 +220,16 @@ ga('send', {
  <span class="dropdown-text">Books’ Summaries</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../misc-notes.html">
- <span class="dropdown-text">Misc. Notes</span></a>
-  </li>  
-        <li>
     <a class="dropdown-item" href="../../reading-list.html">
  <span class="dropdown-text">Reading List</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../../resume.html">
  <span class="dropdown-text">Resume</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../misc-notes.html">
+ <span class="dropdown-text">Misc. Notes</span></a>
   </li>  
     </ul>
   </li>
@@ -324,7 +334,7 @@ ga('send', {
 
 
 
-<p><img src="images/image.svg" class="img-fluid"></p>
+<p><a href="images/image.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="images/image.svg" class="img-fluid"></a></p>
 <p><em>Part 1 of 4: Applying Polya’s Problem-Solving Framework to Data Science, ML, and AI</em></p>
 <p><em>A Comprehensive Guide for Practitioners</em></p>
 <section id="introduction-the-hidden-crisis-in-ai-development" class="level2">
@@ -335,7 +345,7 @@ ga('send', {
 <p>The compounding nature of misunderstanding in AI projects deserves particular attention. When a problem is misunderstood by even a small margin at the outset, this error doesn’t simply add a proportional amount of waste to the project. Instead, it multiplies through each subsequent phase, creating an exponential cascade of inefficiency. A 10% misalignment in problem definition becomes a 20% misdirection in planning, as architects design systems for the wrong objectives. This doubles again during implementation, reaching 40% waste as engineers optimize for incorrect metrics. By the deployment phase, the cumulative effect can result in 80% waste—or complete project failure.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/cascading-cost.svg" class="img-fluid figure-img"></p>
+<p><a href="images/cascading-cost.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2" data-glightbox="description: .lightbox-desc-2" title="Figure 1: Compounding cost of misunderstanding"><img src="images/cascading-cost.svg" class="img-fluid figure-img" alt="Figure 1: Compounding cost of misunderstanding"></a></p>
 <figcaption>Figure 1: Compounding cost of misunderstanding</figcaption>
 </figure>
 </div>
@@ -348,7 +358,7 @@ ga('send', {
 <p>The specification of the unknown in a machine learning context requires us to think across multiple dimensions simultaneously. We must consider not only the technical nature of the prediction—whether it’s a continuous value, a category, or a probability—but also its temporal characteristics, its intended use, and its relationship to business processes. A prediction that arrives too late to be actionable is worthless, regardless of its accuracy. A highly accurate model that requires data unavailable at inference time is an elaborate fiction. A probabilistic output that decision-makers don’t understand how to interpret might as well be random noise.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/types-ml-unknowns.svg" class="img-fluid figure-img"></p>
+<p><a href="images/types-ml-unknowns.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3" data-glightbox="description: .lightbox-desc-3" title="Figure 2: Spectrum of machine learning unknowns"><img src="images/types-ml-unknowns.svg" class="img-fluid figure-img" alt="Figure 2: Spectrum of machine learning unknowns"></a></p>
 <figcaption>Figure 2: Spectrum of machine learning unknowns</figcaption>
 </figure>
 </div>
@@ -404,7 +414,7 @@ ga('send', {
 <p>The provenance of data—its origin and the process by which it was collected—fundamentally determines what problems it can solve. Data collected for one purpose often carries implicit assumptions that make it unsuitable for other uses. Customer service logs, for instance, only capture information about customers who contacted support, creating a selection bias that might invalidate models trying to understand overall customer satisfaction. Transaction data might only record completed purchases, missing the crucial information about abandoned carts that would be essential for understanding purchase intent. Understanding these collection mechanisms and their limitations is essential for determining whether available data can actually answer the questions being asked.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/data-understanding-iceberg.svg" class="img-fluid figure-img"></p>
+<p><a href="images/data-understanding-iceberg.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-4" data-glightbox="description: .lightbox-desc-4" title="Figure 3: Data understanding iceberg"><img src="images/data-understanding-iceberg.svg" class="img-fluid figure-img" alt="Figure 3: Data understanding iceberg"></a></p>
 <figcaption>Figure 3: Data understanding iceberg</figcaption>
 </figure>
 </div>
@@ -462,7 +472,7 @@ ga('send', {
 <p>Polya’s third question—“What is the condition?”—addresses the constraints that bound our solution space. In machine learning applications, these constraints form a complex ecosystem of technical, business, ethical, and regulatory requirements that often conflict with each other and always shape the feasible solution space in non-obvious ways.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/ml-constraint-ecosystem.svg" class="img-fluid figure-img"></p>
+<p><a href="images/ml-constraint-ecosystem.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-5" data-glightbox="description: .lightbox-desc-5" title="Figure 4: ML constraint ecosystem"><img src="images/ml-constraint-ecosystem.svg" class="img-fluid figure-img" alt="Figure 4: ML constraint ecosystem"></a></p>
 <figcaption>Figure 4: ML constraint ecosystem</figcaption>
 </figure>
 </div>
@@ -532,7 +542,7 @@ ga('send', {
 <p>Polya emphasized that complex problems become manageable when properly decomposed into smaller, more tractable components. In machine learning applications, this decomposition must occur across multiple dimensions simultaneously, breaking down the problem by temporal characteristics, functional components, data complexity, and stakeholder concerns.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/problem-decomposition-strategies.svg" class="img-fluid figure-img"></p>
+<p><a href="images/problem-decomposition-strategies.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-6" data-glightbox="description: .lightbox-desc-6" title="Figure 5: Four dimensions of problem decomposition"><img src="images/problem-decomposition-strategies.svg" class="img-fluid figure-img" alt="Figure 5: Four dimensions of problem decomposition"></a></p>
 <figcaption>Figure 5: Four dimensions of problem decomposition</figcaption>
 </figure>
 </div>
@@ -621,7 +631,7 @@ ga('send', {
 <p>Before committing resources to solving a problem, Polya advocates for carefully assessing whether the conditions can actually be satisfied—whether the problem as stated is actually solvable with the available resources. In machine learning contexts, this feasibility assessment must examine statistical, technical, business, and ethical dimensions.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/ml-feasibility-assessment-matrix.svg" class="img-fluid figure-img"></p>
+<p><a href="images/ml-feasibility-assessment-matrix.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-7" data-glightbox="description: .lightbox-desc-7" title="Figure 6: ML project feasibility assessment matrix"><img src="images/ml-feasibility-assessment-matrix.svg" class="img-fluid figure-img" alt="Figure 6: ML project feasibility assessment matrix"></a></p>
 <figcaption>Figure 6: ML project feasibility assessment matrix</figcaption>
 </figure>
 </div>
@@ -743,7 +753,7 @@ ga('send', {
 <p>One of Polya’s key insights was the importance of notation—creating a precise, shared language for discussing the problem. In machine learning projects, this shared understanding must bridge the gap between technical teams who think in terms of algorithms and metrics, and business stakeholders who think in terms of processes and outcomes.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/technical-business-bridge.svg" class="img-fluid figure-img"></p>
+<p><a href="images/technical-business-bridge.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-8" data-glightbox="description: .lightbox-desc-8" title="Figure 7: Technical business bridge"><img src="images/technical-business-bridge.svg" class="img-fluid figure-img" alt="Figure 7: Technical business bridge"></a></p>
 <figcaption>Figure 7: Technical business bridge</figcaption>
 </figure>
 </div>
@@ -826,7 +836,7 @@ ga('send', {
 <p>Experience across numerous failed machine learning projects reveals recurring patterns of problem misunderstanding. Recognizing these anti-patterns early can prevent significant waste and frustration.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/ml-problem-understanding-antipatterns.svg" class="img-fluid figure-img"></p>
+<p><a href="images/ml-problem-understanding-antipatterns.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-9" data-glightbox="description: .lightbox-desc-9" title="Figure 8: Anti-patterns in ML problem understanding"><img src="images/ml-problem-understanding-antipatterns.svg" class="img-fluid figure-img" alt="Figure 8: Anti-patterns in ML problem understanding"></a></p>
 <figcaption>Figure 8: Anti-patterns in ML problem understanding</figcaption>
 </figure>
 </div>
@@ -905,7 +915,7 @@ ga('send', {
 <p>To support systematic problem understanding, practitioners benefit from structured tools and templates that guide thinking and ensure completeness. These tools shouldn’t be treated as rigid forms to fill out but as frameworks that prompt the right questions and capture critical decisions.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/ml-problem-understanding-canva.svg" class="img-fluid figure-img"></p>
+<p><a href="images/ml-problem-understanding-canva.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-10" data-glightbox="description: .lightbox-desc-10" title="Figure 9: ML problem unden canvas"><img src="images/ml-problem-understanding-canva.svg" class="img-fluid figure-img" alt="Figure 9: ML problem unden canvas"></a></p>
 <figcaption>Figure 9: ML problem unden canvas</figcaption>
 </figure>
 </div>
@@ -1026,9 +1036,20 @@ ga('send', {
 <p><em>The principles and frameworks presented here have been developed through analysis of hundreds of ML projects across industries. While each project is unique, the patterns of success and failure repeat with remarkable consistency. By learning from these patterns and applying Polya’s timeless wisdom, we can dramatically improve our chances of building ML systems that deliver real value.</em></p>
 
 
+<div class="hidden" aria-hidden="true">
+<span class="glightbox-desc lightbox-desc-2">Figure 1: Compounding cost of misunderstanding</span>
+<span class="glightbox-desc lightbox-desc-3">Figure 2: Spectrum of machine learning unknowns</span>
+<span class="glightbox-desc lightbox-desc-4">Figure 3: Data understanding iceberg</span>
+<span class="glightbox-desc lightbox-desc-5">Figure 4: ML constraint ecosystem</span>
+<span class="glightbox-desc lightbox-desc-6">Figure 5: Four dimensions of problem decomposition</span>
+<span class="glightbox-desc lightbox-desc-7">Figure 6: ML project feasibility assessment matrix</span>
+<span class="glightbox-desc lightbox-desc-8">Figure 7: Technical business bridge</span>
+<span class="glightbox-desc lightbox-desc-9">Figure 8: Anti-patterns in ML problem understanding</span>
+<span class="glightbox-desc lightbox-desc-10">Figure 9: ML problem unden canvas</span>
+</div>
 </section>
 
-</main> <!-- /main -->
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     // Only add citation to post pages (not index, about, etc.)
@@ -1685,6 +1706,31 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","selector":".lightbox","closeEffect":"zoom","loop":false,"descPosition":"bottom"});
+window.onload = () => {
+  lightboxQuarto.on('slide_before_load', (data) => {
+    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+    const href = trigger.getAttribute('href');
+    if (href !== null) {
+      const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+      if (imgEl !== null) {
+        const srcAttr = imgEl.getAttribute("src");
+        if (srcAttr && srcAttr.startsWith("data:")) {
+          slideConfig.href = srcAttr;
+        }
+      }
+    } 
+  });
+
+  lightboxQuarto.on('slide_after_load', (data) => {
+    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+    if (window.Quarto?.typesetMath) {
+      window.Quarto.typesetMath(slideNode);
+    }
+  });
+
+};
+          </script>
 
 
 

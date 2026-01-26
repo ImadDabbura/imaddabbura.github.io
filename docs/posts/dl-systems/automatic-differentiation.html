@@ -45,6 +45,9 @@ ul.task-list li input[type="checkbox"] {
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -107,9 +110,16 @@ ga('send', {
   'anonymizeIp': true,
 });
 </script>
+<style>
+
+      .quarto-title-block .quarto-title-banner {
+        background-image: url(automatic-differentiation-image.jpeg);
+background-size: cover;
+      }
+</style>
 
 
-<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="../../assets/posts.css">
 <meta property="og:title" content="Imad Dabbura - Automatic Differentiation Demystified">
 <meta property="og:description" content="From dual numbers to backpropagation, uncover the inner workings of forward and reverse mode AD and the performance trade-offs that shape deep learning">
 <meta property="og:image" content="https://imaddabbura.github.io/posts/dl-systems/automatic-differentiation-image.jpeg">
@@ -143,7 +153,7 @@ ga('send', {
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="../../about.html"> 
-<span class="menu-text">About</span></a>
+<span class="menu-text">Imad Dabbura</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../index.html"> 
@@ -277,13 +287,13 @@ ga('send', {
 
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="automatic-differentiation-image.jpeg" class="quarto-figure quarto-figure-center figure-img" width="800" height="500"></p>
+<p><a href="automatic-differentiation-image.jpeg" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="automatic-differentiation-image.jpeg" class="quarto-figure quarto-figure-center figure-img" width="800" height="500"></a></p>
 </figure>
 </div>
 <p>Automatic Differentiation (AD) is a fundamental technique in modern machine learning, particularly crucial for training neural networks and optimizing complex models. In this post, we’ll dive deep into the two main modes of AD: Forward Mode and Reverse-mode, exploring their mechanisms, advantages, and trade-offs.</p>
 <section id="forward-mode-ad-from-input-to-output" class="level2">
 <h2 class="anchored" data-anchor-id="forward-mode-ad-from-input-to-output">Forward-mode AD: From Input to Output</h2>
-<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/ForwardAD.png/500px-ForwardAD.png" class="img-fluid"></p>
+<p><a href="https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/ForwardAD.png/500px-ForwardAD.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/ForwardAD.png/500px-ForwardAD.png" class="img-fluid"></a></p>
 <p>Forward Mode AD operates by propagating derivatives from input nodes to output nodes in a computational graph. At each step, it calculates the partial derivative of the current node with respect to the input node. This mode implements a straightforward approach to computing derivatives, making it particularly intuitive to understand.</p>
 <p>Key features:</p>
 <ol type="1">
@@ -294,7 +304,7 @@ ga('send', {
 </section>
 <section id="reverse-mode-ad-the-power-of-reverse-computation" class="level2">
 <h2 class="anchored" data-anchor-id="reverse-mode-ad-the-power-of-reverse-computation">Reverse-mode AD: The Power of Reverse Computation</h2>
-<p><img src="reverse-mode-AD.png" class="img-fluid"></p>
+<p><a href="reverse-mode-AD.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="reverse-mode-AD.png" class="img-fluid"></a></p>
 <p>Reverse-mode AD, has become the cornerstone of modern deep learning frameworks. This approach computes derivatives by working backwards from the output to the inputs, making it particularly efficient for functions with many inputs but few outputs.</p>
 <p>key features:</p>
 <ol type="1">
@@ -346,7 +356,7 @@ ga('send', {
 
 </section>
 
-</main> <!-- /main -->
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     // Only add citation to post pages (not index, about, etc.)
@@ -1003,6 +1013,31 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","loop":false,"selector":".lightbox","openEffect":"zoom","descPosition":"bottom"});
+window.onload = () => {
+  lightboxQuarto.on('slide_before_load', (data) => {
+    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+    const href = trigger.getAttribute('href');
+    if (href !== null) {
+      const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+      if (imgEl !== null) {
+        const srcAttr = imgEl.getAttribute("src");
+        if (srcAttr && srcAttr.startsWith("data:")) {
+          slideConfig.href = srcAttr;
+        }
+      }
+    } 
+  });
+
+  lightboxQuarto.on('slide_after_load', (data) => {
+    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+    if (window.Quarto?.typesetMath) {
+      window.Quarto.typesetMath(slideNode);
+    }
+  });
+
+};
+          </script>
 
 
 

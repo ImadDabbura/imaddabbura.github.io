@@ -1,0 +1,403 @@
+/*-- Light Theme based on silviacanelon.com --*/
+
+/*-- scss:defaults --*/
+
+/*-- SPC Color Palette (exact from silviacanelon.com) --*/
+$spc-bg-0: #fffbf2;
+$spc-bg-1: #FAF0E3;
+$spc-primary: #002642;
+$spc-primary-light: #2E4963;
+$spc-secondary: #A23E02;
+$spc-secondary-light: #D96E34;
+$spc-accent: #b9c680;
+$spc-accent-light: #EEF1E0;
+$spc-accent-dark: #697935;
+
+/*-- Bootstrap Variable Overrides --*/
+$primary: $spc-primary-light;
+$secondary: $spc-secondary;
+$body-bg: $spc-bg-0;
+$body-color: $spc-primary;
+$link-color: $spc-secondary;
+$link-hover-color: $spc-secondary-light;
+
+/*-- Typography --*/
+$font-family-sans-serif: "Red Hat Text", "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+$headings-font-family: "Petrona", Georgia, serif;
+$font-size-base: 1rem;
+$line-height-base: 1.6;
+$headings-font-weight: 400;
+
+/*-- Links --*/
+$link-decoration: underline;
+
+/*-- Code --*/
+$code-color: $spc-primary;
+$code-bg: $spc-accent-light;
+
+/*-- scss:rules --*/
+
+/*-- Import Google Fonts --*/
+@import url('https://fonts.googleapis.com/css2?family=Petrona:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Red+Hat+Text:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+/*-- CSS Custom Properties --*/
+:root {
+  --spc-bg-0: #{$spc-bg-0};
+  --spc-bg-1: #{$spc-bg-1};
+  --spc-primary: #{$spc-primary};
+  --spc-primary-light: #{$spc-primary-light};
+  --spc-secondary: #{$spc-secondary};
+  --spc-secondary-light: #{$spc-secondary-light};
+  --spc-accent: #{$spc-accent};
+  --spc-accent-light: #{$spc-accent-light};
+  --spc-accent-dark: #{$spc-accent-dark};
+}
+
+/*-- Body --*/
+body {
+  font-family: $font-family-sans-serif;
+  background-color: $spc-bg-0;
+  color: $spc-primary;
+}
+
+/*-- Headings --*/
+h1, h2, h3, h4, h5, h6 {
+  font-family: $headings-font-family;
+  color: $spc-primary;
+  font-weight: $headings-font-weight;
+}
+
+/*-- Links --*/
+a {
+  color: $spc-secondary;
+  text-decoration: underline;
+
+  &:hover {
+    color: $spc-secondary-light;
+    text-decoration: none;
+  }
+}
+
+/*-- Navbar --*/
+.navbar {
+  background-color: $spc-bg-0 !important;
+
+  .navbar-brand {
+    img {
+      border-radius: 50%;
+    }
+  }
+
+  .nav-link {
+    color: $spc-primary !important;
+    text-decoration: none;
+
+    &:hover {
+      color: $spc-secondary !important;
+    }
+  }
+
+  .dropdown-menu {
+    background-color: $spc-bg-1;
+    border: 1px solid darken($spc-bg-1, 10%);
+
+    .dropdown-item {
+      color: $spc-primary;
+
+      &:hover {
+        background-color: $spc-accent-light;
+        color: $spc-primary;
+      }
+    }
+  }
+}
+
+.navbar.bg-primary,
+.navbar[class*="bg-"] {
+  background-color: $spc-bg-0 !important;
+}
+
+/*-- Main Content --*/
+main, #quarto-content, .page-columns {
+  background-color: $spc-bg-0;
+}
+
+/*-- Title Banner --*/
+.quarto-title-banner {
+  background-color: $spc-bg-1;
+
+  .quarto-title {
+    color: $spc-primary;
+  }
+}
+
+/*-- Cards --*/
+.card {
+  background: transparent;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.1);
+}
+
+/*-- Listings --*/
+.quarto-listing-default .listing-item {
+  background: transparent;
+  border: none;
+  border-radius: 5px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.1);
+}
+
+.listing-title {
+  font-family: $headings-font-family;
+  color: $spc-primary;
+  text-decoration: none;
+
+  &:hover {
+    color: $spc-secondary;
+  }
+}
+
+.listing-subtitle,
+.listing-description {
+  color: $spc-primary;
+}
+
+.listing-date,
+.listing-author,
+.listing-reading-time {
+  color: lighten($spc-primary, 30%);
+}
+
+/*-- Grid Listings --*/
+.quarto-grid-item .card {
+  background: transparent;
+  border: none;
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.1);
+}
+
+/*-- Table Listings --*/
+.quarto-listing-table {
+  table {
+    background: transparent;
+    border-collapse: separate;
+    border-spacing: 0;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  th {
+    background-color: rgba($spc-secondary, 0.1);
+    color: $spc-primary;
+    border-bottom: 2px solid $spc-secondary;
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+  }
+
+  td {
+    border-bottom: 1px solid rgba($spc-primary, 0.1);
+    padding: 0.75rem 1rem;
+    color: $spc-primary;
+  }
+
+  tbody tr:hover {
+    background-color: rgba($spc-secondary, 0.08);
+  }
+}
+
+/*-- Categories/Tags (Sage Green) --*/
+.quarto-category,
+.listing-category {
+  background-color: $spc-accent-light;
+  color: $spc-accent-dark;
+  border: 1px solid $spc-accent;
+  border-radius: 3px;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.8rem;
+  text-decoration: none;
+
+  &:hover {
+    background-color: $spc-accent;
+    color: $spc-primary;
+    text-decoration: none;
+  }
+}
+
+/*-- Buttons --*/
+.btn-primary {
+  background-color: $spc-secondary;
+  border-color: $spc-secondary;
+
+  &:hover {
+    background-color: $spc-secondary-light;
+    border-color: $spc-secondary-light;
+  }
+}
+
+.btn-secondary {
+  color: $spc-secondary;
+  background: transparent;
+  border-color: $spc-secondary;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: $spc-secondary;
+    color: white;
+  }
+}
+
+/*-- Code --*/
+pre {
+  background-color: white;
+  border: 1px solid #ebebeb;
+}
+
+code {
+  color: $spc-primary;
+  background-color: $spc-accent-light;
+  border: 1px solid $spc-accent;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+}
+
+pre code {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+}
+
+/*-- Blockquotes --*/
+blockquote, .blockquote {
+  color: lighten($spc-primary, 15%);
+  font-style: oblique;
+  border-left: 3px solid $spc-accent;
+  padding-left: 1rem;
+}
+
+/*-- Footer --*/
+.page-footer {
+  background-color: $spc-bg-0;
+  color: $spc-primary;
+  border-top: 1px solid darken($spc-bg-1, 10%);
+
+  a {
+    color: $spc-secondary;
+
+    &:hover {
+      color: $spc-secondary-light;
+    }
+  }
+
+  i {
+    color: $spc-secondary !important;
+
+    &:hover {
+      color: $spc-secondary-light !important;
+    }
+  }
+}
+
+/*-- About Page --*/
+.quarto-about-trestles {
+  .about-entity {
+    background-color: $spc-bg-1;
+    padding: 3em 0;
+    margin: 0 2em;
+    border-radius: 5px;
+  }
+
+  .about-image {
+    border-radius: 50%;
+  }
+
+  .about-links {
+    justify-content: center !important;
+    column-gap: 0 !important;
+    font-size: 1.2em !important;
+  }
+
+  .about-link {
+    padding: 0.25em !important;
+    border: none !important;
+    text-decoration: none !important;
+
+    i {
+      color: $spc-secondary !important;
+
+      &:hover {
+        color: $spc-secondary-light !important;
+      }
+    }
+  }
+}
+
+/*-- Sidebar / TOC --*/
+.sidebar nav[role=doc-toc] {
+  a {
+    color: $spc-secondary;
+    text-decoration: none;
+
+    &:hover {
+      color: $spc-secondary-light;
+    }
+
+    &.active {
+      color: $spc-secondary;
+      border-left-color: $spc-secondary;
+    }
+  }
+}
+
+/*-- Pagination --*/
+.page-link {
+  color: $spc-primary;
+
+  &:hover {
+    color: white;
+    background-color: $spc-secondary;
+    border-color: $spc-secondary;
+  }
+}
+
+.page-item.active .page-link {
+  background-color: $spc-secondary;
+  border-color: $spc-secondary;
+}
+
+/*-- Back to Top --*/
+#quarto-back-to-top {
+  background-color: $spc-secondary;
+  color: white;
+
+  &:hover {
+    background-color: $spc-secondary-light;
+  }
+}
+
+/*-- Tables --*/
+table {
+  border-color: $spc-primary;
+}
+
+.table-group-separator-color {
+  color: lighten($spc-primary, 25%);
+}
+
+/*-- Callouts --*/
+.callout {
+  background-color: $spc-bg-1;
+}
+
+/*-- Form Controls --*/
+.form-control, .form-select {
+  background-color: $spc-bg-0;
+  border-color: darken($spc-bg-1, 15%);
+  color: $spc-primary;
+
+  &:focus {
+    border-color: $spc-secondary;
+    box-shadow: 0 0 0 0.2rem rgba($spc-secondary, 0.25);
+  }
+}

@@ -79,6 +79,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -141,9 +144,16 @@ ga('send', {
   'anonymizeIp': true,
 });
 </script>
+<style>
+
+      .quarto-title-block .quarto-title-banner {
+        background-image: url(images/devising-plan.svg);
+background-size: cover;
+      }
+</style>
 
 
-<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="../../assets/posts.css">
 <meta property="og:title" content="Imad Dabbura - Devising a Plan: The Creative Heart of ML Problem Solving">
 <meta property="og:description" content="How Pólya’s Step 2 powers reliable DS/ML/AI systems under real-world limits.">
 <meta property="og:image" content="https://imaddabbura.github.io/posts/problem-solving/images/devising-plan.svg">
@@ -177,7 +187,7 @@ ga('send', {
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="../../about.html"> 
-<span class="menu-text">About</span></a>
+<span class="menu-text">Imad Dabbura</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../index.html"> 
@@ -210,16 +220,16 @@ ga('send', {
  <span class="dropdown-text">Books’ Summaries</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../misc-notes.html">
- <span class="dropdown-text">Misc. Notes</span></a>
-  </li>  
-        <li>
     <a class="dropdown-item" href="../../reading-list.html">
  <span class="dropdown-text">Reading List</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../../resume.html">
  <span class="dropdown-text">Resume</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../misc-notes.html">
+ <span class="dropdown-text">Misc. Notes</span></a>
   </li>  
     </ul>
   </li>
@@ -376,7 +386,7 @@ ga('send', {
 
 
 
-<p><img src="images/devising-plan.svg" class="img-fluid"></p>
+<p><a href="images/devising-plan.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="images/devising-plan.svg" class="img-fluid"></a></p>
 <p><em>Part 2 of 4: Applying Polya’s Problem-Solving Framework to Data Science, ML, and AI</em></p>
 <p><em>A Comprehensive Guide for Practitioners</em></p>
 <section id="before-we-begin-where-we-are-in-pólyas-framework" class="level2">
@@ -412,7 +422,7 @@ ga('send', {
 <p>Close your eyes for a moment and imagine this: You’re standing at the edge of a canyon. On this side—your side—you have everything you’ve gathered. Your training dataset of 50,000 samples, your baseline logistic regression that achieves 72% accuracy, your production constraints (50ms latency, 10MB model size), your stakeholder requirements (must be interpretable for regulatory compliance).</p>
 <p>On the other side of that canyon lies your destination. The production model that achieves 90% accuracy, that makes predictions in 30 milliseconds, that your compliance team can audit, that scales to handle peak traffic. That’s where you need to be.</p>
 <p>The plan you’re about to devise? It’s your bridge across this canyon.</p>
-<p><img src="images/building-bridges-ml.svg" class="img-fluid"></p>
+<p><a href="images/building-bridges-ml.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="images/building-bridges-ml.svg" class="img-fluid"></a></p>
 <p>Now, here’s what makes this fascinating—and what Pólya understood intuitively: there’s no single “right” bridge design. Sometimes the most direct path works beautifully. You recognize the problem as straightforward image classification, you grab a pre-trained ResNet, fine-tune it on your data, and you’re done. Direct. Efficient. Perfect.</p>
 <p>But other times—and these are often the most interesting projects—the direct path won’t work. Maybe your data is too different from ImageNet. Maybe you need to solve multiple related tasks simultaneously. Maybe you need to invent something new. In those cases, your bridge might take a creative detour, arcing high through an auxiliary task that helps you learn better representations. Or perhaps you’ll build it incrementally, starting with a simple baseline and iteratively adding complexity as you understand what works.</p>
 <p>Here’s what’s crucial to understand: <strong>Pólya doesn’t prescribe which bridge to build</strong>. Instead, he offers you a series of questions—probing, insightful questions that awaken your problem-solving instincts. These aren’t checklist items to tick off mechanically. Think of them as a conversation with a wise mentor who knows exactly what to ask to unlock your thinking.</p>
@@ -533,7 +543,7 @@ ga('send', {
 <p><strong>“Do you know a related problem?”</strong></p>
 <p>This question is subtly different from the first. We’re not looking for “have you seen this before” anymore. We’re casting a wider net. We’re looking for problems that might differ in specifics but share something essential—maybe the same technique works, maybe they seek the same type of output, maybe they operate in similar domains.</p>
 <p>Let me walk you through how to think about this systematically. Imagine you’re working on that fraud detection problem I mentioned earlier. Let’s build a network of related problems together:</p>
-<p><img src="images/ml-related-problems-network.svg" class="img-fluid"></p>
+<p><a href="images/ml-related-problems-network.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="images/ml-related-problems-network.svg" class="img-fluid"></a></p>
 <p>Looking at this network, each connection type teaches us something different:</p>
 <p><strong>Same Architecture Connection</strong>: Over here, we have spam detection. Why is this related? Because both fraud detection and spam detection can use similar binary classification architectures. If you’ve built a successful spam filter using gradient boosted trees with carefully engineered features about email metadata, text statistics, and sender behavior—well, that same architectural approach might work beautifully for fraud detection with features about transaction metadata, amount statistics, and account behavior.</p>
 <p><strong>Same Challenge Connection</strong>: Look at medical diagnosis systems. These might use completely different architectures (maybe CNNs for medical imaging vs.&nbsp;your tabular methods for fraud), but they share a crucial challenge: <strong>extreme class imbalance</strong>. Most patients don’t have rare diseases, just as most transactions aren’t fraudulent. The techniques you learn from medical diagnosis—careful loss function design, focal loss, cost-sensitive learning, synthetic minority oversampling—all of these transfer directly to your fraud detection problem.</p>
@@ -683,7 +693,7 @@ ga('send', {
 <p>I want you to imagine holding a Rubik’s cube. If you only know how to turn the front face, you’re severely limited. But once you realize you can rotate the entire cube to bring any face to the front, suddenly you have many more moves available. Problem reformulation is like that—it’s rotating the problem to expose different faces, each of which might be easier to solve.</p>
 <p>Let me show you what I mean with a problem you might actually face. You’re tasked with predicting customer lifetime value (CLV) for a subscription business. The request seems straightforward: “Build a model that predicts how much revenue each customer will generate.”</p>
 <p>But here’s the thing: <strong>This single business goal can be framed as completely different ML problems</strong>, each enabling different techniques and revealing different insights.</p>
-<p><img src="images/ml-problem-reformulation-strategies.svg" class="img-fluid"></p>
+<p><a href="images/ml-problem-reformulation-strategies.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="images/ml-problem-reformulation-strategies.svg" class="img-fluid"></a></p>
 <p>Let me walk you through each formulation as if we’re sitting together, sketching out approaches on a whiteboard:</p>
 <section id="formulation-1-classification" class="level3">
 <h3 class="anchored" data-anchor-id="formulation-1-classification"><strong>Formulation 1: Classification</strong></h3>
@@ -1148,7 +1158,7 @@ ga('send', {
 <h3 class="anchored" data-anchor-id="type-2-my-model-overfits-immediately"><strong>Type 2: “My Model Overfits Immediately”</strong></h3>
 <p>Your training loss goes down nicely. Your validation loss goes down for one epoch, then shoots up. Classic overfitting, but severe.</p>
 <p><strong>First, establish a baseline</strong>:</p>
-<p><img src="images/ml-debugging-flowchart.svg" class="img-fluid"></p>
+<p><a href="images/ml-debugging-flowchart.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="images/ml-debugging-flowchart.svg" class="img-fluid"></a></p>
 <p>Let me walk you through this debugging process systematically:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> establish_baselines():</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
@@ -1202,7 +1212,7 @@ ga('send', {
 <p>You’ve gotten to 75% accuracy. You need 85%. You’ve tried deeper networks, more training, different optimizers. Nothing budges it past 76%.</p>
 <p><strong>This is where you need to change your approach fundamentally.</strong></p>
 <p>First, do error analysis:</p>
-<p><img src="images/ml-error-analysis-workflow.svg" class="img-fluid"></p>
+<p><a href="images/ml-error-analysis-workflow.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="images/ml-error-analysis-workflow.svg" class="img-fluid"></a></p>
 <p>This systematic approach to error analysis is crucial. Let me show you how to implement it:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> deep_error_analysis(model, dataset):</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
@@ -1392,7 +1402,7 @@ ga('send', {
 <p>This way you always have something working at each stage.</p>
 <p><strong>4. Document the hierarchy</strong></p>
 <p>I literally draw this out. Example:</p>
-<p><img src="images/ml-recursive-planning.svg" class="img-fluid"></p>
+<p><a href="images/ml-recursive-planning.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="images/ml-recursive-planning.svg" class="img-fluid"></a></p>
 <p>This visual hierarchy helps me:</p>
 <ul>
 <li>See the full scope</li>
@@ -1485,7 +1495,7 @@ ga('send', {
 <p><strong>Inelegant solution</strong>: - Five-model ensemble - 200 engineered features (most weakly predictive) - Complex stacking with meta-learning - Different approaches for different edge cases - Works, but barely, and fragile</p>
 <p><strong>Elegant solution</strong>: - Single well-designed model - 20 carefully chosen features (each strongly predictive) - Clean architecture that handles edge cases naturally - Works robustly across scenarios</p>
 <p>Let me give you a real example: <strong>ResNet vs.&nbsp;earlier deep network approaches</strong>.</p>
-<p><img src="images/ml-solution-aesthetics.svg" class="img-fluid"></p>
+<p><a href="images/ml-solution-aesthetics.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-8"><img src="images/ml-solution-aesthetics.svg" class="img-fluid"></a></p>
 <p>Before ResNet, people struggled to train very deep networks. The approaches were inelegant: - Try very careful initialization schemes - Add batch normalization everywhere - Try different activation functions - Carefully tune learning rates for each layer - Still couldn’t reliably train 50+ layer networks</p>
 <p>ResNet came along with one elegant idea: <strong>skip connections</strong>. Let the network learn residuals (differences) instead of full mappings. Suddenly: - 152-layer networks train easily - Performance scales with depth - Works across tasks without special tuning - The insight is simple and beautiful</p>
 <p>The elegant solution isn’t just more effective—it reveals something fundamental about the problem. It makes you think: “Of course! That’s how it should be done.”</p>
@@ -1684,7 +1694,7 @@ ga('send', {
 </section>
 </section>
 
-</main> <!-- /main -->
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     // Only add citation to post pages (not index, about, etc.)
@@ -2341,6 +2351,31 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"descPosition":"bottom","openEffect":"zoom","closeEffect":"zoom","selector":".lightbox","loop":false});
+window.onload = () => {
+  lightboxQuarto.on('slide_before_load', (data) => {
+    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+    const href = trigger.getAttribute('href');
+    if (href !== null) {
+      const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+      if (imgEl !== null) {
+        const srcAttr = imgEl.getAttribute("src");
+        if (srcAttr && srcAttr.startsWith("data:")) {
+          slideConfig.href = srcAttr;
+        }
+      }
+    } 
+  });
+
+  lightboxQuarto.on('slide_after_load', (data) => {
+    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+    if (window.Quarto?.typesetMath) {
+      window.Quarto.typesetMath(slideNode);
+    }
+  });
+
+};
+          </script>
 
 
 
