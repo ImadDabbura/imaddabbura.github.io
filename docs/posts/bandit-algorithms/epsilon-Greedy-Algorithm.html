@@ -216,11 +216,11 @@ window.Quarto = {
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="../../about.html"> 
-<span class="menu-text">Imad Dabbura</span></a>
+<span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html"> 
-<span class="menu-text">Posts</span></a>
+    <a class="nav-link" href="../../posts.html"> 
+<span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../til.html"> <i class="bi bi-lightbulb" role="img">
@@ -350,9 +350,6 @@ window.Quarto = {
 
 
 
-<p align="center">
-<img src="feature.jpg" style="width: 700px; height:500px">
-</p>
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>A/B testing can be defined as a randomized controlled experiment that allows us to test if there is a causal relationship between a change to a website/app and the user behavior. The change can be visible such as location of a button on the homepage or invisible such as the ranking/recommendation algorithms and backend infrastructure.</p>
@@ -389,7 +386,7 @@ window.Quarto = {
 </figure>
 </div>
 <p>Let’s import the needed packages and implement the algorithm.</p>
-<div id="cell-8" class="cell" data-execution_count="1">
+<div id="cell-7" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
@@ -408,7 +405,7 @@ window.Quarto = {
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>sns.set_context(<span class="st">"notebook"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="cell-9" class="cell" data-code_folding="[]" data-execution_count="2">
+<div id="cell-8" class="cell" data-code_folding="[]" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> EpsilonGreedy:</span>
@@ -452,7 +449,7 @@ window.Quarto = {
 <li>Cumulative rewards. The previous two metrics are not fair metrics for algorithms with large epsilon where they sacrifice by exploring more options; however, cumulative rewards is what we should care about.</li>
 </ul>
 <p>Moreover, we’ll evaluate the algorithm using 5 different values of <span class="math inline">\(\epsilon\)</span>: <span class="math inline">\(0.1, 0.2, 0.3, 0.4, 0.5\)</span>. Since in the literature they use <em>arm</em> instead of <em>option</em> for historical reasons, we’ll be using <em>arm</em> and <em>option</em> interchangeably.</p>
-<div id="cell-13" class="cell" data-code_folding="[0,11]" data-execution_count="3">
+<div id="cell-12" class="cell" data-code_folding="[0,11]" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> BernoulliArm:</span>
@@ -496,7 +493,7 @@ window.Quarto = {
 <span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> chosen_arms, average_rewards, cumulative_rewards</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="cell-14" class="cell" data-execution_count="4">
+<div id="cell-13" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">1</span>)</span>
@@ -526,7 +523,7 @@ window.Quarto = {
 </div>
 <p>Few thing to note from the above graphs: - Regardless of the epsilon values, all algorithms learned the best option. - The algorithm picks options randomly; therefore, it’s not guaranteed to always pick the best option even if it found that option. That’s the main reason why none of the algorithms achieved a probability = 1 of selecting the best option or average rewards = % rewards of the best option even after they learned the best option. - As <span class="math inline">\(\epsilon\)</span> increases <span class="math inline">\(\rightarrow\)</span> increase the exploration <span class="math inline">\(\rightarrow\)</span> increases the chance of picking options randomly instead of the best option. - Algorithms with higher epsilon learn quicker but don’t use that knowledge in exploiting the best option. - Using accuracy in picking the best option and average rewards metrics, the algorithm <span class="math inline">\(\epsilon = 0.1\)</span> outperforms the rest; however, cumulative rewards metric shows that it takes that algorithm long time to outperform the algorithm with <span class="math inline">\(\epsilon = 0.2\)</span>. - Depends on time planned to run the experiment, different values of epsilons may be more optimal. For example, <span class="math inline">\(\epsilon = 0.2\)</span> is the best value for almost anything at or below 400.</p>
 <p>Let’s run the experiment again to see how would the algorithm behave under the following settings: - Only two options. - 50 options. - 5 option that are very similar.</p>
-<div id="cell-16" class="cell" data-execution_count="5">
+<div id="cell-15" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">1</span>)</span>
@@ -554,7 +551,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<div id="cell-17" class="cell" data-execution_count="6">
+<div id="cell-16" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">1</span>)</span>
@@ -582,7 +579,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<div id="cell-18" class="cell" data-execution_count="7">
+<div id="cell-17" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">1</span>)</span>
@@ -620,7 +617,7 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="annealed-epsilon-greedy-algorithm">Annealed epsilon-Greedy Algorithm</h2>
 <p>Epsilon value plays a major role in the performance of epsilon-Greedy algorithm and has to be tuned to the best of our knowledge in terms of the expectations of the estimated rewards of each option. Nonetheless, this estimation suffers from high uncertainty since most of the times either we have no clue what might work or the results would be against our intuition as user experience research has shown in multiple studies. Therefore, isn’t it nice if we can avoid setting up the epsilon values and make the algorithm parameter-free? That’s what <strong>Annealed epsilon-Greedy Algorithm</strong> does. We specify the rule of decaying epsilon with time and let the algorithm runs with no hyper-parameter configurations. The rule of we will use here is: <span class="math inline">\(\epsilon = \frac{1}{log(time + 0.0000001)}\)</span>. As we can see, at the beginning of the experiment, <span class="math inline">\(\epsilon\)</span> would be close to Inf and that means a lot of exploration; however, as time goes, <span class="math inline">\(\epsilon\)</span> start approaching zero and the algorithm would exploit more and more by selecting the best option.</p>
 <p>We will evaluate the Annealed version using the same settings as before and compare it to standard version.</p>
-<div id="cell-22" class="cell" data-code_folding="[0]" data-execution_count="8">
+<div id="cell-21" class="cell" data-code_folding="[0]" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> AnnealingEpsilonGreedy(EpsilonGreedy):</span>
@@ -641,7 +638,7 @@ window.Quarto = {
 <span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> np.random.randint(<span class="dv">0</span>, <span class="bu">len</span>(<span class="va">self</span>.values))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="cell-23" class="cell" data-execution_count="9">
+<div id="cell-22" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">1</span>)</span>
@@ -1399,7 +1396,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","selector":".lightbox","descPosition":"bottom","closeEffect":"zoom","loop":false});
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","descPosition":"bottom","loop":false,"closeEffect":"zoom","openEffect":"zoom"});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;

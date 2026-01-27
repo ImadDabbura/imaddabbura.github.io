@@ -216,11 +216,11 @@ window.Quarto = {
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="../../about.html"> 
-<span class="menu-text">Imad Dabbura</span></a>
+<span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html"> 
-<span class="menu-text">Posts</span></a>
+    <a class="nav-link" href="../../posts.html"> 
+<span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../til.html"> <i class="bi bi-lightbulb" role="img">
@@ -352,12 +352,6 @@ window.Quarto = {
 
 
 
-<!-- <p align="left">
-<img src="images/image.jpg" style="width: 600px; height: 600px">
-</p> -->
-<p align="center">
-<img src="feature.jpg">
-</p>
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>Have you ever wondered how Gmail automatic reply works? Or how a Neural Network can generate musical notes? The general way of generating sequence of text is to train a model to predict the next word/character given all previous words/characters. Such model is called <strong>Statistical Language Model</strong>. So what is a statistical language model? A statistical language model tries to capture the statistical structure (latent space) of training text it’s trained on. Usually <strong>Recurrent Neural Network (RNN)</strong> models family is used to train the model due to the fact that it’s very powerful and expressive in which they remember and process past information through their high dimensional hidden state units. The main goal of any language model is to learn the joint probability distribution of sequences of characters/words in a training text, i.e.&nbsp;trying to learn the joint probability function. For example, if we’re trying to predict a sequence of <span class="math inline">\(T\)</span> words, we try to get the joint probability <span class="math inline">\(P(w_1, w_2, ..., w_T)\)</span> as big as we can which is equal to the product of all conditional probabilities <span class="math inline">\(\prod_{t = 1}^T P(w_t/w_{t-1})\)</span> at all time steps (t).</p>
@@ -429,7 +423,7 @@ The <a href="http://deron.meranda.us/data/census-derived-all-first.txt">dataset<
 <li>As mentioned before, the objective of a character-level language model is to minimize the negative log-likelihood of the training sequence. Therefore, the loss function at time (t) and the total loss across all time steps are: <span class="math display">\[\mathcal{L}^t = -\sum_{i = 1}^{T_y}y^tlog\widehat{y^t}\tag{4}\\{}\]</span> <span class="math display">\[\mathcal{L} = \sum_{t = 1}^{T_y}\mathcal{L}^t(\widehat{y^t}, y^t)\tag{5}\]</span> Since we’ll be using SGD, the loss will be noisy and have many oscillations, so it’s a good practice to smooth out the loss using exponential weighted average.</li>
 <li>Pass the target character <span class="math inline">\(y^t\)</span> as the next input <span class="math inline">\(x^{t + 1}\)</span> until we finish the sequence.</li>
 </ul>
-<div id="cell-10" class="cell" data-code_folding="[]" data-execution_count="2">
+<div id="cell-8" class="cell" data-code_folding="[]" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load packages</span></span>
@@ -455,7 +449,7 @@ The <a href="http://deron.meranda.us/data/census-derived-all-first.txt">dataset<
 <span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>plt.style.use(<span class="st">"fivethirtyeight"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="cell-11" class="cell" data-code_folding="[]" data-execution_count="3">
+<div id="cell-9" class="cell" data-code_folding="[]" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> rnn_forward(x, y, h_prev, parameters):</span>
@@ -534,7 +528,7 @@ With RNN based models, the gradient-based technique that will be used is called 
 <p>In addition, since recurrent networks are known to have steep cliffs (sudden steep decrease in <span class="math inline">\(\mathcal{L}\)</span>), gradients may overshoot the minimum and undo a lot of the work that was done even if we are using adaptive learning methods such as RMSProp. The reason for that is that because gradient is a linear approximation of the loss function and may not capture information further than the point it was evaluated on such as the curvature of loss curve. Therefore, it’s a common practice to clip the gradients to be in the interval [-maxValue, maxValue]. For this exercise, we’ll clip the gradients to be in the interval [-5, 5]. That means if the gradient is &gt; 5 or &lt; -5, it would be clipped to 5 and -5 respectively. Below are all the formulas needed to compute the gradients w.r.t. all parameters at all time steps.</p>
 <p><span class="math display">\[\nabla_{o^t}\mathcal{L} = \widehat{y^t} - y^t\tag{6}\\{}\]</span> <span class="math display">\[\nabla_{W_{hy}}\mathcal{L} = \sum_t \nabla_{o^t}\mathcal{L}\cdot{h^t}^T\tag{7}\\{}\]</span> <span class="math display">\[\nabla_{c}\mathcal{L} = \sum_t \nabla_{o^t}\mathcal{L} \tag{8}\\{}\]</span> <span class="math display">\[\nabla_{h^t}\mathcal{L} = W_{hy}^T\cdot\nabla_{o^t}\mathcal{L} + \underbrace { W_{hh}^T\cdot\nabla_{h^{t + 1}}\mathcal{L} * (1 - tanh(W_{hh}h^{t} + W_{xh}x^{t + 1} + b) ^ 2)}_{dh_{next}} \tag{9}\\{}\]</span> <span class="math display">\[\nabla_{h^{t - 1}}\mathcal{L} = W_{hh}^T\cdot\nabla_{h^t}\mathcal{L} * (1 - tanh(h^t) ^ 2)\tag{10}\\{}\]</span> <span class="math display">\[\nabla_{x^t}\mathcal{L} = W_{xh}^T\cdot\nabla_{h^t}\mathcal{L} * (1 - tanh(W_{hh}\cdot h^{t-1} + W_{xh}\cdot x^t + b) ^ 2)\tag{11}\\{}\]</span> <span class="math display">\[\nabla_{W_{hh}}\mathcal{L} = \sum_t \nabla_{h^t}\mathcal{L} * (1 - tanh(W_{hh}\cdot h^{t-1} + W_{xh}\cdot x^t + b) ^ 2)\cdot{h^{t - 1}}^T\tag{12}\\{}\]</span> <span class="math display">\[\nabla_{W_{xh}}\mathcal{L} = \sum_t \nabla_{h^t}\mathcal{L} * (1 - tanh(W_{hh}\cdot h^{t-1} + W_{xh}\cdot x^t + b) ^ 2) . {x^t}^T\tag{13}\\{}\]</span> <span class="math display">\[\nabla_{b}\mathcal{L} = \sum_t \nabla_{h^t}\mathcal{L} * (1 - tanh(h^t) ^ 2) \tag{14}\\{}\]</span></p>
 <p>Note that at last time step <span class="math inline">\(T\)</span>, we’ll initialize <span class="math inline">\(dh_{next}\)</span> to zeros since we can’t get values from future. To stabilize the update at each time step since SGD may have so many oscillations, we’ll be using one of the adaptive learning methods’ optimizer. More specifically, <a href="https://nbviewer.jupyter.org/github/ImadDabbura/Deep-Learning/blob/master/posts/Optimization-Algorithms.ipynb"><strong>Root Mean Squared Propagation (RMSProp)</strong></a> which tends to have acceptable performance.</p>
-<div id="cell-14" class="cell" data-code_folding="[0]" data-execution_count="4">
+<div id="cell-12" class="cell" data-code_folding="[0]" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> clip_gradients(gradients, max_value):</span>
@@ -633,7 +627,7 @@ With RNN based models, the gradient-based technique that will be used is called 
 
 <p></p>
 <p>Therefore, sampling will be used at test time to generate names character by character.</p>
-<div id="cell-17" class="cell" data-code_folding="[0]" data-execution_count="5">
+<div id="cell-15" class="cell" data-code_folding="[0]" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sample(parameters, idx_to_chars, chars_to_idx, n):</span>
@@ -701,7 +695,7 @@ With RNN based models, the gradient-based technique that will be used is called 
 <section id="fitting-the-model" class="level2">
 <h2 class="anchored" data-anchor-id="fitting-the-model">Fitting the model</h2>
 <p>After covering all the concepts/intuitions behind character-level language model, now we’re ready to fit the model. We’ll use the default settings for RMSProp’s hyperparameters and run the model for 100 iterations. On each iteration, we’ll print out one sampled name and smoothed loss to see how the names generated start to get more interesting with more iterations as well as the loss will start decreasing. When done with fitting the model, we’ll plot the loss function and generate some names.</p>
-<div id="cell-20" class="cell" data-code_folding="[0]" data-execution_count="6">
+<div id="cell-18" class="cell" data-code_folding="[0]" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> model(</span>
@@ -791,7 +785,7 @@ With RNN based models, the gradient-based technique that will be used is called 
 <span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> parameters, overall_loss</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="cell-21" class="cell" data-code_folding="[0]" data-execution_count="7">
+<div id="cell-19" class="cell" data-code_folding="[0]" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load names</span></span>
@@ -1584,7 +1578,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","selector":".lightbox","descPosition":"bottom","loop":false,"openEffect":"zoom"});
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","closeEffect":"zoom","loop":false,"descPosition":"bottom","openEffect":"zoom"});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;

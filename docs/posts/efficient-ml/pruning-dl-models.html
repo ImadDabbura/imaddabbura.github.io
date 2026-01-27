@@ -110,6 +110,13 @@ ga('send', {
   'anonymizeIp': true,
 });
 </script>
+<style>
+
+      .quarto-title-block .quarto-title-banner {
+        background-image: url(pruning.jpeg);
+background-size: cover;
+      }
+</style>
 
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -156,7 +163,7 @@ window.Quarto = {
 <body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
@@ -175,11 +182,11 @@ window.Quarto = {
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="../../about.html"> 
-<span class="menu-text">Imad Dabbura</span></a>
+<span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html"> 
-<span class="menu-text">Posts</span></a>
+    <a class="nav-link" href="../../posts.html"> 
+<span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../til.html"> <i class="bi bi-lightbulb" role="img">
@@ -208,16 +215,16 @@ window.Quarto = {
  <span class="dropdown-text">Books’ Summaries</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../misc-notes.html">
- <span class="dropdown-text">Misc. Notes</span></a>
-  </li>  
-        <li>
     <a class="dropdown-item" href="../../reading-list.html">
  <span class="dropdown-text">Reading List</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../../resume.html">
  <span class="dropdown-text">Resume</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../misc-notes.html">
+ <span class="dropdown-text">Misc. Notes</span></a>
   </li>  
     </ul>
   </li>
@@ -247,7 +254,45 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Cutting the Fat: A Practical Guide to Neural Network Pruning</h1>
+            <p class="subtitle lead">From weight sparsity to hardware-aware strategies—learn how to shrink deep learning models without shrinking their performance</p>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Deep Learning</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Imad Dabbura </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">May 3, 2024</p>
+      </div>
+    </div>
+    
+      <div>
+      <div class="quarto-title-meta-heading">Modified</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date-modified">May 3, 2024</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
@@ -282,60 +327,18 @@ window.Quarto = {
 <div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Cutting the Fat: A Practical Guide to Neural Network Pruning</h1>
-<p class="subtitle lead">From weight sparsity to hardware-aware strategies—learn how to shrink deep learning models without shrinking their performance</p>
-  <div class="quarto-categories">
-    <div class="quarto-category">Deep Learning</div>
-  </div>
-  </div>
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
-<div class="quarto-title-meta">
-
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Imad Dabbura </p>
-          </div>
-  </div>
-    
-    <div>
-    <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">May 3, 2024</p>
-    </div>
-  </div>
-  
-    <div>
-    <div class="quarto-title-meta-heading">Modified</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date-modified">May 3, 2024</p>
-    </div>
-  </div>
-    
-  </div>
-  
 
 
-</header>
-
-
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="pruning.jpeg" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="pruning.jpeg" class="quarto-figure quarto-figure-center figure-img" width="800" height="500"></a></p>
-</figure>
-</div>
 <p>Neural network pruning is a critical optimization technique used to enhance the efficiency of deep learning models by systematically removing unnecessary parameters, such as weights or neurons, while maintaining model performance. This technique is particularly important because memory access and movement are extremely expensive operations in terms of both latency and energy consumption.</p>
 <section id="why-do-we-need-pruning" class="level2">
 <h2 class="anchored" data-anchor-id="why-do-we-need-pruning">Why Do We Need Pruning?</h2>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="pruning-optimization.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="pruning-optimization.png" class="quarto-figure quarto-figure-center figure-img" width="800" height="500"></a></p>
+<p><a href="pruning-optimization.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="pruning-optimization.png" class="quarto-figure quarto-figure-center figure-img" width="800" height="500"></a></p>
 </figure>
 </div>
 <p>The primary objective of pruning can be formalized as minimizing a loss function <span class="math inline">\(L(W_P)\)</span>, where <span class="math inline">\(W\)</span> represents the original weights, <span class="math inline">\(W_P\)</span> is the pruned weights subject to the constraint that the number of non-zero weights (<span class="math inline">\(||W_P||_0\)</span>) is less than a threshold <span class="math inline">\(N\)</span>.</p>
@@ -353,7 +356,7 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="types-of-pruning">Types of Pruning</h2>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="pruning-weight-vs-activation.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="pruning-weight-vs-activation.png" class="quarto-figure quarto-figure-center figure-img" width="800" height="500"></a></p>
+<p><a href="pruning-weight-vs-activation.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="pruning-weight-vs-activation.png" class="quarto-figure quarto-figure-center figure-img" width="800" height="500"></a></p>
 </figure>
 </div>
 <ol type="1">
@@ -1172,7 +1175,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","loop":false,"openEffect":"zoom","descPosition":"bottom","selector":".lightbox"});
+<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","selector":".lightbox","loop":false,"closeEffect":"zoom","descPosition":"bottom"});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;

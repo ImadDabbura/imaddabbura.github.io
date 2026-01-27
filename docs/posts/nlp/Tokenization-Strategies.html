@@ -79,6 +79,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -141,9 +144,15 @@ ga('send', {
   'anonymizeIp': true,
 });
 </script>
+<style>
+
+      .quarto-title-block .quarto-title-banner {
+        background: tokenization.jpeg ;
+      }
+</style>
 
 
-<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="../../assets/posts.css">
 <meta property="og:title" content="Imad Dabbura - Breaking Text Apart (The Smart Way)">
 <meta property="og:description" content="From single characters to advanced subword splits — see how modern tokenizers like WordPiece and SentencePiece prepare language for AI.">
 <meta property="og:image" content="https://imaddabbura.github.io/posts/nlp/tokenization.jpeg">
@@ -180,8 +189,8 @@ ga('send', {
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html"> 
-<span class="menu-text">Posts</span></a>
+    <a class="nav-link" href="../../posts.html"> 
+<span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../til.html"> <i class="bi bi-lightbulb" role="img">
@@ -210,16 +219,16 @@ ga('send', {
  <span class="dropdown-text">Books’ Summaries</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../misc-notes.html">
- <span class="dropdown-text">Misc. Notes</span></a>
-  </li>  
-        <li>
     <a class="dropdown-item" href="../../reading-list.html">
  <span class="dropdown-text">Reading List</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../../resume.html">
  <span class="dropdown-text">Resume</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../misc-notes.html">
+ <span class="dropdown-text">Misc. Notes</span></a>
   </li>  
     </ul>
   </li>
@@ -301,11 +310,7 @@ ga('send', {
   <ul class="collapse">
   <li><a href="#character-tokenization" id="toc-character-tokenization" class="nav-link" data-scroll-target="#character-tokenization">Character Tokenization</a></li>
   <li><a href="#word-tokenization" id="toc-word-tokenization" class="nav-link" data-scroll-target="#word-tokenization">Word Tokenization</a></li>
-  <li><a href="#subword-tokenization" id="toc-subword-tokenization" class="nav-link" data-scroll-target="#subword-tokenization">Subword Tokenization</a>
-  <ul class="collapse">
-  <li><a href="#wordpiece" id="toc-wordpiece" class="nav-link" data-scroll-target="#wordpiece">WordPiece</a></li>
-  <li><a href="#sentencepiece" id="toc-sentencepiece" class="nav-link" data-scroll-target="#sentencepiece">SentencePiece</a></li>
-  </ul></li>
+  <li><a href="#subword-tokenization" id="toc-subword-tokenization" class="nav-link" data-scroll-target="#subword-tokenization">Subword Tokenization</a></li>
   </ul></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   </ul>
@@ -318,15 +323,13 @@ ga('send', {
 
 
 
-<!-- ![](tokenization.jpeg) -->
-<p><img src="tokenization.jpeg" alt="Imad" height="400px" width="800px"></p>
-<section id="introduction" class="level1">
-<h1>Introduction</h1>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p><strong>Tokenization</strong> is the process of breaking down a string into smaller units of information that will be used by the model. This process sometimes involves some preprocessing steps such as converting to lowercase, <a href="https://nlp.stanford.edu/IR-book/html/htmledition/stemming-and-lemmatization-1.html">stemming &amp; lemmatization</a>, etc. There are many tokenization strategies that each has its own advantages and drawbacks. We will first give a brief introduction of the different steps involved in the tokenization process. Then we’ll consider the two <em>extreme</em> and easy tokenization strategies: <em>character tokenization</em> and <em>word tokenization</em>. Finally, we will discuss subword tokenizations where statistical methods and language heuristics are used to learn the optimal splitting of words such as WordPiece and SentencePiece tokenizers.</p>
 </section>
-<section id="tokenization-process" class="level1">
-<h1>Tokenization Process</h1>
-<p><img src="tokenization-pipeline.png" class="img-fluid"></p>
+<section id="tokenization-process" class="level2">
+<h2 class="anchored" data-anchor-id="tokenization-process">Tokenization Process</h2>
+<p><a href="tokenization-pipeline.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="tokenization-pipeline.png" class="img-fluid"></a></p>
 <p>Tokenization process involves 4 steps:</p>
 <ul>
 <li><em>Normalizations</em>: This is the first step where a set of operations are applied to a raw text to make it cleaner. Such operations may include <a href="https://unicode.org/reports/tr15/">Unicode Normalization</a> and lowercasing.</li>
@@ -335,12 +338,12 @@ ga('send', {
 <li><em>Postprocessing</em>: This is the last step where some additional tokens will be added to each sequence. For exampe, BERT tokenizer adds <code>[CLS]</code> to the beginning of the sequence and <code>[SEP]</code> to separate two sequences. On the other hands, XLM-R adds <code>&lt;s&gt;</code> to indicate the beginning of a sequence and <code>&lt;/s&gt;</code> to indicate the end of the sequence.</li>
 </ul>
 </section>
-<section id="tokenization-strategies" class="level1">
-<h1>Tokenization Strategies</h1>
+<section id="tokenization-strategies" class="level2">
+<h2 class="anchored" data-anchor-id="tokenization-strategies">Tokenization Strategies</h2>
 <p>There are so many tokenizers that each have their own rules to split raw text into individual tokens. Each tokenization strategy has its own advantages and drawbacks. Depending on the task, some tokenizers may suit your application better than others. However, in the case of using pretrained model, you must use the same tokenizer that the pretrained model used during training.</p>
 <p>Below are the most common tokenization schemes.</p>
-<section id="character-tokenization" class="level2">
-<h2 class="anchored" data-anchor-id="character-tokenization">Character Tokenization</h2>
+<section id="character-tokenization" class="level3">
+<h3 class="anchored" data-anchor-id="character-tokenization">Character Tokenization</h3>
 <p>This is the simplest tokenization strategy where we simply break down the text at the character level. Then the characters will be fed to the model. Consider the following example:</p>
 <div id="92ba1e07-4dff-4f3a-9b31-0daf88028379" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">"I love NLP!"</span></span>
@@ -378,8 +381,8 @@ ga('send', {
 </ul></li>
 </ul>
 </section>
-<section id="word-tokenization" class="level2">
-<h2 class="anchored" data-anchor-id="word-tokenization">Word Tokenization</h2>
+<section id="word-tokenization" class="level3">
+<h3 class="anchored" data-anchor-id="word-tokenization">Word Tokenization</h3>
 <p>The other extreme of word tokenization is to split text into words and then map each word to its corresponding index in the vocabulary. The simplest form would be to split on whitespace (which works well for English but not other languages such as Japanese that don’t have a well-defined idea of a word):</p>
 <div id="1b6e7b4b-99d2-4ce4-a3d7-3176cdf65250" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>text.split()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -417,12 +420,12 @@ ga('send', {
 </ul></li>
 </ul>
 </section>
-<section id="subword-tokenization" class="level2">
-<h2 class="anchored" data-anchor-id="subword-tokenization">Subword Tokenization</h2>
+<section id="subword-tokenization" class="level3">
+<h3 class="anchored" data-anchor-id="subword-tokenization">Subword Tokenization</h3>
 <p>Split words into smaller parts based on the most frequent sub-strings. Therefore, we want to keep the most frequent words as unique entities but split the rare words into smaller units to allow us to deal with misspellings and complex words. This will help us achieve the best of both wolds: 1) Manageable vocabulary size 2) Keep frequent words as their own entities 3) And deal with complex and misspelling words</p>
 <p>The subword tokenizers are typically learned from pretraining corpus using statistical rules and algorithms. We will cover the most common ones: <em>WordPiece</em> and <em>SentencePiece</em>.</p>
-<section id="wordpiece" class="level3">
-<h3 class="anchored" data-anchor-id="wordpiece">WordPiece</h3>
+<section id="wordpiece" class="level4">
+<h4 class="anchored" data-anchor-id="wordpiece">WordPiece</h4>
 <p><a href="https://arxiv.org/abs/1609.08144v2">WordPiece</a> tokenizer is used by the <a href="https://arxiv.org/abs/1910.01108">DistilBERT</a> model. The vocabulary is first initialized with individual characters in the language, then the most frequent combinations of symbols in the vocabulary are iteratively added to the vocabulary. The process is:</p>
 <ol type="1">
 <li>Initialize the vocabulary with all the characters in the text</li>
@@ -467,8 +470,8 @@ ga('send', {
 </div>
 </div>
 </section>
-<section id="sentencepiece" class="level3">
-<h3 class="anchored" data-anchor-id="sentencepiece">SentencePiece</h3>
+<section id="sentencepiece" class="level4">
+<h4 class="anchored" data-anchor-id="sentencepiece">SentencePiece</h4>
 <p><a href="">SentencePiece</a> implements <strong>byte-pair-encoding</strong> (BPE) and unigram language modeling. It encodes the raw text as a sequence of Unicode characters. This is very useful in multilingual corpora because many languages, such as Japanese, don’t have whitespace characters. Also, it is agnostic about accents and punctuations. That is why it is commonly used in multilingual model training.</p>
 <p>Byte-pair-encoding works as follows:</p>
 <ol type="1">
@@ -516,15 +519,15 @@ ga('send', {
 </section>
 </section>
 </section>
-<section id="conclusion" class="level1">
-<h1>Conclusion</h1>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
 <p>Through this post, we covered three tokenization strategies along with their advantages and challenges/limitations. We mostly use tokenizers from well-known libraries such as <a href="https://spacy.io/">spaCy</a> because it is very hard to get it right ourselves.</p>
 <p><strong>NB</strong>: When using pretrained models such as DistilBERT, we must use the same tokenizer that the model used during training. Otherwise, what the model assumes <code>token_id = 1</code> is will be completely different than what the new <code>token_id = 1</code> represents. It has the same effect as shuffling the vocabulary.</p>
 
 
 </section>
 
-</main> <!-- /main -->
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     // Only add citation to post pages (not index, about, etc.)
@@ -1181,6 +1184,31 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"loop":false,"selector":".lightbox","openEffect":"zoom","closeEffect":"zoom","descPosition":"bottom"});
+window.onload = () => {
+  lightboxQuarto.on('slide_before_load', (data) => {
+    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+    const href = trigger.getAttribute('href');
+    if (href !== null) {
+      const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+      if (imgEl !== null) {
+        const srcAttr = imgEl.getAttribute("src");
+        if (srcAttr && srcAttr.startsWith("data:")) {
+          slideConfig.href = srcAttr;
+        }
+      }
+    } 
+  });
+
+  lightboxQuarto.on('slide_after_load', (data) => {
+    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+    if (window.Quarto?.typesetMath) {
+      window.Quarto.typesetMath(slideNode);
+    }
+  });
+
+};
+          </script>
 
 
 

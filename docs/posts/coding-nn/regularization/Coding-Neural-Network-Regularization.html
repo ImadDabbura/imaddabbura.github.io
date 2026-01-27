@@ -220,11 +220,11 @@ window.Quarto = {
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="../../../about.html"> 
-<span class="menu-text">Imad Dabbura</span></a>
+<span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../../index.html"> 
-<span class="menu-text">Posts</span></a>
+    <a class="nav-link" href="../../../posts.html"> 
+<span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../../til.html"> <i class="bi bi-lightbulb" role="img">
@@ -353,11 +353,6 @@ window.Quarto = {
 
 
 
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="feature.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="feature.png" class="quarto-figure quarto-figure-center figure-img" width="600" height="400"></a></p>
-</figure>
-</div>
 <section id="bias-variance-trade-off" class="level2">
 <h2 class="anchored" data-anchor-id="bias-variance-trade-off">Bias-Variance Trade-off</h2>
 <p>Generalization (test) error is the most important metric in Machine/Deep Learning. It gives us an estimate on the performance of the model on unseen data. Test error is decomposed into 3 parts (see above figure): <strong>Variance, Squared-Bias, and Irreducible Error</strong>. Models with high bias are not complex enough (too simple) for the data and tend to underfit. The simplest model is taking the average (mode) of target variable and assign it to all predictions. On the contrary, models with high variance overfit the training data by closely follow (mimick) the training data where the learning algorithm will follow the signal and the noise. Note that as the complexity (flexibility) of the model increases → the model will become less interpretable such as Neural Networks. Below is the bias-variance decomposition: <span class="math display">\[MSE = E(y - \widehat{y})^2\\{}\]</span> <span class="math display">\[= E(y - f + f - \widehat{y})^2\\{}\]</span> <span class="math display">\[= E\big\{(y - f)^2 + 2(y - f)(f - \widehat{y}) + (f - \widehat{y})^2\big\};\quad substitute\ y = f + \epsilon\\{}\]</span> <span class="math display">\[= E\big\{(\epsilon + f - f)^2 + 2(\epsilon + f - f)(f - \widehat{y}) + (f - \widehat{y})^2\big\}\\{}\]</span> <span class="math display">\[= E(\epsilon)^2 + E(\epsilon)E(f - \widehat{y}) + E(f - \widehat{y})^2; \quad where\ E(\epsilon) = 0\\{}\]</span> <span class="math display">\[= E(\epsilon)^2 + E(f - \widehat{y})^2;\quad add\ and\ subtract\ E(\widehat{y})\\{}\]</span> <span class="math display">\[= E(\epsilon)^2 + E(f - E(\widehat{y}) + E(\widehat{y}) - \widehat{y})^2\\{}\]</span> <span class="math display">\[= E(\epsilon)^2 + E(f - E(\widehat{y}))^2 + E(\widehat{y} - E(\widehat{y}))^2\\{}\]</span> <span class="math display">\[\Rightarrow MSE = var(\widehat{y}) + (Bias(\widehat{y}))^2 + var(\epsilon)\\{}\]</span> Where:</p>
@@ -397,7 +392,7 @@ window.Quarto = {
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="../images/bias_variance_lambda.png" class="lightbox" data-glightbox="description: .lightbox-desc-2" data-gallery="quarto-lightbox-gallery-2" title="Figure 1: Model complexity (underfitting/overfitting) as a function of regularization parameter"><img src="../images/bias_variance_lambda.png" class="quarto-figure quarto-figure-center figure-img" width="600" height="400" alt="Figure 1: Model complexity (underfitting/overfitting) as a function of regularization parameter"></a></p>
+<p><a href="../images/bias_variance_lambda.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" data-glightbox="description: .lightbox-desc-1" title="Figure 1: Model complexity (underfitting/overfitting) as a function of regularization parameter"><img src="../images/bias_variance_lambda.png" class="quarto-figure quarto-figure-center figure-img" width="600" height="400" alt="Figure 1: Model complexity (underfitting/overfitting) as a function of regularization parameter"></a></p>
 </figure>
 </div>
 <figcaption><strong>Figure 1</strong>: Model complexity (underfitting/overfitting) as a function of regularization parameter</figcaption>
@@ -411,7 +406,7 @@ window.Quarto = {
 <p>To illustrate how regularization helps us reduce generalization error, we’ll use the cats_vs_dogs dataset. The dataset has images for cats and dogs. We’ll try to build a neural network to classify if the image has a cat or a dog. Each image is 64 x 64 pixels on RGB scale.</p>
 <p>We’ll be using functions we wrote in <a href="https://imaddabbura.github.io/posts/coding-nn/fwd-bkwd-propagation/Coding-Neural-Network-Forwad-Back-Propagation.html"><em>“Coding Neural Network - Forward and Backward Propagation”</em></a> post to initialize parameters, compute forward propagation, cross-entropy cost, gradients, etc.</p>
 <p>Let’s import the data and take a look at the shape as well as a sample of a cat image from the training set.</p>
-<div id="cell-9" class="cell" data-code_folding="[0]" data-execution_count="2">
+<div id="cell-8" class="cell" data-code_folding="[0]" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
@@ -441,7 +436,7 @@ window.Quarto = {
 <span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">"figure.figsize"</span>] <span class="op">=</span> (<span class="dv">12</span>, <span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="cell-10" class="cell" data-code_folding="[0]" data-execution_count="5">
+<div id="cell-9" class="cell" data-code_folding="[0]" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import training data</span></span>
@@ -482,13 +477,13 @@ X's dimension: (12288, 50), Y's dimension: (1, 50)</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Coding-Neural-Network-Regularization_files/figure-html/cell-4-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="Coding-Neural-Network-Regularization_files/figure-html/cell-4-output-2.png" class="img-fluid figure-img"></a></p>
+<p><a href="Coding-Neural-Network-Regularization_files/figure-html/cell-4-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="Coding-Neural-Network-Regularization_files/figure-html/cell-4-output-2.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
 </div>
 <p>The training set has 209 examples and the test set has 50 examples. Let’s first write all the helper functions that would help us write the multi-layer neural network.</p>
-<div id="cell-12" class="cell" data-code_folding="[0,39,77,117,161]" data-execution_count="6">
+<div id="cell-11" class="cell" data-code_folding="[0,39,77,117,161]" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_cost_reg(AL, y, parameters, lambd<span class="op">=</span><span class="dv">0</span>):</span>
@@ -738,7 +733,7 @@ X's dimension: (12288, 50), Y's dimension: (1, 50)</code></pre>
 </details>
 </div>
 <p>Now we’re ready to train the neural network. We’ll first build a neural network with no regularization and then one with regularization to see which one has lower generalization error. Note that <span class="math inline">\(\lambda\)</span> should be tuned to get the best results but we’ll here choose an arbitrary value to illustrate the concept. Both neural netwotks would have 2 hidden layers where each hidden layer has 5 units.</p>
-<div id="cell-14" class="cell" data-execution_count="7">
+<div id="cell-13" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set up layers dimensions</span></span>
@@ -800,13 +795,13 @@ The test accuracy rate: 72.00%.</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Coding-Neural-Network-Regularization_files/figure-html/cell-6-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="Coding-Neural-Network-Regularization_files/figure-html/cell-6-output-2.png" class="img-fluid figure-img"></a></p>
+<p><a href="Coding-Neural-Network-Regularization_files/figure-html/cell-6-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="Coding-Neural-Network-Regularization_files/figure-html/cell-6-output-2.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
 </div>
 <p>The training accuracy is 82.30% but the test accuracy is 78%. The difference between training and test accuracy is not that much, i.e.&nbsp;we don’t have a lot of overfitting. Therefore, a little bit of regularization may help such as <span class="math inline">\(\lambda = 0.02\)</span>. Values of <span class="math inline">\(\lambda\)</span>s that practitioners recommend are: 0.02, 0.04, 0.08, 0.16, 0.32, 0.64, 1.28, 2.56, 5.12, 10.24.</p>
-<div id="cell-16" class="cell" data-execution_count="8">
+<div id="cell-15" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># train NN with regularization</span></span>
@@ -865,7 +860,7 @@ The test accuracy rate: 58.00%.</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Coding-Neural-Network-Regularization_files/figure-html/cell-7-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="Coding-Neural-Network-Regularization_files/figure-html/cell-7-output-2.png" class="img-fluid figure-img"></a></p>
+<p><a href="Coding-Neural-Network-Regularization_files/figure-html/cell-7-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="Coding-Neural-Network-Regularization_files/figure-html/cell-7-output-2.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -885,7 +880,7 @@ The test accuracy rate: 58.00%.</code></pre>
 
 
 <div class="hidden" aria-hidden="true">
-<span class="glightbox-desc lightbox-desc-2"><strong>Figure 1</strong>: Model complexity (underfitting/overfitting) as a function of regularization parameter</span>
+<span class="glightbox-desc lightbox-desc-1"><strong>Figure 1</strong>: Model complexity (underfitting/overfitting) as a function of regularization parameter</span>
 </div>
 </section>
 
@@ -1597,7 +1592,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","selector":".lightbox","descPosition":"bottom","loop":false,"closeEffect":"zoom"});
+<script>var lightboxQuarto = GLightbox({"descPosition":"bottom","openEffect":"zoom","closeEffect":"zoom","loop":false,"selector":".lightbox"});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;

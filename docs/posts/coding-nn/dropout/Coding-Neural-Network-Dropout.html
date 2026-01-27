@@ -220,11 +220,11 @@ window.Quarto = {
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="../../../about.html"> 
-<span class="menu-text">Imad Dabbura</span></a>
+<span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../../index.html"> 
-<span class="menu-text">Posts</span></a>
+    <a class="nav-link" href="../../../posts.html"> 
+<span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../../til.html"> <i class="bi bi-lightbulb" role="img">
@@ -353,11 +353,6 @@ window.Quarto = {
 
 
 
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="feature.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="feature.png" class="quarto-figure quarto-figure-center figure-img" width="400" height="400"></a></p>
-</figure>
-</div>
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p><strong>Dropout</strong> is a regularization technique. On each iteration, we randomly shut down some neurons (units) on each layer and don’t use those neurons in both forward propagation and back-propagation. Since the units that will be dropped out on each iteration will be random, the learning algorithm will have no idea which neurons will be shut down on every iteration; therefore, force the learning algorithm to spread out the weights and not focus on some specific feattures (units). Moreover, dropout help improving generalization error by:</p>
@@ -368,7 +363,7 @@ window.Quarto = {
 <p>We can use different probabilities on each layer; however, the output layer would always have <code>keep_prob = 1</code> and the input layer has high <code>keep_prob</code> such as 0.9 or 1. If a hidden layer has <code>keep_prob = 0.8</code>, this means that; on each iteration, each unit has 80% probablitity of being included and 20% probability of being dropped out.</p>
 <p>Dropout is used a lot in computer vision problems because we have a lot of features and not a lot of data. Also, features (pixels) next to each other usually don’t add a lot of information. Therefore, models always suffer from overfitting.</p>
 <p>To illustrate how dropout helps us reduce generalization error, we’ll use the same dataset we’ve used in the previous posts. The dataset has images for cats and non-cat. We’ll try to build a neural network to classify if the image has cat or not. Each image is 64 x 64 pixels on RGB scale. Let’s import the data and take a look at the shape as well as a sample of a cat image from the training set.</p>
-<div id="cell-5" class="cell" data-code_folding="[0]" data-execution_count="2">
+<div id="cell-4" class="cell" data-code_folding="[0]" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
@@ -396,7 +391,7 @@ window.Quarto = {
 <span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">"figure.figsize"</span>] <span class="op">=</span> (<span class="dv">12</span>, <span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="cell-6" class="cell" data-code_folding="[0]" data-execution_count="3">
+<div id="cell-5" class="cell" data-code_folding="[0]" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import training data</span></span>
@@ -437,7 +432,7 @@ X's dimension: (12288, 50), Y's dimension: (1, 50)</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Coding-Neural-Network-Dropout_files/figure-html/cell-4-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="Coding-Neural-Network-Dropout_files/figure-html/cell-4-output-2.png" class="img-fluid figure-img"></a></p>
+<p><a href="Coding-Neural-Network-Dropout_files/figure-html/cell-4-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="Coding-Neural-Network-Dropout_files/figure-html/cell-4-output-2.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -446,7 +441,7 @@ X's dimension: (12288, 50), Y's dimension: (1, 50)</code></pre>
 <section id="implementation" class="level2">
 <h2 class="anchored" data-anchor-id="implementation">Implementation</h2>
 <p>Now, we’ll write the functions needed to apply dropout on both forward propagation and back-propagation. Note that we’ll utilize the functions we wrote in previous posts such as <code>initialize_parameters</code>.</p>
-<div id="cell-9" class="cell" data-code_folding="[0,36,89,147]" data-execution_count="4">
+<div id="cell-8" class="cell" data-code_folding="[0,36,89,147]" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> drop_out_matrices(layers_dims, m, keep_prob):</span>
@@ -694,7 +689,7 @@ X's dimension: (12288, 50), Y's dimension: (1, 50)</code></pre>
 <section id="application" class="level2">
 <h2 class="anchored" data-anchor-id="application">Application</h2>
 <p>Finally, we’re ready to build our neural network. First, we’ll build one fully connected network without dropout. That is to say, <code>keep_prob = 1</code>. Next, we’ll build another network where <code>keep_prob &lt; 1</code>. Lastly, we’ll compare the generalization error of both networks and see how dropout technique can help us in improving our generalization error.</p>
-<div id="cell-12" class="cell" data-execution_count="5">
+<div id="cell-11" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># setup layers dimensions, number of examples, and keep probabilities list</span></span>
@@ -742,12 +737,12 @@ The test accuracy rate: 34.00%.</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Coding-Neural-Network-Dropout_files/figure-html/cell-6-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="Coding-Neural-Network-Dropout_files/figure-html/cell-6-output-2.png" class="img-fluid figure-img"></a></p>
+<p><a href="Coding-Neural-Network-Dropout_files/figure-html/cell-6-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="Coding-Neural-Network-Dropout_files/figure-html/cell-6-output-2.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
 </div>
-<div id="cell-13" class="cell" data-execution_count="6">
+<div id="cell-12" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># setup keep probabilities list</span></span>
@@ -793,7 +788,7 @@ The test accuracy rate: 44.00%.</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Coding-Neural-Network-Dropout_files/figure-html/cell-7-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="Coding-Neural-Network-Dropout_files/figure-html/cell-7-output-2.png" class="img-fluid figure-img"></a></p>
+<p><a href="Coding-Neural-Network-Dropout_files/figure-html/cell-7-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="Coding-Neural-Network-Dropout_files/figure-html/cell-7-output-2.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -1522,7 +1517,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"selector":".lightbox","closeEffect":"zoom","loop":false,"openEffect":"zoom","descPosition":"bottom"});
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom"});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;

@@ -219,11 +219,11 @@ window.Quarto = {
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="../../about.html"> 
-<span class="menu-text">Imad Dabbura</span></a>
+<span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html"> 
-<span class="menu-text">Posts</span></a>
+    <a class="nav-link" href="../../posts.html"> 
+<span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../til.html"> <i class="bi bi-lightbulb" role="img">
@@ -356,7 +356,6 @@ window.Quarto = {
 
 
 
-<p><a href="feature.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="feature.jpg" class="img-fluid"></a></p>
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>The two most critical questions in the lending industry are: 1) How risky is the borrower? 2) Given the borrower’s risk, should we lend him/her? The answer to the first question determines the interest rate the borrower would have. Interest rate measures among other things (such as time value of money) the riskness of the borrower, i.e.&nbsp;the riskier the borrower, the higher the interest rate. With interest rate in mind, we can then determine if the borrower is eligible for the loan.</p>
@@ -390,7 +389,7 @@ window.Quarto = {
 <li>If we have missing values</li>
 <li>If we have imbalanced data</li>
 </ul>
-<div id="cell-5" class="cell" data-execution_count="1">
+<div id="cell-4" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
@@ -428,7 +427,7 @@ window.Quarto = {
 <span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>sns.set_context(<span class="st">"notebook"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="cell-6" class="cell" data-code_folding="[0]" data-execution_count="2">
+<div id="cell-5" class="cell" data-code_folding="[0]" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the data</span></span>
@@ -596,7 +595,7 @@ dtype: int64</code></pre>
 </div>
 </div>
 </div>
-<div id="cell-7" class="cell" data-code_folding="[0]" data-execution_count="3">
+<div id="cell-6" class="cell" data-code_folding="[0]" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get number of positve and negative examples</span></span>
@@ -620,7 +619,7 @@ Proportion of positive to negative examples = 19.06%</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Predicting-Loan-Repayment_files/figure-html/cell-5-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="Predicting-Loan-Repayment_files/figure-html/cell-5-output-2.png" class="img-fluid figure-img"></a></p>
+<p><a href="Predicting-Loan-Repayment_files/figure-html/cell-5-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="Predicting-Loan-Repayment_files/figure-html/cell-5-output-2.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -653,7 +652,7 @@ Proportion of positive to negative examples = 19.06%</code></pre>
 <li>Split the data into training set (70%), and test set (30%). Training set will be used to fit the model, and test set will be to evaluate the best model to get an estimation of generalization error. Instead of having validation set to tune hyperparameters and evaluate different models, we’ll use 10-folds cross validation because it’s more reliable estimate of generalization error.</li>
 <li>Standardize the data. We’ll be using <code>RobustScaler</code> so that the standarization will be less influenced by the outliers, i.e.&nbsp;more robust. It centers the data around the median and scale it using <em>interquartile range (IQR)</em>. This step will be included in the pipelines for each model as a transformer so we will not do it separately.</li>
 </ol>
-<div id="cell-11" class="cell" data-code_folding="[]" data-execution_count="4">
+<div id="cell-10" class="cell" data-code_folding="[]" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create dummy variables from the feature purpose</span></span>
@@ -825,7 +824,7 @@ Proportion of positive to negative examples = 19.06%</code></pre>
 </ul>
 <p>To evaluate each strategy, we’ll use <em>Random Forest</em> classifier with hyperparameters’ values guided by <a href="https://arxiv.org/pdf/1708.05070.pdf">Data-driven Advice for Applying Machine Learning to Bioinformatics Problems</a> as a starting point.</p>
 <p>Let’s first create binary features for missing values and then prepare the data for each strategy discussed above. Next, we’ll compute the 10-folds cross validation <em>AUC</em> score for all the models using training data.</p>
-<div id="cell-14" class="cell" data-execution_count="5">
+<div id="cell-13" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create binary features to check if the example is has missing values for all features that have missing values</span></span>
@@ -996,7 +995,7 @@ Proportion of positive to negative examples = 19.06%</code></pre>
 </div>
 </div>
 </div>
-<div id="cell-15" class="cell" data-code_folding="[]" data-execution_count="6">
+<div id="cell-14" class="cell" data-code_folding="[]" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Original Data</span></span>
@@ -1026,7 +1025,7 @@ After dropping NAs: ((7611, 18), (1905, 18))
 MICE data shapes: ((7662, 24), (1916, 24))</code></pre>
 </div>
 </div>
-<div id="cell-16" class="cell" data-code_folding="[]" data-execution_count="7">
+<div id="cell-15" class="cell" data-code_folding="[]" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build random forest classifier</span></span>
@@ -1072,7 +1071,7 @@ MICE imputation model's average AUC: 0.656</code></pre>
 </div>
 </div>
 <p>Let’s plot the feature importances to check if the added binary features added anything to the model.</p>
-<div id="cell-18" class="cell" data-code_folding="[]" data-execution_count="8">
+<div id="cell-17" class="cell" data-code_folding="[]" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit RF to plot feature importances</span></span>
@@ -1089,13 +1088,13 @@ MICE imputation model's average AUC: 0.656</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Predicting-Loan-Repayment_files/figure-html/cell-10-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="Predicting-Loan-Repayment_files/figure-html/cell-10-output-1.png" class="img-fluid figure-img"></a></p>
+<p><a href="Predicting-Loan-Repayment_files/figure-html/cell-10-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="Predicting-Loan-Repayment_files/figure-html/cell-10-output-1.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Guided by the 10-fold cross validation <em>AUC</em> scores, it looks like all strategies have comparable results and missing values were generated randomly. Also, the added six binary features showed no importance when plotting feature importances from <em>Random Forest</em> classifier. Therefore, it’s safe to drop those features and use <em>Median Imputation</em> method as a transformer later on in the pipeline.</p>
-<div id="cell-20" class="cell" data-execution_count="9">
+<div id="cell-19" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop generated binary features</span></span>
@@ -1127,7 +1126,7 @@ MICE imputation model's average AUC: 0.656</code></pre>
 <p>There are other methods such as <code>EditedNearestNeighbors</code> and <code>CondensedNearestNeighbors</code> that we will not cover in this notebook and are rarely used in practice.</p>
 <p>In most applications, misclassifying the minority class (false negative) is a lot more expensive than misclassifying the majority class (false positive). In the context of lending, loosing money by lending to a risky borrower who is more likely to not fully pay the loan back is a lot more costly than missing the opportunity of lending to trust-worthy borrower (less risky). As a result, we can use <code>class_weight</code> that changes the weight of misclassifying positive example in the loss function. Also, we can use different cut-offs assign examples to classes. By default, 0.5 is the cut-off; however, we see more often in applications such as lending that the cut-off is less than 0.5. Note that changing the cut-off from the default 0.5 reduce the overall accuracy but may improve the accuracy of predicting positive/negative examples.</p>
 <p>We’ll evaluate all the above methods plus the original model without resampling as a baseline model using the same <em>Random Forest</em> classifier we used in the missing values section.</p>
-<div id="cell-23" class="cell" data-code_folding="[]" data-execution_count="10">
+<div id="cell-22" class="cell" data-code_folding="[]" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build random forest classifier (same config)</span></span>
@@ -1198,7 +1197,7 @@ SMOTE model's average AUC: 0.641</code></pre>
 <p>We’ll build ensemble models using three different models as base learners: - Extra Gradient Boosting - Support Vector Classifier - Random Forest</p>
 <p>The ensemble models will be built using two different methods: - Blending (average) ensemble model. Fits the base learners to the training data and then, at test time, average the predictions generated by all the base learners. - Use VotingClassifier from sklearn that: - fit all the base learners on the training data - at test time, use all base learners to predict test data and then take the average of all predictions. - Stacked ensemble model: Fits the base learners to the training data. Next, use those trained base learners to generate predictions (meta-features) used by the meta-learner (assuming we have only one layer of base learners). There are few different ways of training stacked ensemble model: - Fitting the base learners to all training data and then generate predictions using the same training data it was used to fit those learners. This method is more prune to overfitting because the meta learner will give more weights to the base learner who memorized the training data better, i.e.&nbsp;meta-learner won’t generate well and would overfit. - Split the training data into 2 to 3 different parts that will be used for training, validation, and generate predictions. It’s a suboptimal method because held out sets usually have higher variance and different splits give different results as well as learning algorithms would have fewer data to train. - Use k-folds cross validation where we split the data into k-folds. We fit the base learners to the (k - 1) folds and use the fitted models to generate predictions of the held out fold. We repeat the process until we generate the predictions for all the k-folds. When done, refit the base learners to the full training data. This method is more reliable and will give models that memorize the data less weight. Therefore, it generalizes better on future data.</p>
 <p>We’ll use logistic regression as the meta-learner for the stacked model. Note that we can use k-folds cross validation to validate and tune the hyperparameters of the meta learner. We will not tune the hyperparameters of any of the base learners or the meta-learner; however, we will use some of the values recommended by the <a href="https://arxiv.org/pdf/1708.05070.pdf">Pennsylvania Benchmarking Paper</a>. Additionally, we won’t use EasyEnsemble in training because, after some experimentation, it didn’t improve the AUC of the ensemble model more than 2% on average and it was computationally very expensive. In practice, we sometimes are willing to give up small improvements if the model would become a lot more complex computationally. Therefore, we will use <code>RandomUnderSampler</code>. Also, we’ll impute the missing values and standardize the data beforehand so that it would shorten the code of the ensemble models and allows use to avoid using <code>Pipeline</code>. Additionally, we will plot ROC and PR curves using test data and evaluate the performance of all models.</p>
-<div id="cell-27" class="cell" data-execution_count="11">
+<div id="cell-26" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Impute the missing data using features means</span></span>
@@ -1226,7 +1225,7 @@ SMOTE model's average AUC: 0.641</code></pre>
 <pre><code>((2452, 18), (2452,))</code></pre>
 </div>
 </div>
-<div id="cell-28" class="cell" data-execution_count="12">
+<div id="cell-27" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define base learners</span></span>
@@ -1307,13 +1306,13 @@ SMOTE model's average AUC: 0.641</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Predicting-Loan-Repayment_files/figure-html/cell-14-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="Predicting-Loan-Repayment_files/figure-html/cell-14-output-1.png" class="img-fluid figure-img"></a></p>
+<p><a href="Predicting-Loan-Repayment_files/figure-html/cell-14-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="Predicting-Loan-Repayment_files/figure-html/cell-14-output-1.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
 </div>
 <p>As we can see from the chart above, stacked ensemble model didn’t improve the performance. One of the major reasons are that the base learners are considerably highly correlated especially <em>Random Forest</em> and <em>Gradient Boosting</em> (see the correlation matrix below).</p>
-<div id="cell-30" class="cell" data-execution_count="17">
+<div id="cell-29" class="cell" data-execution_count="17">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the correlation between base learners</span></span>
@@ -1323,13 +1322,13 @@ SMOTE model's average AUC: 0.641</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Predicting-Loan-Repayment_files/figure-html/cell-15-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="Predicting-Loan-Repayment_files/figure-html/cell-15-output-1.png" class="img-fluid figure-img"></a></p>
+<p><a href="Predicting-Loan-Repayment_files/figure-html/cell-15-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="Predicting-Loan-Repayment_files/figure-html/cell-15-output-1.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
 </div>
 <p>In addition, with classification problems where False Negatives are a lot more expensive than False Positives, we may want to have a model with a high precision rather than high recall, i.e.&nbsp;the probability of the model to identify positive examples from randomly selected examples. Below is the confusion matrix:</p>
-<div id="cell-32" class="cell" data-execution_count="78">
+<div id="cell-31" class="cell" data-execution_count="78">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>second_stack_probs <span class="op">=</span> second_stack.predict_proba(first_stack.transform(X_test))</span>
@@ -1351,13 +1350,13 @@ SMOTE model's average AUC: 0.641</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Predicting-Loan-Repayment_files/figure-html/cell-16-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="Predicting-Loan-Repayment_files/figure-html/cell-16-output-2.png" class="img-fluid figure-img"></a></p>
+<p><a href="Predicting-Loan-Repayment_files/figure-html/cell-16-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="Predicting-Loan-Repayment_files/figure-html/cell-16-output-2.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Let’s finally check the partial dependence plots to see what are the most important features and their relationships with whether the borrower will most likely pay the loan in full before mature data. we will plot only the top 8 features to make it easier to read.</p>
-<div id="cell-34" class="cell" data-execution_count="24">
+<div id="cell-33" class="cell" data-execution_count="24">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot partial dependence plots</span></span>
@@ -1381,7 +1380,7 @@ SMOTE model's average AUC: 0.641</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Predicting-Loan-Repayment_files/figure-html/cell-17-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="Predicting-Loan-Repayment_files/figure-html/cell-17-output-1.png" class="img-fluid figure-img"></a></p>
+<p><a href="Predicting-Loan-Repayment_files/figure-html/cell-17-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="Predicting-Loan-Repayment_files/figure-html/cell-17-output-1.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -2112,7 +2111,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","selector":".lightbox","descPosition":"bottom","loop":false,"closeEffect":"zoom"});
+<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","closeEffect":"zoom","descPosition":"bottom","selector":".lightbox","loop":false});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;

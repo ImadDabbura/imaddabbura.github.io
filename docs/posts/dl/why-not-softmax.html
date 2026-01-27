@@ -45,9 +45,6 @@ ul.task-list li input[type="checkbox"] {
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
-<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
-<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -182,11 +179,11 @@ window.Quarto = {
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="../../about.html"> 
-<span class="menu-text">Imad Dabbura</span></a>
+<span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html"> 
-<span class="menu-text">Posts</span></a>
+    <a class="nav-link" href="../../posts.html"> 
+<span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../til.html"> <i class="bi bi-lightbulb" role="img">
@@ -282,6 +279,12 @@ window.Quarto = {
       </div>
     </div>
     
+      <div>
+      <div class="quarto-title-meta-heading">Modified</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date-modified">June 9, 2024</p>
+      </div>
+    </div>
       
     </div>
     
@@ -294,7 +297,8 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#what-is-softmax" id="toc-what-is-softmax" class="nav-link active" data-scroll-target="#what-is-softmax">What Is Softmax?</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#what-is-softmax" id="toc-what-is-softmax" class="nav-link" data-scroll-target="#what-is-softmax">What Is Softmax?</a></li>
   <li><a href="#cons-of-using-softmax-in-the-final-layer" id="toc-cons-of-using-softmax-in-the-final-layer" class="nav-link" data-scroll-target="#cons-of-using-softmax-in-the-final-layer">Cons of Using Softmax in the Final Layer</a>
   <ul class="collapse">
   <li><a href="#redundancy-with-loss-functions" id="toc-redundancy-with-loss-functions" class="nav-link" data-scroll-target="#redundancy-with-loss-functions">Redundancy with Loss Functions</a></li>
@@ -315,12 +319,10 @@ window.Quarto = {
 
 
 
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="softmax-img.jpeg" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="softmax-img.jpeg" class="quarto-figure quarto-figure-center figure-img" width="600" height="500"></a></p>
-</figure>
-</div>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>When designing a neural network, particularly for classification tasks, the choice of the final layer is a crucial design decision. Many practitioners instinctively apply a <strong>softmax activation</strong> to the logits (the raw, unnormalized outputs of the final layer) to produce a probability distribution over the classes. While softmax has its uses, there are several drawbacks to applying it directly in the final layer, making it preferable to leave the final layer as raw logits in many cases. This article explores <strong>why using raw logits is often better</strong>, focusing on the <strong>cons of softmax activation</strong> and providing resources for further understanding.</p>
+</section>
 <section id="what-is-softmax" class="level2">
 <h2 class="anchored" data-anchor-id="what-is-softmax">What Is Softmax?</h2>
 <p>The softmax function transforms a vector of raw logits into a probability distribution. For a vector of logits ( z ), the softmax function is defined as:</p>
@@ -1064,31 +1066,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","selector":".lightbox","descPosition":"bottom","loop":false,"openEffect":"zoom"});
-window.onload = () => {
-  lightboxQuarto.on('slide_before_load', (data) => {
-    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
-    const href = trigger.getAttribute('href');
-    if (href !== null) {
-      const imgEl = window.document.querySelector(`a[href="${href}"] img`);
-      if (imgEl !== null) {
-        const srcAttr = imgEl.getAttribute("src");
-        if (srcAttr && srcAttr.startsWith("data:")) {
-          slideConfig.href = srcAttr;
-        }
-      }
-    } 
-  });
-
-  lightboxQuarto.on('slide_after_load', (data) => {
-    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
-    if (window.Quarto?.typesetMath) {
-      window.Quarto.typesetMath(slideNode);
-    }
-  });
-
-};
-          </script>
 
 
 

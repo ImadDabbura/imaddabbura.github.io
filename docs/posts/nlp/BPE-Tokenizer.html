@@ -184,11 +184,11 @@ background-size: cover;
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="../../about.html"> 
-<span class="menu-text">Imad Dabbura</span></a>
+<span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html"> 
-<span class="menu-text">Posts</span></a>
+    <a class="nav-link" href="../../posts.html"> 
+<span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../til.html"> <i class="bi bi-lightbulb" role="img">
@@ -318,125 +318,126 @@ background-size: cover;
 
 
 
-<p><img src="bpe-tokenizer.jpg" height="500px" width="800px"></p>
-<section id="introduction" class="level1">
-<h1>Introduction</h1>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>What if I told you that the way a language model “sees” the world is entirely shaped by one invisible yet critical process? A process so fundamental that it can make or break the model’s ability to understand context, predict meaning, and even handle different languages. That process is tokenization—the art of breaking down text into smaller, digestible pieces called tokens. And it’s not just a technical detail; it’s the very lens through which language models perceive the world.</p>
 <p>But here’s the twist: tokenization isn’t perfect. It’s a balancing act, full of trade-offs and challenges. For instance, languages like English, which dominate training datasets, are tokenized into fewer, denser tokens, allowing models to process more context efficiently. Meanwhile, less-represented languages like Korean are fragmented into far more tokens, forcing the model to work harder to understand the same amount of text. This imbalance can lead to inefficiencies, biases, and even a loss of meaning.</p>
 <p>So, how do we strike the right balance? Enter Byte Pair Encoding (BPE)—a clever algorithm that merges frequent character pairs into subwords, creating a compact yet expressive vocabulary. Starting from raw bytes, BPE builds tokens step by step, like assembling a puzzle, ensuring flexibility while maintaining efficiency. It’s a method that not only compresses text but also shapes how much context a model can attend to, directly influencing its performance.</p>
 <p>In this post, we’ll unravel the mysteries of Byte Pair Encoding. We’ll explore how it works, why it’s so effective, and the surprising ways it impacts everything from multilingual understanding to computational efficiency. By the end, you’ll see how this seemingly simple process holds the key to unlocking the true potential of language models. Ready to dive in? Let’s decode the magic of tokenization!</p>
 </section>
-<section id="byte-pair-encoding" class="level1">
-<h1>Byte-Pair Encoding</h1>
+<section id="byte-pair-encoding" class="level2">
+<h2 class="anchored" data-anchor-id="byte-pair-encoding">Byte-Pair Encoding</h2>
 <p>Byte Pair Encoding (BPE) is a subword tokenization algorithm originally developed for data compression, now widely used in NLP to handle unknown or rare words by breaking text into frequent subword units. BPE strikes a balance between character-level and word-level representations, enabling open-vocabulary modeling.</p>
 <p>Algorithm Steps: - Initialize Vocabulary: Begin with a base vocabulary containing all 256 possible byte values (0–255), ensuring full coverage of any input text - Treat each word in the training corpus as a sequence of characters - Count Symbol Pairs: Scan the corpus to count all adjacent symbol (character or subword) pairs - Merge Most Frequent Pair: Identify the most frequent pair of symbols - Merge them into a new symbol (e.g., merging “l” and “o” -&gt; “lo”) - Update Vocabulary: Replace all occurrences of the merged pair in the corpus with the new symbol - Repeat steps 2–4 for a predefined number of merge operations (vocabulary size) or until no pairs remain</p>
+<div id="660e14ce-2270-4cf4-9078-36759f24db29" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">## | echo: false</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">## %load_ext lab_black</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
-<section id="implementation" class="level1">
-<h1>Implementation</h1>
+<section id="implementation" class="level2">
+<h2 class="anchored" data-anchor-id="implementation">Implementation</h2>
 <div id="1517b8b6-f809-44a3-a368-2ecf7073c0d5" class="cell" data-execution_count="23">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Iterable</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">## | code-fold: true</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Iterable</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="a672ce35-a11c-4452-92fa-09b54198aa31" class="cell" data-execution_count="24">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> BPETokenizer:</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Byte-pair encoder."""</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, vocab_sz: <span class="bu">int</span>):</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">            vocab_sz (int): Vocabulary size.</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.vocab_sz <span class="op">=</span> vocab_sz</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.vocab <span class="op">=</span> {}</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.merges <span class="op">=</span> {}</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> train(<span class="va">self</span>, text: Iterable[<span class="bu">str</span>]):</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Train Byte-pair encoder."""</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        ids <span class="op">=</span> <span class="bu">list</span>(text.encode(<span class="st">"utf-8"</span>))</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> idx <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">256</span>, <span class="va">self</span>.vocab_sz):</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>            stats <span class="op">=</span> <span class="va">self</span>._get_stats(ids)</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>            pair <span class="op">=</span> <span class="bu">max</span>(stats, key<span class="op">=</span>stats.get)</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.merges[pair] <span class="op">=</span> idx</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>            ids <span class="op">=</span> <span class="va">self</span>._merge(ids, pair, idx)</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.vocab <span class="op">=</span> <span class="va">self</span>._build_vocab(ids)</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> encode(<span class="va">self</span>, text):</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Encode string to bytes using vocabulary built during training."""</span></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>        ids <span class="op">=</span> <span class="bu">list</span>(text.encode(<span class="st">"utf-8"</span>))</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>        <span class="co"># If text is empty or has one character -&gt; it is already encoded from previous step</span></span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> <span class="bu">len</span>(ids) <span class="op">&gt;=</span> <span class="dv">2</span>:</span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>            <span class="co"># stats is used only for getting pairs next to each other</span></span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>            stats <span class="op">=</span> <span class="va">self</span>._get_stats(ids)</span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Because we built vocab (and merges) bottom-up, we need to encode</span></span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>            <span class="co"># idx from smallest index because some later pairs depend on pairs</span></span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>            <span class="co"># occured before</span></span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>            <span class="co"># If a pair doesn't exist, it wouldn't participate in the list</span></span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>            pair <span class="op">=</span> <span class="bu">min</span>(stats, key<span class="op">=</span><span class="kw">lambda</span> p: <span class="va">self</span>.merges.get(p, <span class="bu">float</span>(<span class="st">"inf"</span>)))</span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> pair <span class="kw">not</span> <span class="kw">in</span> <span class="va">self</span>.merges:</span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>                <span class="cf">break</span>  <span class="co"># No more pairs to merge</span></span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>            idx <span class="op">=</span> <span class="va">self</span>.merges[pair]</span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>            ids <span class="op">=</span> <span class="va">self</span>._merge(ids, pair, idx)</span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ids</span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> decode(<span class="va">self</span>, tokens: Iterable[<span class="bu">int</span>]):</span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Decode tokens into string using the vocabulary built during training."""</span></span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>        tokens <span class="op">=</span> <span class="st">b""</span>.join(<span class="va">self</span>.vocab[idx] <span class="cf">for</span> idx <span class="kw">in</span> tokens)</span>
-<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>        <span class="co"># It is important to replace tokens that were not seen during training</span></span>
-<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>        <span class="co"># with `?`; otherwise, it would fail</span></span>
-<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> tokens.decode(<span class="st">"utf-8"</span>, errors<span class="op">=</span><span class="st">"replace"</span>)</span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _get_stats(<span class="va">self</span>, ids: Iterable[<span class="bu">int</span>]):</span>
-<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Get pair counts."""</span></span>
-<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>        counts <span class="op">=</span> {}</span>
-<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> pair <span class="kw">in</span> <span class="bu">zip</span>(ids, ids[<span class="dv">1</span>:]):</span>
-<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>            counts[pair] <span class="op">=</span> counts.get(pair, <span class="dv">0</span>) <span class="op">+</span> <span class="dv">1</span></span>
-<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> counts</span>
-<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _merge(<span class="va">self</span>, ids: Iterable[<span class="bu">int</span>], pair: Iterable[<span class="bu">int</span>], idx: <span class="bu">int</span>):</span>
-<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Merge pairs that match `pair` with new index `idx`."""</span></span>
-<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>        newids <span class="op">=</span> []</span>
-<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>        i <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> i <span class="op">&lt;</span> <span class="bu">len</span>(ids):</span>
-<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> i <span class="op">&lt;</span> <span class="bu">len</span>(ids) <span class="op">-</span> <span class="dv">1</span> <span class="kw">and</span> pair[<span class="dv">0</span>] <span class="op">==</span> ids[i] <span class="kw">and</span> pair[<span class="dv">1</span>] <span class="op">==</span> ids[i <span class="op">+</span> <span class="dv">1</span>]:</span>
-<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>                newids.append(idx)</span>
-<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>                i <span class="op">+=</span> <span class="dv">2</span></span>
-<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>:</span>
-<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>                newids.append(ids[i])</span>
-<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>                i <span class="op">+=</span> <span class="dv">1</span></span>
-<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> newids</span>
-<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _build_vocab(<span class="va">self</span>, ids: Iterable[<span class="bu">int</span>]):</span>
-<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Build vocabulary from 0-255 bytes and merges."""</span></span>
-<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>        vocab <span class="op">=</span> {idx: <span class="bu">bytes</span>([idx]) <span class="cf">for</span> idx <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">256</span>)}</span>
-<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Here we assume the items returned would be in the same order they were inserted.</span></span>
-<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>        <span class="co"># This is Okay Python 3.7+</span></span>
-<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> (p0, p1), idx <span class="kw">in</span> <span class="va">self</span>.merges.items():</span>
-<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>            <span class="co"># This would be a concatenation of the bytes</span></span>
-<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>            vocab[idx] <span class="op">=</span> vocab[p0] <span class="op">+</span> vocab[p1]</span>
-<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> vocab</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> BPETokenizer:</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Byte-pair encoder."""</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, vocab_sz: <span class="bu">int</span>):</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">            vocab_sz (int): Vocabulary size.</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.vocab_sz <span class="op">=</span> vocab_sz</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.vocab <span class="op">=</span> {}</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.merges <span class="op">=</span> {}</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> train(<span class="va">self</span>, text: Iterable[<span class="bu">str</span>]):</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Train Byte-pair encoder."""</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        ids <span class="op">=</span> <span class="bu">list</span>(text.encode(<span class="st">"utf-8"</span>))</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> idx <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">256</span>, <span class="va">self</span>.vocab_sz):</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>            stats <span class="op">=</span> <span class="va">self</span>._get_stats(ids)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>            pair <span class="op">=</span> <span class="bu">max</span>(stats, key<span class="op">=</span>stats.get)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.merges[pair] <span class="op">=</span> idx</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>            ids <span class="op">=</span> <span class="va">self</span>._merge(ids, pair, idx)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.vocab <span class="op">=</span> <span class="va">self</span>._build_vocab(ids)</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> encode(<span class="va">self</span>, text):</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Encode string to bytes using vocabulary built during training."""</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>        ids <span class="op">=</span> <span class="bu">list</span>(text.encode(<span class="st">"utf-8"</span>))</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>        <span class="co">## If text is empty or has one character -&gt; it is already encoded from previous step</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> <span class="bu">len</span>(ids) <span class="op">&gt;=</span> <span class="dv">2</span>:</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>            <span class="co">## stats is used only for getting pairs next to each other</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>            stats <span class="op">=</span> <span class="va">self</span>._get_stats(ids)</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>            <span class="co">## Because we built vocab (and merges) bottom-up, we need to encode</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>            <span class="co">## idx from smallest index because some later pairs depend on pairs</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>            <span class="co">## occured before</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>            <span class="co">## If a pair doesn't exist, it wouldn't participate in the list</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>            pair <span class="op">=</span> <span class="bu">min</span>(stats, key<span class="op">=</span><span class="kw">lambda</span> p: <span class="va">self</span>.merges.get(p, <span class="bu">float</span>(<span class="st">"inf"</span>)))</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> pair <span class="kw">not</span> <span class="kw">in</span> <span class="va">self</span>.merges:</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>                <span class="cf">break</span>  <span class="co">## No more pairs to merge</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>            idx <span class="op">=</span> <span class="va">self</span>.merges[pair]</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>            ids <span class="op">=</span> <span class="va">self</span>._merge(ids, pair, idx)</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ids</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> decode(<span class="va">self</span>, tokens: Iterable[<span class="bu">int</span>]):</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Decode tokens into string using the vocabulary built during training."""</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>        tokens <span class="op">=</span> <span class="st">b""</span>.join(<span class="va">self</span>.vocab[idx] <span class="cf">for</span> idx <span class="kw">in</span> tokens)</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>        <span class="co">## It is important to replace tokens that were not seen during training</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>        <span class="co">## with `?`; otherwise, it would fail</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> tokens.decode(<span class="st">"utf-8"</span>, errors<span class="op">=</span><span class="st">"replace"</span>)</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _get_stats(<span class="va">self</span>, ids: Iterable[<span class="bu">int</span>]):</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Get pair counts."""</span></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>        counts <span class="op">=</span> {}</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> pair <span class="kw">in</span> <span class="bu">zip</span>(ids, ids[<span class="dv">1</span>:]):</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>            counts[pair] <span class="op">=</span> counts.get(pair, <span class="dv">0</span>) <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> counts</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _merge(<span class="va">self</span>, ids: Iterable[<span class="bu">int</span>], pair: Iterable[<span class="bu">int</span>], idx: <span class="bu">int</span>):</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Merge pairs that match `pair` with new index `idx`."""</span></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>        newids <span class="op">=</span> []</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>        i <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> i <span class="op">&lt;</span> <span class="bu">len</span>(ids):</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> i <span class="op">&lt;</span> <span class="bu">len</span>(ids) <span class="op">-</span> <span class="dv">1</span> <span class="kw">and</span> pair[<span class="dv">0</span>] <span class="op">==</span> ids[i] <span class="kw">and</span> pair[<span class="dv">1</span>] <span class="op">==</span> ids[i <span class="op">+</span> <span class="dv">1</span>]:</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>                newids.append(idx)</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>                i <span class="op">+=</span> <span class="dv">2</span></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>:</span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>                newids.append(ids[i])</span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>                i <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> newids</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _build_vocab(<span class="va">self</span>, ids: Iterable[<span class="bu">int</span>]):</span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Build vocabulary from 0-255 bytes and merges."""</span></span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>        vocab <span class="op">=</span> {idx: <span class="bu">bytes</span>([idx]) <span class="cf">for</span> idx <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">256</span>)}</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>        <span class="co">## Here we assume the items returned would be in the same order they were inserted.</span></span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>        <span class="co">## This is Okay Python 3.7+</span></span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> (p0, p1), idx <span class="kw">in</span> <span class="va">self</span>.merges.items():</span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>            <span class="co">## This would be a concatenation of the bytes</span></span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>            vocab[idx] <span class="op">=</span> vocab[p0] <span class="op">+</span> vocab[p1]</span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> vocab</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="a26b9c11-cf65-45ca-a03a-7f2acef56f13" class="cell" data-execution_count="25">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> requests.get(<span class="st">"https://docs.python.org/3/library/stdtypes.html#bytes.decode"</span>).text</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> requests.get(<span class="st">"https://docs.python.org/3/library/stdtypes.html#bytes.decode"</span>).text</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="4368c372-793e-4ca7-be14-c8e62b9c9ca9" class="cell" data-execution_count="26">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>tokenizer <span class="op">=</span> BPETokenizer(<span class="dv">300</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>tokenizer <span class="op">=</span> BPETokenizer(<span class="dv">300</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="6a4e7562-ca4c-4e81-907c-70479b2448ce" class="cell" data-execution_count="27">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>tokenizer.train(text)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>tokenizer.train(text)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="3ba82c99-8c22-4c9e-be22-717b6be33ab3" class="cell" data-execution_count="28">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>tokenizer.decode(tokenizer.encode(text)) <span class="op">==</span> text</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>tokenizer.decode(tokenizer.encode(text)) <span class="op">==</span> text</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="28">
 <pre><code>True</code></pre>
 </div>
 </div>
 </section>
-<section id="gpt2-bpe-tokenizer" class="level1">
-<h1>GPT2 BPE Tokenizer</h1>
+<section id="gpt2-bpe-tokenizer" class="level2">
+<h2 class="anchored" data-anchor-id="gpt2-bpe-tokenizer">GPT2 BPE Tokenizer</h2>
 <p>Vanilla byte-level BPE applies merges directly on raw byte sequences using a greedy frequency-based heuristic. While this reduces the initial vocabulary size to 256, it leads to inefficient vocabulary usage. For example, common words like “play” might appear with different punctuation (e.g., “play:”, “play?”, “play!”) and the BPE algorithm tends to learn separate tokens for each variant. This redundancy consumes vocabulary slots that could be better utilized.</p>
 <p>Additionally, standard BPE implementations operating on Unicode code points would require a base vocabulary of over 130,000 symbols to handle all Unicode strings. This is impractically large for most models, which typically use vocabularies in the 32k–64k range.</p>
 <p>To address these issues, GPT-2 uses a modified byte-level BPE approach:</p>
@@ -445,8 +446,8 @@ background-size: cover;
 <p>It allows merging with spaces to improve compression without overly fragmenting words.</p>
 <p>This approach balances the open-vocabulary benefits of byte-level encoding with the compression and efficiency gains of BPE, while preserving the ability to assign probabilities to any Unicode string without requiring preprocessing or token normalization.</p>
 </section>
-<section id="resources" class="level1">
-<h1>Resources</h1>
+<section id="resources" class="level2">
+<h2 class="anchored" data-anchor-id="resources">Resources</h2>
 <ul>
 <li><a href="https://utf8everywhere.org/">UTF-8 Everywhere</a></li>
 <li><a href="https://www.reedbeta.com/blog/programmers-intro-to-unicode/">A Programmer’s Introduction to Unicode</a></li>

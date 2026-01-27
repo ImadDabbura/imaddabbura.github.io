@@ -184,11 +184,11 @@ background-size: cover;
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="../../about.html"> 
-<span class="menu-text">Imad Dabbura</span></a>
+<span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html"> 
-<span class="menu-text">Posts</span></a>
+    <a class="nav-link" href="../../posts.html"> 
+<span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../til.html"> <i class="bi bi-lightbulb" role="img">
@@ -318,11 +318,10 @@ background-size: cover;
 
 
 
-<p><img src="images/modules-packages-image.jpeg" width="800px" height="500px"></p>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>Python’s simplicity and versatility are largely attributed to its extensive ecosystem of modules and packages. These essential components enable developers to write clean, reusable, and efficient code, whether for simple scripts or complex applications.</p>
 <p>This article aims to deepen our understanding of Python’s modules and packages and the machinery involved, helping me become a more effective Python programmer. We will explore their structure and functionality, covering everything from the basics of importing to creating custom packages and managing dependencies. By unpacking the underlying machinery of how modules/packages get imported and what they really are, we’ll gain insights that will enhance our coding practices and project organization.</p>
-<section id="introduction" class="level1">
-<h1>Introduction</h1>
 <ul>
 <li>Python has only one type of module object regardless of the language the module was implemented it (C/Python/…)</li>
 <li>Package provides a naming hierarchy to organize modules (same analogy to directory in Unix file system):
@@ -390,8 +389,8 @@ background-size: cover;
 </ul>
 <p><img src="images/executable-submodules.png" width="400px"></p>
 </section>
-<section id="sys.path" class="level1">
-<h1>Sys.path</h1>
+<section id="sys.path" class="level2">
+<h2 class="anchored" data-anchor-id="sys.path">Sys.path</h2>
 <ul>
 <li><code>importlib</code> has a rich API to interact with import system. It is preferred over <code>__import__()</code></li>
 <li><code>__import__</code> Only does module search and creation without the name binding</li>
@@ -433,8 +432,8 @@ background-size: cover;
 <li>Finally the current working directory will be added to the path (at the beginning)</li>
 </ul>
 </section>
-<section id="modules" class="level1">
-<h1>Modules</h1>
+<section id="modules" class="level2">
+<h2 class="anchored" data-anchor-id="modules">Modules</h2>
 <ul>
 <li>Modules are just objects of type ModuleType. They act like a dictionary that holds references to objects it holds; <code>module.__dict__</code>
 <ul>
@@ -444,12 +443,12 @@ background-size: cover;
 <li>The dictionary has preset attributes such as <code>__path__</code>, <code>__loader__</code> …</li>
 <li>Main attributes:
 <ul>
-<li><code>__name__</code> : # Module name</li>
-<li><code>__file__</code> : # Associated source file (if any)</li>
-<li><code>__doc__</code> : # Doc string</li>
-<li><code>__path__</code> : # Package path. It is used to look for package subcomponents</li>
-<li><code>__package__</code> : # The module’s <code>__package__</code> attribute must be set. Its value must be a string, but it can be the same value as its <code>__name__</code>. When the module is a package, its <code>__package__</code> value should be set to its <code>__name__</code>. When the module is not a package, <code>__package__</code> should be set to the empty string for top-level modules, or for submodules, to the parent package’s name.</li>
-<li><code>__spec__</code> : # Module spec</li>
+<li><code>__name__</code> : ## Module name</li>
+<li><code>__file__</code> : ## Associated source file (if any)</li>
+<li><code>__doc__</code> : ## Doc string</li>
+<li><code>__path__</code> : ## Package path. It is used to look for package subcomponents</li>
+<li><code>__package__</code> : ## The module’s <code>__package__</code> attribute must be set. Its value must be a string, but it can be the same value as its <code>__name__</code>. When the module is a package, its <code>__package__</code> value should be set to its <code>__name__</code>. When the module is not a package, <code>__package__</code> should be set to the empty string for top-level modules, or for submodules, to the parent package’s name.</li>
+<li><code>__spec__</code> : ## Module spec</li>
 </ul></li>
 </ul></li>
 <li>The main difference between modules and packages is that packages have <code>__path__</code> and <code>__package__</code> defined (not None)</li>
@@ -493,7 +492,7 @@ background-size: cover;
 <div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys, types</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> import_module(modname):</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Check if it is in the cache first</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">## Check if it is in the cache first</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> modname <span class="kw">in</span> sys.modules:</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> sys.modules[modname]</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -503,21 +502,21 @@ background-size: cover;
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    mod <span class="op">=</span> types.ModuleType(modname)</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    mod.<span class="va">__file__</span> <span class="op">=</span> sourcepath</span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Cache the module</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">## Cache the module</span></span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    sys.modules[modname] <span class="op">=</span> mod</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Convert it to Python ByteCode</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="co">## Convert it to Python ByteCode</span></span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    code <span class="op">=</span> <span class="bu">compile</span>(sourcecode, sourcepath, <span class="st">'exec'</span>)</span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Execute the code in the module from top to bottom</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># And update the state (globals) in the module's dictionary</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="co">## Execute the code in the module from top to bottom</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="co">## And update the state (globals) in the module's dictionary</span></span>
 <span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="bu">exec</span>(code, mod.__dict__)</span>
 <span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># We return the cached one in case there is some patching inside the module</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="co">## We return the cached one in case there is some patching inside the module</span></span>
 <span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> sys.modules[modname]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="module-compilation" class="level1">
-<h1>Module Compilation</h1>
+<section id="module-compilation" class="level2">
+<h2 class="anchored" data-anchor-id="module-compilation">Module Compilation</h2>
 <p><img src="images/module-compilation.png" width="400px"></p>
 <ul>
 <li>Python put a lock when importing a module until it is done so that we don’t have multiple threads trying to import the same module at the same time</li>
@@ -576,13 +575,13 @@ background-size: cover;
 <ul>
 <li>Module Spec main info:
 <ul>
-<li>spec.name : # Full module name</li>
-<li>spec.parent : # Enclosing package</li>
-<li>spec.submodule_search_locations : # Package <strong>path</strong></li>
-<li>spec.has_location : # Has external location</li>
-<li>spec.origin : # Source file location</li>
-<li>spec.cached : # Cached location</li>
-<li>spec.loader : # Loader object</li>
+<li>spec.name : ## Full module name</li>
+<li>spec.parent : ## Enclosing package</li>
+<li>spec.submodule_search_locations : ## Package <strong>path</strong></li>
+<li>spec.has_location : ## Has external location</li>
+<li>spec.origin : ## Source file location</li>
+<li>spec.cached : ## Cached location</li>
+<li>spec.loader : ## Loader object</li>
 </ul></li>
 <li>We can use the <code>loader</code> from module spec to get the source code w/o importing it. They actually create the imported module:</li>
 </ul>
@@ -624,20 +623,20 @@ background-size: cover;
 <div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> importlib.util, sys</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> lazy_import(name):</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>   <span class="co"># If already loaded, return the module</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>   <span class="co">## If already loaded, return the module</span></span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> name <span class="kw">in</span> sys.modules:</span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> sys.modules[name]</span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Not loaded. Find the spec</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">## Not loaded. Find the spec</span></span>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    spec <span class="op">=</span> importlib.util.find_spec(name)</span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> spec:</span>
 <span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ImportError</span>(<span class="ss">f'No module </span><span class="sc">{</span>name<span class="sc">:</span>r<span class="sc">}</span><span class="ss">'</span>)</span>
 <span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Check for compatibility</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">## Check for compatibility</span></span>
 <span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> <span class="bu">hasattr</span>(spec.loader, <span class="st">'exec_module'</span>):</span>
 <span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ImportError</span>(<span class="st">'Not supported'</span>)</span>
 <span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Perform the lazy import</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    <span class="co">## Perform the lazy import</span></span>
 <span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    module <span class="op">=</span> sys.modules[name] <span class="op">=</span> _LazyModule(spec)</span>
 <span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> module</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
@@ -702,11 +701,11 @@ background-size: cover;
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
 <span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">raise</span> <span class="pp">ImportError</span>(<span class="st">'No such module'</span>)</span>
 <span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>...</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Load module from the spec</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co">## Load module from the spec</span></span>
 <span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="experiments" class="level1">
-<h1>Experiments</h1>
+<section id="experiments" class="level2">
+<h2 class="anchored" data-anchor-id="experiments">Experiments</h2>
 <div id="4efe21f4-70e0-4876-a98d-51fbed950551" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>sys.path.append(<span class="st">"/Users/imad/Desktop/"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>

@@ -220,11 +220,11 @@ window.Quarto = {
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="../../../about.html"> 
-<span class="menu-text">Imad Dabbura</span></a>
+<span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../../index.html"> 
-<span class="menu-text">Posts</span></a>
+    <a class="nav-link" href="../../../posts.html"> 
+<span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../../til.html"> <i class="bi bi-lightbulb" role="img">
@@ -340,7 +340,7 @@ window.Quarto = {
    
   <ul>
   <li><a href="#why-neural-networks" id="toc-why-neural-networks" class="nav-link active" data-scroll-target="#why-neural-networks">Why Neural Networks?</a></li>
-  <li><a href="#i.-coding-the-neural-network" id="toc-i.-coding-the-neural-network" class="nav-link" data-scroll-target="#i.-coding-the-neural-network">I. Coding The Neural Network</a>
+  <li><a href="#coding-the-neural-network" id="toc-coding-the-neural-network" class="nav-link" data-scroll-target="#coding-the-neural-network">Coding The Neural Network</a>
   <ul class="collapse">
   <li><a href="#forward-propagation" id="toc-forward-propagation" class="nav-link" data-scroll-target="#forward-propagation">Forward Propagation</a></li>
   <li><a href="#parameters-initialization" id="toc-parameters-initialization" class="nav-link" data-scroll-target="#parameters-initialization">Parameters Initialization</a></li>
@@ -361,11 +361,6 @@ window.Quarto = {
 
 
 
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="feature.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="feature.png" class="quarto-figure quarto-figure-center figure-img" width="400" height="400"></a></p>
-</figure>
-</div>
 <section id="why-neural-networks" class="level2">
 <h2 class="anchored" data-anchor-id="why-neural-networks">Why Neural Networks?</h2>
 <p>According to <em>Universal Approximate Theorem</em>, Neural Networks can approximate as well as learn and represent any function given a large enough layer and desired error margin. The way neural network learns the true function is by building complex representations on top of simple ones. On each hidden layer, the neural network learns new feature space by first compute the affine (linear) transformations of the given inputs and then apply non-linear function which in turn will be the input of the next layer. This process will continue until we reach the output layer. Therefore, we can define neural network as information flows from inputs through hidden layers towards the output. For a 3-layers neural network, the learned function would be: <span class="math inline">\(f(x) = f_3(f_2(f_1(x)))\)</span> where:</p>
@@ -379,7 +374,7 @@ window.Quarto = {
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="../images/neural_net.jpg" class="lightbox" data-glightbox="description: .lightbox-desc-2" data-gallery="quarto-lightbox-gallery-2" title="Figure 1: Neural Network with two hidden layers"><img src="../images/neural_net.jpg" class="img-fluid quarto-figure quarto-figure-center figure-img" alt="Figure 1: Neural Network with two hidden layers"></a></p>
+<p><a href="../images/neural_net.jpg" class="lightbox" data-glightbox="description: .lightbox-desc-1" data-gallery="quarto-lightbox-gallery-1" title="Figure 1: Neural Network with two hidden layers"><img src="../images/neural_net.jpg" class="img-fluid quarto-figure quarto-figure-center figure-img" alt="Figure 1: Neural Network with two hidden layers"></a></p>
 </figure>
 </div>
 <figcaption><strong>Figure 1</strong>: Neural Network with two hidden layers</figcaption>
@@ -392,7 +387,7 @@ window.Quarto = {
 <li>Coding the neural network: This entails writing all the helper functions that would allow us to implement a multi-layer neural network. While doing so, I’ll explain the theoretical parts whenever possible and give some advices on implementations.</li>
 <li>Application: We’ll use the neural network we coded in the first part on image recognition problem to see if the network we built will be able to detect if the image has a cat or a dog and see it working :)</li>
 </ol>
-<div id="cell-6" class="cell" data-code_folding="[0]" data-execution_count="2">
+<div id="cell-5" class="cell" data-code_folding="[0]" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os <span class="im">as</span> os</span>
@@ -409,8 +404,8 @@ window.Quarto = {
 </div>
 <p><a id="Coding the NN"></a></p>
 </section>
-<section id="i.-coding-the-neural-network" class="level2">
-<h2 class="anchored" data-anchor-id="i.-coding-the-neural-network">I. Coding The Neural Network</h2>
+<section id="coding-the-neural-network" class="level2">
+<h2 class="anchored" data-anchor-id="coding-the-neural-network">Coding The Neural Network</h2>
 <section id="forward-propagation" class="level3">
 <h3 class="anchored" data-anchor-id="forward-propagation">Forward Propagation</h3>
 <p>The input <span class="math inline">\(X\)</span> provides the initial information that then propagates to the hidden units at each layer and finally produce the output <span class="math inline">\(\widehat{Y}\)</span>. The architecture of the network entails determining its depth, width, and activation functions used on each layer. <strong>Depth</strong> is the number of hidden layers. <strong>Width</strong> is the number of units (nodes) on each hidden layer since we don’t control neither input layer nor output layer dimensions. There are quite a few set of activation functions such <em>Rectified Linear Unit, Sigmoid, Hyperbolic tangent, etc</em>. Research has proven that deeper networks outperform networks with more hidden units. Therefore, it’s always better and won’t hurt to train a deeper network (with diminishing returns).</p>
@@ -441,7 +436,7 @@ window.Quarto = {
 <section id="parameters-initialization" class="level3">
 <h3 class="anchored" data-anchor-id="parameters-initialization">Parameters Initialization</h3>
 <p>We’ll first initialize the weight matrices and the bias vectors. It’s important to note that we shouldn’t initialize all the parameters to zero because doing so will lead the gradients to be equal and on each iteration the output would be the same and the learning algorithm won’t learn anything. Therefore, it’s important to randomly initialize the parameters to values between 0 and 1. It’s also recommended to multiply the random values by small scalar such as 0.01 to make the activation units active and be on the regions where activation functions’ derivatives are not close to zero.</p>
-<div id="cell-13" class="cell" data-code_folding="[0]" data-execution_count="3">
+<div id="cell-12" class="cell" data-code_folding="[0]" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize parameters</span></span>
@@ -491,7 +486,7 @@ window.Quarto = {
 </ul>
 <p>If you’re not sure which activation function to choose, start with ReLU.</p>
 <p>Next, we’ll implement the above activation functions and draw a graph for each one to make it easier to see the domain and range of each function.</p>
-<div id="cell-16" class="cell" data-code_folding="[0]" data-execution_count="4">
+<div id="cell-15" class="cell" data-code_folding="[0]" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define activation functions that will be used in forward propagation</span></span>
@@ -579,7 +574,7 @@ window.Quarto = {
 <span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> A, Z</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="cell-17" class="cell" data-code_folding="[0]" data-execution_count="5">
+<div id="cell-16" class="cell" data-code_folding="[0]" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the 4 activation functions</span></span>
@@ -625,7 +620,7 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Coding-Neural-Network-Forwad-Back-Propagation_files/figure-html/cell-6-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="Coding-Neural-Network-Forwad-Back-Propagation_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></a></p>
+<p><a href="Coding-Neural-Network-Forwad-Back-Propagation_files/figure-html/cell-6-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="Coding-Neural-Network-Forwad-Back-Propagation_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -634,7 +629,7 @@ window.Quarto = {
 <section id="feed-forward" class="level3">
 <h3 class="anchored" data-anchor-id="feed-forward">Feed Forward</h3>
 <p>Given its inputs from previous layer, each unit computes affine transformation <span class="math inline">\(z = W^Tx + b\)</span> and then apply an activation function <span class="math inline">\(g(z)\)</span> such as ReLU element-wise. During the process, we’ll store (cache) all variables computed and used on each layer to be used in back-propagation. We’ll write first two helper functions that will be used in the L-model forward propagation to make it easier to debug. Keep in mind that on each layer, we may have different activation function.</p>
-<div id="cell-20" class="cell" data-code_folding="[0]" data-execution_count="6">
+<div id="cell-19" class="cell" data-code_folding="[0]" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define helper functions that will be used in L-model forward prop</span></span>
@@ -758,7 +753,7 @@ window.Quarto = {
 <section id="cost" class="level3">
 <h3 class="anchored" data-anchor-id="cost">Cost</h3>
 <p>We’ll use the binary <strong>Cross-Entropy</strong> cost. It uses the log-likelihood method to estimate its error. The cost is: <span class="math display">\[J(W, b) = -\frac{1}{m}\sum_{i = 1}^m\big(y^ilog(\widehat{y^i}) + (1 - y^i)log(1 - \widehat{y^i})\big)\tag3\]</span> The above cost function is convex; however, neural network usually stuck on a local minimum and is not guaranteed to find the optimal parameters. We’ll use here gradient-based learning.</p>
-<div id="cell-23" class="cell" data-code_folding="[0]" data-execution_count="7">
+<div id="cell-22" class="cell" data-code_folding="[0]" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute cross-entropy cost</span></span>
@@ -790,7 +785,7 @@ window.Quarto = {
 <section id="back-propagation" class="level3">
 <h3 class="anchored" data-anchor-id="back-propagation">Back-Propagation</h3>
 <p>Backpropagation allows the information to go back from the cost backward through the network in order to compute the gradient. Therefore, loop over the nodes starting at the final node in reverse topological order to compute the derivative of the final node output with respect to each edge’s node tail. Doing so will help us know who is responsible for the most error and change the parameters in that direction. The following derivatives’ formulas will help us write the back-propagate functions: <span class="math display">\[dA^L = \frac{A^L - Y}{A^L(1 - A^L)}\tag4\\{}\]</span> <span class="math display">\[dZ^L = A^L - Y\tag5\\{}\]</span> <span class="math display">\[dW^l = \frac{1}{m}dZ^l{A^{l - 1}}^T\tag6\\{}\]</span> <span class="math display">\[db^l = \frac{1}{m}\sum_i(dZ^l)\tag7\\{}\]</span> <span class="math display">\[dA^{l - 1} = {W^l}^TdZ^l\tag8\\{}\]</span> <span class="math display">\[dZ^{l} = dA^l*g^{'l}(Z^l)\tag9\\{}\]</span> Since <span class="math inline">\(b^l\)</span> is always a vector, the sum would be across rows (since each column is an example).</p>
-<div id="cell-26" class="cell" data-code_folding="[0]" data-execution_count="8">
+<div id="cell-25" class="cell" data-code_folding="[0]" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define derivative of activation functions w.r.t z that will be used in back-propagation</span></span>
@@ -1020,7 +1015,7 @@ window.Quarto = {
 <li>Reshape input matrix so that each column would be one example. Also, since each image is 64 x 64 x 3, we’ll end up having 12,288 features for each image. Therefore, the input matrix would be 12,288 x 209.</li>
 <li>Standardize the data so that the gradients don’t go out of control. Also, it will help hidden units have similar range of values. For now, we’ll divide every pixel by 255 which shouldn’t be an issue. However, it’s better to standardize the data to have a mean of 0 and a standard deviation of 1.</li>
 </ul>
-<div id="cell-29" class="cell" data-code_folding="[0]" data-execution_count="10">
+<div id="cell-28" class="cell" data-code_folding="[0]" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import training dataset</span></span>
@@ -1073,13 +1068,13 @@ Test: (12288, 50), (1, 50)</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Coding-Neural-Network-Forwad-Back-Propagation_files/figure-html/cell-10-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="Coding-Neural-Network-Forwad-Back-Propagation_files/figure-html/cell-10-output-2.png" class="img-fluid figure-img"></a></p>
+<p><a href="Coding-Neural-Network-Forwad-Back-Propagation_files/figure-html/cell-10-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="Coding-Neural-Network-Forwad-Back-Propagation_files/figure-html/cell-10-output-2.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Now, our dataset is ready to be used and test our neural network implementation. Let’s first write <strong>multi-layer model</strong> function to implement gradient-based learning using predefined number of iterations and learning rate.</p>
-<div id="cell-31" class="cell" data-code_folding="[0]" data-execution_count="11">
+<div id="cell-30" class="cell" data-code_folding="[0]" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the multi-layer model using all the helper functions we wrote before</span></span>
@@ -1187,7 +1182,7 @@ Test: (12288, 50), (1, 50)</code></pre>
 </details>
 </div>
 <p>Next, we’ll train two versions of the neural network where each one will use different activation function on hidden layers: One will use rectified linear unit (<strong>ReLU</strong>) and the second one will use hyperbolic tangent function (<strong>tanh</strong>). Finally we’ll use the parameters we get from both neural networks to classify test examples and compute the test accuracy rates for each version to see which activation function works best on this problem.</p>
-<div id="cell-33" class="cell" data-execution_count="12">
+<div id="cell-32" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Setting layers dims</span></span>
@@ -1244,12 +1239,12 @@ The cost after 3000 iterations is: 0.1902</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Coding-Neural-Network-Forwad-Back-Propagation_files/figure-html/cell-12-output-3.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="Coding-Neural-Network-Forwad-Back-Propagation_files/figure-html/cell-12-output-3.png" class="img-fluid figure-img"></a></p>
+<p><a href="Coding-Neural-Network-Forwad-Back-Propagation_files/figure-html/cell-12-output-3.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="Coding-Neural-Network-Forwad-Back-Propagation_files/figure-html/cell-12-output-3.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
 </div>
-<div id="cell-34" class="cell" data-execution_count="13">
+<div id="cell-33" class="cell" data-execution_count="13">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># NN with relu activation fn</span></span>
@@ -1303,7 +1298,7 @@ The cost after 3000 iterations is: 0.3641</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Coding-Neural-Network-Forwad-Back-Propagation_files/figure-html/cell-13-output-3.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="Coding-Neural-Network-Forwad-Back-Propagation_files/figure-html/cell-13-output-3.png" class="img-fluid figure-img"></a></p>
+<p><a href="Coding-Neural-Network-Forwad-Back-Propagation_files/figure-html/cell-13-output-3.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="Coding-Neural-Network-Forwad-Back-Propagation_files/figure-html/cell-13-output-3.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -1342,7 +1337,7 @@ The cost after 3000 iterations is: 0.3641</code></pre>
 
 
 <div class="hidden" aria-hidden="true">
-<span class="glightbox-desc lightbox-desc-2"><strong>Figure 1</strong>: Neural Network with two hidden layers</span>
+<span class="glightbox-desc lightbox-desc-1"><strong>Figure 1</strong>: Neural Network with two hidden layers</span>
 </div>
 </section>
 
@@ -2054,7 +2049,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"loop":false,"selector":".lightbox","closeEffect":"zoom","descPosition":"bottom","openEffect":"zoom"});
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","loop":false,"openEffect":"zoom","selector":".lightbox","descPosition":"bottom"});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;

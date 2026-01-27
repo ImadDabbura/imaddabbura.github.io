@@ -4,10 +4,9 @@ subtitle: "From weight sparsity to hardware-aware strategies—learn how to shri
 date: 05-03-2024
 date-modified: 05-03-2024
 image: pruning.jpeg
+title-block-banner: "pruning.jpeg"
 categories: "Deep Learning"
 ---
-
-![](pruning.jpeg){height="500" width="800" fig-align="center"}
 
 Neural network pruning is a critical optimization technique used to enhance the efficiency of deep learning models by systematically removing unnecessary parameters, such as weights or neurons, while maintaining model performance. This technique is particularly important because memory access and movement are extremely expensive operations in terms of both latency and energy consumption.
 

@@ -79,6 +79,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -141,9 +144,16 @@ ga('send', {
   'anonymizeIp': true,
 });
 </script>
+<style>
+
+      .quarto-title-block .quarto-title-banner {
+        background-image: url(feature.png);
+background-size: cover;
+      }
+</style>
 
 
-<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="../../assets/posts.css">
 <meta property="og:title" content="Imad Dabbura - Airflow Part 7 - Triggering Workflows">
 <meta property="og:image" content="https://imaddabbura.github.io/posts/airflow/feature.png">
 <meta property="og:site_name" content="Imad Dabbura">
@@ -182,8 +192,8 @@ ga('send', {
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html"> 
-<span class="menu-text">Posts</span></a>
+    <a class="nav-link" href="../../posts.html"> 
+<span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../til.html"> <i class="bi bi-lightbulb" role="img">
@@ -212,16 +222,16 @@ ga('send', {
  <span class="dropdown-text">Books’ Summaries</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../misc-notes.html">
- <span class="dropdown-text">Misc. Notes</span></a>
-  </li>  
-        <li>
     <a class="dropdown-item" href="../../reading-list.html">
  <span class="dropdown-text">Reading List</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../../resume.html">
  <span class="dropdown-text">Resume</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../misc-notes.html">
+ <span class="dropdown-text">Misc. Notes</span></a>
   </li>  
     </ul>
   </li>
@@ -280,6 +290,12 @@ ga('send', {
       </div>
     </div>
     
+      <div>
+      <div class="quarto-title-meta-heading">Modified</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date-modified">March 14, 2022</p>
+      </div>
+    </div>
       
     </div>
     
@@ -297,11 +313,6 @@ ga('send', {
 
 
 
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="feature.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
-</figure>
-</div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -346,7 +357,7 @@ Note
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    op_kwargs<span class="op">=</span>{<span class="st">"supermarket"</span>: <span class="st">"supermarket_1"</span>},</span>
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    dag<span class="op">=</span>dag</span>
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><img src="images/python-sensor.png" class="img-fluid"></p>
+<p><a href="images/python-sensor.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="images/python-sensor.png" class="img-fluid"></a></p>
 <ul>
 <li>All sensors take a <code>timeout</code> arguments, which has default value of 7 days</li>
 <li>There is also a limit on the number of tasks Airflow can run concurrently per DAG (default is 16). DAG takes <code>concurrency</code> argument that can change this number. There is also a limit on the number of tasks per global Airflow and the number DAG runs per DAG</li>
@@ -369,7 +380,7 @@ Note
 <li>Day 6: Supermarket 1 succeeded; supermarkets 2, 3, and 4 are polling, occupying 16 tasks; two new tasks cannot run, and any other task trying to run is blocked.</li>
 </ul></li>
 </ul>
-<p><img src="images/python-sensor-deadlock.png" class="img-fluid"></p>
+<p><a href="images/python-sensor-deadlock.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="images/python-sensor-deadlock.png" class="img-fluid"></a></p>
 <ul>
 <li>This also affect the global Airflow limit of maximum number of tasks that can run concurrently, which may lead to whole system get stalled.</li>
 <li>For sensor task, it pokes to check the condition and block if it is false. So it would run for a little bit and wait for the most part. It keeps poking untel the timeout period is completed, which means it keeps occupying the slot until the condition becomes true or timeout is reached</li>
@@ -497,7 +508,7 @@ Note
 
 
 
-</main> <!-- /main -->
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     // Only add citation to post pages (not index, about, etc.)
@@ -1154,6 +1165,31 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","selector":".lightbox","loop":false,"descPosition":"bottom","closeEffect":"zoom"});
+window.onload = () => {
+  lightboxQuarto.on('slide_before_load', (data) => {
+    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+    const href = trigger.getAttribute('href');
+    if (href !== null) {
+      const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+      if (imgEl !== null) {
+        const srcAttr = imgEl.getAttribute("src");
+        if (srcAttr && srcAttr.startsWith("data:")) {
+          slideConfig.href = srcAttr;
+        }
+      }
+    } 
+  });
+
+  lightboxQuarto.on('slide_after_load', (data) => {
+    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+    if (window.Quarto?.typesetMath) {
+      window.Quarto.typesetMath(slideNode);
+    }
+  });
+
+};
+          </script>
 
 
 

@@ -49,14 +49,15 @@
 }
 
 .quarto-title-banner .quarto-category {
-  background-color: rgba(255, 255, 255, 0.15);
+  background-color: rgba(255, 255, 255, 0.15) !important;
   color: #ffffff !important;
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .quarto-title-banner .quarto-category:hover {
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.3) !important;
+  color: #ffffff !important;
 }
 
 /*-- Metadata section - BELOW banner with regular background --*/
@@ -134,13 +135,34 @@
   background-color: var(--bs-body-bg, #1a1a2e) !important;
 }
 
-/*-- Make navbar more visible over banner images --*/
+/*-- Make navbar visible over banner images --*/
 .navbar {
   background-color: rgba(255, 255, 255, 0.95) !important;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
 
+.navbar .navbar-brand,
+.navbar .navbar-title,
+.navbar .nav-link,
+.navbar .navbar-toggler-icon {
+  color: #002642 !important;
+}
+
+.navbar .nav-link:hover {
+  color: #A23E02 !important;
+}
+
 [data-bs-theme="dark"] .navbar {
   background-color: rgba(26, 26, 46, 0.95) !important;
+}
+
+[data-bs-theme="dark"] .navbar .navbar-brand,
+[data-bs-theme="dark"] .navbar .navbar-title,
+[data-bs-theme="dark"] .navbar .nav-link {
+  color: #e8e8e8 !important;
+}
+
+[data-bs-theme="dark"] .navbar .nav-link:hover {
+  color: #D96E34 !important;
 }

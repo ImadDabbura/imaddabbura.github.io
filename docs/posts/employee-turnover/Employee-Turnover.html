@@ -223,11 +223,11 @@ window.Quarto = {
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="../../about.html"> 
-<span class="menu-text">Imad Dabbura</span></a>
+<span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html"> 
-<span class="menu-text">Posts</span></a>
+    <a class="nav-link" href="../../posts.html"> 
+<span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../til.html"> <i class="bi bi-lightbulb" role="img">
@@ -363,9 +363,6 @@ window.Quarto = {
 
 
 
-<p align="center">
-<img src="feature.png">
-</p>
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p><strong>Employee turnover</strong> refers to the percentage of workers who leave an organization and are replaced by new employees. It is very costly for organizations, where costs include but not limited to: separation, vacancy, recruitment, training and replacement. On average, organizations invest between four weeks and three months training new employees. This investment would be a loss for the company if the new employee decided to leave the first year. Furthermore, organizations such as consulting firms would suffer from deterioration in customer satisfaction due to regular changes in Account Reps and/or consultants that would lead to loss of businesses with clients.</p>
@@ -384,7 +381,7 @@ window.Quarto = {
 <li>salary: Relative level of salary {low, medium, high}.</li>
 </ul>
 <p>Let’s first load all the packages.</p>
-<div id="cell-4" class="cell" data-tags="[]" data-execution_count="1">
+<div id="cell-3" class="cell" data-tags="[]" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
@@ -428,7 +425,7 @@ window.Quarto = {
 <section id="data-preprocessing" class="level2">
 <h2 class="anchored" data-anchor-id="data-preprocessing">Data Preprocessing</h2>
 <p>Let’s take a look at the data (check if there are missing values and the data type of each features):</p>
-<div id="cell-7" class="cell" data-execution_count="2">
+<div id="cell-6" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the data</span></span>
@@ -565,7 +562,7 @@ dtype: int64</code></pre>
 </div>
 </div>
 <p>Since there are no missing values, we do not have to do any imputation. However, there are some data preprocessing needed: 1. Change <strong>sales</strong> feature name to <strong>department</strong>. 2. Convert <strong>salary</strong> into <em>ordinal categorical</em> feature since there is intrinsic order between: low, medium and high. 3. Create dummy features from <strong>department</strong> feature and drop the first one to avoid linear dependency where some learning algorithms may struggle with.</p>
-<div id="cell-9" class="cell" data-execution_count="3">
+<div id="cell-8" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename sales feature into department</span></span>
@@ -721,7 +718,7 @@ dtype: int64</code></pre>
 </div>
 </div>
 </div>
-<div id="cell-10" class="cell" data-execution_count="4">
+<div id="cell-9" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df.columns[df.columns <span class="op">!=</span> <span class="st">"left"</span>].shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -735,7 +732,7 @@ dtype: int64</code></pre>
 <section id="modeling" class="level2">
 <h2 class="anchored" data-anchor-id="modeling">Modeling</h2>
 <p>Let’s first take a look at the proportion of each class to see if we’re dealing with balanced or imbalanced data since each one has its own set of tools to be used when fitting classifiers.</p>
-<div id="cell-14" class="cell" data-execution_count="5">
+<div id="cell-13" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get number of positve and negative examples</span></span>
@@ -766,7 +763,7 @@ Proportion of positive to negative examples = 31.25%</code></pre>
 <p>As the graph shows, we have an imbalanced dataset. As a result, when we fit classifiers on such datasets, we should use metrics other than accuracy when comparing models such as <em>f1-score</em> or <em>AUC</em> (area under ROC curve). Moreover, class imbalance influences a learning algorithm during training by making the decision rule biased towards the majority class by implicitly learns a model that optimizes the predictions based on the majority class in the dataset. There are three ways to deal with this issue: 1. Assign a larger penalty to wrong predictions from the minority class. 2. Upsampling the minority class or downsampling the majority class. 3. Generate synthetic training examples.</p>
 <p>Nonetheless, there is no definitive guide or best practices to deal with such situations. Therefore, we have to try them all and see which one works better on the problem at hand. We’ll restrict ourselves to use the first two, i.e assign larger penalty to wrong predictions from the minority class using <code>class_weight</code> in classifiers that allows us do that and evaluate upsampling/downsampling on the training data to see which gives higher performance.</p>
 <p>First, split the data into training and test sets using 80/20 split; 80% of the data will be used to train the models and 20% to test the performance of the models. Second, Upsample the minority class and downsample the majority class. For this data set, positive class is the minority class and negative class is the majority class.</p>
-<div id="cell-16" class="cell" data-execution_count="6">
+<div id="cell-15" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert dataframe into numpy objects and split them into</span></span>
@@ -806,7 +803,7 @@ Downsampled shape: (5714, 17) (5714,)</code></pre>
 </div>
 </div>
 <p>I don’t think we need to apply dimensionality reduction such as PCA because: 1) We want to know the importance of each feature in determining who will leave vs who won’t (inference). 2) Dimension of the dataset is descent (17 features). However, it’s good to see how many principal components needed to explain 90%, 95% and 99% of the variation in the data.</p>
-<div id="cell-18" class="cell" data-execution_count="7">
+<div id="cell-17" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build PCA using standarized trained data</span></span>
@@ -831,7 +828,7 @@ Downsampled shape: (5714, 17) (5714,)</code></pre>
 </div>
 </div>
 </div>
-<div id="cell-19" class="cell" data-execution_count="8">
+<div id="cell-18" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>cum_var_exp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -855,7 +852,7 @@ Downsampled shape: (5714, 17) (5714,)</code></pre>
 <li><code>min_samples_leaf</code>: how many examples to have for each split to be a final leaf node.</li>
 </ul>
 <p>Random Forest is an ensemble model that has multiple trees (<code>n_estimators</code>), where each tree is a weak learner. The final prediction would be a weighting average or mode of the predictions from all estimators. Note: high number of trees don’t cause overfitting.</p>
-<div id="cell-24" class="cell" data-execution_count="9">
+<div id="cell-23" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build random forest classifier</span></span>
@@ -911,7 +908,7 @@ Best 10-folds CV f1-score: 98.44%.</code></pre>
 </div>
 </div>
 <p>Upsampling yielded the highest CV f1-score with 99.80%. Therefore, we’ll be using the upsampled data to fit the rest of the classifiers. The new data now has 18,284 examples with 50% of the examples belong to the positive class and the other 50% belong to the negative example.</p>
-<div id="cell-26" class="cell" data-execution_count="10">
+<div id="cell-25" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>X_train_u[y_train_u <span class="op">==</span> <span class="dv">0</span>].shape, X_train_u[y_train_u <span class="op">==</span> <span class="dv">1</span>].shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -921,7 +918,7 @@ Best 10-folds CV f1-score: 98.44%.</code></pre>
 </div>
 </div>
 <p>Let’s refit the Random Forest with Upsampled data using best hyperparameters tuned above and plot confusion matrix and ROC curve using test data.</p>
-<div id="cell-28" class="cell" data-execution_count="11">
+<div id="cell-27" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reassign original training data to upsampled data</span></span>
@@ -968,7 +965,7 @@ Best 10-folds CV f1-score: 98.44%.</code></pre>
 <li><code>max_depth</code>: number of split each time a tree is growing which limits the number of nodes in each tree.</li>
 </ul>
 <p>Let’s fit GB classifier and plot confusion matrix and ROC curve using test data.</p>
-<div id="cell-31" class="cell" data-execution_count="12">
+<div id="cell-30" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build Gradient Boosting classifier</span></span>
@@ -1006,7 +1003,7 @@ n_estimators :  500
 Best 10-folds CV f1-score: 97.88%.</code></pre>
 </div>
 </div>
-<div id="cell-32" class="cell" data-execution_count="13">
+<div id="cell-31" class="cell" data-execution_count="13">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot confusion matrix and ROC curve</span></span>
@@ -1033,7 +1030,7 @@ Best 10-folds CV f1-score: 97.88%.</code></pre>
 </ul></li>
 </ul>
 <p>Let’s fit KNN classifier and plot confusion matrix and ROC curve.</p>
-<div id="cell-35" class="cell" data-execution_count="14">
+<div id="cell-34" class="cell" data-execution_count="14">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build KNN classifier</span></span>
@@ -1065,7 +1062,7 @@ weights :  uniform
 Best 10-folds CV f1-score: 98.24%.</code></pre>
 </div>
 </div>
-<div id="cell-36" class="cell" data-execution_count="15">
+<div id="cell-35" class="cell" data-execution_count="15">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>plot_conf_matrix_and_roc(gs_knn, X_test, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1088,7 +1085,7 @@ Best 10-folds CV f1-score: 98.24%.</code></pre>
 <li><code>fit_intercept</code>: whether to include intercept or not.</li>
 </ul>
 <p>We won’t use any non-linearities such as polynomial features.</p>
-<div id="cell-39" class="cell" data-execution_count="16">
+<div id="cell-38" class="cell" data-execution_count="16">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build logistic model classifier</span></span>
@@ -1126,7 +1123,7 @@ penalty :  l1
 Best 10-folds CV f1-score: 77.20%.</code></pre>
 </div>
 </div>
-<div id="cell-40" class="cell" data-execution_count="17">
+<div id="cell-39" class="cell" data-execution_count="17">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>plot_conf_matrix_and_roc(gs_logmodel, X_test, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1148,7 +1145,7 @@ Best 10-folds CV f1-score: 77.20%.</code></pre>
 <li>It has good number of hyperparameters to tune that takes very long time to tune on a CPU.</li>
 </ol>
 <p>Therefore, we’ll use recommended hyperparameters’ values from the paper we mentioned before that showed to yield the best performane on Penn Machine Learning Benchmark 165 datasets. The hyperparameters that we usually look to tune are: - <code>C</code>, <code>gamma</code>, <code>kernel</code>, <code>degree</code> and <code>coef0</code></p>
-<div id="cell-43" class="cell" data-execution_count="18">
+<div id="cell-42" class="cell" data-execution_count="18">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build SVM classifier</span></span>
@@ -1177,7 +1174,7 @@ Best 10-folds CV f1-score: 77.20%.</code></pre>
 <pre><code>The 10-folds CV f1-score is: 96.38%</code></pre>
 </div>
 </div>
-<div id="cell-44" class="cell" data-execution_count="19">
+<div id="cell-43" class="cell" data-execution_count="19">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>plot_conf_matrix_and_roc(clf_svc, X_test, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1195,7 +1192,7 @@ Best 10-folds CV f1-score: 77.20%.</code></pre>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
 <p>Let’s conclude by printing out the test accuracy rates for all classifiers we’ve trained so far and plot ROC curves. Finally, we’ll pick the classifier that has the highest area under ROC curve.</p>
-<div id="cell-47" class="cell" data-execution_count="20">
+<div id="cell-46" class="cell" data-execution_count="20">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot ROC curves for all classifiers</span></span>
@@ -1230,7 +1227,7 @@ KNN: 97.23%, 94.33%.</code></pre>
 </div>
 </div>
 <p>Even though Random Forest and Gradient Boosting Trees have almost equal auc, Random Forest has higher accuracy rate and an f1-score with 99.27% and 99.44% respectively. Therefore, we safely say Random Forest outperforms the rest of the classifiers. Let’s have a look of feature importances from Random Forest classifier.</p>
-<div id="cell-49" class="cell" data-execution_count="21">
+<div id="cell-48" class="cell" data-execution_count="21">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Refit RF classifier</span></span>
@@ -1975,7 +1972,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","selector":".lightbox","descPosition":"bottom","openEffect":"zoom","loop":false});
+<script>var lightboxQuarto = GLightbox({"descPosition":"bottom","selector":".lightbox","closeEffect":"zoom","loop":false,"openEffect":"zoom"});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;

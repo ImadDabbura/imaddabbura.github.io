@@ -184,11 +184,11 @@ background-size: cover;
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="../../about.html"> 
-<span class="menu-text">Imad Dabbura</span></a>
+<span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html"> 
-<span class="menu-text">Posts</span></a>
+    <a class="nav-link" href="../../posts.html"> 
+<span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../til.html"> <i class="bi bi-lightbulb" role="img">
@@ -342,7 +342,6 @@ background-size: cover;
 
 
 
-<p><img src="git.jpeg" align="center" height="500px" width="800px"></p>
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p><strong>Git</strong> is a distributed version control system that thinks/stores its data as a series of snapshots (not delta). Each commit is a snapshot for the state of the system at the time of the commit. For files that haven’t changed, <em>Git</em> doesn’t store the file again but uses a pointer to the previous identical file that it stored before. It also lets us do almost all operations locally.</p>
@@ -402,7 +401,7 @@ background-size: cover;
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> load(<span class="bu">id</span>):</span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> objects[<span class="bu">id</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
 </ul>
-<div id="cell-6" class="cell" data-execution_count="7">
+<div id="cell-5" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>ls <span class="op">-</span>al ..<span class="op">/</span>..<span class="op">/</span>.git</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>total 48
@@ -423,7 +422,7 @@ drwxr-xr-x  94 imad  staff  3008 Mar 17  2020 objects
 drwxr-xr-x   5 imad  staff   160 Feb 12  2020 refs</code></pre>
 </div>
 </div>
-<div id="cell-7" class="cell" data-execution_count="27">
+<div id="cell-6" class="cell" data-execution_count="27">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>ls <span class="op">-</span>a ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>objects</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>.    0c   1a   26   37   43   50   62   72   8b   9e   b1   c5   d1   e0   fc
@@ -434,7 +433,7 @@ drwxr-xr-x   5 imad  staff   160 Feb 12  2020 refs</code></pre>
 08   19   22   33   42   4d   61   6f   8a   9d   b0   b8   d0   dd   f8</code></pre>
 </div>
 </div>
-<div id="cell-8" class="cell" data-execution_count="21">
+<div id="cell-7" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>ls <span class="op">-</span>Ral ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>objects<span class="op">/</span>ee</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>total 8
@@ -443,7 +442,7 @@ drwxr-xr-x  94 imad  staff  3008 Mar 17  2020 ..
 -r--r--r--   1 imad  staff   166 Mar  4  2020 5941ab3c125a3a669370d96cd5cb8496f8acde</code></pre>
 </div>
 </div>
-<div id="cell-9" class="cell" data-execution_count="26">
+<div id="cell-8" class="cell" data-execution_count="26">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>git cat<span class="op">-</span><span class="bu">file</span> <span class="op">-</span>p ee5941ab3c125a3a669370d96cd5cb8496f8acde</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>100644 blob b6e47617de110dea7ca47e087ff1347cc2646eda    .gitignore
@@ -462,20 +461,20 @@ drwxr-xr-x  94 imad  staff  3008 Mar 17  2020 ..
 <li>The type of file which is “blob”, the number of characters in it, the separator character, and the actual content are passed to the sha1sum to get the hash value.</li>
 <li>Since Git does not store the name of the file or any of its metadata, if you have two files with the same content then Git only stores it once.</li>
 </ul>
-<div id="cell-12" class="cell" data-execution_count="30">
+<div id="cell-11" class="cell" data-execution_count="30">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>git cat<span class="op">-</span><span class="bu">file</span> <span class="op">-</span>p <span class="dv">58</span><span class="er">da9de606d62625c379fea5ca020d19d958fb18</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># software-engineering
 Materials for software engineering.</code></pre>
 </div>
 </div>
-<div id="cell-13" class="cell" data-execution_count="31">
+<div id="cell-12" class="cell" data-execution_count="31">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>wc ..<span class="op">/</span>..<span class="op">/</span>README.md</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       2       6      59 ../../README.md</code></pre>
 </div>
 </div>
-<div id="cell-14" class="cell" data-execution_count="68">
+<div id="cell-13" class="cell" data-execution_count="68">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>cat <span class="op">&lt;</span>(echo <span class="op">-</span>e <span class="st">"blob 60</span><span class="ch">\0</span><span class="st">"</span>) ..<span class="op">/</span>..<span class="op">/</span>README.md</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -484,13 +483,13 @@ Materials for software engineering.</code></pre>
 Materials for software engineering.</code></pre>
 </div>
 </div>
-<div id="cell-15" class="cell" data-execution_count="75">
+<div id="cell-14" class="cell" data-execution_count="75">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # Since todo.md and todo2.md are identical, Git saves ONLY one copy</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 100644 blob b3dfa8b0b7c73f2c7156dfc69c737d05f2f900c3    file.txt</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 100644 blob c1ee9d5404109b66f21fa193da635aa8c4f04c47    todo.md</span></span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 100644 blob c1ee9d5404109b66f21fa193da635aa8c4f04c47    todo2.md</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-16" class="cell" data-execution_count="66">
+<div id="cell-15" class="cell" data-execution_count="66">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>cat <span class="op">&lt;</span>(echo <span class="op">-</span>e <span class="st">"blob 58</span><span class="ch">\0</span><span class="st">"</span>) ..<span class="op">/</span>..<span class="op">/</span>README.md <span class="op">|</span> shasum</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -523,7 +522,7 @@ Materials for software engineering.</code></pre>
 <li>Trees are named and stored in the objects directory by hashing their contents (the list of objects described above)</li>
 </ul></li>
 </ul>
-<div id="cell-19" class="cell" data-execution_count="78">
+<div id="cell-18" class="cell" data-execution_count="78">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># master is a branch that points to a commit which also points to a tree</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>git ls<span class="op">-</span>tree master</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -577,7 +576,7 @@ Materials for software engineering.</code></pre>
 <span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> load(references[name_or_id])</span>
 <span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
 <span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> load(name_or_id)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div id="cell-25" class="cell" data-execution_count="88">
+<div id="cell-24" class="cell" data-execution_count="88">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C <span class="op">-</span>L <span class="dv">1</span> ..<span class="op">/</span>..<span class="op">/</span>.git</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>../../.git
@@ -598,7 +597,7 @@ Materials for software engineering.</code></pre>
 7 directories, 6 files</code></pre>
 </div>
 </div>
-<div id="cell-26" class="cell" data-execution_count="89">
+<div id="cell-25" class="cell" data-execution_count="89">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C <span class="op">-</span>L <span class="dv">1</span> ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>../../.git/refs/
@@ -609,7 +608,7 @@ Materials for software engineering.</code></pre>
 3 directories, 0 files</code></pre>
 </div>
 </div>
-<div id="cell-27" class="cell" data-execution_count="90">
+<div id="cell-26" class="cell" data-execution_count="90">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C <span class="op">-</span>L <span class="dv">1</span> ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>heads<span class="op">/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>../../.git/refs/heads/
@@ -618,19 +617,19 @@ Materials for software engineering.</code></pre>
 0 directories, 1 file</code></pre>
 </div>
 </div>
-<div id="cell-28" class="cell" data-execution_count="91">
+<div id="cell-27" class="cell" data-execution_count="91">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>cat ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>heads<span class="op">/</span>master</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>e1d95ecb4c02e0c30a8635a37631c523d2041299</code></pre>
 </div>
 </div>
-<div id="cell-29" class="cell" data-execution_count="93">
+<div id="cell-28" class="cell" data-execution_count="93">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>git cat<span class="op">-</span><span class="bu">file</span> <span class="op">-</span>t e1d95ecb4c02e0c30a8635a37631c523d2041299</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>commit</code></pre>
 </div>
 </div>
-<div id="cell-30" class="cell" data-execution_count="94">
+<div id="cell-29" class="cell" data-execution_count="94">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>git cat<span class="op">-</span><span class="bu">file</span> <span class="op">-</span>p e1d95ecb4c02e0c30a8635a37631c523d2041299</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>tree 75407c234b245d258c809de234e030f57dd98148
@@ -643,13 +642,13 @@ Review all nbs</code></pre>
 </div>
 <p><code>HEAD</code>, unlike the other objects we’ve discussed, is a singleton, meaning that there is only ever one HEAD. It identifies the currently checked out object. Typically, this is a branch (with that branch pointing to a commit), but it is possible to check out a commit directly, in which case HEAD would be pointing at that commit.</p>
 <p>HEAD is a file just like our branch objects. It lives at the root of the .git directory and its contents are similarly simple.</p>
-<div id="cell-32" class="cell" data-execution_count="114">
+<div id="cell-31" class="cell" data-execution_count="114">
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>cat <span class="op">/</span>Users<span class="op">/</span>imad<span class="op">/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span>.git<span class="op">/</span>HEAD</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>ref: refs/heads/master</code></pre>
 </div>
 </div>
-<div id="cell-33" class="cell" data-execution_count="115">
+<div id="cell-32" class="cell" data-execution_count="115">
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>cd <span class="op">~/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span></span>
 <span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>git graph2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -667,7 +666,7 @@ Review all nbs</code></pre>
 * c2b7166    first commit (Imad)</code></pre>
 </div>
 </div>
-<div id="cell-34" class="cell" data-execution_count="116">
+<div id="cell-33" class="cell" data-execution_count="116">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>cd <span class="op">~/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span></span>
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>git checkout <span class="dv">8610</span><span class="er">c78</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -686,13 +685,13 @@ do so (now or later) by using -b with the checkout command again. Example:
 HEAD is now at 8610c78 Add copied file</code></pre>
 </div>
 </div>
-<div id="cell-35" class="cell" data-execution_count="118">
+<div id="cell-34" class="cell" data-execution_count="118">
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>cat <span class="op">/</span>Users<span class="op">/</span>imad<span class="op">/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span>.git<span class="op">/</span>HEAD</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>8610c78113fe423b20a9f84d485b49af5ad089b0</code></pre>
 </div>
 </div>
-<div id="cell-36" class="cell" data-execution_count="117">
+<div id="cell-35" class="cell" data-execution_count="117">
 <div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>cd <span class="op">~/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span></span>
 <span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>git graph2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -782,7 +781,7 @@ HEAD is now at 8610c78 Add copied file</code></pre>
 </ul></li>
 <li>We can delete remote branch <code>git push origin --delete branchname</code></li>
 </ul>
-<div id="cell-43" class="cell" data-execution_count="108">
+<div id="cell-42" class="cell" data-execution_count="108">
 <div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>remotes<span class="op">/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>../../.git/refs/remotes/
@@ -793,7 +792,7 @@ HEAD is now at 8610c78 Add copied file</code></pre>
 1 directory, 2 files</code></pre>
 </div>
 </div>
-<div id="cell-44" class="cell" data-execution_count="109">
+<div id="cell-43" class="cell" data-execution_count="109">
 <div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>cat ..<span class="op">/</span>..<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>remotes<span class="op">/</span>origin<span class="op">/*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>ref: refs/remotes/origin/master
@@ -821,7 +820,7 @@ e1d95ecb4c02e0c30a8635a37631c523d2041299</code></pre>
 <li>remote: <code>git push remote_name -d tagname</code> OR <code>git push remote_name :refs/tags/tagname</code></li>
 </ul></li>
 </ul>
-<div id="cell-47" class="cell" data-execution_count="96">
+<div id="cell-46" class="cell" data-execution_count="96">
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>tree <span class="op">-</span>C <span class="op">/</span>Users<span class="op">/</span>imad<span class="op">/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>/Users/imad/Desktop/git-repo/.git/refs/
@@ -835,13 +834,13 @@ e1d95ecb4c02e0c30a8635a37631c523d2041299</code></pre>
 2 directories, 4 files</code></pre>
 </div>
 </div>
-<div id="cell-48" class="cell" data-execution_count="97">
+<div id="cell-47" class="cell" data-execution_count="97">
 <div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>cat <span class="op">/</span>Users<span class="op">/</span>imad<span class="op">/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span>.git<span class="op">/</span>refs<span class="op">/</span>tags<span class="op">/*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>6e9c6886a2180fdfde291a130aa9e10a52bac679</code></pre>
 </div>
 </div>
-<div id="cell-49" class="cell" data-execution_count="100">
+<div id="cell-48" class="cell" data-execution_count="100">
 <div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>bash</span>
 <span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>cd <span class="op">~/</span>Desktop<span class="op">/</span>git<span class="op">-</span>repo<span class="op">/</span></span>
 <span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>git graph2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>

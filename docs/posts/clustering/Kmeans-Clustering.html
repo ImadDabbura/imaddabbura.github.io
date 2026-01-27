@@ -220,11 +220,11 @@ window.Quarto = {
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="../../about.html"> 
-<span class="menu-text">Imad Dabbura</span></a>
+<span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html"> 
-<span class="menu-text">Posts</span></a>
+    <a class="nav-link" href="../../posts.html"> 
+<span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../til.html"> <i class="bi bi-lightbulb" role="img">
@@ -365,11 +365,6 @@ window.Quarto = {
 
 
 
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="feature.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="feature.png" class="quarto-figure quarto-figure-center figure-img" width="700" height="500"></a></p>
-</figure>
-</div>
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p><strong>Clustering</strong> is one of the most common exploratory data analysis technique used to get an intuition about the structure of the data. It can be defined as the task of identifying subgroups in the data such that data points in the same subgroup (cluster) are very similar while data points in different clusters are very different. In other words, we try to find homogeneous subgroups within the data such that data points in each cluster are as similar as possible according to a similarity measure such as euclidean-based distance or correlation-based distance. The decision of which similarity measure to use is application-specific.</p>
@@ -413,7 +408,7 @@ window.Quarto = {
 <section id="implementation" class="level2">
 <h2 class="anchored" data-anchor-id="implementation">Implementation</h2>
 <p>We’ll use simple implementation of kmeans here to just illustrate some concepts. Then we will use <code>sklearn</code> implementation that is more efficient take care of many things for us.</p>
-<div id="cell-8" class="cell" data-code_folding="[]" data-execution_count="1">
+<div id="cell-7" class="cell" data-code_folding="[]" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -489,7 +484,7 @@ window.Quarto = {
 <li>waiting (int): Waiting time to next eruption.</li>
 </ul>
 <p>Let’s plot the data first:</p>
-<div id="cell-13" class="cell" data-code_folding="[]" data-execution_count="2">
+<div id="cell-12" class="cell" data-code_folding="[]" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Modules</span></span>
@@ -511,7 +506,7 @@ window.Quarto = {
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>filterwarnings(<span class="st">'ignore'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="cell-14" class="cell" data-execution_count="3">
+<div id="cell-13" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import the data</span></span>
@@ -527,13 +522,13 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Kmeans-Clustering_files/figure-html/cell-4-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="Kmeans-Clustering_files/figure-html/cell-4-output-1.png" class="img-fluid figure-img"></a></p>
+<p><a href="Kmeans-Clustering_files/figure-html/cell-4-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="Kmeans-Clustering_files/figure-html/cell-4-output-1.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
 </div>
 <p>We’ll use this data because it’s easy to plot and visually spot the clusters since its a 2-dimension dataset. It’s obvious that we have 2 clusters. Let’s standardize the data first and run the kmeans algorithm on the standardized data with <span class="math inline">\(K = 2\)</span>.</p>
-<div id="cell-16" class="cell" data-code_folding="[]" data-execution_count="4">
+<div id="cell-15" class="cell" data-code_folding="[]" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Standardize the data</span></span>
@@ -563,7 +558,7 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Kmeans-Clustering_files/figure-html/cell-5-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="Kmeans-Clustering_files/figure-html/cell-5-output-1.png" class="img-fluid figure-img"></a></p>
+<p><a href="Kmeans-Clustering_files/figure-html/cell-5-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="Kmeans-Clustering_files/figure-html/cell-5-output-1.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -571,7 +566,7 @@ window.Quarto = {
 <p>The above graph shows the scatter plot of the data colored by the cluster they belong to. In this example, we chose <span class="math inline">\(K = 2\)</span>. The symbol **’*’** is the centroid of each cluster. We can think of those 2 clusters as geyser had different kinds of behaviors under different scenarios.</p>
 <p>Next, we’ll show that different initializations of centroids may yield to different results. I’ll use 9 different <code>random_state</code> to change the initialization of the centroids and plot the results. The title of each plot will be the sum of squared distance of each initialization.</p>
 <p>As a side note, this dataset is considered very easy and converges in less than 10 iterations. Therefore, to see the effect of random initialization on convergence, I am going to go with 3 iterations to illustrate the concept. However, in real world applications, datasets are not at all that clean and nice!</p>
-<div id="cell-18" class="cell" data-execution_count="5">
+<div id="cell-17" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>n_iter <span class="op">=</span> <span class="dv">9</span></span>
@@ -602,7 +597,7 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Kmeans-Clustering_files/figure-html/cell-6-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="Kmeans-Clustering_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></a></p>
+<p><a href="Kmeans-Clustering_files/figure-html/cell-6-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="Kmeans-Clustering_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -618,7 +613,7 @@ window.Quarto = {
 <li><code>tol</code> is the within-cluster variation metric used to declare convergence.</li>
 <li>The default of <code>init</code> is <strong>k-means++</strong> which is supposed to yield a better results than just random initialization of centroids.</li>
 </ul>
-<div id="cell-22" class="cell" data-code_folding="[]" data-execution_count="6">
+<div id="cell-21" class="cell" data-code_folding="[]" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read the image</span></span>
@@ -652,7 +647,7 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Kmeans-Clustering_files/figure-html/cell-7-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="Kmeans-Clustering_files/figure-html/cell-7-output-1.png" class="img-fluid figure-img"></a></p>
+<p><a href="Kmeans-Clustering_files/figure-html/cell-7-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="Kmeans-Clustering_files/figure-html/cell-7-output-1.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -671,7 +666,7 @@ window.Quarto = {
 <section id="elbow-method" class="level3">
 <h3 class="anchored" data-anchor-id="elbow-method">Elbow Method</h3>
 <p><strong>Elbow</strong> method gives us an idea on what a good <span class="math inline">\(k\)</span> number of clusters would be based on the sum of squared distance (SSE) between data points and their assigned clusters’ centroids. We pick <span class="math inline">\(k\)</span> at the spot where SSE starts to flatten out and forming an elbow. We’ll use the geyser dataset and evaluate SSE for different values of <span class="math inline">\(k\)</span> and see where the curve might form an elbow and flatten out.</p>
-<div id="cell-28" class="cell" data-execution_count="7">
+<div id="cell-27" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the Kmeans algorithm and get the index of data points clusters</span></span>
@@ -692,7 +687,7 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Kmeans-Clustering_files/figure-html/cell-8-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="Kmeans-Clustering_files/figure-html/cell-8-output-1.png" class="img-fluid figure-img"></a></p>
+<p><a href="Kmeans-Clustering_files/figure-html/cell-8-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="Kmeans-Clustering_files/figure-html/cell-8-output-1.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -713,7 +708,7 @@ window.Quarto = {
 </ul></li>
 </ul>
 <p>Therefore, we want the coefficients to be as big as possible and close to 1 to have a good clusters. We’ll use here geyser dataset again because its cheaper to run the silhouette analysis and it is actually obvious that there is most likely only two groups of data points.</p>
-<div id="cell-32" class="cell" data-execution_count="8">
+<div id="cell-31" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, k <span class="kw">in</span> <span class="bu">enumerate</span>([<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>]):</span>
@@ -764,21 +759,21 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Kmeans-Clustering_files/figure-html/cell-9-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="Kmeans-Clustering_files/figure-html/cell-9-output-1.png" class="img-fluid figure-img"></a></p>
+<p><a href="Kmeans-Clustering_files/figure-html/cell-9-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="Kmeans-Clustering_files/figure-html/cell-9-output-1.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Kmeans-Clustering_files/figure-html/cell-9-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8"><img src="Kmeans-Clustering_files/figure-html/cell-9-output-2.png" class="img-fluid figure-img"></a></p>
+<p><a href="Kmeans-Clustering_files/figure-html/cell-9-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="Kmeans-Clustering_files/figure-html/cell-9-output-2.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Kmeans-Clustering_files/figure-html/cell-9-output-3.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9"><img src="Kmeans-Clustering_files/figure-html/cell-9-output-3.png" class="img-fluid figure-img"></a></p>
+<p><a href="Kmeans-Clustering_files/figure-html/cell-9-output-3.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8"><img src="Kmeans-Clustering_files/figure-html/cell-9-output-3.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -790,7 +785,7 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="drawbacks">Drawbacks</h2>
 <p>Kmeans algorithm is good in capturing structure of the data if clusters have a spherical-like shape. It always try to construct a nice spherical shape around the centroid. That means, the minute the clusters have a complicated geometric shapes, kmeans does a poor job in clustering the data. We’ll illustrate three cases where kmeans will not perform well.</p>
 <p>First, kmeans algorithm doesn’t let data points that are far-away from each other share the same cluster even though they obviously belong to the same cluster. Below is an example of data points on two different horizontal lines that illustrates how kmeans tries to group half of the data points of each horizontal lines together.</p>
-<div id="cell-36" class="cell" data-code_folding="[]" data-execution_count="9">
+<div id="cell-35" class="cell" data-code_folding="[]" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create horizantal data</span></span>
@@ -815,14 +810,14 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Kmeans-Clustering_files/figure-html/cell-10-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10"><img src="Kmeans-Clustering_files/figure-html/cell-10-output-1.png" class="img-fluid figure-img"></a></p>
+<p><a href="Kmeans-Clustering_files/figure-html/cell-10-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9"><img src="Kmeans-Clustering_files/figure-html/cell-10-output-1.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Kmeans considers the point ‘B’ closer to point ‘A’ than point ‘C’ since they have non-spherical shape. Therefore, points ‘A’ and ‘B’ will be in the same cluster but point ‘C’ will be in a different cluster. Note the <strong>Single Linkage</strong> hierarchical clustering method gets this right because it doesn’t separate similar points).</p>
 <p>Second, we’ll generate data from multivariate normal distributions with different means and standard deviations. So we would have 3 groups of data where each group was generated from different multivariate normal distribution (different mean/standard deviation). One group will have a lot more data points than the other two combined. Next, we’ll run kmeans on the data with <span class="math inline">\(K = 3\)</span> and see if it will be able to cluster the data correctly. To make the comparison easier, I am going to plot first the data colored based on the distribution it came from. Then I will plot the same data but now colored based on the clusters they have been assigned to.</p>
-<div id="cell-39" class="cell" data-code_folding="[]" data-execution_count="10">
+<div id="cell-38" class="cell" data-code_folding="[]" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create data from three different multivariate distributions</span></span>
@@ -854,14 +849,14 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Kmeans-Clustering_files/figure-html/cell-11-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11"><img src="Kmeans-Clustering_files/figure-html/cell-11-output-1.png" class="img-fluid figure-img"></a></p>
+<p><a href="Kmeans-Clustering_files/figure-html/cell-11-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10"><img src="Kmeans-Clustering_files/figure-html/cell-11-output-1.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Looks like kmeans couldn’t figure out the clusters correctly. Since it tries to minimize the within-cluster variation, it gives more weight to bigger clusters than smaller ones. In other words, data points in smaller clusters may be left away from the centroid in order to focus more on the larger cluster.</p>
 <p>Last, we’ll generate data that have complicated geometric shapes such as moons and circles within each other and test kmeans on both of the datasets.</p>
-<div id="cell-41" class="cell" data-code_folding="[]" data-execution_count="11">
+<div id="cell-40" class="cell" data-code_folding="[]" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cricles</span></span>
@@ -887,13 +882,13 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Kmeans-Clustering_files/figure-html/cell-12-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-12"><img src="Kmeans-Clustering_files/figure-html/cell-12-output-1.png" class="img-fluid figure-img"></a></p>
+<p><a href="Kmeans-Clustering_files/figure-html/cell-12-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11"><img src="Kmeans-Clustering_files/figure-html/cell-12-output-1.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
 </div>
 <p>As expected, kmeans couldn’t figure out the correct clusters for both datasets. However, we can help kmeans perfectly cluster these kind of datasets if we use kernel methods. The idea is we transform to higher dimensional representation that make the data linearly separable (the same idea that we use in SVMs). Different kinds of algorithms work very well in such scenarios such as <code>SpectralClustering</code>, see below:</p>
-<div id="cell-43" class="cell" data-execution_count="12">
+<div id="cell-42" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cricles</span></span>
@@ -915,7 +910,7 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Kmeans-Clustering_files/figure-html/cell-13-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-13"><img src="Kmeans-Clustering_files/figure-html/cell-13-output-1.png" class="img-fluid figure-img"></a></p>
+<p><a href="Kmeans-Clustering_files/figure-html/cell-13-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-12"><img src="Kmeans-Clustering_files/figure-html/cell-13-output-1.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -1645,7 +1640,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","loop":false,"descPosition":"bottom","selector":".lightbox","openEffect":"zoom"});
+<script>var lightboxQuarto = GLightbox({"loop":false,"descPosition":"bottom","closeEffect":"zoom","openEffect":"zoom","selector":".lightbox"});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;

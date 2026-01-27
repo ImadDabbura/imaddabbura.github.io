@@ -217,11 +217,11 @@ window.Quarto = {
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="../../about.html"> 
-<span class="menu-text">Imad Dabbura</span></a>
+<span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html"> 
-<span class="menu-text">Posts</span></a>
+    <a class="nav-link" href="../../posts.html"> 
+<span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../til.html"> <i class="bi bi-lightbulb" role="img">
@@ -365,6 +365,8 @@ window.Quarto = {
 
 
 
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p align="center">
 <img src="full-transformer-architecture.png" width="600px"><br>
 
@@ -373,8 +375,6 @@ window.Quarto = {
 </center>
 
 <p></p>
-<section id="introduction" class="level1">
-<h1>Introduction</h1>
 <p>Transformer architecture was first introduced in <a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need</a> paper in 2017. It outperformed RNN-based models on all NLP related tasks. It has an encoder-decoder architecture that is used in tasks such as <em>Neural Machine Translation</em>. The most common examples of models that use transformer architecture is <strong>BERT</strong>, which uses encoder-only architecture, and <strong>GPT</strong>, that uses decoder-only architecture.</p>
 <p>The main motivation behind creating the Transformer architecture is to overcome issues that RNN-based models have:</p>
 <ol type="1">
@@ -387,10 +387,10 @@ window.Quarto = {
 <li>Understand the role of each block.</li>
 </ol>
 </section>
-<section id="building-blocks" class="level1">
-<h1>Building Blocks</h1>
-<section id="embedding-layer" class="level2">
-<h2 class="anchored" data-anchor-id="embedding-layer">Embedding Layer</h2>
+<section id="building-blocks" class="level2">
+<h2 class="anchored" data-anchor-id="building-blocks">Building Blocks</h2>
+<section id="embedding-layer" class="level3">
+<h3 class="anchored" data-anchor-id="embedding-layer">Embedding Layer</h3>
 <p>After the input sequence is tokenized and numericalized, we need to project each token into lower dimension space. Such projection is called <strong>embedding</strong> and it captures the semantic representation of tokens based on the context the token mostly occurs in.</p>
 <p>Attention operation is a permutation equivariant, this means that if we permute the input then the corresponding output will be permuted in exactly the same way. In other words, attention mechanism is not aware of the relative ordering of the tokens. Therefore, we need some way to encode the positions of the tokens in each sequence. This is where <strong>positional encoding</strong> comes into play. There are two types of encodings:</p>
 <ul>
@@ -412,10 +412,10 @@ window.Quarto = {
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>config <span class="op">=</span> {</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"vocab_sz"</span>: <span class="dv">1000</span>,</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"block_sz"</span>: <span class="dv">8</span>,</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"intermediare_sz"</span>: <span class="dv">4</span> <span class="op">*</span> <span class="dv">64</span>,  <span class="co"># 4x hidden_dim</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"intermediare_sz"</span>: <span class="dv">4</span> <span class="op">*</span> <span class="dv">64</span>,  <span class="co">## 4x hidden_dim</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"hidden_dropout_prob"</span>: <span class="fl">0.2</span>,</span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"num_attention_heads"</span>: <span class="dv">12</span>,</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"hidden_sz"</span>: <span class="dv">64</span>,           <span class="co"># embed_dim / num_attention_head = 768 / 12 = 64</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"hidden_sz"</span>: <span class="dv">64</span>,           <span class="co">## embed_dim / num_attention_head = 768 / 12 = 64</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"num_hidden_layers"</span>: <span class="dv">6</span>,</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"embed_dim"</span>: <span class="dv">768</span>,</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"num_classes"</span>: <span class="dv">2</span>,</span>
@@ -437,9 +437,9 @@ window.Quarto = {
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.dropout <span class="op">=</span> nn.Dropout(p<span class="op">=</span><span class="fl">0.1</span>)</span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        <span class="co"># X:                   B x T</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        <span class="co"># token_embeddings:    B x T x embed_dim</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>        <span class="co"># position_embeddings: T x embed_dim</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        <span class="co">## X:                   B x T</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        <span class="co">## token_embeddings:    B x T x embed_dim</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>        <span class="co">## position_embeddings: T x embed_dim</span></span>
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>        embeddings <span class="op">=</span> <span class="va">self</span>.token_embedding(x) <span class="op">+</span> <span class="va">self</span>.position_embedding(</span>
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>            torch.arange(x.shape[<span class="dv">1</span>])</span>
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>        )</span>
@@ -447,8 +447,8 @@ window.Quarto = {
 <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.dropout(embeddings)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="attention" class="level2">
-<h2 class="anchored" data-anchor-id="attention">Attention</h2>
+<section id="attention" class="level3">
+<h3 class="anchored" data-anchor-id="attention">Attention</h3>
 <p><strong>Attention</strong> is a communication mechanism that is used by NN model to learn to make predictions by attending to some tokens in the context window (only current and previous tokens for decoder-only architectute). The attention weights, which are learned, are used to construct the weighted average of all the tokens attended to by each token. This will help each token focus on what is important in the context. As a reminder, with attention, there is no notion of space. This means it operates on a set of vectors. This is why we need positional encoding for tokens.</p>
 <p>The results of the attention layer would be contextualized embeddings, since the output of the embedding layer is contextless embeddings. This is very useful because we know that the meaning of a word changes according to the context, and embeddings from the embedding layer for a token is the same regardless of its context. For example, the word “bear” has the same embedding vector whether it comes in “teddy bear” or “to bear”.</p>
 <p><strong>Self-attention</strong> is a type of attention mechanism where the keys and values come from the same source as the queries, which is the input <span class="math inline">\(x\)</span>. Whereas in <strong>cross-attention</strong>, the queries still get produced from the input <span class="math inline">\(x\)</span>, but the keys and values come from some other external source (encoder module in the case of encoder-decoder architecture).</p>
@@ -492,21 +492,21 @@ window.Quarto = {
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        )</span>
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, query, key, value):</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>        <span class="co"># query, key, value are each B x T x embed_dim</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>        <span class="co">## query, key, value are each B x T x embed_dim</span></span>
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        q <span class="op">=</span> <span class="va">self</span>.q(query)</span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        k <span class="op">=</span> <span class="va">self</span>.k(key)</span>
 <span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        v <span class="op">=</span> <span class="va">self</span>.v(value)</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        <span class="co"># w is B x T x T</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        <span class="co">## w is B x T x T</span></span>
 <span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>        w <span class="op">=</span> q <span class="op">@</span> k.transpose(<span class="dv">2</span>, <span class="dv">1</span>) <span class="op">/</span> (k.shape[<span class="op">-</span><span class="dv">1</span>] <span class="op">**</span> <span class="fl">0.5</span>)</span>
 <span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.is_decoder:</span>
 <span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>            w <span class="op">=</span> w.masked_fill(<span class="va">self</span>.mask <span class="op">==</span> <span class="dv">0</span>, <span class="op">-</span><span class="bu">float</span>(<span class="st">"inf"</span>))</span>
 <span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>        w <span class="op">=</span> F.softmax(w, dim<span class="op">=-</span><span class="dv">1</span>)</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>        <span class="co"># output is B x T x head_dim</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>        <span class="co">## output is B x T x head_dim</span></span>
 <span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> w <span class="op">@</span> v</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="multi-head-attention" class="level2">
-<h2 class="anchored" data-anchor-id="multi-head-attention">Multi-Head Attention</h2>
+<section id="multi-head-attention" class="level3">
+<h3 class="anchored" data-anchor-id="multi-head-attention">Multi-Head Attention</h3>
 <p>What we described in the previous section was self-attention mechanism with one-head. Since each attention head focuses on one specific characteristic of the data in terms of similarity such as subject-verb interaction, other heads are needed to focus on other aspects such as adjectives. We can also think of having multiple heads as if each head focuses on one or few other tokens. Remember that all of this is done in parallel and there is no communication between heads. This means that each head has no idea what other heads are doing.</p>
 <p align="center">
 <img src="multi-head-attention.png" height="400px"><br>
@@ -536,15 +536,15 @@ window.Quarto = {
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.output(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="feed-forward-layer" class="level2">
-<h2 class="anchored" data-anchor-id="feed-forward-layer">Feed-Forward Layer</h2>
+<section id="feed-forward-layer" class="level3">
+<h3 class="anchored" data-anchor-id="feed-forward-layer">Feed-Forward Layer</h3>
 <p>Because there are no elementwise nonlinearities involved in the calculation of the attention, stacking multiple layers of attention wouldn’t help much because the output would still be linear transformation of the input. As a result, feed-forward NN is added to add such nonlinearities to post-process each output vector from the attention layer. Therefore, each embedding vector is processed independently in the batched sequence, which leads to the position-wise feed-forward layer.</p>
 <p>We typically first project the output vector into new space 4x the hidden_sz. Therefore, most of the capacity and memorization is expected to happen in the first layer, which is what gets scaled when the model is scaled up. Then we project it back to the original dimension. We use <a href="https://pytorch.org/docs/stable/generated/torch.nn.GELU.html?highlight=gelu#torch.nn.GELU"><code>GELU</code></a> as the activation function, which is a Gaussian Error Linear Units.</p>
 <div id="c7ceda3b-1880-495c-8a32-04005afe4260" class="cell" data-execution_count="52">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> FeedForwardNN(nn.Module):</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config):</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        <span class="co"># intermediate_sz is typically 4 x embed_dim</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        <span class="co">## intermediate_sz is typically 4 x embed_dim</span></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.l1 <span class="op">=</span> nn.Linear(config.embed_dim, config.intermediate_sz)</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.l2 <span class="op">=</span> nn.Linear(config.intermediate_sz, config.embed_dim)</span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.dropout <span class="op">=</span> nn.Dropout(config.hidden_dropout_prob)</span>
@@ -553,8 +553,8 @@ window.Quarto = {
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.dropout(<span class="va">self</span>.l2(F.gelu(<span class="va">self</span>.l1(x))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="layer-normalization" class="level2">
-<h2 class="anchored" data-anchor-id="layer-normalization">Layer Normalization</h2>
+<section id="layer-normalization" class="level3">
+<h3 class="anchored" data-anchor-id="layer-normalization">Layer Normalization</h3>
 <p><strong>Layer normalization</strong> was introduced in <a href="https://arxiv.org/abs/1607.06450">this paper</a> to overcome the main challenges of <strong>Batch normalization</strong>, which are 1) how do we handles batches with 1 or few examples because we would have infinite variance or unstable training and 2) how do we handle RNNs. The main differences with batch normalization are 1) we don’t have moving averages/standard deviations and 2) we average over the hidden dimesnion(s), so it is indepenedent of the batch size. It has two learnable parameters (scalars): <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\gamma\)</span> (see the equation below):</p>
 <p><span class="math display">\[y = \frac{x - \mathrm{E}[x]}{ \sqrt{\mathrm{Var}[x] + \epsilon}} * \gamma + \beta\]</span></p>
 <p>It is used as a trick to train complex models, such as Transformer, faster. In our case, we would normalize the hidden vectors to zero mean and unit standard deviation. This trick helps maintain consistent distribution of signals by cutting down uninformative variations in hidden vector values.</p>
@@ -572,8 +572,8 @@ window.Quarto = {
 <li><em>Postlayer normalization</em>: Places the layer normalization in between skip connections. This arrangement is used in the Transformer paper.</li>
 </ul>
 </section>
-<section id="skip-connections" class="level2">
-<h2 class="anchored" data-anchor-id="skip-connections">Skip Connections</h2>
+<section id="skip-connections" class="level3">
+<h3 class="anchored" data-anchor-id="skip-connections">Skip Connections</h3>
 <p><strong>Skip connections</strong> help train deeper and more complex models faster as well as avoid the issue of vanishing gradients that deeper networks face. It provides paths for the gradient to flow through back to the input. In our case, we are using skip connections with addition, which means we take a copy of the inputs and added it to the output of a block (involves some computations). If we assume <span class="math inline">\(y = x + F(x)\)</span>, then it is as if we are asking the block to predict <span class="math inline">\(y - x\)</span>. In other words, it means to backpropagate through the identity function, which leads to multiply the gradient of <span class="math inline">\(y\)</span> by one and retain its value in the earlier layers.</p>
 <p>Skip connections help also smooth out the loss landscape (see Figure-5), and make it easier for the gradients to flow back as <em>addition</em> operator split the gradients equally. This means that small changes in the input can still find their way to the output. Additionally, it preserves the original input sequence, which means there is no way for the current word to forget to attend to its position because we always add it back.</p>
 <p align="center">
@@ -585,8 +585,8 @@ window.Quarto = {
 
 <p></p>
 </section>
-<section id="dropout" class="level2">
-<h2 class="anchored" data-anchor-id="dropout">Dropout</h2>
+<section id="dropout" class="level3">
+<h3 class="anchored" data-anchor-id="dropout">Dropout</h3>
 <p align="center">
 <img src="dropout.png" width="600px"><br>
 
@@ -604,10 +604,10 @@ window.Quarto = {
 <p>For more information on dropout, check out my <a href="https://imaddabbura.github.io/posts/coding-nn/dropout/Coding-Neural-Network-Dropout.html">previous post</a>.</p>
 </section>
 </section>
-<section id="transformer-components" class="level1">
-<h1>Transformer Components</h1>
-<section id="encoder-only-architecture" class="level2">
-<h2 class="anchored" data-anchor-id="encoder-only-architecture">Encoder-only Architecture</h2>
+<section id="transformer-components" class="level2">
+<h2 class="anchored" data-anchor-id="transformer-components">Transformer Components</h2>
+<section id="encoder-only-architecture" class="level3">
+<h3 class="anchored" data-anchor-id="encoder-only-architecture">Encoder-only Architecture</h3>
 <p>Encoder-only architecture are well suited for classification tasks. The most common model that uses encoder-only branch of the Transformer architecture is <a href="https://arxiv.org/abs/1810.04805">BERT</a> and all its variants such as <a href="https://arxiv.org/abs/1907.11692">RoBERTa</a>. In this architecture, we would have:</p>
 <ul>
 <li>body: Stacked encoder layers. The output would be <code>B x T x hidden_sz</code>.</li>
@@ -623,15 +623,15 @@ window.Quarto = {
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.ff <span class="op">=</span> FeedForwardNN(config)</span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        <span class="co"># There are two arrangements for layer_norm:</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Prelayer normalization &amp; Postlayer normalization</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        <span class="co"># we are using postlayer normalization arrangement</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">## There are two arrangements for layer_norm:</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">## Prelayer normalization &amp; Postlayer normalization</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        <span class="co">## we are using postlayer normalization arrangement</span></span>
 <span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.layer_norm_1(x <span class="op">+</span> <span class="va">self</span>.attn(x))</span>
 <span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.layer_norm_2(x <span class="op">+</span> <span class="va">self</span>.ff(x))</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Prelayer normalization</span></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        <span class="co"># x = self.layer_norm_1(x)</span></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        <span class="co"># x = x + self.attn(x)</span></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>        <span class="co"># x = x + self.ff(self.layer_norm_2(x))</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        <span class="co">## Prelayer normalization</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        <span class="co">## x = self.layer_norm_1(x)</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        <span class="co">## x = x + self.attn(x)</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>        <span class="co">## x = x + self.ff(self.layer_norm_2(x))</span></span>
 <span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="af565905-5b13-4773-b44f-d0a2e78a3831" class="cell" data-execution_count="56">
@@ -656,15 +656,15 @@ window.Quarto = {
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.classifier <span class="op">=</span> nn.Linear(config.embed_dim, config.num_classes)</span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        <span class="co"># We take the hidden state of the [CLS] token as</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        <span class="co"># input to the classifier</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        <span class="co">## We take the hidden state of the [CLS] token as</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">## input to the classifier</span></span>
 <span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.encoder(x)[:, <span class="dv">0</span>, :]</span>
 <span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.dropout(x)</span>
 <span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.classifier(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="decoder-only-architecture" class="level2">
-<h2 class="anchored" data-anchor-id="decoder-only-architecture">Decoder-only Architecture</h2>
+<section id="decoder-only-architecture" class="level3">
+<h3 class="anchored" data-anchor-id="decoder-only-architecture">Decoder-only Architecture</h3>
 <p>These models are typically used as language models such as <a href="https://openai.com/blog/language-unsupervised/">GPT</a> and all its variants. In this architecture, as opposed to the encoder-only architecture, the token can only see past tokens but <strong>not future</strong> tokens because this would be a kind of cheating since we are trying to predict the next token. Therefore, we need to mask all future tokens in the attention layer. In this architecture, we would have:</p>
 <ul>
 <li>body: Stacked decoder layers. The output would be <code>B x T x hidden_sz</code>.</li>
@@ -712,20 +712,20 @@ window.Quarto = {
 <span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.lm_head(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="encoder-decoder-architecture" class="level2">
-<h2 class="anchored" data-anchor-id="encoder-decoder-architecture">Encoder-Decoder Architecture</h2>
+<section id="encoder-decoder-architecture" class="level3">
+<h3 class="anchored" data-anchor-id="encoder-decoder-architecture">Encoder-Decoder Architecture</h3>
 <p>The encoder-decoder architecture is the first Transformer architecture used in the <a href="">Attention Is All You Need</a> paper for Neural Machine Translation Task. It is typically used for tasks that have both their input and output as text such as <em>summarization</em>. <a href="https://arxiv.org/abs/1910.10683">T5</a> and <a href="https://arxiv.org/abs/1910.13461">BART</a> are the most common models that use such architecture.</p>
 <p>For each decoder layer, we add masked multi-head attention layer in the middle that 1) takes the hidden state from the last encoder layer to compute the keys and values and 2) takes the hidden state from layer norm to compute the query. This means, this additional middle multi-head attention layer attends to the all tokens in the input sequence. This is a kind of cross-attention that we defined earlier where keys and values come from different source (input sequence) while the query comes from other source.</p>
 <p>It is very easy to extend or modify our implementation of DecoderLayer to use it in this architecture, so I will leave it for you as an exercise!</p>
 </section>
 </section>
-<section id="conclusion" class="level1">
-<h1>Conclusion</h1>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
 <p>In this post we started with a brief introduction of Transformer architecture and the motivation behind it such as overcoming RNN-based models. We then covered the main building blocks of the Transformer architecture including attention mechanism. We then briefly went over few tricks that are helpful to train complex models faster such as skip connections and layer normalization. Along the way, we implemented main sublayers used in the architecure. We concluded with different branches of the Transformer architecture that can be used separately such as encoder-only or decoder-only.</p>
 <p>I hope that you found this post helpful and provided and a good background about the Transformer architecture.</p>
 </section>
-<section id="creditsresources" class="level1">
-<h1>Credits/Resources</h1>
+<section id="creditsresources" class="level2">
+<h2 class="anchored" data-anchor-id="creditsresources">Credits/Resources</h2>
 <ul>
 <li><a href="https://arxiv.labs.arxiv.org/html/1706.03762">Attention Is All You Need</a></li>
 <li><a href="https://www.oreilly.com/library/view/natural-language-processing/9781098136789/">Natural Language Processing with Transformers by Lewis Tunstall, Leandro von Werra, and Thomas Wolf (O’Reilly)</a></li>

@@ -1,6 +1,6 @@
 ---
 title: "C Program Startup"
-subtitle: "Does C program really start at main"
+subtitle: "Does C program really start at `main`?"
 image: "linux-prog-startup.png"
 title-block-banner: "linux-prog-startup.png"
 date: "2022-10-21"
@@ -8,13 +8,12 @@ date-modified: "2022-10-21"
 categories: ["SWE", "C"]
 ---
 
-![Figure 1: Linux x86 program startup([Source](http://dbp-consulting.com/tutorials/debugging/linuxProgramStartup.html))](linux-prog-startup.png)
 
 ## Introduction
 
 In this post, I will try to write down the steps of C program execution on x86. I used to believe that all C programs start execution at `main`, or at least this was my understanding from different books/courses until my best friend `gdb` debugger showed the symbol for `_start`. This is how I got curious until I got to the bottom of it. Below are my notes that I took during my learning.
 
-# Execution Steps
+## Execution Steps
 
 1. The linker inject `_start` which is called in the process of loading.
     - It is written in assembly language
