@@ -45,6 +45,9 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -138,7 +141,6 @@ window.Quarto = {
 };
 </script>
 
-<link rel="stylesheet" href="../styles.css">
 <meta property="og:title" content="Imad Dabbura - 100x Impact">
 <meta property="og:description" content="">
 <meta property="og:site_name" content="Imad Dabbura">
@@ -173,8 +175,8 @@ window.Quarto = {
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../index.html"> 
-<span class="menu-text">Posts</span></a>
+    <a class="nav-link" href="../posts.html"> 
+<span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../til.html"> <i class="bi bi-lightbulb" role="img">
@@ -203,10 +205,6 @@ window.Quarto = {
  <span class="dropdown-text">Books’ Summaries</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../misc-notes.html">
- <span class="dropdown-text">Misc. Notes</span></a>
-  </li>  
-        <li>
     <a class="dropdown-item" href="../reading-list.html">
  <span class="dropdown-text">Reading List</span></a>
   </li>  
@@ -214,17 +212,16 @@ window.Quarto = {
     <a class="dropdown-item" href="../resume.html">
  <span class="dropdown-text">Resume</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../misc-notes.html">
+ <span class="dropdown-text">Misc. Notes</span></a>
+  </li>  
     </ul>
   </li>
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
     <a class="nav-link" href="https://github.com/imaddabbura"> <i class="bi bi-github" role="img">
-</i> 
-<span class="menu-text"></span></a>
-  </li>  
-  <li class="nav-item compact">
-    <a class="nav-link" href="https://twitter.com/imadphd"> <i class="bi bi-twitter" role="img">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
@@ -293,14 +290,14 @@ window.Quarto = {
 <li>If I am <span class="math inline">\(80\%\)</span> utilized -&gt; Focus on the task <span class="math inline">\(20\%\)</span> of the day -&gt; 5 days</li>
 <li>If I am <span class="math inline">\(100\%\)</span> utilized -&gt; Focus on the task <span class="math inline">\(1\%\)</span> of the day -&gt; 100 days</li>
 </ul>
-<p><img src="images/100x-curve.png" class="img-fluid"></p>
+<p><a href="images/100x-curve.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="images/100x-curve.png" class="img-fluid"></a></p>
 <p>What would it take to achieve <span class="math inline">\(100x\)</span>?</p>
 <ul>
 <li>Step 1: Get rid of all the other stuff and focus on 1 task</li>
 <li>You don’t want <em>work</em> to be waiting for <em>resources</em>. You want <em>resources</em> to be waiting for <em>work</em> (not too long)</li>
 </ul>
 <p>How <em>Fragile</em> am I:</p>
-<p><img src="images/fragility-of-systems.png" class="img-fluid"></p>
+<p><a href="images/fragility-of-systems.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="images/fragility-of-systems.png" class="img-fluid"></a></p>
 <p>Wealth paradigm:</p>
 <ul>
 <li>Wisdom &gt; Health &gt; Wealth</li>
@@ -313,7 +310,7 @@ window.Quarto = {
 
 
 
-</main> <!-- /main -->
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     // Only add citation to post pages (not index, about, etc.)
@@ -970,6 +967,31 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","openEffect":"zoom","closeEffect":"zoom","loop":false,"descPosition":"bottom"});
+window.onload = () => {
+  lightboxQuarto.on('slide_before_load', (data) => {
+    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+    const href = trigger.getAttribute('href');
+    if (href !== null) {
+      const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+      if (imgEl !== null) {
+        const srcAttr = imgEl.getAttribute("src");
+        if (srcAttr && srcAttr.startsWith("data:")) {
+          slideConfig.href = srcAttr;
+        }
+      }
+    } 
+  });
+
+  lightboxQuarto.on('slide_after_load', (data) => {
+    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+    if (window.Quarto?.typesetMath) {
+      window.Quarto.typesetMath(slideNode);
+    }
+  });
+
+};
+          </script>
 
 
 
