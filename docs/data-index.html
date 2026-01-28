@@ -6,10 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2022-02-28">
 
-<title>Imad Dabbura - Airflow Part 6 - Sharing Data Between Tasks</title>
+<title>Imad Dabbura - Data</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,66 +20,31 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
-<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../../site_libs/quarto-search/quarto-search.js"></script>
-<script src="../../site_libs/quarto-search/autocomplete-preset-algolia.umd.js"></script>
-<meta name="quarto:offset" content="../../">
-<link href="../../images/profile-pic.png" rel="icon" type="image/png">
-<script src="../../site_libs/quarto-html/quarto.js"></script>
-<script src="../../site_libs/quarto-html/popper.min.js"></script>
-<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
-<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
-<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<script src="site_libs/quarto-search/autocomplete-preset-algolia.umd.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./images/profile-pic.png" rel="icon" type="image/png">
+<script src="site_libs/quarto-listing/list.min.js"></script>
+<script src="site_libs/quarto-listing/quarto-listing.js"></script>
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -130,6 +93,35 @@ i.async=1,i.src=n,c.parentNode.insertBefore(i,c)
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-plugin-algolia-insights">
 
 </script>
+<script>
+
+  window.document.addEventListener("DOMContentLoaded", function (_event) {
+    const listingTargetEl = window.document.querySelector('#listing-listing .list');
+    if (!listingTargetEl) {
+      // No listing discovered, do not attach.
+      return; 
+    }
+
+    const options = {
+      valueNames: ['listing-image','listing-date','listing-title','listing-description','listing-categories','listing-author',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      
+      searchColumns: ["listing-title","listing-author","listing-date","listing-image","listing-description","listing-categories"],
+    };
+
+    window['quarto-listings'] = window['quarto-listings'] || {};
+    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
+
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  });
+
+  window.addEventListener('hashchange',() => {
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  })
+  </script>
 
 <script type="text/javascript">
 
@@ -144,40 +136,56 @@ ga('send', {
   'anonymizeIp': true,
 });
 </script>
-<style>
 
-      .quarto-title-block .quarto-title-banner {
-        background-image: url(feature.png);
-background-size: cover;
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
       }
-</style>
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
-
-<link rel="stylesheet" href="../../assets/posts.css">
-<meta property="og:title" content="Imad Dabbura - Airflow Part 6 - Sharing Data Between Tasks">
-<meta property="og:image" content="https://imaddabbura.github.io/posts/airflow/feature.png">
+<link rel="stylesheet" href="assets/listing.css">
+<meta property="og:title" content="Imad Dabbura - Data">
 <meta property="og:site_name" content="Imad Dabbura">
-<meta property="og:image:height" content="146">
-<meta property="og:image:width" content="345">
-<meta name="twitter:title" content="Imad Dabbura - Airflow Part 6 - Sharing Data Between Tasks">
-<meta name="twitter:image" content="https://imaddabbura.github.io/posts/airflow/feature.png">
+<meta name="twitter:title" content="Imad Dabbura - Data">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image-height" content="146">
-<meta name="twitter:image-width" content="345">
 </head>
 
 <body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+  <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
-    <img src="../../images/profile-pic.png" alt="" class="navbar-logo">
+    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    <img src="./images/profile-pic.png" alt="" class="navbar-logo">
     </a>
-    <a class="navbar-brand" href="../../index.html">
+    <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">Imad Dabbura</span>
     </a>
   </div>
@@ -188,28 +196,28 @@ background-size: cover;
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../about.html"> 
+    <a class="nav-link" href="./about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../posts.html"> 
+    <a class="nav-link" href="./posts.html"> 
 <span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../til.html"> <i class="bi bi-lightbulb" role="img">
+    <a class="nav-link" href="./til.html"> <i class="bi bi-lightbulb" role="img">
 </i> 
 <span class="menu-text">TIL</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../papers-summaries.html"> 
+    <a class="nav-link" href="./papers-summaries.html"> 
 <span class="menu-text">Papers’ Summaries</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../dl-tips-tricks.html"> 
+    <a class="nav-link" href="./dl-tips-tricks.html"> 
 <span class="menu-text">DL Tips &amp; Tricks</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../projects-index.html"> 
+    <a class="nav-link" href="./projects-index.html"> 
 <span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -218,19 +226,23 @@ background-size: cover;
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-more">    
         <li>
-    <a class="dropdown-item" href="../../books-summaries.html">
+    <a class="dropdown-item" href="./data-index.html">
+ <span class="dropdown-text">Data</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./books-summaries.html">
  <span class="dropdown-text">Books’ Summaries</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../reading-list.html">
+    <a class="dropdown-item" href="./reading-list.html">
  <span class="dropdown-text">Reading List</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../resume.html">
+    <a class="dropdown-item" href="./resume.html">
  <span class="dropdown-text">Resume</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../misc-notes.html">
+    <a class="dropdown-item" href="./misc-notes.html">
  <span class="dropdown-text">Misc. Notes</span></a>
   </li>  
     </ul>
@@ -256,148 +268,309 @@ background-size: cover;
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
-      <h1 class="title">Airflow Part 6 - Sharing Data Between Tasks</h1>
-                                <div class="quarto-categories">
-                <div class="quarto-category">Data Engineering</div>
-                <div class="quarto-category">MLOps</div>
-                <div class="quarto-category">Airflow</div>
-              </div>
-                  </div>
-  </div>
-    
-  
-  <div class="quarto-title-meta">
-
-      <div>
-      <div class="quarto-title-meta-heading">Author</div>
-      <div class="quarto-title-meta-contents">
-               <p>Imad Dabbura </p>
-            </div>
-    </div>
-      
-      <div>
-      <div class="quarto-title-meta-heading">Published</div>
-      <div class="quarto-title-meta-contents">
-        <p class="date">February 28, 2022</p>
-      </div>
-    </div>
-    
-      <div>
-      <div class="quarto-title-meta-heading">Modified</div>
-      <div class="quarto-title-meta-contents">
-        <p class="date-modified">February 28, 2022</p>
-      </div>
-    </div>
-      
-    </div>
-    
-  
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         
-    </div>
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(8)</span></div><div class="category" data-category="Airflow">Airflow <span class="quarto-category-count">(8)</span></div><div class="category" data-category="Data Engineering">Data Engineering <span class="quarto-category-count">(8)</span></div></div></div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content column-page-left" id="quarto-document-content">
 
-
-
-
-
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Data</h1>
 </div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Other than my experience and the documentation, the main resource behind this post and figures is the fantastic book: <a href="https://www.manning.com/books/data-pipelines-with-apache-airflow">Data Pipelines with Apache. Airflow</a>.</p>
-</div>
-</div>
-<ul>
-<li>It is meant to exchange messages between tasks, which is some form of shared state</li>
-<li>We can use dag instance to push/pull data between tasks:
-<ul>
-<li><code>conext["dag_instance"].xcom_push(key="data_name", value="value")</code> to push data to metastore. It also store the <code>dag_id</code>, <code>task_id</code>, &amp; <code>execution_date</code>.</li>
-<li><code>conext["dag_instance"].xcom_pull(key="data_name")</code> which pull the shared data. We can also specify <code>dag_id</code> and <code>execution_date</code>.</li>
-<li>We can also access push/pull methods in templates using <code>task_instance.xcom_push()</code> or <code>task_instance.xcom_pull()</code></li>
-<li>We can view the shared data on the UI by going to Admin -&gt; XComs</li>
-</ul></li>
-<li><strong>Limitations</strong>:
-<ul>
-<li>XComs data will be pickled and stored in the database -&gt; The objects have to be serializable</li>
-<li>Size limitations:
-<ul>
-<li>SQLite—Stored as BLOB type, 2GB limit</li>
-<li>PostgreSQL—Stored as BYTEA type, 1 GB limit</li>
-<li>MySQL—Stored as BLOB type, 64 KB limit</li>
-</ul></li>
-<li>It create hidden dependency between tasks because now the task the pushes the shared state has to push the data before the task that pulls the data. Airflow won’t manage/respect this dependency the developer has to document this and make sure this is not an issue based on the tasks’ order</li>
-</ul></li>
-<li>Due to its limitations in terms of size, we can create custom backends for XComs by defining a class that inherits from <code>BaseXCom</code> and implements two static methods. Airflow will use this class. It can be added to <code>xcom_backend</code> parameter in the Airflow configWe can use cheap/large storage services on the cloud such as Amazon S3, Azure Blob Storage, or Google GCS.</li>
-</ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Any</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> airflow.models.xcom <span class="im">import</span> BaseXCom</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> CustomXComBackend(BaseXCom):</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">@staticmethod</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> serialize(value: Any):</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        ...</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">@staticmethod</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> deserialize(result):</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        ...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li>If most of tasks are PythonOperators, we can use <code>Taskflow</code> API that takes care of passing state between tasks and avoid the boilerplate code that we have to write with regular API. We need to just decorate the function that we use in the PythonOperator with <code>@task</code> and Airflow will take care of the rest by passed XCom data between tasks. Example:</li>
-</ul>
-<p><a href="images/taskflow-example.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="images/taskflow-example.png" class="img-fluid"></a></p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> airflow.decorators <span class="im">import</span> task</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> DAG(...) <span class="im">as</span> dag:</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    start <span class="op">=</span> DummyOperator(task_id<span class="op">=</span><span class="st">"start"</span>)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    start <span class="op">&gt;&gt;</span> fetch_sales</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    start <span class="op">&gt;&gt;</span> fetch_weather</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    fetch_sales <span class="op">&gt;&gt;</span> clean_sales</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    fetch_weather <span class="op">&gt;&gt;</span> clean_weather</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    [clean_sales, clean_weather] <span class="op">&gt;&gt;</span> join_datasets</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">@task</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> train_model():</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        model_id <span class="op">=</span> <span class="bu">str</span>(uuid.uuid4())</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Airflow will figure out that the return value is XCom</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="co"># and would take care of pushing it</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> model_id</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">@task</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> deploy_model(model_id: <span class="bu">str</span>):</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Airflow would realize that this task uses XCom so it passes</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>        <span class="co"># it from XCom</span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Deploying model </span><span class="sc">{</span>model_id<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>model_id <span class="op">=</span> train_model()</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>deploy_model(model_id)</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Now train_model and deploy_model will be new tasks</span></span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="co"># with explicit dependeny. </span></span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="co"># The task type is PythonDecoratedOperator</span></span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>join_datasets <span class="op">&gt;&gt;</span> model_id</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li>Any data passed between Taskflow-style tasks will be stored as XComs and subject to the same limitations of XCom</li>
-<li>The main limitation of Taskflow API is that it is still only for PythonOperators</li>
-</ul>
 
 
 
-<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<div class="quarto-title-meta column-page-left">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+
+
+
+
+<div class="quarto-listing quarto-listing-container-grid" id="listing-listing">
+<div class="list grid quarto-listing-cols-3">
+<div class="g-col-1" data-index="0" data-categories="Data Engineering,Airflow" data-listing-date-sort="1648443600000" data-listing-file-modified-sort="1769633368569" data-listing-date-modified-sort="1648443600000" data-listing-reading-time-sort="4" data-listing-word-count-sort="678">
+<a href="./data/airflow/Best-Practices.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img src="./data/airflow/images/best-practices.png" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Airflow Part 8 - Best Practices
+</h5>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Data Engineering'); return false;">
+Data Engineering
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Airflow'); return false;">
+Airflow
+</div>
+</div>
+<div class="card-text listing-description">
+Other than my experience and the documentation, the main resource behind this post and figures is the fantastic book: Data Pipelines with Apache. Airflow.
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+
+</div>
+<div class="listing-date">
+Mar 28, 2022
+</div>
+</div>
+</div>
+</div>
+</a>
+</div>
+<div class="g-col-1" data-index="1" data-categories="Data Engineering,Airflow" data-listing-date-sort="1647234000000" data-listing-file-modified-sort="1769633368601" data-listing-date-modified-sort="1647234000000" data-listing-reading-time-sort="8" data-listing-word-count-sort="1456">
+<a href="./data/airflow/Triggering-Workflows.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img src="./data/airflow/images/triggering-workflows.png" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Airflow Part 7 - Triggering Workflows
+</h5>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Data Engineering'); return false;">
+Data Engineering
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Airflow'); return false;">
+Airflow
+</div>
+</div>
+<div class="card-text listing-description">
+Other than my experience and the documentation, the main resource behind this post and figures is the fantastic book: Data Pipelines with Apache. Airflow.
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+
+</div>
+<div class="listing-date">
+Mar 14, 2022
+</div>
+</div>
+</div>
+</div>
+</a>
+</div>
+<div class="g-col-1" data-index="2" data-categories="Data Engineering,Airflow" data-listing-date-sort="1646028000000" data-listing-file-modified-sort="1769633368587" data-listing-date-modified-sort="1646028000000" data-listing-reading-time-sort="4" data-listing-word-count-sort="626">
+<a href="./data/airflow/Sharing-Data-Between-Tasks.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img src="./data/airflow/images/data-sharing.png" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Airflow Part 6 - Sharing Data Between Tasks
+</h5>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Data Engineering'); return false;">
+Data Engineering
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Airflow'); return false;">
+Airflow
+</div>
+</div>
+<div class="card-text listing-description">
+Other than my experience and the documentation, the main resource behind this post and figures is the fantastic book: Data Pipelines with Apache. Airflow.
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+
+</div>
+<div class="listing-date">
+Feb 28, 2022
+</div>
+</div>
+</div>
+</div>
+</a>
+</div>
+<div class="g-col-1" data-index="3" data-categories="Data Engineering,Airflow" data-listing-date-sort="1644818400000" data-listing-file-modified-sort="1769633368578" data-listing-date-modified-sort="1644818400000" data-listing-reading-time-sort="7" data-listing-word-count-sort="1321">
+<a href="./data/airflow/Dependencies-Between-Tasks.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img src="./data/airflow/images/task-dependencies.png" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Airflow Part 5 - Dependencies Between Tasks
+</h5>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Data Engineering'); return false;">
+Data Engineering
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Airflow'); return false;">
+Airflow
+</div>
+</div>
+<div class="card-text listing-description">
+Other than my experience and the documentation, the main resource behind this post and figures is the fantastic book: Data Pipelines with Apache. Airflow.
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+
+</div>
+<div class="listing-date">
+Feb 14, 2022
+</div>
+</div>
+</div>
+</div>
+</a>
+</div>
+<div class="g-col-1" data-index="4" data-categories="Data Engineering,Airflow" data-listing-date-sort="1644213600000" data-listing-file-modified-sort="1769633368593" data-listing-date-modified-sort="1644213600000" data-listing-reading-time-sort="5" data-listing-word-count-sort="968">
+<a href="./data/airflow/Task-Context-And-Templating.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img src="./data/airflow/images/task-context.png" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Airflow Part 4 - Task Context &amp; Jinja Templating
+</h5>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Data Engineering'); return false;">
+Data Engineering
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Airflow'); return false;">
+Airflow
+</div>
+</div>
+<div class="card-text listing-description">
+Other than my experience and the documentation, the main resource behind this post and figures is the fantastic book: Data Pipelines with Apache. Airflow.
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+
+</div>
+<div class="listing-date">
+Feb 7, 2022
+</div>
+</div>
+</div>
+</div>
+</a>
+</div>
+<div class="g-col-1" data-index="5" data-categories="Data Engineering,Airflow" data-listing-date-sort="1643004000000" data-listing-file-modified-sort="1769633368560" data-listing-date-modified-sort="1643004000000" data-listing-reading-time-sort="6" data-listing-word-count-sort="1123">
+<a href="./data/airflow/Airflow-Scheduling.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img src="./data/airflow/images/scheduling.png" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Airflow Part 3 - DAG Scheduling
+</h5>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Data Engineering'); return false;">
+Data Engineering
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Airflow'); return false;">
+Airflow
+</div>
+</div>
+<div class="card-text listing-description">
+Other than my experience and the documentation, the main resource behind this post and figures is the fantastic book: Data Pipelines with Apache. Airflow.
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+
+</div>
+<div class="listing-date">
+Jan 24, 2022
+</div>
+</div>
+</div>
+</div>
+</a>
+</div>
+<div class="g-col-1" data-index="6" data-categories="Data Engineering,Airflow" data-listing-date-sort="1642399200000" data-listing-file-modified-sort="1769633368549" data-listing-date-modified-sort="1642399200000" data-listing-reading-time-sort="3" data-listing-word-count-sort="403">
+<a href="./data/airflow/Airflow-DAGs.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img src="./data/airflow/images/dags.png" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Airflow Part 2 - DAGs
+</h5>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Data Engineering'); return false;">
+Data Engineering
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Airflow'); return false;">
+Airflow
+</div>
+</div>
+<div class="card-text listing-description">
+Other than my experience and the documentation, the main resource behind this post and figures is the fantastic book: Data Pipelines with Apache. Airflow.
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+
+</div>
+<div class="listing-date">
+Jan 17, 2022
+</div>
+</div>
+</div>
+</div>
+</a>
+</div>
+<div class="g-col-1" data-index="7" data-categories="Data Engineering,Airflow" data-listing-date-sort="1641794400000" data-listing-file-modified-sort="1769633368612" data-listing-date-modified-sort="1641794400000" data-listing-reading-time-sort="4" data-listing-word-count-sort="669">
+<a href="./data/airflow/What-Is-Airflow.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img src="./data/airflow/images/what-is-airflow.png" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Airflow Part 1 - What is Airflow?
+</h5>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Data Engineering'); return false;">
+Data Engineering
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Airflow'); return false;">
+Airflow
+</div>
+</div>
+<div class="card-text listing-description">
+Other than my experience and the documentation, the main resource behind this post and figures is the fantastic book: Data Pipelines with Apache. Airflow.
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+
+</div>
+<div class="listing-date">
+Jan 10, 2022
+</div>
+</div>
+</div>
+</div>
+</a>
+</div>
+</div>
+<div class="listing-no-matching d-none">
+No matching items
+</div>
+</div><a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     // Only add citation to post pages (not index, about, etc.)
@@ -1027,14 +1200,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
     <li class="nav-item compact">
-    <a class="nav-link" href="https://www.linkedin.com/in/imaddabbura/">
-      <i class="bi bi-linkedin" role="img">
+    <a class="nav-link" href="https://twitter.com/imadphd">
+      <i class="bi bi-twitter" role="img">
 </i> 
     </a>
   </li>  
     <li class="nav-item compact">
-    <a class="nav-link" href="mailto:imad.dabbura@hotmail.com">
-      <i class="bi bi-envelope" role="img">
+    <a class="nav-link" href="https://www.linkedin.com/in/imaddabbura/">
+      <i class="bi bi-linkedin" role="img">
 </i> 
     </a>
   </li>  
@@ -1045,8 +1218,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </a>
   </li>  
     <li class="nav-item compact">
-    <a class="nav-link" href="https://twitter.com/imadphd">
-      <i class="bi bi-twitter" role="img">
+    <a class="nav-link" href="https://medium.com/@ImadPhd">
+      <i class="bi bi-medium" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="mailto:imad.dabbura@hotmail.com">
+      <i class="bi bi-envelope" role="img">
 </i> 
     </a>
   </li>  
@@ -1054,31 +1233,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","openEffect":"zoom","loop":false,"descPosition":"bottom","selector":".lightbox"});
-window.onload = () => {
-  lightboxQuarto.on('slide_before_load', (data) => {
-    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
-    const href = trigger.getAttribute('href');
-    if (href !== null) {
-      const imgEl = window.document.querySelector(`a[href="${href}"] img`);
-      if (imgEl !== null) {
-        const srcAttr = imgEl.getAttribute("src");
-        if (srcAttr && srcAttr.startsWith("data:")) {
-          slideConfig.href = srcAttr;
-        }
-      }
-    } 
-  });
-
-  lightboxQuarto.on('slide_after_load', (data) => {
-    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
-    if (window.Quarto?.typesetMath) {
-      window.Quarto.typesetMath(slideNode);
-    }
-  });
-
-};
-          </script>
 
 
 
