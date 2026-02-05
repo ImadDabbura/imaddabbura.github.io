@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.553">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Imad Dabbura">
+<meta name="dcterms.date" content="2023-12-20">
+
+<title>Imad Dabbura - I Built My Own PyTorch (Tiny Version) — Here’s Everything I Learned</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete-preset-algolia.umd.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../images/profile-pic.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "algolia": {
+    "application-id": "PVDXB8B7OS",
+    "search-only-api-key": "eb3007c200831c30465f8a5172690cf0",
+    "index-name": "Initial-Website-Search-Index",
+    "analytics-events": true,
+    "show-logo": true,
+    "libDir": "site_libs"
+  },
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdn.jsdelivr.net/npm/algoliasearch@4.5.1/dist/algoliasearch-lite.umd.js"></script>
+
+
+<script type="text/javascript">
+var ALGOLIA_INSIGHTS_SRC = "https://cdn.jsdelivr.net/npm/search-insights/dist/search-insights.iife.min.js";
+!function(e,a,t,n,s,i,c){e.AlgoliaAnalyticsObject=s,e[s]=e[s]||function(){
+(e[s].queue=e[s].queue||[]).push(arguments)},i=a.createElement(t),c=a.getElementsByTagName(t)[0],
+i.async=1,i.src=n,c.parentNode.insertBefore(i,c)
+}(window,document,"script",ALGOLIA_INSIGHTS_SRC,"aa");
+</script>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-plugin-algolia-insights">
+
+</script>
+
+<script type="text/javascript">
+
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-127825273-1', 'auto');
+
+ga('send', {
+  hitType: 'pageview',
+  'anonymizeIp': true,
+});
+</script>
+<style>
+
+      .quarto-title-block .quarto-title-banner {
+        background-image: url(images/dl-system-image.jpeg);
+background-size: cover;
+      }
+</style>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../assets/posts.css">
+<meta property="og:title" content="Imad Dabbura - I Built My Own PyTorch (Tiny Version) — Here’s Everything I Learned">
+<meta property="og:description" content="Inside the engineering decisions, optimizations, and trade-offs behind a homegrown deep learning framework">
+<meta property="og:image" content="https://imaddabbura.github.io/posts/mlsys/images/dl-system-image.jpeg">
+<meta property="og:site_name" content="Imad Dabbura">
+<meta name="twitter:title" content="Imad Dabbura - I Built My Own PyTorch (Tiny Version) — Here’s Everything I Learned">
+<meta name="twitter:description" content="Inside the engineering decisions, optimizations, and trade-offs behind a homegrown deep learning framework">
+<meta name="twitter:image" content="https://imaddabbura.github.io/posts/mlsys/images/dl-system-image.jpeg">
+<meta name="twitter:creator" content="@imaddabbura">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../images/profile-pic.png" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Imad Dabbura</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../posts.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../til.html"> <i class="bi bi-lightbulb" role="img">
+</i> 
+<span class="menu-text">TIL</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../papers-summaries.html"> 
+<span class="menu-text">Papers’ Summaries</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../dl-tips-tricks.html"> 
+<span class="menu-text">DL Tips &amp; Tricks</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../projects-index.html"> 
+<span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-more" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">More</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-more">    
+        <li>
+    <a class="dropdown-item" href="../../data-index.html">
+ <span class="dropdown-text">Data</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../books-summaries.html">
+ <span class="dropdown-text">Books’ Summaries</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../reading-list.html">
+ <span class="dropdown-text">Reading List</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../resume.html">
+ <span class="dropdown-text">Resume</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../misc-notes.html">
+ <span class="dropdown-text">Misc. Notes</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/imaddabbura"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">I Built My Own PyTorch (Tiny Version) — Here’s Everything I Learned</h1>
+            <p class="subtitle lead">Inside the engineering decisions, optimizations, and trade-offs behind a homegrown deep learning framework</p>
+                                <div class="quarto-categories">
+                <div class="quarto-category">MLSys</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Imad Dabbura </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">December 20, 2023</p>
+      </div>
+    </div>
+    
+      <div>
+      <div class="quarto-title-meta-heading">Modified</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date-modified">May 2, 2026</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p>Below are some notes I wrote down while developing <a href="https://github.com/ImadDabbura/tiny-pytorch"><code>tiny_pytorch</code></a> library.</p>
+<ul>
+<li>DL frameworks:
+<ul>
+<li>Caffe (Only C++):
+<ul>
+<li>Define a computation in terms of <code>layers</code></li>
+<li>Each layer implements forward and backward methods</li>
+<li>The change would be inplace</li>
+<li>The backward pass implementation is natural and intuitive from Hinton’s paper</li>
+</ul></li>
+<li>Tensorflow:
+<ul>
+<li>Construct static graph before we can execute it</li>
+<li>Make it easy for optimizations such as fusing operations together, reusing memory, execute only what is needed at run-time</li>
+<li>Hard to debug and experiment with the output of each step</li>
+<li>It is not intuitive and has its own programming language</li>
+</ul></li>
+<li>Pytorch:
+<ul>
+<li>Construct dynamic computation graph called <strong>define by run</strong></li>
+<li>Very easy to debug and experiment with computation graph</li>
+<li>Can mix python control flow and computations</li>
+<li>Typically slower. New advancement allowed for JIT compilation to speed up the execution.</li>
+</ul></li>
+</ul></li>
+<li>Automatic differentiation
+<ul>
+<li>Forward mode AD: We start from input node to output node where at each step we take the partial derivative of that node with respect to the input node
+<ul>
+<li>For each input, we do full AD forward pass. I.e. If we have <code>n</code> inputs, we need to do <code>n</code> AD forward passes</li>
+<li>Since most loss functions are scalars and input size <code>n</code> is very large -&gt; inefficient</li>
+</ul></li>
+<li>Backward mode AD: We start from output node to input node where at each step we take the partial derivative of output node with respect to input node. In other words, we compute the gradient of the scalar function with respect to all input nodes in a single backward pass. This will create a computational graph for the gradients that would also let us compute the gradients of the gradients if we add more operations to it.
+<ul>
+<li>The gradients at each node tells us how much the node needs to change to change output in the steepest ascent/descent direction (locally)</li>
+<li>Pros: we can do more optimizations to utilize the underlying HW and fuse node/ops together. It is also very efficient since most of the functions in DL have 1 or very few outputs.</li>
+<li>Cons: We need to store the intermediate results for each step. This means we need to store the input tensors and the operation that created the tensor so we know how to compute its gradients during the backward pass -&gt; More memory usage</li>
+</ul></li>
+</ul></li>
+<li>Initialization
+<ul>
+<li>The effect of weights initialization persists throughout training
+<ul>
+<li>It affects the relative norms of the activations and the gradients over time</li>
+<li>If we don’t initialize the weights appropriately (such as <span class="math inline">\(2/n\)</span> for ReLU), the L2-norm of the activations/gradients will change over time during training, which will lead to either no training or exploding</li>
+</ul></li>
+<li>Weights don’t change much from their initial values after training
+<ul>
+<li>It may change in some direction/dimension more but overall the weights don’t change much relative to the initial values especially for deep NN. We can see this if we plot the variance of the weights before and after training for each layer. We typically see very similar variances for the weights before/after training</li>
+</ul></li>
+<li>Proper weight initializations speed up training and converge to much lower error rates</li>
+<li>We can judge the effect of initialization by computing the norm of both the weights and the gradients at every layer over all iterations</li>
+</ul></li>
+<li>Normalization. The idea is that if we know that the norms of the activations/gradients would change over time during training due to poor initializations, we can add normalization layer that would fix this issue by always normalizing the activations of any layer to have zero mean and variance 1
+<ul>
+<li>Batch Normalization:
+<ul>
+<li>Helps trains much faster by normalizing across all examples and maintain different relative norms between activations within layers. This would overcome the issue of losing the discriminative nature of different sizes of activations since we normalize across batches for each feature separately</li>
+<li>Drawbacks:
+<ul>
+<li>Dependency between samples in the same batch as each one is dependent on other examples in the same batch.</li>
+<li>Unstable training with small batches where we may have infinite variance</li>
+<li>Doesn’t work with RNNs as hidden state depends on all previous hidden states/input in the sequence (temporal dependency) and we can’t just compute stats for each time step independently</li>
+</ul></li>
+</ul></li>
+<li>Layer Normalization:
+<ul>
+<li>It fixes the problem of varying norms of layer activations as well as solve the problem where we have only one sample in the batch that batch normalization have. It normalize across all features for each sample</li>
+<li>It also fixes the problem of RNNs with BatchNorm as it applies the normalization of features (embedding dimension) for each token in each batch -&gt; widely used in RNNs and Transformer architectures</li>
+<li>The main drawback is that is it is hard to drive the network to low loss especially for fully connected networks because after applying the layer norm the difference between activations for different examples will be lost because it forces the mean to be zero and the standard deviation to be 1, but relative norms are very important feature to discriminate between classes</li>
+</ul></li>
+</ul></li>
+<li>Regularization.
+<ul>
+<li>Implicit regularization refers to optimizing for all NN that are only considered by the learning algorithms such as SGD with a given weight initialization (remember that weights change very little from their initial values)</li>
+<li>Explicit regularization refers to changing the NN and training procedure to limit the functions learned such as L2-regularization and Dropout
+<ul>
+<li>The premise is that the magnitude of the parameters is a good proxy for complexity. Smoother functions don’t change dramatically for small changes and thus they have smaller weights. As a result, we can limit the magnitude of the parameters to be small by adding a penalty to the loss function such as L2 regularization so the weights are smaller.</li>
+<li>Dropout. It is useful to think of dropout as a stochastic approximation of the activations for each layer. It is very similar for what stochastic gradient descent does to approximate gradients. We need to divide activations and gradients by <span class="math inline">\(1/(1 - p)\)</span> to keep the expected activations/gradients the same since each node has probability <span class="math inline">\(1 - p\)</span> to stay active</li>
+<li>L2 regularization is different than weight decay for optimizer like Adam even through they are equivalent for vanilla SGD. The reason is that the update includes computing the first and second moments of the gradients, which means adding the weight decay directly to the gradient leads to less effective results compared to adding the weight decay only when performing the update without changing the gradients</li>
+</ul></li>
+</ul></li>
+<li>Broadcasting doesn’t copy data but only changes strides. With automatic differentiation, we basically sum across all the dimensions that we broadcasted</li>
+<li>Reshape/view can in sometimes copy data if we can’t use striding to change the shape of the tensor</li>
+<li>Hardware acceleration:
+<ul>
+<li>We need to pay attention to memory alignment because hardware can only load data into caches in one-go as a cache line of 64 bytes if they are aligned. Otherwise, we need more than one load.</li>
+<li>Most BLAS libraries are implemented using Fortran that uses column-major format to store ND-arrays.</li>
+<li>Stride format is more general and we can use it to get any format including row-major or column-major format.
+<ul>
+<li>Example: With 2d array A:
+<ul>
+<li>row-major: stride[0] = A.shape[1], stride[1] = 1</li>
+<li>column-major: stride[0] = 1, stride[1] = A.shape[0]</li>
+</ul></li>
+<li>Advantages:
+<ul>
+<li>We can have slices that use the same underlying memory by with different offsets to begin the slice as well as shape and stride. The same thing can be used with <code>transpose</code> by swapping the strides and change the shape. Finally, <code>broadcast</code> can be done by inserting a stride equal to 0.</li>
+</ul></li>
+<li>Disadvantages:
+<ul>
+<li>Memory access becomes not contiguous which makes vectorization hard. Some linear algebra libraries require arrays to be compact.</li>
+</ul></li>
+</ul></li>
+<li>Parallelization: We can use <code>OpenMP</code> to parallelize the operation by executing it using multiple threads on different cores in parallel.
+<ul>
+<li>Example: <code>#pragma use omp parallel for</code> before the loop.</li>
+</ul></li>
+</ul></li>
+<li>Hardware acceleration implementation:
+<ul>
+<li>CPU/GPU or any other device let us create flat array which is a consecutive slots of memory together. Therefore, we need shape, stride, and offset to create ND arrays view of flat array</li>
+<li>All operations leads to creating new output array to store the results regardless of the backend device</li>
+<li>Changing the device of an array involves copying the data from one device to the other. In tiny-pytorch, we are using numpy as a bridge. So we first create a numpy array of the input array and then create the final array on the intended device</li>
+<li>With shape, stride, and offset: we can create different views of the same array that all share the same underlying memory. The output array is just a different NDArray data structure with the same underlying array. Example: Slice, Transpose, and Broadcast.</li>
+<li>When we do slicing, the resulting view may not be contiguous (compact). This means we can’t pass the array handler because the operation will be applied to all the elements of the original array. Therefore, we need to first check if the input array is compact before doing the operation.
+<ul>
+<li>The array is compact if offset = 0 &amp; strides correspond to the row-major order. Otherwise, we need to make it compact by creating new array with the sliced data (creating a copy with new memory slots).</li>
+<li>Some frameworks such as Numpy and Pytorch allows users to do operations on non-contiguous arrays and they handle that in their implementations w/o the need to create new contiguous array. However, in some cases they may still force us to have contiguous array such as in matmul operations to have faster access to the elements and speed up operations.</li>
+</ul></li>
+</ul></li>
+<li>Training larger models: large datasets require large models which have large capacity. This will put pressure on compute devices and put them to the limit.
+<ul>
+<li>Shared memory on each core is typically 64KB.</li>
+<li>Global memory of GPU becomes the bottleneck for large models because it typically has 10GB for most devices and we can’t fit most larger models in 10GB.</li>
+<li>Techniques to save memory:
+<ul>
+<li>Inference: Use few buffers that will hold the activations of the layers. Every few layers, we reuse the same buffers we used in earlier computations. So instead of allocating N buffers, we can use 2 or 3 buffers that will be reused in the forward computations.</li>
+<li>Training: Because each activation is needed for the backward pass to compute the gradients, we can’t just deallocate the buffers. As a workaround we can use checkpointing. This technique involves checkpointing <code>K</code> layers/activations which is typically <code>sqrt(N)</code> and not store the whole N activations. During the backward pass, we recompute the values needed by running forward pass again for small segments at a time. This would make sublinear memory allocation and allows us to have bigger models at the expense of more computations due to segments forward pass done during gradient computation. We can pick activations that don’t require heavy computations such as ReLU as non-stored activations as opposed to something like convolution which is computation-heavy.</li>
+</ul></li>
+<li>Parallel and Distributed Training: We can leverage multiple GPU devices that are possibly distributed across several worker nodes to train the model. Parallelism can either be by model partitioning or data partitioning:
+<ul>
+<li>Model partitioning: break up the computation graph into multiple parts and pipeline the computations such that different worker nodes will be performing different parts of the computation at the same time and do the communication through send/recv at the boundaries of the graph.</li>
+<li>Data partitioning: every worker runs the same replica of the model but using different micro batches and then the gradients can be summed from all workers since they are independent.
+<ul>
+<li>We can either use parameter server that receives all the gradients from all workers and then sum them up and perform the updates on the weights which then is sent to all workers so that they can be used in next micro batches. Each worker can start sending the gradients as soon as they are ready before waiting for all the gradients to be finished. This will increase the parallelism and allows workers to send the gradients while other gradient computation is being performed.</li>
+<li>Or we can use allreduce() which sums up all gradients from all workers and send them back so each worker then can perform the updates</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>GANs: The main goal is to generate images by the generator model that looks real and hard to tell they are fake, which means making the distribution of the generated images as close as possible to the distribution of the real images. This is done by training a discriminator and a generator which are trained through iterative process:
+<ul>
+<li>Generator’s input is random vector and tries to generate image that looks real by maximizing the negative log-likelihood of the discriminator loss. This means make it harder for the discriminator to predict that it is fake and tries to bring the probability to 1.</li>
+<li>Discriminator’s input is both fake images generated by the generator and real images where fake images would have label = 0 and real images would have label = 1 and tries to minimize the negative log-likelihood. So the role of the discriminator is to guide the generator to generate better images and make it focus on what it takes to generate fake images that can’t be differentiated from real images.</li>
+<li>It is called <em>adversarial</em> because the generator is able to learn subtle corner cases that looks the same for the human eye but are actually different for each distribution</li>
+<li>Deconvolution or Conv2dTranspose is the opposite of convolution when we take a small vector and convert it to a much bigger space such as image</li>
+</ul></li>
+<li>CNN:
+<ul>
+<li>Parameter sharing: We don’t care where is the object in the image. The filter should always be able to detect it w/o having different filters for different locations in the image</li>
+<li>Sparse connectivity: Each receptive field has local spatial computation -&gt; very few parameters needed</li>
+<li>translation equivariant: Local transformation leads to same transformation after convolution</li>
+<li>Captures local changes (context). That is why it is useful for temporal problems that depend heavily on the most recent past</li>
+<li>Dilation: To increase receptive field of each feature by having access to bigger spatial area (spread out according to the dilation factor)</li>
+<li>We can think of convolution in terms of matrix multiplication. The weight matrix just have to be constructed in a way that reflects the convolution operation filled with the actual weights and zeros
+<ul>
+<li>Note that we don’t actually construct this matrix as it would be huge but we use that conceptually</li>
+</ul></li>
+<li>Multiplying by the transpose of a convolution is equivalent to convolving with a flipped version of the filter. This means the derivative of a convolution is to flip the filter and convolve with that</li>
+</ul></li>
+<li>Sequence modeling helps when there is temporal dependence between x/y pairs. We typically would assume that x/y pair are i.i.d for tasks such as image classification. With tasks such as part of speech recognition or autoregressiove prediction (such as time series forecasting and language modeling), temporal dependence is key to predict next token or label because the token/input can’t be understood alone without its context -&gt; can’t predict the label correctly without encoding the previous inputs.
+<ul>
+<li>RNNs: the whole past compacted in the last hidden state that makes learning harder due to the long history which may lead to exploding/vanishing gradients. Also, the far past such as x1 will have less weight if at all compared to xt even with LSTM.
+<ul>
+<li>Maintains a hidden state over time where the hidden state at time <span class="math inline">\(t\)</span> is a function of the input at time <span class="math inline">\(t\)</span> and hidden state at time <span class="math inline">\(t -1\)</span>. Therefore, in theory, the hidden state at the last time step should capture all the inputs from <span class="math inline">\(t_0\)</span> to <span class="math inline">\(t_T\)</span></li>
+<li>Weights are shared across all time steps. When unrolling RNN, we can think of it as each time step is its own layer but the weights are shared</li>
+<li>Gradients are calculated use <strong>Backpropagation Through Time</strong> because weights are shared across all time steps. This leads to gradient vanishing/exploding. If eigenvalue of weight is less than 1 -&gt; vanishing. If it is greater than 1 -&gt; explode</li>
+</ul></li>
+<li>LSTM
+<ul>
+<li>Solve the problem of vanishing gradients by breaking down the overall hidden state into two states: hidden state and cell state</li>
+<li>We have four gates (weights) that determine at each time step:
+<ul>
+<li>What information from the past to keep and what to forget using forget/input gates and previous cell state to update cell state</li>
+<li>What information to pass to next hidden state using output gate and cell state</li>
+</ul></li>
+<li>Both LSTM/RNN have issues remembering things further in the past in their last hidden state. The influence of recent tokens is much more than tokens further in the past as they have more of direct connection with the current hidden state</li>
+</ul></li>
+<li>Direct prediction: We use all the past inputs to predict the next output; no hidden state. This is a drawback because we don’t have compact representation (latent state) of the past.</li>
+<li>Temporal CNN: It works well for tasks such as speech generation but suffers from the relatively small receptive field. This means hidden state at any time step t can only capture few of the past history and this is not good. We can increase filter size or use dilation but still is not optimal.</li>
+<li>Transformer: We can use attention that take all the history and weight them (attention matrix) so we are sure we’re incorporating all the past
+<ul>
+<li>Global receptive field -&gt; q, k, v have access to all inputs over all time <span class="math inline">\(t\)</span>
+<ul>
+<li>For autoregressiove modeling, add mask to restrict accesss to inputs to only current and previous inputs</li>
+</ul></li>
+<li>Order invariant. Permutation to any weight matrix K/Q/V would lead to change the output in the same way. Add positional encoding to capture order of input</li>
+</ul></li>
+</ul></li>
+<li>Model Deployment:
+<ul>
+<li>Considerations:
+<ul>
+<li>Application env restrictions: model-size, no-python</li>
+<li>Leverage existing HW accelerators such as mobile GPUs, NPUs, accelerated CPU instructions</li>
+<li>Integrate with applications</li>
+</ul></li>
+</ul></li>
+<li><code>im2col</code>: Do convolution in a form of matrix multiplication by first using strided operation to create the im2col matrix then reshape it to 2D tensor. Also, the weight which is 4D tensor would be reshaped to 2D tensor.
+<ul>
+<li>For batches of images with multiple channels where images are represented in the form of <span class="math inline">\(N x H x W x C_{in}\)</span> tensors and weights as <span class="math inline">\(K x K x C_{in} x
+C_{out}\)</span>:
+<ul>
+<li>Create a new 6D tensor for images with dimensions: <span class="math inline">\(N x H_new x W_new x K
+x K x C_{in}\)</span></li>
+<li>Reshape the batch to create im2col matrix with dimensions: <span class="math inline">\((N*H_new*W_new) x (K*K*C_{in})\)</span></li>
+<li>Reshape weight tensor to <span class="math inline">\((K*K*C_{in}) x C_{out}\)</span></li>
+<li>Do the matrix-matrix multiplication</li>
+<li>Reshape the 2D output to new dimension: <span class="math inline">\(N x H_new x W_new x C_{out}\)</span></li>
+</ul></li>
+<li>Cons: im2col matrix would lead to the creation of new matrix with new memory which is huge and inefficient since reshape would have to copy the data as it can’t create the new matrix with existing strides</li>
+</ul></li>
+</ul>
+
+
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Only add citation to post pages (not index, about, etc.)
+    if (window.location.pathname.includes('/posts/')) {
+        // Find the main content area
+        const mainContent = document.querySelector('main');
+        if (mainContent) {
+            // Get metadata from the page
+            const titleElement = document.querySelector('h1.title');
+            const dateElement = document.querySelector('.date');
+            
+            const title = titleElement ? titleElement.textContent : 'Untitled';
+            const dateText = dateElement ? dateElement.textContent : new Date().toLocaleDateString();
+            
+            // Get the current post URL - construct proper GitHub Pages URL
+            const postPath = window.location.pathname;
+            const postUrl = 'https://imaddabbura.github.io' + postPath;
+            
+            // Parse date and format it
+            const date = new Date(dateText);
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                               "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const formattedDate = monthNames[date.getMonth()] + " " + date.getFullYear();
+            const year = date.getFullYear();
+            const month = monthNames[date.getMonth()];
+            
+            // Create citation HTML
+            const citationHTML = '<hr>' +
+                '<div class="callout callout-style-default callout-note no-icon callout-titled">' +
+                    '<div class="callout-header d-flex align-content-center">' +
+                        '<div class="callout-icon-container">' +
+                            '<i class="callout-icon no-icon"></i>' +
+                        '</div>' +
+                        '<div class="callout-title-container flex-fill">' +
+                            'How to Cite This Post' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="callout-body-container callout-body">' +
+                        '<p>If you found this useful, please cite this write-up as:</p>' +
+                        '<blockquote class="blockquote">' +
+                            '<p>Dabbura, Imad. (' + formattedDate + '). ' + title + '. https://imaddabbura.github.io. ' + postUrl + '.</p>' +
+                        '</blockquote>' +
+                        '<p>or</p>' +
+                        '<div class="sourceCode"><pre class="sourceCode bibtex code-with-copy"><code class="sourceCode bibtex">@article{dabbura' + year + ',\n' +
+                        '  title   = {' + title + '},\n' +
+                        '  author  = {Dabbura, Imad},\n' +
+                        '  journal = {https://imaddabbura.github.io},\n' +
+                        '  year    = {' + year + '},\n' +
+                        '  month   = {' + month + '},\n' +
+                        '  url     = {' + postUrl + '}\n' +
+                        '}</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>' +
+                    '</div>' +
+                '</div>';
+            
+            // Insert citation at the end of main content, before closing tag
+            mainContent.insertAdjacentHTML('beforeend', citationHTML);
+        }
+    }
+});
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/imaddabbura\.github\.io\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<script src="https://giscus.app/client.js" data-repo="imaddabbura/imaddabbura.github.io" data-repo-id="R_kgDOIEwRMg" data-category="General" data-category-id="DIC_kwDOIEwRMs4CRprP" data-mapping="title" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
+</script>
+<input type="hidden" id="giscus-base-theme" value="light">
+<input type="hidden" id="giscus-alt-theme" value="dark">
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Blog made with Quarto, by Imad Dabbura</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/imadphd">
+      <i class="bi bi-twitter" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/imaddabbura/">
+      <i class="bi bi-linkedin" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/imaddabbura">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://medium.com/@ImadPhd">
+      <i class="bi bi-medium" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="mailto:imad.dabbura@hotmail.com">
+      <i class="bi bi-envelope" role="img">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
