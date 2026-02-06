@@ -295,7 +295,7 @@ background-size: cover;
 <p>Forward Mode AD operates by propagating derivatives from input nodes to output nodes in a computational graph. At each step, it calculates the partial derivative of the current node with respect to the input node. This mode implements a straightforward approach to computing derivatives, making it particularly intuitive to understand.</p>
 <p>Key features:</p>
 <ol type="1">
-<li><p><strong>Multiple Passes Required</strong>: For a function with n inputs, Forward Mode AD requires n separate forward passes to compute all necessary derivatives. This characteristic makes it less efficient for functions with many input variables, which is often the case in deep learning applications.</p></li>
+<li><p><strong>Multiple Passes Required</strong>: For a function with <code>n</code> inputs, Forward Mode AD requires <code>n</code> separate forward passes to compute all necessary derivatives. This characteristic makes it less efficient for functions with many input variables, which is often the case in deep learning applications as most of the loss functions are scalars.</p></li>
 <li><p><strong>Implementation Using Dual Numbers</strong>: Forward Mode AD typically uses dual numbers (a + bε) to track both the value and its derivative simultaneously during computation. This elegant mathematical approach allows for efficient derivative computation alongside function evaluation.</p></li>
 <li><p><strong>Memory Efficiency</strong>: One advantage of Forward Mode AD is its relatively lower memory requirements compared to Reverse-mode. Since it doesn’t need to store intermediate results for backpropagation, it can be more memory-efficient for certain types of computations.</p></li>
 </ol>
@@ -1017,7 +1017,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"descPosition":"bottom","openEffect":"zoom","loop":false,"selector":".lightbox","closeEffect":"zoom"});
+<script>var lightboxQuarto = GLightbox({"loop":false,"selector":".lightbox","closeEffect":"zoom","descPosition":"bottom","openEffect":"zoom"});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;

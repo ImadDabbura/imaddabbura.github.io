@@ -20,7 +20,7 @@ Forward Mode AD operates by propagating derivatives from input nodes to output n
 
 Key features:
 
-1. **Multiple Passes Required**: For a function with n inputs, Forward Mode AD requires n separate forward passes to compute all necessary derivatives. This characteristic makes it less efficient for functions with many input variables, which is often the case in deep learning applications.
+1. **Multiple Passes Required**: For a function with `n` inputs, Forward Mode AD requires `n` separate forward passes to compute all necessary derivatives. This characteristic makes it less efficient for functions with many input variables, which is often the case in deep learning applications as most of the loss functions are scalars.
 
 2. **Implementation Using Dual Numbers**: Forward Mode AD typically uses dual numbers (a + bε) to track both the value and its derivative simultaneously during computation. This elegant mathematical approach allows for efficient derivative computation alongside function evaluation.
 
