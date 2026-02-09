@@ -114,6 +114,10 @@ ga('send', {
 background-size: cover;
       }
 </style>
+<meta name="mermaid-theme" content="default">
+<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -292,7 +296,83 @@ window.Quarto = {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#why-build-a-deep-learning-framework-from-scratch" id="toc-why-build-a-deep-learning-framework-from-scratch" class="nav-link active" data-scroll-target="#why-build-a-deep-learning-framework-from-scratch">Why Build a Deep Learning Framework from Scratch?</a>
+  <ul class="collapse">
+  <li><a href="#roadmap" id="toc-roadmap" class="nav-link" data-scroll-target="#roadmap">Roadmap</a></li>
+  </ul></li>
+  <li><a href="#the-evolution-of-dl-frameworks" id="toc-the-evolution-of-dl-frameworks" class="nav-link" data-scroll-target="#the-evolution-of-dl-frameworks">The Evolution of DL Frameworks</a>
+  <ul class="collapse">
+  <li><a href="#caffe-layers-all-the-way-down" id="toc-caffe-layers-all-the-way-down" class="nav-link" data-scroll-target="#caffe-layers-all-the-way-down">Caffe: Layers All the Way Down</a></li>
+  <li><a href="#tensorflow-1.x-the-static-graph" id="toc-tensorflow-1.x-the-static-graph" class="nav-link" data-scroll-target="#tensorflow-1.x-the-static-graph">TensorFlow 1.x: The Static Graph</a></li>
+  <li><a href="#pytorch-define-by-run" id="toc-pytorch-define-by-run" class="nav-link" data-scroll-target="#pytorch-define-by-run">PyTorch: Define by Run</a></li>
+  </ul></li>
+  <li><a href="#automatic-differentiation-the-engine-room" id="toc-automatic-differentiation-the-engine-room" class="nav-link" data-scroll-target="#automatic-differentiation-the-engine-room">Automatic Differentiation: The Engine Room</a>
+  <ul class="collapse">
+  <li><a href="#forward-mode-ad" id="toc-forward-mode-ad" class="nav-link" data-scroll-target="#forward-mode-ad">Forward Mode AD</a></li>
+  <li><a href="#reverse-mode-ad-backpropagation" id="toc-reverse-mode-ad-backpropagation" class="nav-link" data-scroll-target="#reverse-mode-ad-backpropagation">Reverse Mode AD (Backpropagation)</a></li>
+  </ul></li>
+  <li><a href="#memory-layout-shapes-strides-and-the-viewcopy-divide" id="toc-memory-layout-shapes-strides-and-the-viewcopy-divide" class="nav-link" data-scroll-target="#memory-layout-shapes-strides-and-the-viewcopy-divide">Memory Layout: Shapes, Strides, and the View/Copy Divide</a>
+  <ul class="collapse">
+  <li><a href="#the-flat-array-reality" id="toc-the-flat-array-reality" class="nav-link" data-scroll-target="#the-flat-array-reality">The Flat Array Reality</a></li>
+  <li><a href="#views-same-memory-different-perspective" id="toc-views-same-memory-different-perspective" class="nav-link" data-scroll-target="#views-same-memory-different-perspective">Views: Same Memory, Different Perspective</a></li>
+  <li><a href="#the-contiguity-problem" id="toc-the-contiguity-problem" class="nav-link" data-scroll-target="#the-contiguity-problem">The Contiguity Problem</a></li>
+  </ul></li>
+  <li><a href="#broadcasting-and-its-gradient-implications" id="toc-broadcasting-and-its-gradient-implications" class="nav-link" data-scroll-target="#broadcasting-and-its-gradient-implications">Broadcasting and Its Gradient Implications</a>
+  <ul class="collapse">
+  <li><a href="#the-forward-pass-implicit-repetition" id="toc-the-forward-pass-implicit-repetition" class="nav-link" data-scroll-target="#the-forward-pass-implicit-repetition">The Forward Pass: Implicit Repetition</a></li>
+  <li><a href="#the-backward-pass-sum-reduce" id="toc-the-backward-pass-sum-reduce" class="nav-link" data-scroll-target="#the-backward-pass-sum-reduce">The Backward Pass: Sum-Reduce</a></li>
+  </ul></li>
+  <li><a href="#hardware-acceleration-from-strides-to-silicon" id="toc-hardware-acceleration-from-strides-to-silicon" class="nav-link" data-scroll-target="#hardware-acceleration-from-strides-to-silicon">Hardware Acceleration: From Strides to Silicon</a>
+  <ul class="collapse">
+  <li><a href="#memory-alignment" id="toc-memory-alignment" class="nav-link" data-scroll-target="#memory-alignment">Memory Alignment</a></li>
+  <li><a href="#parallelization-with-openmp" id="toc-parallelization-with-openmp" class="nav-link" data-scroll-target="#parallelization-with-openmp">Parallelization with OpenMP</a></li>
+  <li><a href="#the-im2col-trick-convolution-as-matrix-multiplication" id="toc-the-im2col-trick-convolution-as-matrix-multiplication" class="nav-link" data-scroll-target="#the-im2col-trick-convolution-as-matrix-multiplication">The im2col Trick: Convolution as Matrix Multiplication</a></li>
+  </ul></li>
+  <li><a href="#weight-initialization-the-effects-that-persist" id="toc-weight-initialization-the-effects-that-persist" class="nav-link" data-scroll-target="#weight-initialization-the-effects-that-persist">Weight Initialization: The Effects That Persist</a>
+  <ul class="collapse">
+  <li><a href="#why-initialization-matters-more-than-you-think" id="toc-why-initialization-matters-more-than-you-think" class="nav-link" data-scroll-target="#why-initialization-matters-more-than-you-think">Why Initialization Matters More Than You Think</a></li>
+  <li><a href="#how-to-diagnose-initialization-problems" id="toc-how-to-diagnose-initialization-problems" class="nav-link" data-scroll-target="#how-to-diagnose-initialization-problems">How to Diagnose Initialization Problems</a></li>
+  </ul></li>
+  <li><a href="#normalization-fixing-what-initialization-cant" id="toc-normalization-fixing-what-initialization-cant" class="nav-link" data-scroll-target="#normalization-fixing-what-initialization-cant">Normalization: Fixing What Initialization Can’t</a>
+  <ul class="collapse">
+  <li><a href="#batch-normalization" id="toc-batch-normalization" class="nav-link" data-scroll-target="#batch-normalization">Batch Normalization</a></li>
+  <li><a href="#layer-normalization" id="toc-layer-normalization" class="nav-link" data-scroll-target="#layer-normalization">Layer Normalization</a></li>
+  </ul></li>
+  <li><a href="#regularization-controlling-complexity" id="toc-regularization-controlling-complexity" class="nav-link" data-scroll-target="#regularization-controlling-complexity">Regularization: Controlling Complexity</a>
+  <ul class="collapse">
+  <li><a href="#implicit-regularization" id="toc-implicit-regularization" class="nav-link" data-scroll-target="#implicit-regularization">Implicit Regularization</a></li>
+  <li><a href="#explicit-regularization" id="toc-explicit-regularization" class="nav-link" data-scroll-target="#explicit-regularization">Explicit Regularization</a></li>
+  </ul></li>
+  <li><a href="#scaling-up-when-one-gpu-isnt-enough" id="toc-scaling-up-when-one-gpu-isnt-enough" class="nav-link" data-scroll-target="#scaling-up-when-one-gpu-isnt-enough">Scaling Up: When One GPU Isn’t Enough</a>
+  <ul class="collapse">
+  <li><a href="#the-memory-bottleneck" id="toc-the-memory-bottleneck" class="nav-link" data-scroll-target="#the-memory-bottleneck">The Memory Bottleneck</a></li>
+  <li><a href="#memory-saving-techniques" id="toc-memory-saving-techniques" class="nav-link" data-scroll-target="#memory-saving-techniques">Memory-Saving Techniques</a></li>
+  <li><a href="#distributed-training-data-and-model-parallelism" id="toc-distributed-training-data-and-model-parallelism" class="nav-link" data-scroll-target="#distributed-training-data-and-model-parallelism">Distributed Training: Data and Model Parallelism</a></li>
+  </ul></li>
+  <li><a href="#neural-network-architectures-through-a-systems-lens" id="toc-neural-network-architectures-through-a-systems-lens" class="nav-link" data-scroll-target="#neural-network-architectures-through-a-systems-lens">Neural Network Architectures Through a Systems Lens</a>
+  <ul class="collapse">
+  <li><a href="#convolutional-neural-networks-cnns" id="toc-convolutional-neural-networks-cnns" class="nav-link" data-scroll-target="#convolutional-neural-networks-cnns">Convolutional Neural Networks (CNNs)</a></li>
+  <li><a href="#recurrent-neural-networks-rnns" id="toc-recurrent-neural-networks-rnns" class="nav-link" data-scroll-target="#recurrent-neural-networks-rnns">Recurrent Neural Networks (RNNs)</a></li>
+  <li><a href="#lstm-gating-the-information-flow" id="toc-lstm-gating-the-information-flow" class="nav-link" data-scroll-target="#lstm-gating-the-information-flow">LSTM: Gating the Information Flow</a></li>
+  <li><a href="#transformers-global-receptive-field-via-attention" id="toc-transformers-global-receptive-field-via-attention" class="nav-link" data-scroll-target="#transformers-global-receptive-field-via-attention">Transformers: Global Receptive Field via Attention</a></li>
+  <li><a href="#gans-adversarial-generation" id="toc-gans-adversarial-generation" class="nav-link" data-scroll-target="#gans-adversarial-generation">GANs: Adversarial Generation</a></li>
+  </ul></li>
+  <li><a href="#model-deployment-considerations" id="toc-model-deployment-considerations" class="nav-link" data-scroll-target="#model-deployment-considerations">Model Deployment Considerations</a></li>
+  <li><a href="#tying-it-all-together" id="toc-tying-it-all-together" class="nav-link" data-scroll-target="#tying-it-all-together">Tying It All Together</a></li>
+  <li><a href="#visual-reference-pack" id="toc-visual-reference-pack" class="nav-link" data-scroll-target="#visual-reference-pack">Visual Reference Pack</a>
+  <ul class="collapse">
+  <li><a href="#autograd-mental-model" id="toc-autograd-mental-model" class="nav-link" data-scroll-target="#autograd-mental-model">1. Autograd Mental Model</a></li>
+  <li><a href="#shapestrideview-vs.-copy" id="toc-shapestrideview-vs.-copy" class="nav-link" data-scroll-target="#shapestrideview-vs.-copy">2. Shape/Stride/View vs.&nbsp;Copy</a></li>
+  <li><a href="#broadcasting-gradient-duality" id="toc-broadcasting-gradient-duality" class="nav-link" data-scroll-target="#broadcasting-gradient-duality">3. Broadcasting ↔︎ Gradient Duality</a></li>
+  <li><a href="#checkpointing-trade-off" id="toc-checkpointing-trade-off" class="nav-link" data-scroll-target="#checkpointing-trade-off">4. Checkpointing Trade-off</a></li>
+  <li><a href="#distributed-training-taxonomy" id="toc-distributed-training-taxonomy" class="nav-link" data-scroll-target="#distributed-training-taxonomy">5. Distributed Training Taxonomy</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
@@ -301,222 +381,1011 @@ window.Quarto = {
 
 
 
-<p>Below are some notes I wrote down while developing <a href="https://github.com/ImadDabbura/tiny-pytorch"><code>tiny_pytorch</code></a> library.</p>
+<section id="why-build-a-deep-learning-framework-from-scratch" class="level2">
+<h2 class="anchored" data-anchor-id="why-build-a-deep-learning-framework-from-scratch">Why Build a Deep Learning Framework from Scratch?</h2>
+<p>Every deep learning practitioner eventually runs <code>loss.backward()</code> and watches gradients flow. But what <em>actually</em> happens inside that call? Where do the intermediate tensors live? Why does your GPU run out of memory on a model that “should” fit? And why does reshaping a tensor sometimes silently copy gigabytes of data?</p>
+<p>I built <a href="https://github.com/ImadDabbura/tiny-pytorch"><code>tiny_pytorch</code></a> to answer these questions for myself. Along the way, I encountered nearly every foundational design decision that real frameworks like PyTorch, TensorFlow, and Caffe had to make — and learned <em>why</em> they made them.</p>
+<p>This post distills everything I learned into a coherent narrative. We’ll start from the framework-level design philosophy, work our way down to how bytes are laid out in memory, and then zoom back out to distributed training across multiple GPUs. The goal is <strong>intuition</strong>: mental models you can carry with you when debugging real systems.</p>
+<section id="roadmap" class="level3">
+<h3 class="anchored" data-anchor-id="roadmap">Roadmap</h3>
+<p>Here’s what we’ll cover and why it matters:</p>
+<table class="table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Section</th>
+<th>What You’ll Learn</th>
+<th>Why It Matters</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Framework Design</strong></td>
+<td>Static vs.&nbsp;dynamic graphs, and the Caffe → TF → PyTorch arc</td>
+<td>Understand trade-offs you inherit from your framework</td>
+</tr>
+<tr class="even">
+<td><strong>Automatic Differentiation</strong></td>
+<td>Forward vs.&nbsp;reverse mode AD, what gets saved</td>
+<td>Know <em>why</em> backward passes consume so much memory</td>
+</tr>
+<tr class="odd">
+<td><strong>Memory Layout</strong></td>
+<td>Shapes, strides, views, and when copies happen</td>
+<td>Stop guessing about tensor memory behavior</td>
+</tr>
+<tr class="even">
+<td><strong>Hardware Acceleration</strong></td>
+<td>Alignment, parallelism, BLAS, im2col</td>
+<td>Understand the layer between your code and silicon</td>
+</tr>
+<tr class="odd">
+<td><strong>Initialization &amp; Normalization</strong></td>
+<td>Why init persists, and how norms fix training</td>
+<td>Debug training instabilities at their root</td>
+</tr>
+<tr class="even">
+<td><strong>Regularization</strong></td>
+<td>Implicit vs.&nbsp;explicit, dropout mechanics</td>
+<td>Apply regularization correctly (L2 ≠ weight decay!)</td>
+</tr>
+<tr class="odd">
+<td><strong>Scaling Up</strong></td>
+<td>Checkpointing, data/model/pipeline parallelism</td>
+<td>Train models that don’t fit in memory</td>
+</tr>
+<tr class="even">
+<td><strong>Neural Network Architectures</strong></td>
+<td>CNN, RNN, LSTM, Transformer, GAN design choices</td>
+<td>See architectures through a <em>systems</em> lens</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+</section>
+<section id="the-evolution-of-dl-frameworks" class="level2">
+<h2 class="anchored" data-anchor-id="the-evolution-of-dl-frameworks">The Evolution of DL Frameworks</h2>
+<p>Before writing a single line of code, it helps to understand the three philosophies that shaped modern deep learning frameworks. Each solved a real problem — and introduced new ones.</p>
+<section id="caffe-layers-all-the-way-down" class="level3">
+<h3 class="anchored" data-anchor-id="caffe-layers-all-the-way-down">Caffe: Layers All the Way Down</h3>
+<p>Caffe (C++ only) was beautifully simple. You defined your computation as a stack of <strong>layers</strong>, each implementing a <code>forward()</code> and <code>backward()</code> method. The backward pass was a direct implementation of the backpropagation algorithm from Hinton’s seminal work — each layer knew how to compute its own gradients, and updates happened in-place.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Mental Model
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Think of Caffe layers like a stack of Lego bricks. Each brick knows its own shape (forward) and how to “unstick” itself (backward). Simple, intuitive, but rigid — you can’t easily build non-linear architectures.</p>
+</div>
+</div>
+</section>
+<section id="tensorflow-1.x-the-static-graph" class="level3">
+<h3 class="anchored" data-anchor-id="tensorflow-1.x-the-static-graph">TensorFlow 1.x: The Static Graph</h3>
+<p>TensorFlow introduced a powerful idea: <strong>construct a static computation graph first</strong>, then execute it. This separation of <em>definition</em> and <em>execution</em> unlocked serious optimizations — the compiler could fuse operations, reuse memory, and skip unnecessary computations at run-time.</p>
+<p>The cost? Debugging was painful. You couldn’t just print a tensor mid-computation. The graph had its own “programming language” that felt alien to Python developers. Experimentation slowed down because every change required rebuilding the graph.</p>
+</section>
+<section id="pytorch-define-by-run" class="level3">
+<h3 class="anchored" data-anchor-id="pytorch-define-by-run">PyTorch: Define by Run</h3>
+<p>PyTorch flipped the script with <strong>dynamic computation graphs</strong> — the graph is built on-the-fly as you execute operations. This is called <em>define by run</em>. You can mix Python control flow (if/else, loops) directly with tensor operations, set breakpoints anywhere, and inspect intermediate values trivially.</p>
+<p>The trade-off? Dynamic graphs are typically harder to optimize ahead of time. You lose the global view that static compilation provides. Modern PyTorch addresses this with <code>torch.compile()</code> and JIT compilation, getting closer to static-graph performance while keeping the dynamic-graph developer experience.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The Trade-off Triangle
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Every DL framework navigates three competing goals: <strong>ease of debugging</strong>, <strong>optimization potential</strong>, and <strong>flexibility</strong>. Caffe optimized for simplicity, TensorFlow for optimization, and PyTorch for flexibility. No framework gets all three for free.</p>
+</div>
+</div>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    A["&lt;b&gt;Caffe&lt;/b&gt;&lt;br/&gt;Layers with forward/backward&lt;br/&gt;In-place updates&lt;br/&gt;C++ only"] --&gt; B["&lt;b&gt;TensorFlow 1.x&lt;/b&gt;&lt;br/&gt;Static graph&lt;br/&gt;Compile-then-run&lt;br/&gt;Hard to debug"]
+    B --&gt; C["&lt;b&gt;PyTorch&lt;/b&gt;&lt;br/&gt;Dynamic graph&lt;br/&gt;Define-by-run&lt;br/&gt;Python-native"]
+    C --&gt; D["&lt;b&gt;Modern PyTorch&lt;/b&gt;&lt;br/&gt;torch.compile / JIT&lt;br/&gt;Best of both worlds"]
+
+    style A fill:#f9f,stroke:#333
+    style B fill:#bbf,stroke:#333
+    style C fill:#fbb,stroke:#333
+    style D fill:#bfb,stroke:#333
+</pre>
+</div>
+<p></p><figcaption> The evolution of DL framework design philosophies</figcaption> </figure><p></p>
+</div>
+</div>
+</div>
+<p><strong>Key takeaway:</strong> Framework design is fundamentally about <em>when</em> the computation graph is known. Know it early (static) and you can optimize aggressively. Know it late (dynamic) and you can iterate fast. Modern systems try to give you both.</p>
+<hr>
+</section>
+</section>
+<section id="automatic-differentiation-the-engine-room" class="level2">
+<h2 class="anchored" data-anchor-id="automatic-differentiation-the-engine-room">Automatic Differentiation: The Engine Room</h2>
+<p>Automatic differentiation (AD) is the core engine of every deep learning framework. It’s what makes <code>loss.backward()</code> work. But there are two fundamentally different approaches, and understanding <em>why</em> we use one over the other is essential.</p>
+<section id="forward-mode-ad" class="level3">
+<h3 class="anchored" data-anchor-id="forward-mode-ad">Forward Mode AD</h3>
+<p>In forward mode, we walk from <strong>inputs to outputs</strong>. At each node, we compute the partial derivative of that node with respect to a <em>single</em> input variable. This means:</p>
 <ul>
-<li>DL frameworks:
-<ul>
-<li>Caffe (Only C++):
-<ul>
-<li>Define a computation in terms of <code>layers</code></li>
-<li>Each layer implements forward and backward methods</li>
-<li>The change would be inplace</li>
-<li>The backward pass implementation is natural and intuitive from Hinton’s paper</li>
-</ul></li>
-<li>Tensorflow:
-<ul>
-<li>Construct static graph before we can execute it</li>
-<li>Make it easy for optimizations such as fusing operations together, reusing memory, execute only what is needed at run-time</li>
-<li>Hard to debug and experiment with the output of each step</li>
-<li>It is not intuitive and has its own programming language</li>
-</ul></li>
-<li>Pytorch:
-<ul>
-<li>Construct dynamic computation graph called <strong>define by run</strong></li>
-<li>Very easy to debug and experiment with computation graph</li>
-<li>Can mix python control flow and computations</li>
-<li>Typically slower. New advancement allowed for JIT compilation to speed up the execution.</li>
-</ul></li>
-</ul></li>
-<li>Automatic differentiation
-<ul>
-<li>Forward mode AD: We start from input node to output node where at each step we take the partial derivative of that node with respect to the input node
-<ul>
-<li>For each input, we do full AD forward pass. I.e. If we have <code>n</code> inputs, we need to do <code>n</code> AD forward passes</li>
-<li>Since most loss functions are scalars and input size <code>n</code> is very large -&gt; inefficient</li>
-</ul></li>
-<li>Backward mode AD: We start from output node to input node where at each step we take the partial derivative of output node with respect to input node. In other words, we compute the gradient of the scalar function with respect to all input nodes in a single backward pass. This will create a computational graph for the gradients that would also let us compute the gradients of the gradients if we add more operations to it.
-<ul>
-<li>The gradients at each node tells us how much the node needs to change to change output in the steepest ascent/descent direction (locally)</li>
-<li>Pros: we can do more optimizations to utilize the underlying HW and fuse node/ops together. It is also very efficient since most of the functions in DL have 1 or very few outputs.</li>
-<li>Cons: We need to store the intermediate results for each step. This means we need to store the input tensors and the operation that created the tensor so we know how to compute its gradients during the backward pass -&gt; More memory usage</li>
-</ul></li>
-</ul></li>
-<li>Initialization
-<ul>
-<li>The effect of weights initialization persists throughout training
-<ul>
-<li>It affects the relative norms of the activations and the gradients over time</li>
-<li>If we don’t initialize the weights appropriately (such as <span class="math inline">\(2/n\)</span> for ReLU), the L2-norm of the activations/gradients will change over time during training, which will lead to either no training or exploding</li>
-</ul></li>
-<li>Weights don’t change much from their initial values after training
-<ul>
-<li>It may change in some direction/dimension more but overall the weights don’t change much relative to the initial values especially for deep NN. We can see this if we plot the variance of the weights before and after training for each layer. We typically see very similar variances for the weights before/after training</li>
-</ul></li>
-<li>Proper weight initializations speed up training and converge to much lower error rates</li>
-<li>We can judge the effect of initialization by computing the norm of both the weights and the gradients at every layer over all iterations</li>
-</ul></li>
-<li>Normalization. The idea is that if we know that the norms of the activations/gradients would change over time during training due to poor initializations, we can add normalization layer that would fix this issue by always normalizing the activations of any layer to have zero mean and variance 1
-<ul>
-<li>Batch Normalization:
-<ul>
-<li>Helps trains much faster by normalizing across all examples and maintain different relative norms between activations within layers. This would overcome the issue of losing the discriminative nature of different sizes of activations since we normalize across batches for each feature separately</li>
-<li>Drawbacks:
-<ul>
-<li>Dependency between samples in the same batch as each one is dependent on other examples in the same batch.</li>
-<li>Unstable training with small batches where we may have infinite variance</li>
-<li>Doesn’t work with RNNs as hidden state depends on all previous hidden states/input in the sequence (temporal dependency) and we can’t just compute stats for each time step independently</li>
-</ul></li>
-</ul></li>
-<li>Layer Normalization:
-<ul>
-<li>It fixes the problem of varying norms of layer activations as well as solve the problem where we have only one sample in the batch that batch normalization have. It normalize across all features for each sample</li>
-<li>It also fixes the problem of RNNs with BatchNorm as it applies the normalization of features (embedding dimension) for each token in each batch -&gt; widely used in RNNs and Transformer architectures</li>
-<li>The main drawback is that is it is hard to drive the network to low loss especially for fully connected networks because after applying the layer norm the difference between activations for different examples will be lost because it forces the mean to be zero and the standard deviation to be 1, but relative norms are very important feature to discriminate between classes</li>
-</ul></li>
-</ul></li>
-<li>Regularization.
-<ul>
-<li>Implicit regularization refers to optimizing for all NN that are only considered by the learning algorithms such as SGD with a given weight initialization (remember that weights change very little from their initial values)</li>
-<li>Explicit regularization refers to changing the NN and training procedure to limit the functions learned such as L2-regularization and Dropout
-<ul>
-<li>The premise is that the magnitude of the parameters is a good proxy for complexity. Smoother functions don’t change dramatically for small changes and thus they have smaller weights. As a result, we can limit the magnitude of the parameters to be small by adding a penalty to the loss function such as L2 regularization so the weights are smaller.</li>
-<li>Dropout. It is useful to think of dropout as a stochastic approximation of the activations for each layer. It is very similar for what stochastic gradient descent does to approximate gradients. We need to divide activations and gradients by <span class="math inline">\(1/(1 - p)\)</span> to keep the expected activations/gradients the same since each node has probability <span class="math inline">\(1 - p\)</span> to stay active</li>
-<li>L2 regularization is different than weight decay for optimizer like Adam even through they are equivalent for vanilla SGD. The reason is that the update includes computing the first and second moments of the gradients, which means adding the weight decay directly to the gradient leads to less effective results compared to adding the weight decay only when performing the update without changing the gradients</li>
-</ul></li>
-</ul></li>
-<li>Broadcasting doesn’t copy data but only changes strides. With automatic differentiation, we basically sum across all the dimensions that we broadcasted</li>
-<li>Reshape/view can in sometimes copy data if we can’t use striding to change the shape of the tensor</li>
-<li>Hardware acceleration:
-<ul>
-<li>We need to pay attention to memory alignment because hardware can only load data into caches in one-go as a cache line of 64 bytes if they are aligned. Otherwise, we need more than one load.</li>
-<li>Most BLAS libraries are implemented using Fortran that uses column-major format to store ND-arrays.</li>
-<li>Stride format is more general and we can use it to get any format including row-major or column-major format.
-<ul>
-<li>Example: With 2d array A:
-<ul>
-<li>row-major: stride[0] = A.shape[1], stride[1] = 1</li>
-<li>column-major: stride[0] = 1, stride[1] = A.shape[0]</li>
-</ul></li>
-<li>Advantages:
-<ul>
-<li>We can have slices that use the same underlying memory by with different offsets to begin the slice as well as shape and stride. The same thing can be used with <code>transpose</code> by swapping the strides and change the shape. Finally, <code>broadcast</code> can be done by inserting a stride equal to 0.</li>
-</ul></li>
-<li>Disadvantages:
-<ul>
-<li>Memory access becomes not contiguous which makes vectorization hard. Some linear algebra libraries require arrays to be compact.</li>
-</ul></li>
-</ul></li>
-<li>Parallelization: We can use <code>OpenMP</code> to parallelize the operation by executing it using multiple threads on different cores in parallel.
-<ul>
-<li>Example: <code>#pragma use omp parallel for</code> before the loop.</li>
-</ul></li>
-</ul></li>
-<li>Hardware acceleration implementation:
-<ul>
-<li>CPU/GPU or any other device let us create flat array which is a consecutive slots of memory together. Therefore, we need shape, stride, and offset to create ND arrays view of flat array</li>
-<li>All operations leads to creating new output array to store the results regardless of the backend device</li>
-<li>Changing the device of an array involves copying the data from one device to the other. In tiny-pytorch, we are using numpy as a bridge. So we first create a numpy array of the input array and then create the final array on the intended device</li>
-<li>With shape, stride, and offset: we can create different views of the same array that all share the same underlying memory. The output array is just a different NDArray data structure with the same underlying array. Example: Slice, Transpose, and Broadcast.</li>
-<li>When we do slicing, the resulting view may not be contiguous (compact). This means we can’t pass the array handler because the operation will be applied to all the elements of the original array. Therefore, we need to first check if the input array is compact before doing the operation.
-<ul>
-<li>The array is compact if offset = 0 &amp; strides correspond to the row-major order. Otherwise, we need to make it compact by creating new array with the sliced data (creating a copy with new memory slots).</li>
-<li>Some frameworks such as Numpy and Pytorch allows users to do operations on non-contiguous arrays and they handle that in their implementations w/o the need to create new contiguous array. However, in some cases they may still force us to have contiguous array such as in matmul operations to have faster access to the elements and speed up operations.</li>
-</ul></li>
-</ul></li>
-<li>Training larger models: large datasets require large models which have large capacity. This will put pressure on compute devices and put them to the limit.
-<ul>
-<li>Shared memory on each core is typically 64KB.</li>
-<li>Global memory of GPU becomes the bottleneck for large models because it typically has 10GB for most devices and we can’t fit most larger models in 10GB.</li>
-<li>Techniques to save memory:
-<ul>
-<li>Inference: Use few buffers that will hold the activations of the layers. Every few layers, we reuse the same buffers we used in earlier computations. So instead of allocating N buffers, we can use 2 or 3 buffers that will be reused in the forward computations.</li>
-<li>Training: Because each activation is needed for the backward pass to compute the gradients, we can’t just deallocate the buffers. As a workaround we can use checkpointing. This technique involves checkpointing <code>K</code> layers/activations which is typically <code>sqrt(N)</code> and not store the whole N activations. During the backward pass, we recompute the values needed by running forward pass again for small segments at a time. This would make sublinear memory allocation and allows us to have bigger models at the expense of more computations due to segments forward pass done during gradient computation. We can pick activations that don’t require heavy computations such as ReLU as non-stored activations as opposed to something like convolution which is computation-heavy.</li>
-</ul></li>
-<li>Parallel and Distributed Training: We can leverage multiple GPU devices that are possibly distributed across several worker nodes to train the model. Parallelism can either be by model partitioning or data partitioning:
-<ul>
-<li>Model partitioning: break up the computation graph into multiple parts and pipeline the computations such that different worker nodes will be performing different parts of the computation at the same time and do the communication through send/recv at the boundaries of the graph.</li>
-<li>Data partitioning: every worker runs the same replica of the model but using different micro batches and then the gradients can be summed from all workers since they are independent.
-<ul>
-<li>We can either use parameter server that receives all the gradients from all workers and then sum them up and perform the updates on the weights which then is sent to all workers so that they can be used in next micro batches. Each worker can start sending the gradients as soon as they are ready before waiting for all the gradients to be finished. This will increase the parallelism and allows workers to send the gradients while other gradient computation is being performed.</li>
-<li>Or we can use allreduce() which sums up all gradients from all workers and send them back so each worker then can perform the updates</li>
-</ul></li>
-</ul></li>
-</ul></li>
-<li>GANs: The main goal is to generate images by the generator model that looks real and hard to tell they are fake, which means making the distribution of the generated images as close as possible to the distribution of the real images. This is done by training a discriminator and a generator which are trained through iterative process:
-<ul>
-<li>Generator’s input is random vector and tries to generate image that looks real by maximizing the negative log-likelihood of the discriminator loss. This means make it harder for the discriminator to predict that it is fake and tries to bring the probability to 1.</li>
-<li>Discriminator’s input is both fake images generated by the generator and real images where fake images would have label = 0 and real images would have label = 1 and tries to minimize the negative log-likelihood. So the role of the discriminator is to guide the generator to generate better images and make it focus on what it takes to generate fake images that can’t be differentiated from real images.</li>
-<li>It is called <em>adversarial</em> because the generator is able to learn subtle corner cases that looks the same for the human eye but are actually different for each distribution</li>
-<li>Deconvolution or Conv2dTranspose is the opposite of convolution when we take a small vector and convert it to a much bigger space such as image</li>
-</ul></li>
-<li>CNN:
-<ul>
-<li>Parameter sharing: We don’t care where is the object in the image. The filter should always be able to detect it w/o having different filters for different locations in the image</li>
-<li>Sparse connectivity: Each receptive field has local spatial computation -&gt; very few parameters needed</li>
-<li>translation equivariant: Local transformation leads to same transformation after convolution</li>
-<li>Captures local changes (context). That is why it is useful for temporal problems that depend heavily on the most recent past</li>
-<li>Dilation: To increase receptive field of each feature by having access to bigger spatial area (spread out according to the dilation factor)</li>
-<li>We can think of convolution in terms of matrix multiplication. The weight matrix just have to be constructed in a way that reflects the convolution operation filled with the actual weights and zeros
-<ul>
-<li>Note that we don’t actually construct this matrix as it would be huge but we use that conceptually</li>
-</ul></li>
-<li>Multiplying by the transpose of a convolution is equivalent to convolving with a flipped version of the filter. This means the derivative of a convolution is to flip the filter and convolve with that</li>
-</ul></li>
-<li>Sequence modeling helps when there is temporal dependence between x/y pairs. We typically would assume that x/y pair are i.i.d for tasks such as image classification. With tasks such as part of speech recognition or autoregressiove prediction (such as time series forecasting and language modeling), temporal dependence is key to predict next token or label because the token/input can’t be understood alone without its context -&gt; can’t predict the label correctly without encoding the previous inputs.
-<ul>
-<li>RNNs: the whole past compacted in the last hidden state that makes learning harder due to the long history which may lead to exploding/vanishing gradients. Also, the far past such as x1 will have less weight if at all compared to xt even with LSTM.
-<ul>
-<li>Maintains a hidden state over time where the hidden state at time <span class="math inline">\(t\)</span> is a function of the input at time <span class="math inline">\(t\)</span> and hidden state at time <span class="math inline">\(t -1\)</span>. Therefore, in theory, the hidden state at the last time step should capture all the inputs from <span class="math inline">\(t_0\)</span> to <span class="math inline">\(t_T\)</span></li>
-<li>Weights are shared across all time steps. When unrolling RNN, we can think of it as each time step is its own layer but the weights are shared</li>
-<li>Gradients are calculated use <strong>Backpropagation Through Time</strong> because weights are shared across all time steps. This leads to gradient vanishing/exploding. If eigenvalue of weight is less than 1 -&gt; vanishing. If it is greater than 1 -&gt; explode</li>
-</ul></li>
-<li>LSTM
-<ul>
-<li>Solve the problem of vanishing gradients by breaking down the overall hidden state into two states: hidden state and cell state</li>
-<li>We have four gates (weights) that determine at each time step:
-<ul>
-<li>What information from the past to keep and what to forget using forget/input gates and previous cell state to update cell state</li>
-<li>What information to pass to next hidden state using output gate and cell state</li>
-</ul></li>
-<li>Both LSTM/RNN have issues remembering things further in the past in their last hidden state. The influence of recent tokens is much more than tokens further in the past as they have more of direct connection with the current hidden state</li>
-</ul></li>
-<li>Direct prediction: We use all the past inputs to predict the next output; no hidden state. This is a drawback because we don’t have compact representation (latent state) of the past.</li>
-<li>Temporal CNN: It works well for tasks such as speech generation but suffers from the relatively small receptive field. This means hidden state at any time step t can only capture few of the past history and this is not good. We can increase filter size or use dilation but still is not optimal.</li>
-<li>Transformer: We can use attention that take all the history and weight them (attention matrix) so we are sure we’re incorporating all the past
-<ul>
-<li>Global receptive field -&gt; q, k, v have access to all inputs over all time <span class="math inline">\(t\)</span>
-<ul>
-<li>For autoregressiove modeling, add mask to restrict accesss to inputs to only current and previous inputs</li>
-</ul></li>
-<li>Order invariant. Permutation to any weight matrix K/Q/V would lead to change the output in the same way. Add positional encoding to capture order of input</li>
-</ul></li>
-</ul></li>
-<li>Model Deployment:
-<ul>
-<li>Considerations:
-<ul>
-<li>Application env restrictions: model-size, no-python</li>
-<li>Leverage existing HW accelerators such as mobile GPUs, NPUs, accelerated CPU instructions</li>
-<li>Integrate with applications</li>
-</ul></li>
-</ul></li>
-<li><code>im2col</code>: Do convolution in a form of matrix multiplication by first using strided operation to create the im2col matrix then reshape it to 2D tensor. Also, the weight which is 4D tensor would be reshaped to 2D tensor.
-<ul>
-<li>For batches of images with multiple channels where images are represented in the form of <span class="math inline">\(N x H x W x C_{in}\)</span> tensors and weights as <span class="math inline">\(K x K x C_{in} x
-C_{out}\)</span>:
-<ul>
-<li>Create a new 6D tensor for images with dimensions: <span class="math inline">\(N x H_new x W_new x K
-x K x C_{in}\)</span></li>
-<li>Reshape the batch to create im2col matrix with dimensions: <span class="math inline">\((N*H_new*W_new) x (K*K*C_{in})\)</span></li>
-<li>Reshape weight tensor to <span class="math inline">\((K*K*C_{in}) x C_{out}\)</span></li>
-<li>Do the matrix-matrix multiplication</li>
-<li>Reshape the 2D output to new dimension: <span class="math inline">\(N x H_new x W_new x C_{out}\)</span></li>
-</ul></li>
-<li>Cons: im2col matrix would lead to the creation of new matrix with new memory which is huge and inefficient since reshape would have to copy the data as it can’t create the new matrix with existing strides</li>
-</ul></li>
+<li>For <strong>each input variable</strong>, we need a <em>full forward pass</em> through the graph.</li>
+<li>If we have <span class="math inline">\(n\)</span> inputs, we need <span class="math inline">\(n\)</span> forward AD passes.</li>
 </ul>
+<p>For a typical deep learning loss function — a scalar output with millions of input parameters — this is catastrophically inefficient. We’d need millions of passes just to get one gradient update.</p>
+</section>
+<section id="reverse-mode-ad-backpropagation" class="level3">
+<h3 class="anchored" data-anchor-id="reverse-mode-ad-backpropagation">Reverse Mode AD (Backpropagation)</h3>
+<p>Reverse mode flips the direction. We walk from the <strong>output back to inputs</strong>, computing the gradient of the scalar output with respect to <em>all</em> input nodes in a <strong>single backward pass</strong>. This is why it’s the standard for deep learning: one output, millions of inputs, one pass.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    subgraph forward["Forward Mode (one pass per input)"]
+        direction LR
+        x1f["x₁"] --&gt; |"∂/∂x₁"| af["a"] --&gt; |"∂/∂x₁"| bf["b"] --&gt; |"∂/∂x₁"| Lf["L"]
+    end
+
+    subgraph reverse["Reverse Mode (one pass for ALL inputs)"]
+        direction RL
+        Lr["L"] --&gt; |"∂L/∂b"| br["b"] --&gt; |"∂L/∂a"| ar["a"] --&gt; |"∂L/∂x₁&lt;br/&gt;∂L/∂x₂&lt;br/&gt;∂L/∂x₃"| xr["x₁, x₂, x₃"]
+    end
+</pre>
+</div>
+<p></p><figcaption> Forward vs.&nbsp;reverse mode AD — reverse mode computes all gradients in a single backward pass</figcaption> </figure><p></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The Memory Cost of Reverse Mode
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Reverse mode has a catch: to compute gradients during the backward pass, we need the <strong>intermediate values from the forward pass</strong>. For each operation, we must store the input tensors and remember which operation created them. This is why training uses far more memory than inference — all those “saved tensors” accumulate on the graph.</p>
+</div>
+</div>
+<p>Here’s what the autograd system actually tracks:</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    x["Input x&lt;br/&gt;&lt;i&gt;leaf tensor&lt;/i&gt;"] --&gt; mul["Mul"]
+    w["Weight W&lt;br/&gt;&lt;i&gt;leaf tensor&lt;/i&gt;"] --&gt; mul
+    mul --&gt; |"z = W·x&lt;br/&gt;&lt;b&gt;saved: W, x&lt;/b&gt;"| act["ReLU"]
+    act --&gt; |"a = relu(z)&lt;br/&gt;&lt;b&gt;saved: z&lt;/b&gt;"| loss_fn["MSELoss"]
+    y["Target y"] --&gt; loss_fn
+    loss_fn --&gt; |"L = loss(a, y)&lt;br/&gt;&lt;b&gt;saved: a, y&lt;/b&gt;"| L["Scalar Loss L"]
+
+    L -.-&gt; |"backward()"| loss_fn
+    loss_fn -.-&gt; act
+    act -.-&gt; mul
+    mul -.-&gt; x
+    mul -.-&gt; w
+
+    style x fill:#e8f5e9
+    style w fill:#e8f5e9
+    style L fill:#ffcdd2
+</pre>
+</div>
+<p></p><figcaption> What the autograd engine saves during a forward pass — every intermediate result and its creator must be retained for backward</figcaption> </figure><p></p>
+</div>
+</div>
+</div>
+<p>The dashed arrows show the backward pass, which retraces the forward graph in reverse. At each node, the saved tensors are consumed to compute local gradients.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Gradients as Directional Information
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The gradient at each node tells you: <em>“How much should this value change to decrease the loss most steeply?”</em> It’s a local, linear approximation of the loss landscape — the direction of steepest descent (or ascent, if you negate it).</p>
+</div>
+</div>
+<p>One powerful consequence: the backward pass itself builds a computation graph for the gradients. This means you can compute <strong>gradients of gradients</strong> simply by adding more operations — which is exactly what second-order methods and some meta-learning approaches do.</p>
+<p><strong>Key takeaway:</strong> Reverse mode AD gives us all gradients in one pass, but the price is memory — every intermediate tensor from the forward pass must be kept alive until it’s consumed by the backward pass.</p>
+<hr>
+</section>
+</section>
+<section id="memory-layout-shapes-strides-and-the-viewcopy-divide" class="level2">
+<h2 class="anchored" data-anchor-id="memory-layout-shapes-strides-and-the-viewcopy-divide">Memory Layout: Shapes, Strides, and the View/Copy Divide</h2>
+<p>This is where the rubber meets the road. Understanding how tensors are stored in memory explains a surprising number of performance issues and subtle bugs.</p>
+<section id="the-flat-array-reality" class="level3">
+<h3 class="anchored" data-anchor-id="the-flat-array-reality">The Flat Array Reality</h3>
+<p>Whether you’re on CPU or GPU, the hardware gives you a <strong>flat, contiguous block of memory</strong>. There are no “dimensions” at the hardware level — just consecutive slots. To create the <em>illusion</em> of an N-dimensional array, we need three pieces of metadata:</p>
+<ul>
+<li><strong>Shape</strong>: The logical dimensions (e.g., <code>[3, 4]</code> for a 3×4 matrix)</li>
+<li><strong>Stride</strong>: How many elements to skip in the flat array to move one step along each dimension</li>
+<li><strong>Offset</strong>: Where the data starts within the flat array</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Row-Major vs.&nbsp;Column-Major via Strides
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For a 2D array <code>A</code> with shape <code>[R, C]</code>:</p>
+<ul>
+<li><strong>Row-major</strong> (C/NumPy/PyTorch default): <code>stride = [C, 1]</code> — rows are contiguous</li>
+<li><strong>Column-major</strong> (Fortran/BLAS): <code>stride = [1, R]</code> — columns are contiguous</li>
+</ul>
+<p>Most BLAS libraries (the workhorses of linear algebra) are implemented in Fortran and expect column-major layout. This is why you sometimes see frameworks internally transposing data before calling into BLAS routines.</p>
+</div>
+</div>
+</section>
+<section id="views-same-memory-different-perspective" class="level3">
+<h3 class="anchored" data-anchor-id="views-same-memory-different-perspective">Views: Same Memory, Different Perspective</h3>
+<p>The stride mechanism enables something powerful: multiple tensor objects can <strong>share the same underlying memory</strong> with different shapes, strides, and offsets. These are called <em>views</em>. Three critical operations create views, not copies:</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Operation</th>
+<th>What Changes</th>
+<th>Memory Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Slice</strong></td>
+<td>Offset + shape + stride</td>
+<td>Zero (view)</td>
+</tr>
+<tr class="even">
+<td><strong>Transpose</strong></td>
+<td>Strides are swapped, shape changes</td>
+<td>Zero (view)</td>
+</tr>
+<tr class="odd">
+<td><strong>Broadcast</strong></td>
+<td>Stride set to 0 along new dims</td>
+<td>Zero (view)</td>
+</tr>
+<tr class="even">
+<td><strong>Reshape/View</strong></td>
+<td>Shape + stride (if compatible)</td>
+<td>Zero <em>or</em> copy</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+When Reshape Becomes a Copy
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>reshape</code> / <code>view</code> can create a view <em>only</em> when the new shape is compatible with existing strides (i.e., the data is already contiguous in the right order). If the tensor has been transposed or sliced in a way that makes the data non-contiguous, <code>reshape</code> must <strong>copy</strong> the data into a new contiguous block. This can silently allocate gigabytes of memory.</p>
+<p><strong>How to detect it:</strong> In PyTorch, call <code>tensor.is_contiguous()</code> before reshaping. If it returns <code>False</code>, the reshape will trigger a copy. Use <code>tensor.contiguous()</code> explicitly to make the copy intentional and visible.</p>
+</div>
+</div>
+</section>
+<section id="the-contiguity-problem" class="level3">
+<h3 class="anchored" data-anchor-id="the-contiguity-problem">The Contiguity Problem</h3>
+<p>After operations like slicing or transposing, the logical tensor and the physical memory layout can diverge. The tensor is no longer <em>compact</em> — meaning the offset isn’t 0 or the strides don’t correspond to row-major order.</p>
+<p>This matters because many operations (especially matrix multiplication) require contiguous data for efficient memory access. The framework typically handles this by checking compactness before an operation and creating a contiguous copy if needed. But this implicit copy is a hidden performance cost.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    flat["Flat memory: [a b c d e f g h i j k l]"] --&gt; orig["Tensor A&lt;br/&gt;shape=[3,4], stride=[4,1], offset=0"]
+    flat --&gt; slice["Slice A[0:2, 1:3]&lt;br/&gt;shape=[2,2], stride=[4,1], offset=1&lt;br/&gt;&lt;b&gt;VIEW (shared memory)&lt;/b&gt;"]
+    flat --&gt; trans["A.T&lt;br/&gt;shape=[4,3], stride=[1,4], offset=0&lt;br/&gt;&lt;b&gt;VIEW (shared memory)&lt;/b&gt;"]
+
+    trans --&gt; |"reshape(-1) on&lt;br/&gt;non-contiguous tensor"| copy["New flat memory&lt;br/&gt;&lt;b&gt;COPY (new allocation)&lt;/b&gt;"]
+
+    style flat fill:#fff3e0
+    style slice fill:#e8f5e9
+    style trans fill:#e8f5e9
+    style copy fill:#ffcdd2
+</pre>
+</div>
+<p></p><figcaption> View operations share memory; some operations force a copy when data is non-contiguous</figcaption> </figure><p></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Rule of Thumb
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If you chain <code>transpose</code> + <code>reshape</code>, you’re almost certainly triggering a copy. If you’re in a hot loop or a custom kernel, this matters. Profile with <code>torch.cuda.memory_allocated()</code> to catch surprise allocations.</p>
+</div>
+</div>
+<p><strong>Key takeaway:</strong> Tensors are flat arrays dressed up with metadata. Operations that only change metadata (slice, transpose, broadcast) are free. Operations that need physically contiguous data may silently copy. Know which is which.</p>
+<hr>
+</section>
+</section>
+<section id="broadcasting-and-its-gradient-implications" class="level2">
+<h2 class="anchored" data-anchor-id="broadcasting-and-its-gradient-implications">Broadcasting and Its Gradient Implications</h2>
+<p>Broadcasting is one of the most convenient features in numerical computing — and one of the most misunderstood when it comes to gradients.</p>
+<section id="the-forward-pass-implicit-repetition" class="level3">
+<h3 class="anchored" data-anchor-id="the-forward-pass-implicit-repetition">The Forward Pass: Implicit Repetition</h3>
+<p>When you add a bias vector <code>b</code> of shape <code>[1, C]</code> to an activation matrix <code>A</code> of shape <code>[N, C]</code>, broadcasting logically <em>repeats</em> <code>b</code> along the batch dimension <code>N</code> times. But crucially, <strong>no data is copied</strong>. The framework simply sets the stride to 0 along the broadcast dimension, so the same values are read repeatedly.</p>
+</section>
+<section id="the-backward-pass-sum-reduce" class="level3">
+<h3 class="anchored" data-anchor-id="the-backward-pass-sum-reduce">The Backward Pass: Sum-Reduce</h3>
+<p>Here’s the subtle part. During the backward pass, if a value was broadcast (repeated) across a dimension, the gradients must be <strong>summed along that dimension</strong>. Why? Because the same parameter contributed to multiple outputs — its total influence is the sum of all its partial effects.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    subgraph fwd["Forward: broadcast adds"]
+        direction TB
+        A_fwd["A: shape [N, C]"] --&gt; plus["+ (broadcast)"]
+        b_fwd["b: shape [1, C]&lt;br/&gt;(stride 0 on dim 0)"] --&gt; plus
+        plus --&gt; out_fwd["Output: shape [N, C]"]
+    end
+
+    subgraph bwd["Backward: sum-reduce"]
+        direction TB
+        grad_out["∂L/∂Output: shape [N, C]"] --&gt; sum_op["sum(dim=0)"]
+        sum_op --&gt; grad_b["∂L/∂b: shape [1, C]"]
+        grad_out --&gt; grad_A["∂L/∂A: shape [N, C]&lt;br/&gt;(passed through directly)"]
+    end
+
+    fwd --&gt; |"backward()"| bwd
+</pre>
+</div>
+<p></p><figcaption> Broadcasting repeats values in the forward pass; gradients must sum-reduce along broadcast dimensions in the backward pass</figcaption> </figure><p></p>
+</div>
+</div>
+</div>
+<p><strong>Worked example:</strong></p>
+<p>Suppose <code>A</code> has shape <code>[3, 2]</code> and <code>b</code> has shape <code>[1, 2]</code> with values <code>[0.5, -0.3]</code>. After broadcasting, every row of <code>A</code> gets the same bias added. If the upstream gradient <code>∂L/∂Output</code> is:</p>
+<pre><code>[[1.0, 2.0],
+ [0.5, 1.5],
+ [0.3, 0.7]]</code></pre>
+<p>Then <code>∂L/∂b = sum along dim 0 = [1.8, 4.2]</code>, because <code>b</code> influenced all three rows.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+General Rule
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For any operation in autograd: <strong>the gradient of a broadcast is a reduction, and the gradient of a reduction is a broadcast.</strong> This duality shows up everywhere — in loss functions, in normalization layers, and in attention mechanisms.</p>
+</div>
+</div>
+<p><strong>Key takeaway:</strong> Broadcasting doesn’t copy data (strides handle it), but gradients must sum-reduce along every dimension that was broadcast. Forgetting this is a common source of shape mismatch bugs in custom autograd functions.</p>
+<hr>
+</section>
+</section>
+<section id="hardware-acceleration-from-strides-to-silicon" class="level2">
+<h2 class="anchored" data-anchor-id="hardware-acceleration-from-strides-to-silicon">Hardware Acceleration: From Strides to Silicon</h2>
+<p>Understanding the hardware layer helps you write code that runs fast <em>by default</em> instead of fighting the machine.</p>
+<section id="memory-alignment" class="level3">
+<h3 class="anchored" data-anchor-id="memory-alignment">Memory Alignment</h3>
+<p>Hardware loads data into caches in fixed-size chunks called <strong>cache lines</strong> (typically 64 bytes). If your data is aligned to cache line boundaries, a single load brings in exactly what you need. If it’s misaligned, you need <em>two</em> loads for data that spans a boundary — doubling the memory traffic for that access.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Practical Impact
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Memory alignment mostly matters for custom kernels and low-level code. High-level frameworks handle this for you. But if you’re writing CUDA kernels or using <code>ctypes</code> to interface with C libraries, ensure your allocations are aligned.</p>
+</div>
+</div>
+</section>
+<section id="parallelization-with-openmp" class="level3">
+<h3 class="anchored" data-anchor-id="parallelization-with-openmp">Parallelization with OpenMP</h3>
+<p>On CPU, the simplest form of parallelism is loop parallelization. Tools like <strong>OpenMP</strong> let you annotate a loop with <code>#pragma omp parallel for</code>, and the runtime splits iterations across CPU cores automatically.</p>
+<p>This is the basis for CPU-accelerated tensor operations. Each core processes a different slice of the tensor, and the results are combined. The bottleneck shifts from compute to <strong>memory bandwidth</strong> — reading and writing large tensors becomes the limiting factor, not arithmetic.</p>
+</section>
+<section id="the-im2col-trick-convolution-as-matrix-multiplication" class="level3">
+<h3 class="anchored" data-anchor-id="the-im2col-trick-convolution-as-matrix-multiplication">The im2col Trick: Convolution as Matrix Multiplication</h3>
+<p>Convolution is the most compute-intensive operation in CNNs. The <strong>im2col</strong> (image-to-column) trick converts convolution into matrix multiplication, which lets us use heavily optimized BLAS routines.</p>
+<p>The process for a batch of images (<code>N × H × W × Cᵢₙ</code>) with filters (<code>K × K × Cᵢₙ × Cₒᵤₜ</code>):</p>
+<ol type="1">
+<li>Create a 6D strided view: <code>N × H_out × W_out × K × K × Cᵢₙ</code></li>
+<li>Reshape to a 2D im2col matrix: <code>(N·H_out·W_out) × (K·K·Cᵢₙ)</code></li>
+<li>Reshape weights to 2D: <code>(K·K·Cᵢₙ) × Cₒᵤₜ</code></li>
+<li>Matrix multiply: <code>im2col @ weights</code></li>
+<li>Reshape result: <code>N × H_out × W_out × Cₒᵤₜ</code></li>
+</ol>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+im2col Memory Overhead
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The im2col matrix is typically <strong>much larger</strong> than the original image tensor because filter patches overlap. Each input pixel appears in multiple rows of the im2col matrix. The reshape from the 6D strided view to 2D <em>cannot</em> be done as a view (the data isn’t contiguous in the right order), so it triggers a <strong>full copy</strong>. This is a significant memory cost — for large images with many channels, the im2col matrix can be several times the size of the input.</p>
+<p><strong>When it helps:</strong> When your BLAS library is highly optimized (which it usually is). The speedup from using GEMM far outweighs the memory copy cost.</p>
+<p><strong>When it hurts:</strong> When you’re memory-constrained. Alternative approaches like FFT-based convolution or Winograd transforms can reduce memory usage at the cost of implementation complexity.</p>
+</div>
+</div>
+<p><strong>Key takeaway:</strong> The gap between “logical operations on tensors” and “what the hardware actually does” is large. Frameworks bridge it with tricks like im2col, cache-aware memory layout, and loop parallelization. When performance matters, understanding this layer is essential.</p>
+<hr>
+</section>
+</section>
+<section id="weight-initialization-the-effects-that-persist" class="level2">
+<h2 class="anchored" data-anchor-id="weight-initialization-the-effects-that-persist">Weight Initialization: The Effects That Persist</h2>
+<p>Weight initialization might seem like a minor detail — just pick some random numbers and start training. But the evidence tells a more nuanced story.</p>
+<section id="why-initialization-matters-more-than-you-think" class="level3">
+<h3 class="anchored" data-anchor-id="why-initialization-matters-more-than-you-think">Why Initialization Matters More Than You Think</h3>
+<p>Two observations that changed how I think about initialization:</p>
+<ol type="1">
+<li><p><strong>The effect of initialization persists throughout training.</strong> Bad initialization affects the relative norms of activations and gradients <em>at every step</em>. If you don’t initialize appropriately (e.g., using <span class="math inline">\(\frac{2}{n}\)</span> scaling for ReLU networks, known as He initialization), the L2-norm of activations or gradients will drift — leading to vanishing signals or exploding values.</p></li>
+<li><p><strong>Weights don’t move far from their initial values.</strong> This is surprising. If you plot the variance of weights before and after training for each layer, you’ll see remarkably similar values. The weights shift in certain directions, but relative to their initial magnitude, the change is small — especially for deep networks.</p></li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The Implication
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Together, these observations mean initialization isn’t just “where you start” — it effectively defines the <em>neighborhood</em> of weight space you’ll explore during training. Proper initialization puts you in a good neighborhood. Bad initialization puts you somewhere the optimizer can’t easily escape.</p>
+</div>
+</div>
+</section>
+<section id="how-to-diagnose-initialization-problems" class="level3">
+<h3 class="anchored" data-anchor-id="how-to-diagnose-initialization-problems">How to Diagnose Initialization Problems</h3>
+<p><strong>Monitor two metrics across layers over all training iterations:</strong></p>
+<ul>
+<li><strong>Norm of weights</strong> per layer</li>
+<li><strong>Norm of gradients</strong> per layer</li>
+</ul>
+<p>If the weight norms explode or collapse across layers, or if gradient norms vary by orders of magnitude between early and late layers, your initialization is likely wrong. Proper initialization keeps these norms roughly stable across layers.</p>
+<p><strong>Key takeaway:</strong> Proper weight initialization speeds up training and leads to lower final error rates. It defines the effective search region for your optimizer, and its influence doesn’t fade — it persists throughout training.</p>
+<hr>
+</section>
+</section>
+<section id="normalization-fixing-what-initialization-cant" class="level2">
+<h2 class="anchored" data-anchor-id="normalization-fixing-what-initialization-cant">Normalization: Fixing What Initialization Can’t</h2>
+<p>If we know that activation norms can drift during training (due to imperfect initialization or the dynamics of optimization itself), why not just <em>force</em> them to be well-behaved? That’s the idea behind normalization layers.</p>
+<section id="batch-normalization" class="level3">
+<h3 class="anchored" data-anchor-id="batch-normalization">Batch Normalization</h3>
+<p>Batch Normalization normalizes activations <strong>across the batch dimension</strong> for each feature independently. For a given feature, it computes the mean and variance across all examples in the batch, then normalizes to zero mean and unit variance.</p>
+<p><strong>When it helps:</strong></p>
+<ul>
+<li>Dramatically speeds up training by maintaining stable activation norms</li>
+<li>Preserves the discriminative information <em>between features</em> within each layer (because normalization is per-feature, not per-example)</li>
+</ul>
+<p><strong>When it hurts:</strong></p>
+<ul>
+<li>Creates <strong>dependency between samples</strong> in a batch — each example’s normalized activation depends on the other examples in the batch</li>
+<li><strong>Unstable with small batches</strong> — statistics become noisy, and with a batch of 1, the variance is undefined</li>
+<li><strong>Doesn’t work well with RNNs</strong> — the hidden state has temporal dependencies across time steps, and computing batch statistics independently at each time step ignores this structure</li>
+</ul>
+</section>
+<section id="layer-normalization" class="level3">
+<h3 class="anchored" data-anchor-id="layer-normalization">Layer Normalization</h3>
+<p>Layer Normalization normalizes <strong>across all features</strong> for each sample independently. No dependency on other samples in the batch.</p>
+<p><strong>When it helps:</strong></p>
+<ul>
+<li>Works with <strong>any batch size</strong>, including batch size 1</li>
+<li><strong>Perfect for RNNs and Transformers</strong> — it normalizes across the embedding dimension for each token in each example, respecting temporal structure</li>
+<li>This is why it’s the standard in Transformer architectures</li>
+</ul>
+<p><strong>When it hurts:</strong></p>
+<ul>
+<li>For fully connected networks, forcing zero mean and unit variance <em>across features</em> can destroy the relative magnitude differences between activations for different examples. These magnitude differences can be an important discriminative signal.</li>
+<li>This makes it harder to drive loss low on tasks where inter-example feature magnitude differences matter</li>
+</ul>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Choosing Between Them
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Use BatchNorm</strong> for CNNs with reasonably large batches (≥32). <strong>Use LayerNorm</strong> for Transformers, RNNs, and any setting where batch size is small or variable. This isn’t just convention — it follows from the structural properties of each approach.</p>
+</div>
+</div>
+<p><strong>Key takeaway:</strong> Normalization layers fix the activation drift that initialization can only partially prevent. BatchNorm and LayerNorm make different trade-offs about <em>what to normalize over</em>, and the right choice depends on your architecture and batch size.</p>
+<hr>
+</section>
+</section>
+<section id="regularization-controlling-complexity" class="level2">
+<h2 class="anchored" data-anchor-id="regularization-controlling-complexity">Regularization: Controlling Complexity</h2>
+<p>Regularization prevents models from memorizing the training data. But the story has a twist that’s often overlooked.</p>
+<section id="implicit-regularization" class="level3">
+<h3 class="anchored" data-anchor-id="implicit-regularization">Implicit Regularization</h3>
+<p>Before you add <em>any</em> explicit regularization, your training procedure already constrains the model. <strong>SGD with a particular initialization</strong> only explores a subset of all possible neural networks. The initialization defines the starting point, and the optimizer’s dynamics (step size, momentum, batch sampling) determine the trajectory through weight space.</p>
+<p>This is called <em>implicit regularization</em>, and it’s powerful. The fact that SGD-trained networks generalize well — even when they have enough capacity to memorize the training set — is partly due to these implicit biases of the optimization procedure.</p>
+</section>
+<section id="explicit-regularization" class="level3">
+<h3 class="anchored" data-anchor-id="explicit-regularization">Explicit Regularization</h3>
+<p>Explicit regularization directly limits the functions the model can learn:</p>
+<p><strong>L2 Regularization</strong> adds a penalty proportional to the squared magnitude of the weights. The premise: smoother functions (which don’t change dramatically for small input changes) tend to have smaller weights. By penalizing large weights, we encourage smoother, simpler functions.</p>
+<p><strong>Dropout</strong> randomly zeroes out activations with probability <span class="math inline">\(p\)</span> during training. A useful mental model: dropout is a <em>stochastic approximation</em> of each layer’s activations, similar to how SGD approximates the full gradient with a mini-batch sample. During inference, we multiply activations by <span class="math inline">\(\frac{1}{1-p}\)</span> (or equivalently, scale during training) to keep the expected value consistent.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+L2 Regularization ≠ Weight Decay (for Adam!)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For vanilla SGD, L2 regularization and weight decay are mathematically equivalent. But for adaptive optimizers like <strong>Adam</strong>, they are <em>not</em> the same.</p>
+<p>Why? Adam computes first and second moments of the gradients. If you add the L2 penalty to the gradient (L2 regularization), the penalty gets scaled by Adam’s adaptive learning rate, making it <strong>less effective</strong> than intended. Weight decay, which adds the penalty directly to the parameter update step <em>without</em> modifying the gradient, avoids this issue.</p>
+<p>This distinction — first identified in the “Decoupled Weight Decay” paper (AdamW) — is why AdamW is preferred over Adam + L2 regularization in practice.</p>
+</div>
+</div>
+<p><strong>Key takeaway:</strong> Regularization operates at two levels: the implicit biases of SGD and initialization, and explicit penalties like L2/weight decay and dropout. For Adam-family optimizers, always use weight decay (AdamW), not L2 regularization.</p>
+<hr>
+</section>
+</section>
+<section id="scaling-up-when-one-gpu-isnt-enough" class="level2">
+<h2 class="anchored" data-anchor-id="scaling-up-when-one-gpu-isnt-enough">Scaling Up: When One GPU Isn’t Enough</h2>
+<p>Large datasets demand large models, and large models push hardware to its limits. Here’s how the systems community addresses this.</p>
+<section id="the-memory-bottleneck" class="level3">
+<h3 class="anchored" data-anchor-id="the-memory-bottleneck">The Memory Bottleneck</h3>
+<p>The memory hierarchy tells the story:</p>
+<ul>
+<li><strong>Shared memory per core (GPU):</strong> ~64 KB — fast, tiny</li>
+<li><strong>Global GPU memory:</strong> 10–80 GB depending on the device — this is the typical bottleneck</li>
+<li><strong>CPU RAM:</strong> 64–512 GB — large but slow to access from GPU</li>
+</ul>
+<p>Most large models can’t fit entirely in GPU global memory during training, because we need to store: model parameters, optimizer state (2× or 3× model size for Adam), activations (saved for backward), and gradients.</p>
+</section>
+<section id="memory-saving-techniques" class="level3">
+<h3 class="anchored" data-anchor-id="memory-saving-techniques">Memory-Saving Techniques</h3>
+<section id="inference-buffer-reuse" class="level4">
+<h4 class="anchored" data-anchor-id="inference-buffer-reuse">Inference: Buffer Reuse</h4>
+<p>During inference, we don’t need to keep activations for backward. We can reuse a small set of buffers (2 or 3) across layers, writing each layer’s output into a buffer that a previous layer no longer needs. This reduces memory from <code>O(N)</code> to <code>O(1)</code> in the number of layers.</p>
+</section>
+<section id="training-activation-checkpointing" class="level4">
+<h4 class="anchored" data-anchor-id="training-activation-checkpointing">Training: Activation Checkpointing</h4>
+<p>During training, we normally keep <em>all</em> activations for the backward pass. Checkpointing trades memory for compute:</p>
+<ol type="1">
+<li>Divide the network into <strong>segments</strong> of roughly <span class="math inline">\(\sqrt{N}\)</span> layers</li>
+<li>Only store activations at <strong>segment boundaries</strong> (checkpoints)</li>
+<li>During the backward pass, <strong>recompute</strong> the forward pass within each segment to recover the needed activations</li>
+</ol>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    subgraph seg1["Segment 1"]
+        L1["Layer 1"] --&gt; L2["Layer 2"] --&gt; L3["Layer 3"]
+    end
+    subgraph seg2["Segment 2"]
+        L4["Layer 4"] --&gt; L5["Layer 5"] --&gt; L6["Layer 6"]
+    end
+    subgraph seg3["Segment 3"]
+        L7["Layer 7"] --&gt; L8["Layer 8"] --&gt; L9["Layer 9"]
+    end
+
+    seg1 --&gt; |"✓ checkpoint"| seg2
+    seg2 --&gt; |"✓ checkpoint"| seg3
+
+    style L1 fill:#e8f5e9,stroke:#333
+    style L3 fill:#e8f5e9,stroke:#333
+    style L4 fill:#e8f5e9,stroke:#333
+    style L6 fill:#e8f5e9,stroke:#333
+    style L7 fill:#e8f5e9,stroke:#333
+    style L9 fill:#e8f5e9,stroke:#333
+</pre>
+</div>
+<p></p><figcaption> Activation checkpointing: store only segment boundaries, recompute the rest during backward</figcaption> </figure><p></p>
+</div>
+</div>
+</div>
+<table class="table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Approach</th>
+<th>Memory</th>
+<th>Compute Overhead</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>No checkpointing</td>
+<td><code>O(N)</code> activations</td>
+<td>None</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\sqrt{N}\)</span> checkpoints</td>
+<td><code>O(√N)</code> activations</td>
+<td>~1 extra forward pass</td>
+</tr>
+<tr class="odd">
+<td>Aggressive checkpointing</td>
+<td><code>O(1)</code> activations</td>
+<td>Up to <code>N</code> extra forward passes</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Smart Checkpoint Placement
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Choose checkpoints at layers with <strong>cheap recomputation</strong>. ReLU activations are trivial to recompute (just check sign). Convolution or attention layers are expensive. Checkpoint <em>after</em> cheap layers to minimize the recomputation cost.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="distributed-training-data-and-model-parallelism" class="level3">
+<h3 class="anchored" data-anchor-id="distributed-training-data-and-model-parallelism">Distributed Training: Data and Model Parallelism</h3>
+<p>When one GPU isn’t enough, we spread the work across multiple devices. There are two fundamental strategies:</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    DT["Distributed Training"] --&gt; DP["&lt;b&gt;Data Parallelism&lt;/b&gt;&lt;br/&gt;Same model, different data"]
+    DT --&gt; MP["&lt;b&gt;Model Parallelism&lt;/b&gt;&lt;br/&gt;Different parts of model"]
+
+    DP --&gt; PS["Parameter Server&lt;br/&gt;Central coordinator"]
+    DP --&gt; AR["AllReduce&lt;br/&gt;Peer-to-peer"]
+
+    MP --&gt; TP["Tensor Parallelism&lt;br/&gt;Split layers across devices"]
+    MP --&gt; PP["Pipeline Parallelism&lt;br/&gt;Different layers on different devices"]
+
+    style DT fill:#fff3e0
+    style DP fill:#e3f2fd
+    style MP fill:#fce4ec
+</pre>
+</div>
+<p></p><figcaption> Taxonomy of distributed training approaches</figcaption> </figure><p></p>
+</div>
+</div>
+</div>
+<section id="data-parallelism" class="level4">
+<h4 class="anchored" data-anchor-id="data-parallelism">Data Parallelism</h4>
+<p>Every worker runs a <strong>full replica of the model</strong> on a different micro-batch. Since gradients are additive (they’re independent across examples), we just need to sum them across workers before performing the weight update.</p>
+<p>Two coordination strategies:</p>
+<p><strong>Parameter Server:</strong> A central server collects gradients from all workers, sums them, performs the update, and broadcasts the new weights. Workers can start sending gradients as soon as they’re computed (layer by layer), overlapping communication with computation.</p>
+<ul>
+<li><strong>Bottleneck:</strong> The parameter server becomes a communication bottleneck as the number of workers grows. All traffic flows through one node.</li>
+</ul>
+<p><strong>AllReduce:</strong> A peer-to-peer approach where all workers collectively sum their gradients and each receives the result. No central bottleneck — communication scales more gracefully. Algorithms like Ring-AllReduce distribute the bandwidth load evenly.</p>
+<ul>
+<li><strong>Bottleneck:</strong> Total communication volume still grows with model size. Network bandwidth between nodes becomes the limiting factor.</li>
+</ul>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+When Communication Dominates
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Communication overhead dominates training time when:</p>
+<ul>
+<li><strong>Model is large</strong> relative to batch computation time (small compute-to-communication ratio)</li>
+<li><strong>Network bandwidth is low</strong> (especially across nodes vs.&nbsp;within a node with NVLink)</li>
+<li><strong>Gradient compression</strong> isn’t used</li>
+</ul>
+<p>Rule of thumb: if your per-step compute time is less than 3× the gradient synchronization time, communication is your bottleneck. Scale batch size or use gradient compression/accumulation to amortize the cost.</p>
+</div>
+</div>
+</section>
+<section id="model-parallelism-pipeline-parallelism" class="level4">
+<h4 class="anchored" data-anchor-id="model-parallelism-pipeline-parallelism">Model Parallelism (Pipeline Parallelism)</h4>
+<p>When the model itself doesn’t fit on one device, we split the computation graph across devices. Each device handles a different set of layers, and they <strong>pipeline</strong> the computation: while device 2 processes micro-batch 1, device 1 can start on micro-batch 2.</p>
+<p>Communication happens at layer boundaries via <code>send</code>/<code>recv</code> operations. The challenge is minimizing <strong>pipeline bubbles</strong> — idle time when a device is waiting for input from the previous stage.</p>
+<p><strong>Key takeaway:</strong> Scaling from one GPU to many introduces a new bottleneck: communication. Data parallelism is simpler and scales well when the model fits on one device. Model/pipeline parallelism is necessary when it doesn’t, but introduces pipeline bubbles and more complex communication patterns.</p>
+<hr>
+</section>
+</section>
+</section>
+<section id="neural-network-architectures-through-a-systems-lens" class="level2">
+<h2 class="anchored" data-anchor-id="neural-network-architectures-through-a-systems-lens">Neural Network Architectures Through a Systems Lens</h2>
+<p>The remaining sections cover architectures not as algorithmic curiosities, but as <em>systems design decisions</em> — what problem does each one solve, and what trade-off does it introduce?</p>
+<section id="convolutional-neural-networks-cnns" class="level3">
+<h3 class="anchored" data-anchor-id="convolutional-neural-networks-cnns">Convolutional Neural Networks (CNNs)</h3>
+<p>CNNs exploit three structural priors about spatial data:</p>
+<table class="table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Property</th>
+<th>What It Means</th>
+<th>Systems Benefit</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Parameter sharing</strong></td>
+<td>Same filter everywhere in the image</td>
+<td>Massive reduction in parameters</td>
+</tr>
+<tr class="even">
+<td><strong>Sparse connectivity</strong></td>
+<td>Each output depends only on a local receptive field</td>
+<td>Few computations per output pixel</td>
+</tr>
+<tr class="odd">
+<td><strong>Translation equivariance</strong></td>
+<td>Shifting input shifts output the same way</td>
+<td>No need to learn position-specific detectors</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Dilation</strong> increases the receptive field without increasing parameters — each filter element is spread out by a dilation factor, giving access to a larger spatial area. This is particularly useful for temporal problems where context matters.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Convolution as Matrix Multiplication
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We can express convolution as a matrix multiplication where the weight matrix has a specific sparsity pattern (filled with actual weights and zeros reflecting the filter structure). We don’t actually construct this matrix — it would be enormous — but this view explains why the backward pass of a convolution is a convolution with a flipped filter: multiplying by the transpose of the convolution matrix is equivalent to convolving with the spatially flipped kernel.</p>
+</div>
+</div>
+</section>
+<section id="recurrent-neural-networks-rnns" class="level3">
+<h3 class="anchored" data-anchor-id="recurrent-neural-networks-rnns">Recurrent Neural Networks (RNNs)</h3>
+<p>RNNs address temporal dependencies by maintaining a <strong>hidden state</strong> that gets updated at each time step as a function of the current input and the previous hidden state. In theory, the last hidden state captures the entire input history.</p>
+<p>In practice, the hidden state is a bottleneck. The entire past is <em>compacted</em> into a single vector, and information from early time steps (<code>x₁</code>) gets diluted compared to recent ones (<code>xₜ</code>).</p>
+<p><strong>Backpropagation Through Time (BPTT):</strong> Because weights are shared across time steps, gradients must flow through the entire unrolled sequence. If the dominant eigenvalue of the weight matrix is less than 1, gradients <strong>vanish</strong> exponentially with sequence length. Greater than 1, they <strong>explode</strong>.</p>
+</section>
+<section id="lstm-gating-the-information-flow" class="level3">
+<h3 class="anchored" data-anchor-id="lstm-gating-the-information-flow">LSTM: Gating the Information Flow</h3>
+<p>LSTMs address vanishing gradients by separating the hidden state into two components:</p>
+<ul>
+<li><strong>Cell state</strong>: A “highway” for long-range information flow</li>
+<li><strong>Hidden state</strong>: The working memory exposed to the next layer</li>
+</ul>
+<p>Four gates (learned transformations) control information flow at each step:</p>
+<ol type="1">
+<li><strong>Forget gate</strong>: What information from the cell state to discard</li>
+<li><strong>Input gate</strong>: What new information to add to the cell state</li>
+<li><strong>Cell update</strong>: The candidate new information</li>
+<li><strong>Output gate</strong>: What to expose as the hidden state</li>
+</ol>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+LSTMs Don’t Fully Solve Long-Range Dependencies
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Despite the gating mechanism, both RNNs and LSTMs struggle with information far in the past. Recent tokens have a much more direct connection to the current hidden state. The cell state highway helps, but it’s not a complete solution for very long sequences. This is the fundamental motivation for attention mechanisms.</p>
+</div>
+</div>
+</section>
+<section id="transformers-global-receptive-field-via-attention" class="level3">
+<h3 class="anchored" data-anchor-id="transformers-global-receptive-field-via-attention">Transformers: Global Receptive Field via Attention</h3>
+<p>Transformers replace recurrence with <strong>attention</strong>, which gives every position direct access to every other position — a global receptive field.</p>
+<p>However, the attention mechanism is inherently <strong>order-invariant</strong>: permuting the input tokens permutes the output in the same way. There’s no notion of “first” or “last.” This is why <strong>positional encodings</strong> are essential — they inject order information that attention alone cannot capture.</p>
+<p>For <strong>autoregressive tasks</strong> (language modeling, text generation), a causal mask restricts each position to attend only to current and previous positions, preserving the left-to-right generation constraint.</p>
+</section>
+<section id="gans-adversarial-generation" class="level3">
+<h3 class="anchored" data-anchor-id="gans-adversarial-generation">GANs: Adversarial Generation</h3>
+<p>GANs learn to generate data by pitting two networks against each other:</p>
+<ul>
+<li><strong>Generator</strong>: Takes a random noise vector and tries to produce realistic images. Its objective is to <em>maximize</em> the discriminator’s error — make the discriminator believe the fake images are real.</li>
+<li><strong>Discriminator</strong>: Receives both real and generated images and tries to classify them correctly. It <em>minimizes</em> its classification loss.</li>
+</ul>
+<p>The discriminator acts as a learned loss function that guides the generator toward producing increasingly realistic outputs. The “adversarial” aspect refers to the generator learning to exploit subtle distributional differences that are imperceptible to humans.</p>
+<p><strong>Conv2dTranspose (Deconvolution):</strong> The generator typically needs to upsample from a small latent vector to a full-resolution image. Transposed convolution reverses the spatial dimension change of convolution — taking a small spatial input and producing a larger spatial output.</p>
+<p><strong>Key takeaway:</strong> Each architecture encodes different assumptions about data structure. CNNs assume spatial locality. RNNs assume temporal ordering. Transformers assume that global relationships matter and let attention learn what to focus on. GANs assume that the best loss function is a learned one.</p>
+<hr>
+</section>
+</section>
+<section id="model-deployment-considerations" class="level2">
+<h2 class="anchored" data-anchor-id="model-deployment-considerations">Model Deployment Considerations</h2>
+<p>Training a model is only half the battle. Deploying it introduces a different set of constraints:</p>
+<ul>
+<li><strong>Application environment restrictions</strong>: Model size limits, no Python runtime available (embedded/mobile)</li>
+<li><strong>Hardware acceleration</strong>: Leveraging mobile GPUs, NPUs, or specialized CPU instructions (AVX, NEON)</li>
+<li><strong>Integration</strong>: Fitting into existing application architectures and serving infrastructure</li>
+</ul>
+<p>These constraints often drive post-training optimizations like quantization, pruning, distillation, and conversion to inference-specific formats (ONNX, TensorRT, Core ML).</p>
+<hr>
+</section>
+<section id="tying-it-all-together" class="level2">
+<h2 class="anchored" data-anchor-id="tying-it-all-together">Tying It All Together</h2>
+<p>If you’ve made it this far, you’ve traced the full stack of a deep learning system:</p>
+<ol type="1">
+<li><strong>Framework design</strong> determines your development experience and optimization ceiling</li>
+<li><strong>Autograd</strong> gives you gradients but demands memory for saved tensors</li>
+<li><strong>Memory layout</strong> (strides, views, contiguity) determines whether operations are free or expensive</li>
+<li><strong>Hardware acceleration</strong> turns logical operations into physical memory accesses and arithmetic</li>
+<li><strong>Initialization and normalization</strong> keep training stable from start to finish</li>
+<li><strong>Regularization</strong> prevents overfitting at both implicit and explicit levels</li>
+<li><strong>Scaling</strong> trades communication overhead for the ability to train larger models</li>
+<li><strong>Architecture choices</strong> encode structural assumptions about your data</li>
+</ol>
+<p>These layers interact. Autograd’s saved tensors create memory pressure, which motivates checkpointing, which trades memory for recomputation. Initialization determines activation norms, which normalization layers can stabilize, which affects gradient flow, which determines whether training converges. Strides determine memory access patterns, which determine kernel performance, which determines whether you’re compute-bound or memory-bound.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The Systems Thinking Payoff
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The next time training is slow, memory is exploding, or loss isn’t decreasing — you’ll have a mental model of the full stack to reason about where the problem might be. That’s the real value of building a framework from scratch.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="visual-reference-pack" class="level2">
+<h2 class="anchored" data-anchor-id="visual-reference-pack">Visual Reference Pack</h2>
+<p>Below is a summary of the key diagrams and tables presented throughout this post for quick reference.</p>
+<section id="autograd-mental-model" class="level3">
+<h3 class="anchored" data-anchor-id="autograd-mental-model">1. Autograd Mental Model</h3>
+<p>The forward pass builds a graph of operations and saves intermediate tensors. The backward pass traverses this graph in reverse, consuming saved tensors to compute gradients. <strong>Saved tensors = memory cost of training.</strong></p>
+</section>
+<section id="shapestrideview-vs.-copy" class="level3">
+<h3 class="anchored" data-anchor-id="shapestrideview-vs.-copy">2. Shape/Stride/View vs.&nbsp;Copy</h3>
+<table class="table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Operation</th>
+<th>Changes</th>
+<th>Memory</th>
+<th>Performance Implication</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Slice</td>
+<td>offset, shape, stride</td>
+<td>View (free)</td>
+<td>No allocation</td>
+</tr>
+<tr class="even">
+<td>Transpose</td>
+<td>swap strides, new shape</td>
+<td>View (free)</td>
+<td>May make tensor non-contiguous</td>
+</tr>
+<tr class="odd">
+<td>Broadcast</td>
+<td>stride=0 on new dim</td>
+<td>View (free)</td>
+<td>No allocation, but gradients must reduce</td>
+</tr>
+<tr class="even">
+<td>Reshape (contiguous)</td>
+<td>shape, stride</td>
+<td>View (free)</td>
+<td>No allocation</td>
+</tr>
+<tr class="odd">
+<td>Reshape (non-contiguous)</td>
+<td>everything</td>
+<td><strong>Copy</strong></td>
+<td>Full allocation + data transfer</td>
+</tr>
+<tr class="even">
+<td><code>.contiguous()</code></td>
+<td>makes compact</td>
+<td><strong>Copy</strong></td>
+<td>Explicit allocation — use intentionally</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="broadcasting-gradient-duality" class="level3">
+<h3 class="anchored" data-anchor-id="broadcasting-gradient-duality">3. Broadcasting ↔︎ Gradient Duality</h3>
+<p>Forward broadcast (repeat via stride=0) → backward sum-reduce. Forward reduce (sum) → backward broadcast. This duality is universal in autograd.</p>
+</section>
+<section id="checkpointing-trade-off" class="level3">
+<h3 class="anchored" data-anchor-id="checkpointing-trade-off">4. Checkpointing Trade-off</h3>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Strategy</th>
+<th>Memory</th>
+<th>Extra Compute</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Store all activations</td>
+<td>O(N)</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>√N checkpoints</td>
+<td>O(√N)</td>
+<td>~1× forward pass</td>
+</tr>
+<tr class="odd">
+<td>Checkpoint every layer</td>
+<td>O(1)</td>
+<td>~N× forward passes</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="distributed-training-taxonomy" class="level3">
+<h3 class="anchored" data-anchor-id="distributed-training-taxonomy">5. Distributed Training Taxonomy</h3>
+<p>Data parallelism (same model, split data) vs.&nbsp;model parallelism (split model, same data). Parameter server creates central bottleneck; AllReduce distributes load. Communication dominates when compute-to-communication ratio is small.</p>
 
 
+</section>
+</section>
 
 <a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
 <script>
@@ -1144,7 +2013,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
     <li class="nav-item compact">
