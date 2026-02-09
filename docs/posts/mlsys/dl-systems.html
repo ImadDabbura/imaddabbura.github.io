@@ -363,14 +363,6 @@ window.Quarto = {
   </ul></li>
   <li><a href="#model-deployment-considerations" id="toc-model-deployment-considerations" class="nav-link" data-scroll-target="#model-deployment-considerations">Model Deployment Considerations</a></li>
   <li><a href="#tying-it-all-together" id="toc-tying-it-all-together" class="nav-link" data-scroll-target="#tying-it-all-together">Tying It All Together</a></li>
-  <li><a href="#visual-reference-pack" id="toc-visual-reference-pack" class="nav-link" data-scroll-target="#visual-reference-pack">Visual Reference Pack</a>
-  <ul class="collapse">
-  <li><a href="#autograd-mental-model" id="toc-autograd-mental-model" class="nav-link" data-scroll-target="#autograd-mental-model">1. Autograd Mental Model</a></li>
-  <li><a href="#shapestrideview-vs.-copy" id="toc-shapestrideview-vs.-copy" class="nav-link" data-scroll-target="#shapestrideview-vs.-copy">2. Shape/Stride/View vs.&nbsp;Copy</a></li>
-  <li><a href="#broadcasting-gradient-duality" id="toc-broadcasting-gradient-duality" class="nav-link" data-scroll-target="#broadcasting-gradient-duality">3. Broadcasting ↔︎ Gradient Duality</a></li>
-  <li><a href="#checkpointing-trade-off" id="toc-checkpointing-trade-off" class="nav-link" data-scroll-target="#checkpointing-trade-off">4. Checkpointing Trade-off</a></li>
-  <li><a href="#distributed-training-taxonomy" id="toc-distributed-training-taxonomy" class="nav-link" data-scroll-target="#distributed-training-taxonomy">5. Distributed Training Taxonomy</a></li>
-  </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -1280,111 +1272,8 @@ The Systems Thinking Payoff
 <p>The next time training is slow, memory is exploding, or loss isn’t decreasing — you’ll have a mental model of the full stack to reason about where the problem might be. That’s the real value of building a framework from scratch.</p>
 </div>
 </div>
-<hr>
-</section>
-<section id="visual-reference-pack" class="level2">
-<h2 class="anchored" data-anchor-id="visual-reference-pack">Visual Reference Pack</h2>
-<p>Below is a summary of the key diagrams and tables presented throughout this post for quick reference.</p>
-<section id="autograd-mental-model" class="level3">
-<h3 class="anchored" data-anchor-id="autograd-mental-model">1. Autograd Mental Model</h3>
-<p>The forward pass builds a graph of operations and saves intermediate tensors. The backward pass traverses this graph in reverse, consuming saved tensors to compute gradients. <strong>Saved tensors = memory cost of training.</strong></p>
-</section>
-<section id="shapestrideview-vs.-copy" class="level3">
-<h3 class="anchored" data-anchor-id="shapestrideview-vs.-copy">2. Shape/Stride/View vs.&nbsp;Copy</h3>
-<table class="table">
-<colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Operation</th>
-<th>Changes</th>
-<th>Memory</th>
-<th>Performance Implication</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Slice</td>
-<td>offset, shape, stride</td>
-<td>View (free)</td>
-<td>No allocation</td>
-</tr>
-<tr class="even">
-<td>Transpose</td>
-<td>swap strides, new shape</td>
-<td>View (free)</td>
-<td>May make tensor non-contiguous</td>
-</tr>
-<tr class="odd">
-<td>Broadcast</td>
-<td>stride=0 on new dim</td>
-<td>View (free)</td>
-<td>No allocation, but gradients must reduce</td>
-</tr>
-<tr class="even">
-<td>Reshape (contiguous)</td>
-<td>shape, stride</td>
-<td>View (free)</td>
-<td>No allocation</td>
-</tr>
-<tr class="odd">
-<td>Reshape (non-contiguous)</td>
-<td>everything</td>
-<td><strong>Copy</strong></td>
-<td>Full allocation + data transfer</td>
-</tr>
-<tr class="even">
-<td><code>.contiguous()</code></td>
-<td>makes compact</td>
-<td><strong>Copy</strong></td>
-<td>Explicit allocation — use intentionally</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="broadcasting-gradient-duality" class="level3">
-<h3 class="anchored" data-anchor-id="broadcasting-gradient-duality">3. Broadcasting ↔︎ Gradient Duality</h3>
-<p>Forward broadcast (repeat via stride=0) → backward sum-reduce. Forward reduce (sum) → backward broadcast. This duality is universal in autograd.</p>
-</section>
-<section id="checkpointing-trade-off" class="level3">
-<h3 class="anchored" data-anchor-id="checkpointing-trade-off">4. Checkpointing Trade-off</h3>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Strategy</th>
-<th>Memory</th>
-<th>Extra Compute</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Store all activations</td>
-<td>O(N)</td>
-<td>0</td>
-</tr>
-<tr class="even">
-<td>√N checkpoints</td>
-<td>O(√N)</td>
-<td>~1× forward pass</td>
-</tr>
-<tr class="odd">
-<td>Checkpoint every layer</td>
-<td>O(1)</td>
-<td>~N× forward passes</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="distributed-training-taxonomy" class="level3">
-<h3 class="anchored" data-anchor-id="distributed-training-taxonomy">5. Distributed Training Taxonomy</h3>
-<p>Data parallelism (same model, split data) vs.&nbsp;model parallelism (split model, same data). Parameter server creates central bottleneck; AllReduce distributes load. Communication dominates when compute-to-communication ratio is small.</p>
 
 
-</section>
 </section>
 
 <a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
