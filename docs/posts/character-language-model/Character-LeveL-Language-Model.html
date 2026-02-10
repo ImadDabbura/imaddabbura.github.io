@@ -338,10 +338,7 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#the-simplest-language-model-you-can-actually-build" id="toc-the-simplest-language-model-you-can-actually-build" class="nav-link active" data-scroll-target="#the-simplest-language-model-you-can-actually-build">The Simplest Language Model You Can Actually Build</a>
-  <ul class="collapse">
-  <li><a href="#roadmap" id="toc-roadmap" class="nav-link" data-scroll-target="#roadmap">Roadmap</a></li>
-  </ul></li>
+  <li><a href="#the-simplest-language-model-you-can-actually-build" id="toc-the-simplest-language-model-you-can-actually-build" class="nav-link active" data-scroll-target="#the-simplest-language-model-you-can-actually-build">The Simplest Language Model You Can Actually Build</a></li>
   <li><a href="#the-core-idea-one-character-at-a-time" id="toc-the-core-idea-one-character-at-a-time" class="nav-link" data-scroll-target="#the-core-idea-one-character-at-a-time">The Core Idea: One Character at a Time</a>
   <ul class="collapse">
   <li><a href="#why-rnns" id="toc-why-rnns" class="nav-link" data-scroll-target="#why-rnns">Why RNNs?</a></li>
@@ -376,6 +373,7 @@ window.Quarto = {
   <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key Takeaways</a></li>
   <li><a href="#scaling-up-what-would-change" id="toc-scaling-up-what-would-change" class="nav-link" data-scroll-target="#scaling-up-what-would-change">Scaling Up: What Would Change?</a></li>
   </ul></li>
+  <li><a href="#references-resources" id="toc-references-resources" class="nav-link" data-scroll-target="#references-resources">References &amp; Resources</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -390,50 +388,6 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="the-simplest-language-model-you-can-actually-build">The Simplest Language Model You Can Actually Build</h2>
 <p>Every time Gmail suggests a reply or a speech recognition system transcribes your words, a language model is predicting the next token. State-of-the-art systems like Google’s Neural Machine Translation do this with millions of parameters and subword tokens — but the <em>core idea</em> is identical to what we’ll build here: <strong>predict the next character given everything that came before it.</strong></p>
 <p>In this post, we’ll build a character-level language model from scratch using a Recurrent Neural Network (RNN). We’ll train it on a dataset of human names, and by the end, it will generate plausible-sounding new names character by character. Along the way, we’ll cover the same fundamental concepts that power production NLP systems — from this toy RNN to large-scale neural machine translation: sequential prediction, backpropagation through time, gradient instabilities, and the creativity-coherence trade-off in sampling.</p>
-<section id="roadmap" class="level3">
-<h3 class="anchored" data-anchor-id="roadmap">Roadmap</h3>
-<table class="table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Section</th>
-<th>What You’ll Learn</th>
-<th>Why It Matters</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>The Core Idea</strong></td>
-<td>How sequence prediction decomposes into conditional probabilities</td>
-<td>The same factorization underlies every autoregressive neural language model</td>
-</tr>
-<tr class="even">
-<td><strong>Forward Pass</strong></td>
-<td>One-hot encoding → hidden state → softmax → loss</td>
-<td>The mechanics of a single training step</td>
-</tr>
-<tr class="odd">
-<td><strong>Backpropagation Through Time</strong></td>
-<td>How gradients flow backward across shared weights</td>
-<td>Why RNNs struggle with long sequences (and why we clip gradients)</td>
-</tr>
-<tr class="even">
-<td><strong>Sampling</strong></td>
-<td>Controlling randomness in generation</td>
-<td>The entropy knob that controls text generation quality</td>
-</tr>
-<tr class="odd">
-<td><strong>Training &amp; Results</strong></td>
-<td>Putting it all together and generating names</td>
-<td>Seeing the model go from gibberish to “Yasira”</td>
-</tr>
-</tbody>
-</table>
-</section>
 </section>
 <section id="the-core-idea-one-character-at-a-time" class="level2">
 <h2 class="anchored" data-anchor-id="the-core-idea-one-character-at-a-time">The Core Idea: One Character at a Time</h2>
@@ -647,7 +601,7 @@ Why Cross-Entropy?
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Cross-entropy loss is equivalent to minimizing the KL divergence between the model’s predicted distribution and the true distribution (which is a one-hot vector). It’s also the negative log-likelihood of the data under the model — so minimizing cross-entropy is the same as maximum likelihood estimation.</p>
+<p>Cross-entropy loss is equivalent to minimizing the KL divergence between the model’s predicted distribution and the empirical data distribution (which is a one-hot vector). It’s also the negative log-likelihood of the data under the model — so minimizing cross-entropy is the same as maximum likelihood estimation.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -816,7 +770,7 @@ Reading the Equations
 </section>
 <section id="optimizer-rmsprop" class="level3">
 <h3 class="anchored" data-anchor-id="optimizer-rmsprop">Optimizer: RMSProp</h3>
-<p>Since SGD with batch size 1 produces very noisy gradients, we use <strong><a href="https://nbviewer.jupyter.org/github/ImadDabbura/Deep-Learning/blob/master/posts/Optimization-Algorithms.ipynb">Root Mean Squared Propagation (RMSProp)</a></strong> — an adaptive learning rate method that divides each gradient by a running average of its recent magnitude. This dampens updates for parameters with consistently large gradients and amplifies updates for parameters with consistently small gradients, leading to more stable convergence.</p>
+<p>Since SGD with batch size 1 produces very noisy gradients, we use <strong>Root Mean Squared Propagation (RMSProp)</strong> — an adaptive learning rate method that divides each gradient by a running average of its recent magnitude. This dampens updates for parameters with consistently large gradients and amplifies updates for parameters with consistently small gradients, leading to more stable convergence.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1333,9 +1287,23 @@ What Stays the Same at Scale
 <p>Regardless of scale, the <em>concepts</em> remain the same: conditional probability factorization, teacher forcing, cross-entropy loss, gradient-based optimization, and the sampling trade-off. Understanding them at this small scale makes the jump to larger systems far more intuitive.</p>
 </div>
 </div>
-
-
 </section>
+</section>
+<section id="references-resources" class="level2">
+<h2 class="anchored" data-anchor-id="references-resources">References &amp; Resources</h2>
+<ul>
+<li><strong>Karpathy, A.</strong> (2015). <a href="https://karpathy.github.io/2015/05/21/rnn-effectiveness/">The Unreasonable Effectiveness of Recurrent Neural Networks</a>. The blog post that popularized character-level RNN language models — includes stunning examples of Shakespeare, Wikipedia, LaTeX, and C code generation.</li>
+<li><strong>Hochreiter, S. &amp; Schmidhuber, J.</strong> (1997). <a href="https://www.bioinf.jku.at/publications/older/2604.pdf">Long Short-Term Memory</a>. <em>Neural Computation</em>, 9(8), 1735–1780. The original LSTM paper that introduced gating mechanisms to address vanishing gradients in RNNs.</li>
+<li><strong>Vaswani, A. et al.</strong> (2017). <a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need</a>. <em>NeurIPS 2017</em>. Introduced the Transformer architecture, replacing recurrence with self-attention for sequence modeling.</li>
+<li><strong>Kingma, D. P. &amp; Ba, J.</strong> (2015). <a href="https://arxiv.org/abs/1412.6980">Adam: A Method for Stochastic Optimization</a>. <em>ICLR 2015</em>. The Adam optimizer, which combines RMSProp’s adaptive learning rates with momentum.</li>
+<li><strong>Merity, S. et al.</strong> (2018). <a href="https://arxiv.org/abs/1708.02182">Regularizing and Optimizing LSTM Language Models</a>. <em>ICLR 2018</em>. Achieved state-of-the-art word-level perplexity on Penn Treebank using weight-dropped LSTMs (AWD-LSTM).</li>
+<li><strong>Bengio, Y. et al.</strong> (2003). <a href="https://www.jmlr.org/papers/volume3/bengio03a/bengio03a.pdf">A Neural Probabilistic Language Model</a>. <em>JMLR</em>, 3, 1137–1155. One of the foundational papers on neural language models, introducing the idea of learning distributed word representations jointly with a language model.</li>
+<li><strong>Pascanu, R. et al.</strong> (2013). <a href="https://arxiv.org/abs/1211.5063">On the Difficulty of Training Recurrent Neural Networks</a>. <em>ICML 2013</em>. Formal analysis of vanishing and exploding gradients in RNNs and the gradient clipping solution.</li>
+<li><strong>Sutskever, I. et al.</strong> (2014). <a href="https://arxiv.org/abs/1409.3215">Sequence to Sequence Learning with Neural Networks</a>. <em>NeurIPS 2014</em>. Demonstrated that deep LSTMs can learn complex sequence-to-sequence mappings for machine translation.</li>
+<li><strong>Graves, A.</strong> (2013). <a href="https://arxiv.org/abs/1308.0850">Generating Sequences With Recurrent Neural Networks</a>. Extended RNN text generation to handwriting synthesis with impressive results.</li>
+</ul>
+
+
 </section>
 
 <a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
@@ -2052,7 +2020,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"descPosition":"bottom","openEffect":"zoom","closeEffect":"zoom","selector":".lightbox","loop":false});
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","selector":".lightbox","descPosition":"bottom","loop":false,"openEffect":"zoom"});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;
