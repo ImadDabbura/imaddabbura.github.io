@@ -148,6 +148,10 @@ ga('send', {
 background-size: cover;
       }
 </style>
+<meta name="mermaid-theme" content="default">
+<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 <link rel="stylesheet" href="../../assets/posts.css">
@@ -411,7 +415,34 @@ background-size: cover;
 </tbody>
 </table>
 <p>BPE discovered that <code>l</code> and <code>o</code> always appear together, then that <code>lo</code> and <code>w</code> always appear together, building up <code>low</code> as a token — effectively learning the word stem. Then it found <code>lowe</code> as a shared prefix of “lower” and “lowest.” Without any linguistic rules, purely from frequency, BPE learned morphological structure.</p>
-<p>Notice what happened in merge 2: the algorithm merged <code>lo</code> with <code>w</code>, where <code>lo</code> itself was created in merge 1. BPE builds tokens <strong>hierarchically</strong> — later merges compose earlier ones, the same way that syllables compose into words.</p>
+<p>Notice what happened in merge 2: the algorithm merged <code>lo</code> with <code>w</code>, where <code>lo</code> itself was created in merge 1. BPE builds tokens <strong>hierarchically</strong> — later merges compose earlier ones. We can visualize this as a tree:</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">graph BT
+    l["l (byte)"] --&gt; lo["lo (merge 1)"]
+    o["o (byte)"] --&gt; lo
+    lo --&gt; low["low (merge 2)"]
+    w["w (byte)"] --&gt; low
+    low --&gt; lowe["lowe (merge 3)"]
+    e["e (byte)"] --&gt; lowe
+
+    style l fill:#f0f0f0,stroke:#999
+    style o fill:#f0f0f0,stroke:#999
+    style w fill:#f0f0f0,stroke:#999
+    style e fill:#f0f0f0,stroke:#999
+    style lo fill:#d4e6f1,stroke:#2980b9
+    style low fill:#aed6f1,stroke:#2471a3
+    style lowe fill:#85c1e9,stroke:#1a5276
+</pre>
+</div>
+<p></p><figcaption> BPE merges build tokens bottom-up. Each merge composes two existing tokens into a new one, forming a hierarchy from bytes to subwords.</figcaption> </figure><p></p>
+</div>
+</div>
+</div>
+<p>Each level in the tree depends on the levels below it. This is why merge order matters during encoding — you can’t build <code>low</code> until <code>lo</code> exists.</p>
 </section>
 <section id="the-algorithm" class="level3">
 <h3 class="anchored" data-anchor-id="the-algorithm">The Algorithm</h3>
@@ -427,13 +458,37 @@ background-size: cover;
 <section id="training-vs.-encoding-a-subtle-difference" class="level3">
 <h3 class="anchored" data-anchor-id="training-vs.-encoding-a-subtle-difference">Training vs.&nbsp;Encoding: A Subtle Difference</h3>
 <p>There’s an important asymmetry between how BPE <em>learns</em> merges (training) and how it <em>applies</em> them to new text (encoding).</p>
-<p>During <strong>training</strong>, we always merge the globally most <em>frequent</em> pair — that’s how we decide which merges to learn. But during <strong>encoding</strong>, we apply merges in the <em>order they were learned</em>, not by their frequency in the new text. Why? Because later merges depend on earlier ones. The token <code>low</code> only exists after <code>lo</code> has been created. If we tried to merge <code>(lo, w)</code> before creating <code>lo</code>, we’d never find the pair.</p>
-<p>In the implementation, this shows up as a subtle line: <code>min(stats, key=lambda p: self.merges.get(p, float("inf")))</code> — instead of picking the most frequent pair, it picks the pair with the <em>lowest merge index</em> (i.e., learned earliest). Pairs not in the merge table get <code>inf</code>, so they’re never merged.</p>
+<p>During <strong>training</strong>, we always merge the globally most <em>frequent</em> pair — that’s how we decide which merges to learn. But during <strong>encoding</strong>, we apply merges in the <em>order they were learned</em>, not by their frequency in the new text.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Encoding Replays Merges — It Doesn’t Re-learn Them
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A common misconception is that encoding finds the most frequent pair in the new text and merges it. It doesn’t. Encoding applies the <em>training-time</em> merges in their original order. The token <code>low</code> only exists after <code>lo</code> has been created (merge 1). If we tried to merge <code>(lo, w)</code> before creating <code>lo</code>, we’d never find the pair. In the implementation, this shows up as <code>min(stats, key=lambda p: self.merges.get(p, float("inf")))</code> — picking the pair with the <em>lowest merge index</em>, not the highest frequency.</p>
+</div>
+</div>
 </section>
 <section id="why-bytes-not-characters" class="level3">
 <h3 class="anchored" data-anchor-id="why-bytes-not-characters">Why Bytes, Not Characters?</h3>
 <p>Starting from bytes (0–255) rather than Unicode code points is a practical decision. Unicode has over 150,000 code points — that’s an impractically large base vocabulary. By working at the byte level, we start with just 256 symbols and can represent <em>any</em> string in <em>any</em> language or script. BPE merges then learn to compose bytes into characters, characters into subwords, and subwords into common words — all driven by frequency in the training data.</p>
-<p>The trade-off: languages underrepresented in training data get less efficient tokenization. English “hello” might be one token, but the same greeting in a low-resource language could take 3–4 tokens because the byte sequences were never frequent enough to merge. This means the model burns more of its context window on the same content — a real and well-documented source of multilingual inefficiency (<a href="https://arxiv.org/abs/2311.09071">Petrov et al., 2023</a>).</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The Multilingual Tax
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Languages underrepresented in training data pay a tokenization tax. English “hello” might be one token, but the same greeting in a low-resource language could take 3–4 tokens because the byte sequences were never frequent enough to merge. This means the model burns more of its context window on the same content — a well-documented source of multilingual inefficiency (<a href="https://arxiv.org/abs/2311.09071">Petrov et al., 2023</a>). It also means the model takes more compute per word for these languages, making inference more expensive.</p>
+</div>
+</div>
 </section>
 <section id="vocabulary-size-a-key-hyperparameter" class="level3">
 <h3 class="anchored" data-anchor-id="vocabulary-size-a-key-hyperparameter">Vocabulary Size: A Key Hyperparameter</h3>
@@ -606,6 +661,19 @@ background-size: cover;
 <li><strong>Digits don’t merge with letters</strong>: “h3llo” → <code>["h", "3", "llo"]</code></li>
 </ul>
 <p>BPE then runs <em>within</em> each chunk independently. The result: a much cleaner vocabulary where tokens correspond to linguistically meaningful units rather than artifacts of adjacent punctuation.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Try It Yourself
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Use <a href="https://tiktokenizer.vercel.app">Tiktokenizer</a> to see how GPT-2 and GPT-4 tokenize arbitrary text. Try pasting the same sentence in English and another language — you’ll immediately see the multilingual tokenization tax in action: the non-English version will use significantly more tokens for the same meaning.</p>
+</div>
+</div>
 <p>This pre-tokenization pattern has been refined in later models. GPT-4 uses a <a href="https://github.com/openai/tiktoken">more sophisticated pattern</a> that handles apostrophes, numbers, and whitespace more carefully, and also limits the length of digit sequences to avoid learning overly specific number tokens. The core idea remains the same: constrain where merges can happen to produce a more useful vocabulary.</p>
 </section>
 <section id="references-resources" class="level2">
