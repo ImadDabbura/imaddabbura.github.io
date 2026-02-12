@@ -9,7 +9,7 @@
 <meta name="author" content="Imad Dabbura">
 <meta name="dcterms.date" content="2024-04-10">
 
-<title>Imad Dabbura - Tokenization Uncovered: How BPE Shapes the Mind of a Language Model</title>
+<title>Imad Dabbura - Byte Pair Encoding from Scratch</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -151,12 +151,12 @@ background-size: cover;
 
 
 <link rel="stylesheet" href="../../assets/posts.css">
-<meta property="og:title" content="Imad Dabbura - Tokenization Uncovered: How BPE Shapes the Mind of a Language Model">
-<meta property="og:description" content="A deep dive into the algorithm that compresses text, balances trade-offs, and defines how AI perceives meaning">
+<meta property="og:title" content="Imad Dabbura - Byte Pair Encoding from Scratch">
+<meta property="og:description" content="Building a BPE tokenizer step by step — the algorithm that decides how language models see text">
 <meta property="og:image" content="https://imaddabbura.github.io/posts/nlp/bpe-tokenizer.jpg">
 <meta property="og:site_name" content="Imad Dabbura">
-<meta name="twitter:title" content="Imad Dabbura - Tokenization Uncovered: How BPE Shapes the Mind of a Language Model">
-<meta name="twitter:description" content="A deep dive into the algorithm that compresses text, balances trade-offs, and defines how AI perceives meaning">
+<meta name="twitter:title" content="Imad Dabbura - Byte Pair Encoding from Scratch">
+<meta name="twitter:description" content="Building a BPE tokenizer step by step — the algorithm that decides how language models see text">
 <meta name="twitter:image" content="https://imaddabbura.github.io/posts/nlp/bpe-tokenizer.jpg">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
@@ -258,8 +258,8 @@ background-size: cover;
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Tokenization Uncovered: How BPE Shapes the Mind of a Language Model</h1>
-            <p class="subtitle lead">A deep dive into the algorithm that compresses text, balances trade-offs, and defines how AI perceives meaning</p>
+      <h1 class="title">Byte Pair Encoding from Scratch</h1>
+            <p class="subtitle lead">Building a BPE tokenizer step by step — the algorithm that decides how language models see text</p>
                                 <div class="quarto-categories">
                 <div class="quarto-category">NLP</div>
                 <div class="quarto-category">Deep Learning</div>
@@ -302,11 +302,18 @@ background-size: cover;
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#byte-pair-encoding" id="toc-byte-pair-encoding" class="nav-link" data-scroll-target="#byte-pair-encoding">Byte-Pair Encoding</a></li>
+  <li><a href="#why-tokenization-matters" id="toc-why-tokenization-matters" class="nav-link active" data-scroll-target="#why-tokenization-matters">Why Tokenization Matters</a></li>
+  <li><a href="#how-bpe-works" id="toc-how-bpe-works" class="nav-link" data-scroll-target="#how-bpe-works">How BPE Works</a>
+  <ul class="collapse">
+  <li><a href="#seeing-it-in-action" id="toc-seeing-it-in-action" class="nav-link" data-scroll-target="#seeing-it-in-action">Seeing It in Action</a></li>
+  <li><a href="#the-algorithm" id="toc-the-algorithm" class="nav-link" data-scroll-target="#the-algorithm">The Algorithm</a></li>
+  <li><a href="#training-vs.-encoding-a-subtle-difference" id="toc-training-vs.-encoding-a-subtle-difference" class="nav-link" data-scroll-target="#training-vs.-encoding-a-subtle-difference">Training vs.&nbsp;Encoding: A Subtle Difference</a></li>
+  <li><a href="#why-bytes-not-characters" id="toc-why-bytes-not-characters" class="nav-link" data-scroll-target="#why-bytes-not-characters">Why Bytes, Not Characters?</a></li>
+  <li><a href="#vocabulary-size-a-key-hyperparameter" id="toc-vocabulary-size-a-key-hyperparameter" class="nav-link" data-scroll-target="#vocabulary-size-a-key-hyperparameter">Vocabulary Size: A Key Hyperparameter</a></li>
+  </ul></li>
   <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation">Implementation</a></li>
-  <li><a href="#gpt2-bpe-tokenizer" id="toc-gpt2-bpe-tokenizer" class="nav-link" data-scroll-target="#gpt2-bpe-tokenizer">GPT2 BPE Tokenizer</a></li>
-  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources">Resources</a></li>
+  <li><a href="#from-vanilla-bpe-to-gpt-2s-tokenizer" id="toc-from-vanilla-bpe-to-gpt-2s-tokenizer" class="nav-link" data-scroll-target="#from-vanilla-bpe-to-gpt-2s-tokenizer">From Vanilla BPE to GPT-2’s Tokenizer</a></li>
+  <li><a href="#references-resources" id="toc-references-resources" class="nav-link" data-scroll-target="#references-resources">References &amp; Resources</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -317,24 +324,174 @@ background-size: cover;
 
 
 
-<section id="introduction" class="level2">
-<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>What if I told you that the way a language model “sees” the world is entirely shaped by one invisible yet critical process? A process so fundamental that it can make or break the model’s ability to understand context, predict meaning, and even handle different languages. That process is tokenization—the art of breaking down text into smaller, digestible pieces called tokens. And it’s not just a technical detail; it’s the very lens through which language models perceive the world.</p>
-<p>But here’s the twist: tokenization isn’t perfect. It’s a balancing act, full of trade-offs and challenges. For instance, languages like English, which dominate training datasets, are tokenized into fewer, denser tokens, allowing models to process more context efficiently. Meanwhile, less-represented languages like Korean are fragmented into far more tokens, forcing the model to work harder to understand the same amount of text. This imbalance can lead to inefficiencies, biases, and even a loss of meaning.</p>
-<p>So, how do we strike the right balance? Enter Byte Pair Encoding (BPE)—a clever algorithm that merges frequent character pairs into subwords, creating a compact yet expressive vocabulary. Starting from raw bytes, BPE builds tokens step by step, like assembling a puzzle, ensuring flexibility while maintaining efficiency. It’s a method that not only compresses text but also shapes how much context a model can attend to, directly influencing its performance.</p>
-<p>In this post, we’ll unravel the mysteries of Byte Pair Encoding. We’ll explore how it works, why it’s so effective, and the surprising ways it impacts everything from multilingual understanding to computational efficiency. By the end, you’ll see how this seemingly simple process holds the key to unlocking the true potential of language models. Ready to dive in? Let’s decode the magic of tokenization!</p>
+<section id="why-tokenization-matters" class="level2">
+<h2 class="anchored" data-anchor-id="why-tokenization-matters">Why Tokenization Matters</h2>
+<p>When you type “unhappiness” into ChatGPT, the model doesn’t see the word “unhappiness.” It sees something like <code>["un", "happ", "iness"]</code> — three <strong>tokens</strong> that were chosen by an algorithm months before the model was even trained. That algorithm decided, based on statistics from a massive training corpus, that these three pieces are the right granularity. Not individual characters (too many tokens, too little meaning per token). Not whole words (too many unique words, no way to handle words never seen in training). Subwords — the sweet spot.</p>
+<p>This isn’t a minor preprocessing detail. Tokenization defines <strong>what the model can see</strong>. Consider three strategies on the same sentence:</p>
+<table class="table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Strategy</th>
+<th>“The cat sat unhappily” becomes</th>
+<th>Tokens</th>
+<th>Vocab Size</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Character-level</strong></td>
+<td><code>["T","h","e"," ","c","a","t"," ","s","a","t"," ","u","n","h","a","p","p","i","l","y"]</code></td>
+<td>21</td>
+<td>~256</td>
+</tr>
+<tr class="even">
+<td><strong>Word-level</strong></td>
+<td><code>["The", "cat", "sat", "unhappily"]</code></td>
+<td>4</td>
+<td>100,000+</td>
+</tr>
+<tr class="odd">
+<td><strong>Subword (BPE)</strong></td>
+<td><code>["The", " cat", " sat", " un", "happ", "ily"]</code></td>
+<td>6</td>
+<td>~50,000</td>
+</tr>
+</tbody>
+</table>
+<p>With characters, a fixed context window of 2048 tokens covers ~400 words. With subwords, the same window covers ~1500 words — nearly 4× more context for the model to reason over. Word-level is compact but brittle: “unhappily” might never appear in training data, making it an <code>&lt;UNK&gt;</code> token the model is completely blind to. But “un”, “happ”, and “ily” almost certainly do appear — the model can compose meaning from pieces it knows.</p>
+<p>The algorithm that learns these splits is <strong>Byte Pair Encoding (BPE)</strong> — originally a data compression technique (<a href="https://www.derczynski.com/papers/archive/BPE_Gage.pdf">Gage, 1994</a>), adapted for NLP by <a href="https://arxiv.org/abs/1508.07909">Sennrich et al.&nbsp;(2016)</a>, and now used in GPT-2, GPT-3/4, LLaMA, and most modern language models. In this post, we’ll understand how it works, implement it from scratch, and see how GPT-2 refined the basic algorithm for production.</p>
 </section>
-<section id="byte-pair-encoding" class="level2">
-<h2 class="anchored" data-anchor-id="byte-pair-encoding">Byte-Pair Encoding</h2>
-<p>Byte Pair Encoding (BPE) is a subword tokenization algorithm originally developed for data compression, now widely used in NLP to handle unknown or rare words by breaking text into frequent subword units. BPE strikes a balance between character-level and word-level representations, enabling open-vocabulary modeling.</p>
-<p>Algorithm Steps: - Initialize Vocabulary: Begin with a base vocabulary containing all 256 possible byte values (0–255), ensuring full coverage of any input text - Treat each word in the training corpus as a sequence of characters - Count Symbol Pairs: Scan the corpus to count all adjacent symbol (character or subword) pairs - Merge Most Frequent Pair: Identify the most frequent pair of symbols - Merge them into a new symbol (e.g., merging “l” and “o” -&gt; “lo”) - Update Vocabulary: Replace all occurrences of the merged pair in the corpus with the new symbol - Repeat steps 2–4 for a predefined number of merge operations (vocabulary size) or until no pairs remain</p>
+<section id="how-bpe-works" class="level2">
+<h2 class="anchored" data-anchor-id="how-bpe-works">How BPE Works</h2>
+<p>The core insight is simple: <strong>if two symbols frequently appear next to each other, they probably belong together.</strong> Merge them into a single token, then look for the next most frequent pair, and repeat. It’s exactly how you’d compress a text file — find repeated patterns and replace them with shorter symbols. Frequent patterns get absorbed into single tokens; rare patterns stay as smaller pieces.</p>
+<p>Think of it like learning abbreviations. If you keep writing “machine learning” in your notes, you’d eventually start writing “ML.” Then if “ML model” keeps appearing, maybe you’d abbreviate that too. BPE does the same thing, but systematically and bottom-up — starting from the smallest units (bytes) and building up to subwords.</p>
+<section id="seeing-it-in-action" class="level3">
+<h3 class="anchored" data-anchor-id="seeing-it-in-action">Seeing It in Action</h3>
+<p>Before formalizing the algorithm, let’s watch it work on a real example. Consider a tiny training corpus containing the words <code>"low lower lowest"</code>:</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Step</th>
+<th>Token Sequence</th>
+<th>Most Frequent Pair</th>
+<th>New Token</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Start</td>
+<td><code>l o w _ l o w e r _ l o w e s t</code></td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>Merge 1</td>
+<td><code>lo w _ lo w e r _ lo w e s t</code></td>
+<td><code>(l, o)</code> → <code>lo</code></td>
+<td>3×</td>
+</tr>
+<tr class="odd">
+<td>Merge 2</td>
+<td><code>low _ low e r _ low e s t</code></td>
+<td><code>(lo, w)</code> → <code>low</code></td>
+<td>3×</td>
+</tr>
+<tr class="even">
+<td>Merge 3</td>
+<td><code>low _ lowe r _ lowe s t</code></td>
+<td><code>(low, e)</code> → <code>lowe</code></td>
+<td>2×</td>
+</tr>
+</tbody>
+</table>
+<p>BPE discovered that <code>l</code> and <code>o</code> always appear together, then that <code>lo</code> and <code>w</code> always appear together, building up <code>low</code> as a token — effectively learning the word stem. Then it found <code>lowe</code> as a shared prefix of “lower” and “lowest.” Without any linguistic rules, purely from frequency, BPE learned morphological structure.</p>
+<p>Notice what happened in merge 2: the algorithm merged <code>lo</code> with <code>w</code>, where <code>lo</code> itself was created in merge 1. BPE builds tokens <strong>hierarchically</strong> — later merges compose earlier ones, the same way that syllables compose into words.</p>
+</section>
+<section id="the-algorithm" class="level3">
+<h3 class="anchored" data-anchor-id="the-algorithm">The Algorithm</h3>
+<p>With the intuition in place, here’s the formal procedure:</p>
+<ol type="1">
+<li><p><strong>Initialize</strong>: Start with a base vocabulary of all 256 byte values (0–255). Every string can be represented as bytes, so this guarantees full coverage — no <code>&lt;UNK&gt;</code> tokens, ever.</p></li>
+<li><p><strong>Count pairs</strong>: Scan the corpus and count every adjacent pair of tokens.</p></li>
+<li><p><strong>Merge the most frequent pair</strong>: Create a new token for it and replace all occurrences in the corpus.</p></li>
+<li><p><strong>Repeat</strong> steps 2–3 until you’ve done <code>vocab_size - 256</code> merges.</p></li>
+</ol>
+<p>The output is a <strong>merge table</strong>: an ordered list of pair → token mappings. This table <em>is</em> the tokenizer.</p>
+</section>
+<section id="training-vs.-encoding-a-subtle-difference" class="level3">
+<h3 class="anchored" data-anchor-id="training-vs.-encoding-a-subtle-difference">Training vs.&nbsp;Encoding: A Subtle Difference</h3>
+<p>There’s an important asymmetry between how BPE <em>learns</em> merges (training) and how it <em>applies</em> them to new text (encoding).</p>
+<p>During <strong>training</strong>, we always merge the globally most <em>frequent</em> pair — that’s how we decide which merges to learn. But during <strong>encoding</strong>, we apply merges in the <em>order they were learned</em>, not by their frequency in the new text. Why? Because later merges depend on earlier ones. The token <code>low</code> only exists after <code>lo</code> has been created. If we tried to merge <code>(lo, w)</code> before creating <code>lo</code>, we’d never find the pair.</p>
+<p>In the implementation, this shows up as a subtle line: <code>min(stats, key=lambda p: self.merges.get(p, float("inf")))</code> — instead of picking the most frequent pair, it picks the pair with the <em>lowest merge index</em> (i.e., learned earliest). Pairs not in the merge table get <code>inf</code>, so they’re never merged.</p>
+</section>
+<section id="why-bytes-not-characters" class="level3">
+<h3 class="anchored" data-anchor-id="why-bytes-not-characters">Why Bytes, Not Characters?</h3>
+<p>Starting from bytes (0–255) rather than Unicode code points is a practical decision. Unicode has over 150,000 code points — that’s an impractically large base vocabulary. By working at the byte level, we start with just 256 symbols and can represent <em>any</em> string in <em>any</em> language or script. BPE merges then learn to compose bytes into characters, characters into subwords, and subwords into common words — all driven by frequency in the training data.</p>
+<p>The trade-off: languages underrepresented in training data get less efficient tokenization. English “hello” might be one token, but the same greeting in a low-resource language could take 3–4 tokens because the byte sequences were never frequent enough to merge. This means the model burns more of its context window on the same content — a real and well-documented source of multilingual inefficiency (<a href="https://arxiv.org/abs/2311.09071">Petrov et al., 2023</a>).</p>
+</section>
+<section id="vocabulary-size-a-key-hyperparameter" class="level3">
+<h3 class="anchored" data-anchor-id="vocabulary-size-a-key-hyperparameter">Vocabulary Size: A Key Hyperparameter</h3>
+<p>How many merges should we do? This is the vocabulary size, and it’s a meaningful trade-off:</p>
+<table class="table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Vocab Size</th>
+<th>Tokens per Text</th>
+<th>Embedding Table</th>
+<th>Character</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Small</strong> (~1k)</td>
+<td>Many — close to character-level</td>
+<td>Tiny</td>
+<td>Better generalization on rare words, but sequences are long and training is slow</td>
+</tr>
+<tr class="even">
+<td><strong>Medium</strong> (~32k–50k)</td>
+<td>Moderate — good compression</td>
+<td>Manageable</td>
+<td>The sweet spot for most models (GPT-2: 50k, LLaMA: 32k)</td>
+</tr>
+<tr class="odd">
+<td><strong>Large</strong> (~100k+)</td>
+<td>Few — common phrases become single tokens</td>
+<td>Very large</td>
+<td>Risk of overfitting to training distribution; rare tokens get poorly trained embeddings</td>
+</tr>
+</tbody>
+</table>
+<p>Larger vocabularies mean each token carries more information, so sequences are shorter and the model sees more context per forward pass. But each token also needs an embedding vector, so the embedding table grows linearly. And tokens that appear rarely in training will have poorly learned embeddings — they’ve simply not been seen enough times.</p>
+<p>Most modern models settle in the 32k–100k range. GPT-2 uses ~50k tokens. LLaMA uses 32k. GPT-4 reportedly uses ~100k. The right size depends on the training data, the target languages, and the compute budget.</p>
 <div id="660e14ce-2270-4cf4-9078-36759f24db29" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">## | echo: false</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">## %load_ext lab_black</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
+</section>
 <section id="implementation" class="level2">
 <h2 class="anchored" data-anchor-id="implementation">Implementation</h2>
+<p>Let’s turn the algorithm into code. The <code>BPETokenizer</code> class below has four core methods, each mapping directly to a step we’ve discussed:</p>
+<ul>
+<li><strong><code>train</code></strong>: The learning loop — encode the corpus to bytes, then greedily merge the most frequent pair <code>vocab_size - 256</code> times. Each merge is recorded in <code>self.merges</code> as a <code>(pair) → index</code> mapping. This ordered dictionary <em>is</em> the tokenizer.</li>
+<li><strong><code>encode</code></strong>: The encoding step — convert new text to bytes, then apply merges in <em>learned order</em> (earliest first, using the <code>min</code> trick we discussed). This is where training-order matters: we pick the pair with the smallest merge index, not the most frequent.</li>
+<li><strong><code>decode</code></strong>: The inverse — look up each token ID in the vocabulary to get its byte sequence, concatenate, and decode back to a string.</li>
+<li><strong><code>_get_stats</code> / <code>_merge</code></strong>: Helpers that count adjacent pairs and replace a specific pair with its merged token throughout a sequence.</li>
+</ul>
+<p>One implementation detail: <code>_build_vocab</code> relies on Python 3.7+ dictionary insertion order. Since merges are inserted chronologically, iterating <code>self.merges</code> replays them in order — each merged token is the byte-concatenation of its two parents, which must already exist in the vocabulary.</p>
 <div id="1517b8b6-f809-44a3-a368-2ecf7073c0d5" class="cell" data-execution_count="23">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">## | code-fold: true</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Iterable</span>
@@ -435,23 +592,32 @@ background-size: cover;
 </div>
 </div>
 </section>
-<section id="gpt2-bpe-tokenizer" class="level2">
-<h2 class="anchored" data-anchor-id="gpt2-bpe-tokenizer">GPT2 BPE Tokenizer</h2>
-<p>Vanilla byte-level BPE applies merges directly on raw byte sequences using a greedy frequency-based heuristic. While this reduces the initial vocabulary size to 256, it leads to inefficient vocabulary usage. For example, common words like “play” might appear with different punctuation (e.g., “play:”, “play?”, “play!”) and the BPE algorithm tends to learn separate tokens for each variant. This redundancy consumes vocabulary slots that could be better utilized.</p>
-<p>Additionally, standard BPE implementations operating on Unicode code points would require a base vocabulary of over 130,000 symbols to handle all Unicode strings. This is impractically large for most models, which typically use vocabularies in the 32k–64k range.</p>
-<p>To address these issues, GPT-2 uses a modified byte-level BPE approach:</p>
-<p>It starts with a 256-symbol byte vocabulary.</p>
-<p>It prevents merges across character categories (e.g., letters and punctuation), reducing redundancy.</p>
-<p>It allows merging with spaces to improve compression without overly fragmenting words.</p>
-<p>This approach balances the open-vocabulary benefits of byte-level encoding with the compression and efficiency gains of BPE, while preserving the ability to assign probabilities to any Unicode string without requiring preprocessing or token normalization.</p>
-</section>
-<section id="resources" class="level2">
-<h2 class="anchored" data-anchor-id="resources">Resources</h2>
+<section id="from-vanilla-bpe-to-gpt-2s-tokenizer" class="level2">
+<h2 class="anchored" data-anchor-id="from-vanilla-bpe-to-gpt-2s-tokenizer">From Vanilla BPE to GPT-2’s Tokenizer</h2>
+<p>The implementation above is vanilla byte-level BPE — it works, but it has a practical problem. Because merges are purely frequency-driven, the algorithm doesn’t respect word boundaries. The word “play” might appear in the corpus as “play.”, “play!”, “play,”, and “play” — and BPE will learn separate tokens for each variant, wasting vocabulary slots on what is essentially the same word with different punctuation.</p>
+<p>GPT-2 (<a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf">Radford et al., 2019</a>) introduced a key refinement: <strong>pre-tokenization with a regex pattern</strong> that splits text into chunks <em>before</em> BPE runs. The regex prevents merges from crossing certain boundaries — letters can’t merge with digits, punctuation stays separate from words, and spaces attach to the <em>beginning</em> of words rather than the end.</p>
+<p>The GPT-2 regex pattern:</p>
+<pre><code>'(?:[sdmt]|ll|ve|re)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+</code></pre>
+<p>This ensures that:</p>
 <ul>
-<li><a href="https://utf8everywhere.org/">UTF-8 Everywhere</a></li>
-<li><a href="https://www.reedbeta.com/blog/programmers-intro-to-unicode/">A Programmer’s Introduction to Unicode</a></li>
-<li><a href="https://www.youtube.com/watch?v=zduSFxRajkE">Karpathy’s video on BPE</a></li>
-<li><a href="https://tiktokenizer.vercel.app">Good tokenization web app</a></li>
+<li><strong>Contractions</strong> are split cleanly: “don’t” → <code>["don", "'t"]</code></li>
+<li><strong>Spaces attach to the next word</strong>: ” hello” stays together, preserving word boundaries</li>
+<li><strong>Punctuation stays isolated</strong>: “play!” → <code>["play", "!"]</code> instead of learning “play!” as one token</li>
+<li><strong>Digits don’t merge with letters</strong>: “h3llo” → <code>["h", "3", "llo"]</code></li>
+</ul>
+<p>BPE then runs <em>within</em> each chunk independently. The result: a much cleaner vocabulary where tokens correspond to linguistically meaningful units rather than artifacts of adjacent punctuation.</p>
+<p>This pre-tokenization pattern has been refined in later models. GPT-4 uses a <a href="https://github.com/openai/tiktoken">more sophisticated pattern</a> that handles apostrophes, numbers, and whitespace more carefully, and also limits the length of digit sequences to avoid learning overly specific number tokens. The core idea remains the same: constrain where merges can happen to produce a more useful vocabulary.</p>
+</section>
+<section id="references-resources" class="level2">
+<h2 class="anchored" data-anchor-id="references-resources">References &amp; Resources</h2>
+<ul>
+<li><strong>Gage, P.</strong> (1994). <a href="https://www.derczynski.com/papers/archive/BPE_Gage.pdf">A New Algorithm for Data Compression</a>. <em>The C Users Journal</em>. The original BPE paper — a compression algorithm that found new life in NLP.</li>
+<li><strong>Sennrich, R. et al.</strong> (2016). <a href="https://arxiv.org/abs/1508.07909">Neural Machine Translation of Rare Words with Subword Units</a>. <em>ACL 2016</em>. The paper that adapted BPE for NLP tokenization.</li>
+<li><strong>Radford, A. et al.</strong> (2019). <a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf">Language Models are Unsupervised Multitask Learners</a>. The GPT-2 paper that introduced byte-level BPE with regex pre-tokenization.</li>
+<li><strong>Karpathy, A.</strong> (2024). <a href="https://www.youtube.com/watch?v=zduSFxRajkE">Let’s build the GPT Tokenizer</a>. Excellent video walkthrough of building a BPE tokenizer from scratch.</li>
+<li><a href="https://www.reedbeta.com/blog/programmers-intro-to-unicode/">A Programmer’s Introduction to Unicode</a> — why bytes vs.&nbsp;code points matters.</li>
+<li><a href="https://utf8everywhere.org/">UTF-8 Everywhere</a> — the case for UTF-8 as the universal encoding.</li>
+<li><a href="https://tiktokenizer.vercel.app">Tiktokenizer</a> — interactive web app to visualize how different tokenizers split text.</li>
 </ul>
 
 
