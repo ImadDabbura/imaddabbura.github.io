@@ -114,6 +114,10 @@ ga('send', {
 background-size: cover;
       }
 </style>
+<meta name="mermaid-theme" content="default">
+<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 <link rel="stylesheet" href="../../assets/posts.css">
@@ -232,6 +236,7 @@ background-size: cover;
             <p class="subtitle lead">A Guide for Engineers and Product Managers</p>
                                 <div class="quarto-categories">
                 <div class="quarto-category">Product Management</div>
+                <div class="quarto-category">Machine Learning</div>
               </div>
                   </div>
   </div>
@@ -256,7 +261,7 @@ background-size: cover;
       <div>
       <div class="quarto-title-meta-heading">Modified</div>
       <div class="quarto-title-meta-contents">
-        <p class="date-modified">January 5, 2025</p>
+        <p class="date-modified">February 11, 2026</p>
       </div>
     </div>
       
@@ -271,25 +276,13 @@ background-size: cover;
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#introcution" id="toc-introcution" class="nav-link active" data-scroll-target="#introcution">Introcution</a></li>
-  <li><a href="#tips" id="toc-tips" class="nav-link" data-scroll-target="#tips">Tips</a>
-  <ul class="collapse">
-  <li><a href="#write-for-a-specific-audience-and-topic" id="toc-write-for-a-specific-audience-and-topic" class="nav-link" data-scroll-target="#write-for-a-specific-audience-and-topic">Write for a Specific Audience and Topic</a></li>
-  <li><a href="#set-a-deadline-and-stick-to-it" id="toc-set-a-deadline-and-stick-to-it" class="nav-link" data-scroll-target="#set-a-deadline-and-stick-to-it">Set a Deadline and Stick to It</a></li>
-  <li><a href="#work-backwards-from-the-end-goal" id="toc-work-backwards-from-the-end-goal" class="nav-link" data-scroll-target="#work-backwards-from-the-end-goal">Work Backwards from the End Goal</a></li>
-  <li><a href="#break-it-down-into-manageable-pieces" id="toc-break-it-down-into-manageable-pieces" class="nav-link" data-scroll-target="#break-it-down-into-manageable-pieces">Break It Down into Manageable Pieces</a></li>
-  <li><a href="#be-crystal-clear-on-completion-criteria" id="toc-be-crystal-clear-on-completion-criteria" class="nav-link" data-scroll-target="#be-crystal-clear-on-completion-criteria">Be Crystal Clear on Completion Criteria</a></li>
-  <li><a href="#start-small-and-learn-quickly" id="toc-start-small-and-learn-quickly" class="nav-link" data-scroll-target="#start-small-and-learn-quickly">Start Small (and Learn Quickly)</a></li>
-  <li><a href="#track-progress-and-celebrate-wins" id="toc-track-progress-and-celebrate-wins" class="nav-link" data-scroll-target="#track-progress-and-celebrate-wins">Track Progress and Celebrate Wins</a></li>
-  <li><a href="#dont-reinvent-the-wheel" id="toc-dont-reinvent-the-wheel" class="nav-link" data-scroll-target="#dont-reinvent-the-wheel">Don’t Reinvent the Wheel</a></li>
-  <li><a href="#every-version-should-be-better" id="toc-every-version-should-be-better" class="nav-link" data-scroll-target="#every-version-should-be-better">Every Version Should Be Better</a></li>
-  <li><a href="#define-success-criteria-for-the-first-version" id="toc-define-success-criteria-for-the-first-version" class="nav-link" data-scroll-target="#define-success-criteria-for-the-first-version">Define Success Criteria for the First Version</a></li>
-  <li><a href="#do-your-homework-research-before-you-start" id="toc-do-your-homework-research-before-you-start" class="nav-link" data-scroll-target="#do-your-homework-research-before-you-start">Do Your Homework (Research Before You Start)</a></li>
-  <li><a href="#prioritize-must-haves-vs.-nice-to-haves" id="toc-prioritize-must-haves-vs.-nice-to-haves" class="nav-link" data-scroll-target="#prioritize-must-haves-vs.-nice-to-haves">Prioritize Must-Haves vs.&nbsp;Nice-to-Haves</a></li>
-  <li><a href="#mistakes-will-happendont-take-them-personally" id="toc-mistakes-will-happendont-take-them-personally" class="nav-link" data-scroll-target="#mistakes-will-happendont-take-them-personally">Mistakes Will Happen—Don’t Take Them Personally</a></li>
-  <li><a href="#ship-now-improve-later" id="toc-ship-now-improve-later" class="nav-link" data-scroll-target="#ship-now-improve-later">Ship Now, Improve Later</a></li>
-  </ul></li>
-  <li><a href="#final-thoughts-start-shipping" id="toc-final-thoughts-start-shipping" class="nav-link" data-scroll-target="#final-thoughts-start-shipping">Final Thoughts: Start Shipping</a></li>
+  <li><a href="#why-ml-projects-fail-to-ship" id="toc-why-ml-projects-fail-to-ship" class="nav-link active" data-scroll-target="#why-ml-projects-fail-to-ship">Why ML Projects Fail to Ship</a></li>
+  <li><a href="#define-the-target-before-writing-a-line-of-code" id="toc-define-the-target-before-writing-a-line-of-code" class="nav-link" data-scroll-target="#define-the-target-before-writing-a-line-of-code">Define the Target Before Writing a Line of Code</a></li>
+  <li><a href="#make-time-the-constraint-not-scope" id="toc-make-time-the-constraint-not-scope" class="nav-link" data-scroll-target="#make-time-the-constraint-not-scope">Make Time the Constraint, Not Scope</a></li>
+  <li><a href="#decompose-until-done-is-unambiguous" id="toc-decompose-until-done-is-unambiguous" class="nav-link" data-scroll-target="#decompose-until-done-is-unambiguous">Decompose Until Done Is Unambiguous</a></li>
+  <li><a href="#validate-the-core-assumption-before-building-the-system" id="toc-validate-the-core-assumption-before-building-the-system" class="nav-link" data-scroll-target="#validate-the-core-assumption-before-building-the-system">Validate the Core Assumption Before Building the System</a></li>
+  <li><a href="#ship-then-compound" id="toc-ship-then-compound" class="nav-link" data-scroll-target="#ship-then-compound">Ship, Then Compound</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key Takeaways</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -300,97 +293,197 @@ background-size: cover;
 
 
 
-<section id="introcution" class="level2">
-<h2 class="anchored" data-anchor-id="introcution">Introcution</h2>
-<p>Shipping software projects — especially in machine learning (ML) and AI—can feel like navigating a maze of unknowns. Over the years, I’ve learned (often the hard way) what works and what doesn’t when it comes to delivering projects on time and with impact. Below, I share my most valuable lessons, distilled into actionable advice to help you ship your project faster, with fewer headaches, and greater confidence.</p>
+<section id="why-ml-projects-fail-to-ship" class="level2">
+<h2 class="anchored" data-anchor-id="why-ml-projects-fail-to-ship">Why ML Projects Fail to Ship</h2>
+<p>Some ML projects I’ve worked on shipped six months late. Others shipped and quietly died in production. A few never shipped at all — and those are the ones I keep coming back to. I’ve been through this as an individual contributor and as the person leading the team. For a long time I blamed the usual suspects: unclear requirements, technical debt, underestimating complexity. The real cause, I eventually realized, was more structural — and it looked the same from both seats.</p>
+<p>A web feature has a clear definition of done: the button appears, the form submits, the data is saved. An ML feature doesn’t. “Improve recommendation accuracy” could mean another week of training runs, another architecture experiment, another round of feature engineering — indefinitely. Unlike traditional software, where the solution space is bounded by the spec, ML projects have an effectively unbounded search space. Every model can be made larger, every feature set more complete, every training run longer.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    subgraph trad ["Traditional Software"]
+        direction LR
+        t1["Define Feature"] --&gt; t2["Build"] --&gt; t3["Ship ✓"]
+    end
+    subgraph ml ["ML Without Constraints"]
+        direction LR
+        m1["Vague Goal"] --&gt; m2["Experiment #1"]
+        m2 --&gt;|"+0.5% accuracy"| m3["Experiment #2"]
+        m3 --&gt;|"+0.2% accuracy"| m4["Experiment #3"]
+        m4 -.-&gt;|"one more try..."| m2
+    end
+</pre>
+</div>
+<p></p><figcaption> Traditional software has a bounded end state. ML projects without defined constraints loop indefinitely — each experiment looks like progress.</figcaption> </figure><p></p>
+</div>
+</div>
+</div>
+<p>This produces a predictable failure mode: a project that <em>looks</em> like it’s making progress — models training, experiments running, metrics moving — but never ships.</p>
+<p>The root cause, I’ve come to believe, is a category error. ML projects sit uncomfortably between research and engineering. Research is unbounded by design — you keep going until you understand something. Engineering is bounded by design — you keep going until it ships. The teams that deliver consistently have made a deliberate choice about which one they’re doing. The ones that don’t, haven’t — and so they run a research process inside an engineering context, indefinitely.</p>
+<p>What follows is what I’ve learned — sometimes from my own failures, sometimes from watching teams I was leading repeat patterns I’d already lived through — about how to actually make that choice.</p>
 </section>
-<section id="tips" class="level2">
-<h2 class="anchored" data-anchor-id="tips">Tips</h2>
-<section id="write-for-a-specific-audience-and-topic" class="level3">
-<h3 class="anchored" data-anchor-id="write-for-a-specific-audience-and-topic">Write for a Specific Audience and Topic</h3>
-<p>One of the easiest ways to reduce complexity in a project is to focus on a specific audience and topic. Building for “everyone” leads to endless scope creep, vague requirements, and delayed delivery. When you narrow your audience and define your topic, you’ll find it much easier to: - Define the core problem you’re solving. - Decide which features and functionality are essential.<br>
-In short, specificity speeds up decision-making—and delivery.</p>
+<section id="define-the-target-before-writing-a-line-of-code" class="level2">
+<h2 class="anchored" data-anchor-id="define-the-target-before-writing-a-line-of-code">Define the Target Before Writing a Line of Code</h2>
+<p>The most consistent mistake I’ve made — and watched others make — is starting before the goal is properly defined. It doesn’t feel like a mistake at the time. There’s energy, there’s a general direction, there’s a team ready to move. But you can’t constrain an undefined goal. The first structural requirement for shipping is a precise definition of version one — not the roadmap, not the vision, but version one.</p>
+<p>Write it as a falsifiable criterion: <em>“A model that identifies churn risk 14 days in advance with precision ≥ 70% on the holdout set, deployable via the existing prediction service.”</em> That’s a definition. “Improve churn prediction” is not — it’s a direction, and directions don’t ship.</p>
+<p>Before writing code, three questions force the definition:</p>
+<p><strong>Who is this for, specifically?</strong> A customer-facing recommendation system for mobile users has different input distributions, latency constraints, and acceptable error modes than an internal analyst tool. “Users in general” means nobody in particular, and a system designed for nobody in particular gets spec’d indefinitely.</p>
+<p><strong>What does version one accomplish — and what does it explicitly not do?</strong> The second half matters as much as the first. Scope creep in ML is insidious because experiments feel like progress: an additional feature, a new architecture variant, a cleaned edge case — each looks like forward motion. The out-of-scope list is what makes the in-scope list real.</p>
+<p><strong>What are the success criteria, written down and falsifiable?</strong> Precision ≥ 0.70. Latency ≤ 100ms at p99. Deployable on the existing serving infrastructure. Criteria that can be verified make it possible to call the project done. Criteria that can’t — “good enough,” “production-ready,” “performs well” — guarantee the project never ends.</p>
+<p>Working backwards from these answers also produces the project structure. Once you know what version one must accomplish, you can enumerate prerequisite questions: <em>What training data do we need? What does the evaluation harness look like? How does it plug into production?</em> Each answer either gets scheduled or gets cut. Vague goals don’t allow this decomposition — they keep the surface area perpetually open.</p>
 </section>
-<section id="set-a-deadline-and-stick-to-it" class="level3">
-<h3 class="anchored" data-anchor-id="set-a-deadline-and-stick-to-it">Set a Deadline and Stick to It</h3>
-<p>Deadlines are your best friend, not your enemy. View them as a challenge: “What can I ship by this date, no matter what?”<br>
-The key here is to ship whatever is ready—even if it’s incomplete or imperfect. Deadlines force you to prioritize ruthlessly and get the project out the door. Remember, you can always iterate later.</p>
+<section id="make-time-the-constraint-not-scope" class="level2">
+<h2 class="anchored" data-anchor-id="make-time-the-constraint-not-scope">Make Time the Constraint, Not Scope</h2>
+<p>The natural instinct is to treat scope as fixed and deadline as flexible. This is exactly backwards.</p>
+<p>Scope in an ML project is not fixed — it’s infinitely expandable. There’s always a better architecture to try, a cleaner way to handle edge cases, a feature that might help. Teams treat scope as the constraint because it feels <em>owned</em>: the team wrote the requirements, agreed on them, and changing them feels like abandoning a commitment. Deadlines, by contrast, feel externally imposed and therefore more negotiable — something to push when the work “isn’t ready yet.”</p>
+<p>I’ve been in this meeting many times — sometimes as the engineer watching the deadline move, more often as the person responsible for it. The deadline slips, then slips again, then becomes a standing item on the weekly status call.</p>
+<p>Flip the constraint. Treat the deadline as fixed and scope as the variable. This changes the question from <em>“when will we be done with everything we planned?”</em> to <em>“what’s the most important thing we can ship by this date?”</em> The second question forces real prioritization. The model that trains in four hours ships; the one that takes 24 hours doesn’t. The feature built on existing infrastructure stays; the one that requires a new data pipeline gets cut.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Deadlines as a Design Tool
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A deadline doesn’t dictate quality — it dictates scope. The discipline is specifically about protecting the deadline from <em>scope expansion</em>, not accelerating the work. When a new requirement surfaces mid-project, the question isn’t <em>“can we fit it in?”</em> — it’s <em>“what does it displace?”</em></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Version One Is Supposed to Be Small
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Version one of most production models is smaller, faster, and more constrained than anything the team initially imagined. Good. The goal of version one isn’t to build the best possible system — it’s to establish the deployment path, validate production integration, and generate real usage data. The best possible system comes later, built on what version one teaches you.</p>
+</div>
+</div>
 </section>
-<section id="work-backwards-from-the-end-goal" class="level3">
-<h3 class="anchored" data-anchor-id="work-backwards-from-the-end-goal">Work Backwards from the End Goal</h3>
-<p>When starting any project, first ask: “What does success look like?” Work backwards from there, breaking the project into essential questions:<br>
-- What’s the end result look like, exactly?<br>
-- How many features are needed?<br>
-- What’s absolutely required vs.&nbsp;what’s nice to have?<br>
-- How perfect does it need to be?<br>
-- How long will each step take?<br>
-- What tasks need to happen first, and what preparation is required?</p>
-<p>By answering these questions, you’ll create a clear roadmap, reduce uncertainty, and avoid aimless wandering through your project.</p>
+<section id="decompose-until-done-is-unambiguous" class="level2">
+<h2 class="anchored" data-anchor-id="decompose-until-done-is-unambiguous">Decompose Until Done Is Unambiguous</h2>
+<p>Once you have a target and a deadline, break the project into tasks — not work items, not epics, tasks. The distinction matters: a task has an unambiguous definition of done. A project doesn’t.</p>
+<p>“Train a production NLP model” is a project. Tasks are: - <em>“Label 500 training examples from the January logs”</em> — done or not done. - <em>“Achieve F1 ≥ 0.82 on the validation split”</em> — done or not done. - <em>“Write the endpoint that accepts raw text and returns a classification”</em> — done or not done.</p>
+<p>If you can’t tell whether a piece of work is finished without discussion, break it down further.</p>
+<p>With tasks in hand, ruthlessly prioritize against the version one criteria. Not everything is equally important, and pretending otherwise is how projects stall:</p>
+<table class="table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Category</th>
+<th>Description</th>
+<th>Rule</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Must-have</strong></td>
+<td>System cannot ship without this</td>
+<td>Do first, never cut</td>
+</tr>
+<tr class="even">
+<td><strong>Should-have</strong></td>
+<td>Meaningfully improves the product</td>
+<td>Include if time allows</td>
+</tr>
+<tr class="odd">
+<td><strong>Nice-to-have</strong></td>
+<td>Incremental gain, no blocker</td>
+<td>Version two</td>
+</tr>
+<tr class="even">
+<td><strong>Gold-plating</strong></td>
+<td>No clear user benefit</td>
+<td>Cut immediately</td>
+</tr>
+</tbody>
+</table>
+<p>The failure mode is treating “should-haves” as “must-haves.” It happens because, deep down, the team doesn’t believe version two is coming. If this feels like the only shot, every improvement feels essential. But that’s exactly backwards: version two only exists because version one shipped. Holding version one hostage to version two’s requirements is how you guarantee neither does.</p>
 </section>
-<section id="break-it-down-into-manageable-pieces" class="level3">
-<h3 class="anchored" data-anchor-id="break-it-down-into-manageable-pieces">Break It Down into Manageable Pieces</h3>
-<p>Big projects can feel overwhelming, which is why breaking them into smaller components is essential. Tackle each piece in focused, deep work sessions. Every time you complete a component, you’ll feel a sense of accomplishment—which keeps motivation high.<br>
-Example: If you’re building an ML pipeline, treat data preprocessing, model training, and evaluation as separate milestones rather than one big, nebulous task.</p>
+<section id="validate-the-core-assumption-before-building-the-system" class="level2">
+<h2 class="anchored" data-anchor-id="validate-the-core-assumption-before-building-the-system">Validate the Core Assumption Before Building the System</h2>
+<p>Every ML project rests on a single load-bearing assumption: <em>“Does a model trained on this data actually produce useful predictions for this problem?”</em> Everything else — the serving infrastructure, the feature pipeline, the retraining loop, the monitoring dashboard — only matters if the answer is yes.</p>
+<p>I’ve fallen into this trap early in my career, and led teams into it later. The pattern is always the same: stand up a feature store, design a training pipeline, architect a serving layer — then train the model and discover the data doesn’t support the prediction task, or the signal is too weak, or the problem is better solved without ML at all. Months of infrastructure work, none of it applicable to the revised approach. The infrastructure trap is just as easy to fall into when you’re the one setting the direction as when you’re the one doing the building.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    subgraph wrong ["❌ Common Mistake"]
+        direction LR
+        w1["Feature Store"] --&gt; w2["Training Pipeline"] --&gt; w3["Model Registry"] --&gt; w4["Model"] --&gt; w5["Works?"]
+    end
+    subgraph right ["✓ Correct Order"]
+        direction LR
+        r1["Validate\nApproach"] --&gt; r2["Establish\nDeploy Path"] --&gt; r3["Build\nInfrastructure"] --&gt; r4["Ship ✓"]
+    end
+</pre>
+</div>
+<p></p><figcaption> The infrastructure trap: building the full system before validating the approach. The correct order validates cheaply first, then invests in infrastructure.</figcaption> </figure><p></p>
+</div>
+</div>
+</div>
+<p>The minimum viable experiment: train a simple baseline on a slice of the data, evaluate it against a manually-labeled holdout, and show the results to at least one person who’d actually use the output. Logistic regression, a small neural net, a fine-tuned pretrained model — whatever takes days, not months. If the results are promising, the infrastructure investment is justified. If not, you’ve learned the most important thing about the project for the cost of two weeks.</p>
+<p>This also determines tool choice during validation. <code>scikit-learn</code>, <code>PyTorch</code>, pre-trained transformers from HuggingFace — these represent thousands of engineering hours and are battle-tested at scale. Custom architectures and bespoke training loops are justified when profiling data shows standard tools can’t meet your requirements. That data doesn’t exist before validation. Building custom infrastructure before validating the approach is the fastest way to spend six months on something nobody uses.</p>
 </section>
-<section id="be-crystal-clear-on-completion-criteria" class="level3">
-<h3 class="anchored" data-anchor-id="be-crystal-clear-on-completion-criteria">Be Crystal Clear on Completion Criteria</h3>
-<p>Ambiguity is the enemy of progress. For every stage of your project, define what “done” looks like. This clarity not only helps you move faster but also ensures you avoid endlessly tweaking and polishing.</p>
+<section id="ship-then-compound" class="level2">
+<h2 class="anchored" data-anchor-id="ship-then-compound">Ship, Then Compound</h2>
+<p>Once version one meets the criteria, ship it — even if it’s not perfect.</p>
+<p>Every model I’ve shipped has surprised me in production. Not because the evaluation was wrong, but because it was measuring the wrong things. Your holdout set measures what you measured. Real users do things you didn’t anticipate — edge cases you didn’t label, inputs from distributions you didn’t sample, and above all, they surface which errors actually matter. A model that’s 92% accurate on the evaluation set might be systematically wrong on the 8% of inputs that are disproportionately important to users. You won’t know that until the model is deployed.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    A["Ship\nImperfect v1"] --&gt; B["Real\nUsage Data"]
+    B --&gt; C["Discover\nActual Failures"]
+    C --&gt; D["Targeted\nFixes"]
+    D --&gt; E["Ship\nBetter v2"]
+    E --&gt; B
+</pre>
+</div>
+<p></p><figcaption> The iteration flywheel: each shipped version surfaces real failures that targeted improvements address, compounding over time.</figcaption> </figure><p></p>
+</div>
+</div>
+</div>
+<p>Ship versions that meet the bar, not versions that approach some imagined ceiling. Version one will be wrong in ways you didn’t anticipate — I’ve never shipped one that wasn’t, and I’ve never led a team that did. One of the harder things about leading engineers through this is convincing them that shipping something imperfect isn’t a compromise — it’s the whole point. The failures you discover in production are the ones that matter. Find them early, when fixing them is fast, not late, when the system is load-bearing and everything is entangled.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Each Version Enables the Next
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Real usage reveals the failures that matter — not the ones you hypothesized in the design doc, but the ones users actually encounter. Their feedback tells you which improvements are worth making. Infrastructure built for version one scales to version two. The teams that ship consistently aren’t the ones with better planning processes — they’re the ones who’ve completed more cycles of this loop.</p>
+</div>
+</div>
 </section>
-<section id="start-small-and-learn-quickly" class="level3">
-<h3 class="anchored" data-anchor-id="start-small-and-learn-quickly">Start Small (and Learn Quickly)</h3>
-<p>Start with a small prototype or proof of concept. This gives you a realistic sense of what it will take to deliver the full project while helping you identify potential roadblocks early.<br>
-Starting small also lowers the stakes, making it easier to experiment and iterate without fear of failure.</p>
-</section>
-<section id="track-progress-and-celebrate-wins" class="level3">
-<h3 class="anchored" data-anchor-id="track-progress-and-celebrate-wins">Track Progress and Celebrate Wins</h3>
-<p>Use tools like <code>Trello</code>, <code>Jira</code>, or even a simple Kanban board to track your tasks and progress. Keep completed tasks visible—seeing progress in real time is a great motivator.<br>
-Why? Because software projects are as much about emotional management as technical execution. Visible progress keeps momentum alive and helps you push through inevitable roadblocks.</p>
-</section>
-<section id="dont-reinvent-the-wheel" class="level3">
-<h3 class="anchored" data-anchor-id="dont-reinvent-the-wheel">Don’t Reinvent the Wheel</h3>
-<p>Time is your most valuable resource. Wherever possible, lean on existing tools, libraries, and frameworks to speed up development.<br>
-For instance, in ML and AI, libraries like <code>TensorFlow</code>, <code>scikit-learn</code>, or pre-trained models can save you weeks of effort. You can always revisit and optimize later if needed. The goal is to get something functional in front of users quickly.</p>
-</section>
-<section id="every-version-should-be-better" class="level3">
-<h3 class="anchored" data-anchor-id="every-version-should-be-better">Every Version Should Be Better</h3>
-<p>A common pitfall is aiming to ship a perfect product from day one. Don’t. Instead, focus on shipping a better version with each iteration.<br>
-Why? Because you’ll learn more from real-world usage and user feedback than from endless internal debates or polishing. Each version builds on the last, so it doesn’t have to be perfect—it just has to be better.</p>
-</section>
-<section id="define-success-criteria-for-the-first-version" class="level3">
-<h3 class="anchored" data-anchor-id="define-success-criteria-for-the-first-version">Define Success Criteria for the First Version</h3>
-<p>Before you start coding, define what “success” means for the first version. What must it accomplish to be considered shippable?<br>
-Write these criteria down. This clarity will keep you focused and prevent scope creep.</p>
-</section>
-<section id="do-your-homework-research-before-you-start" class="level3">
-<h3 class="anchored" data-anchor-id="do-your-homework-research-before-you-start">Do Your Homework (Research Before You Start)</h3>
-<p>Before diving into implementation, spend time researching:<br>
-- What tools, frameworks, or libraries can you use?<br>
-- What’s the best structure for the project?<br>
-- How have others solved similar problems?</p>
-<p>A solid research phase will save you countless hours of trial and error later.</p>
-</section>
-<section id="prioritize-must-haves-vs.-nice-to-haves" class="level3">
-<h3 class="anchored" data-anchor-id="prioritize-must-haves-vs.-nice-to-haves">Prioritize Must-Haves vs.&nbsp;Nice-to-Haves</h3>
-<p>Not all features are created equal. Early in the project, create two lists:<br>
-- Must-haves: Features that are absolutely necessary for the project to function.<br>
-- Nice-to-haves: Features that would be great to include but aren’t essential.<br>
-Focus on the must-haves first. Nice-to-haves can wait for later versions.</p>
-</section>
-<section id="mistakes-will-happendont-take-them-personally" class="level3">
-<h3 class="anchored" data-anchor-id="mistakes-will-happendont-take-them-personally">Mistakes Will Happen—Don’t Take Them Personally</h3>
-<p>No matter how well you plan, mistakes will happen. Bugs will slip through, features might not work as expected, and some users may complain. Don’t take it personally.<br>
-Instead, treat every mistake as an opportunity to learn and improve. Fix the issue, iterate, and move forward.</p>
-</section>
-<section id="ship-now-improve-later" class="level3">
-<h3 class="anchored" data-anchor-id="ship-now-improve-later">Ship Now, Improve Later</h3>
-<p>Shipping something today—even if it’s imperfect—is far more valuable than shipping something “perfect” six months from now. Why? Because you learn more from trial and error than from endless planning.<br>
-Fast iterations drive faster learning—and faster progress.</p>
-</section>
-</section>
-<section id="final-thoughts-start-shipping" class="level2">
-<h2 class="anchored" data-anchor-id="final-thoughts-start-shipping">Final Thoughts: Start Shipping</h2>
-<p>Shipping software projects is never easy, especially in ML and AI, where complexity is the norm. But by following these principles—working backwards, starting small, tracking progress, and focusing on iteration—you can consistently deliver impactful projects on time.</p>
-<p>The most important lesson? Just ship it. You’ll learn far more by putting your work into the world than by waiting for perfection.</p>
+<section id="key-takeaways" class="level2">
+<h2 class="anchored" data-anchor-id="key-takeaways">Key Takeaways</h2>
+<ol type="1">
+<li><p><strong>Decide whether you’re doing research or engineering before you start.</strong> ML projects that don’t make this distinction run research processes in engineering contexts — indefinitely.</p></li>
+<li><p><strong>Define version one as a falsifiable criterion.</strong> Precision ≥ X. Latency ≤ Y. Deployable on Z. Criteria that can’t be verified guarantee the project never ends.</p></li>
+<li><p><strong>Treat deadline as fixed, scope as variable.</strong> The question is always: <em>“What’s the most important thing we can ship by this date?”</em></p></li>
+<li><p><strong>Decompose until done is unambiguous.</strong> If you can’t tell whether a task is finished without discussion, it’s not a task — it’s a project.</p></li>
+<li><p><strong>Validate the core assumption before building infrastructure.</strong> Does the model work on this data? Answer that first, with the simplest possible tools. Everything else comes after.</p></li>
+<li><p><strong>Ship the imperfect version.</strong> Offline evaluation measures what you measured. Real usage reveals what you missed. Each shipped version enables the next.</p></li>
+</ol>
 
 
 </section>
