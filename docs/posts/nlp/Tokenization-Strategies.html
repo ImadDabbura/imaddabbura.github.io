@@ -151,6 +151,35 @@ ga('send', {
       }
 </style>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../assets/posts.css">
 <meta property="og:title" content="Imad Dabbura - Breaking Text Apart (The Smart Way)">
@@ -324,26 +353,88 @@ ga('send', {
 
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p><strong>Tokenization</strong> is the process of breaking down a string into smaller units of information that will be used by the model. This process sometimes involves some preprocessing steps such as converting to lowercase, <a href="https://nlp.stanford.edu/IR-book/html/htmledition/stemming-and-lemmatization-1.html">stemming &amp; lemmatization</a>, etc. There are many tokenization strategies that each has its own advantages and drawbacks. We will first give a brief introduction of the different steps involved in the tokenization process. Then we’ll consider the two <em>extreme</em> and easy tokenization strategies: <em>character tokenization</em> and <em>word tokenization</em>. Finally, we will discuss subword tokenizations where statistical methods and language heuristics are used to learn the optimal splitting of words such as WordPiece and SentencePiece tokenizers.</p>
+<p>Tokenization sits at the foundation of every NLP system — and it’s where more bugs, performance failures, and cross-lingual headaches originate than most practitioners expect.</p>
+<p>The core problem: neural networks can’t consume raw text. They need numbers. Tokenization is the bridge — converting a string into a sequence of integer IDs that the model can embed and process. But <em>how</em> you make that conversion has enormous downstream consequences: for vocabulary size, sequence length, out-of-vocabulary handling, and multilingual generalization.</p>
+<p>There are three fundamental strategies, sitting on a spectrum from fine-grained to coarse:</p>
+<ul>
+<li><strong>Character tokenization</strong>: split at every character — maximum granularity, minimum vocabulary</li>
+<li><strong>Word tokenization</strong>: split at word boundaries — minimum granularity, maximum vocabulary</li>
+<li><strong>Subword tokenization</strong>: split rules learned from corpus statistics — the practical sweet spot used by every modern LLM</li>
+</ul>
+<p>We’ll work through each in turn with concrete code, then zoom in on the two subword algorithms that dominate modern NLP: <strong>WordPiece</strong> (BERT, DistilBERT) and <strong>BPE via SentencePiece</strong> (XLM-R, LLaMA, GPT-family models).</p>
 </section>
 <section id="tokenization-process" class="level2">
 <h2 class="anchored" data-anchor-id="tokenization-process">Tokenization Process</h2>
 <p><a href="images/tokenization-pipeline.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="images/tokenization-pipeline.png" class="img-fluid"></a></p>
-<p>Tokenization process involves 4 steps:</p>
+<p>The tokenization pipeline has four stages, each with a distinct job:</p>
 <ul>
-<li><em>Normalizations</em>: This is the first step where a set of operations are applied to a raw text to make it cleaner. Such operations may include <a href="https://unicode.org/reports/tr15/">Unicode Normalization</a> and lowercasing.</li>
-<li><em>Pretokenization</em>: This step involves splitting the normalized text into words. For languages like English and German, splitting on whitespaces and punctuations work really well. However, some languages such as Japanese and Chinese don’t have whitespace character and we would be better off using language-specific tokenizer.</li>
-<li><em>Tokenizer</em>: This step applies subword splitting model such as <a href="https://arxiv.org/abs/1609.08144v2">WordPiece</a> and <a href="https://arxiv.org/abs/1808.06226">SentencePiece</a>. The subword model would be learned/trained on the pretrained corpus.</li>
-<li><em>Postprocessing</em>: This is the last step where some additional tokens will be added to each sequence. For exampe, BERT tokenizer adds <code>[CLS]</code> to the beginning of the sequence and <code>[SEP]</code> to separate two sequences. On the other hands, XLM-R adds <code>&lt;s&gt;</code> to indicate the beginning of a sequence and <code>&lt;/s&gt;</code> to indicate the end of the sequence.</li>
+<li><p><strong>Normalization</strong>: Clean the raw text before any splitting. Common operations include Unicode normalization (collapsing different byte representations of the same character), lowercasing, and accent stripping. Critically, what gets normalized here is permanent — the model never sees the original form.</p></li>
+<li><p><strong>Pretokenization</strong>: Split the normalized text into coarse units, typically words or word-like chunks. For English and German, splitting on whitespace and punctuation works well. For languages like Japanese or Chinese — which have no whitespace — language-specific rules or character-level splits are used instead.</p></li>
+<li><p><strong>Tokenizer model</strong>: Apply the learned subword splitting algorithm (WordPiece, BPE, Unigram, etc.) to each pretokenized chunk. This is the only <em>trained</em> stage — everything else is rule-based. The vocabulary and merge rules come from the pretraining corpus.</p></li>
+<li><p><strong>Postprocessing</strong>: Wrap the token sequence with any model-specific special tokens. BERT prepends <code>[CLS]</code> and inserts <code>[SEP]</code> between sequences. XLM-R uses <code>&lt;s&gt;</code> and <code>&lt;/s&gt;</code>. These tokens have specific learned representations and must be consistent between pretraining and fine-tuning.</p></li>
 </ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The Pipeline Is Framework-Agnostic
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This four-stage structure underpins Hugging Face <code>tokenizers</code>, SentencePiece, and most production tokenizer implementations. Most unexpected token outputs trace back to either normalization (e.g., surprise lowercasing or accent stripping) or postprocessing (missing or double-added special tokens).</p>
+</div>
+</div>
 </section>
 <section id="tokenization-strategies" class="level2">
 <h2 class="anchored" data-anchor-id="tokenization-strategies">Tokenization Strategies</h2>
-<p>There are so many tokenizers that each have their own rules to split raw text into individual tokens. Each tokenization strategy has its own advantages and drawbacks. Depending on the task, some tokenizers may suit your application better than others. However, in the case of using pretrained model, you must use the same tokenizer that the pretrained model used during training.</p>
-<p>Below are the most common tokenization schemes.</p>
+<p>There are three core tokenization schemes. Before diving in, here’s a preview of the trade-offs that motivate the progression from characters to subwords:</p>
+<table class="table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Strategy</th>
+<th>Vocab size</th>
+<th>Sequence length</th>
+<th>OOV handling</th>
+<th>Multilingual</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Character</td>
+<td>Tiny (~100s)</td>
+<td>Very long</td>
+<td>✅ None</td>
+<td>✅ Natural</td>
+</tr>
+<tr class="even">
+<td>Word</td>
+<td>Huge (millions)</td>
+<td>Short</td>
+<td>❌ UNK collapse</td>
+<td>⚠️ Poor</td>
+</tr>
+<tr class="odd">
+<td>Subword</td>
+<td>Medium (10K–100K)</td>
+<td>Medium</td>
+<td>✅ Decompose</td>
+<td>✅ Good</td>
+</tr>
+</tbody>
+</table>
+<p>The pattern is clear: characters and words are opposite extremes, each with a disqualifying flaw. Subword tokenization is the engineered middle ground — and why every modern LLM uses it.</p>
 <section id="character-tokenization" class="level3">
 <h3 class="anchored" data-anchor-id="character-tokenization">Character Tokenization</h3>
-<p>This is the simplest tokenization strategy where we simply break down the text at the character level. Then the characters will be fed to the model. Consider the following example:</p>
+<p>Character tokenization is the simplest possible approach: split the input string into individual characters and treat each one as a token. No learned vocabulary, no language-specific rules — just <code>list(text)</code>. It’s the floor of the granularity spectrum.</p>
 <div id="92ba1e07-4dff-4f3a-9b31-0daf88028379" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">"I love NLP!"</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">list</span>(text)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -366,23 +457,43 @@ ga('send', {
 <pre><code>[2, 0, 7, 8, 9, 6, 0, 4, 3, 5, 1]</code></pre>
 </div>
 </div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Why Character Tokenization Is Appealing
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <ul>
-<li><strong>Advantages</strong>:
-<ul>
-<li>Helps us avoid misspellings and rare words</li>
-<li>Very small vocabulary. Therefore, embedding and output layer would be small which means less computation</li>
-</ul></li>
-<li><strong>Drawbacks</strong>:
-<ul>
-<li>Sequences’ length will be very long</li>
-<li>Linguistic structures such as words now need to be learned from data. This requires much more data, memory, and computation</li>
-<li>Because we have fixed context length for most LLMs and the sequence would be very long, we would lose the ability to attend the important tokens from before</li>
-</ul></li>
+<li><strong>No out-of-vocabulary problem</strong>: every possible input — misspellings, code, emojis, neologisms — is representable from the same small fixed alphabet</li>
+<li><strong>Tiny vocabulary</strong>: ~100 characters for English. The embedding matrix and output projection stay small, which reduces parameter count and memory</li>
 </ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Why Character Tokenization Fails in Practice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Sequences become extremely long</strong>: “I love NLP!” becomes 11 tokens. A typical 512-word document becomes several thousand characters. For Transformers with quadratic attention cost, this is prohibitively expensive</li>
+<li><strong>No free linguistic priors</strong>: the model has no prior knowledge that <code>l</code>, <code>o</code>, <code>v</code>, <code>e</code> together constitute a meaningful unit. Recovering word-level and phrase-level structure from raw characters requires far more data, compute, and model depth than most tasks justify</li>
+<li><strong>Context window exhaustion</strong>: with fixed-length context windows, very long character sequences mean the model can attend to only a small slice of a document at a time, losing long-range dependencies that often carry the most important signal</li>
+</ul>
+</div>
+</div>
 </section>
 <section id="word-tokenization" class="level3">
 <h3 class="anchored" data-anchor-id="word-tokenization">Word Tokenization</h3>
-<p>The other extreme of word tokenization is to split text into words and then map each word to its corresponding index in the vocabulary. The simplest form would be to split on whitespace (which works well for English but not other languages such as Japanese that don’t have a well-defined idea of a word):</p>
+<p>Word tokenization takes the opposite approach: split on whitespace (and often punctuation) and treat each word as an atomic token. Sequences stay short and tokens carry recognizable meaning — but the vocabulary problem quickly becomes unmanageable at scale.</p>
 <div id="1b6e7b4b-99d2-4ce4-a3d7-3176cdf65250" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>text.split()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
@@ -402,37 +513,61 @@ ga('send', {
 <pre><code>[0, 2, 1]</code></pre>
 </div>
 </div>
-<p>Most tokenizers would include rules and heuristics that try to separate parts of meaning even when there are no spaces such as “doesn’t” into “does n’t”.</p>
+<p>Most production word tokenizers go beyond whitespace splitting and include language-specific heuristics — for example, separating contractions like “doesn’t” into “does” and “n’t”, or splitting punctuation from adjacent words. These rules improve coverage but don’t solve the fundamental vocabulary size and OOV problems.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Why Word Tokenization Seems Appealing
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <ul>
-<li><strong>Advantages</strong>:
-<ul>
-<li>Sequences’ length will be short, which means a token can attend to much more context</li>
-</ul></li>
-<li><strong>Drawbacks</strong>:
-<ul>
-<li>Size of the vocabulary will explode for large corpus due to the fact that words can include declinations, misspellings, or punctuations. If the vocabulary size has 1m words and the embedding dimension is 512 -&gt; the first embedding layer would be ~ 0.5 billion parameters!
-<ul>
-<li>We can work around this issue by including top <code>n</code> most frequent words. For example, if we include top 100,000 words -&gt; the first embedding layer would be ~ 0.5 million parameters. However, because all other words will be mapped to the <code>UNK</code> token, the model has no idea about the words associated with the <code>UNK</code> token and we may lose some important information</li>
-</ul></li>
-<li>Some languages don’t have well-defined idea of what constitute a word</li>
-<li>Because we have so many tokens that are either rare or never happened in the training data, these tokens would either have never been activated or maybe few passes activated them which is not good to get good embedding vector for them (under-trained). Therefore, they are occupying memory w/o being that useful</li>
-</ul></li>
+<li><strong>Short sequences</strong>: “I love NLP!” is 3 tokens. The model attends to far more context within the same fixed-length window</li>
+<li><strong>Tokens carry meaning directly</strong>: each token maps to a recognizable linguistic unit, giving the model useful priors without learning from scratch</li>
 </ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Why Word Tokenization Breaks Down
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Vocabulary explosion</strong>: a large corpus contains millions of distinct word forms — declinations, misspellings, punctuation variants, domain-specific terms. An embedding table with 1M entries at dimension 512 requires ~500M parameters for the embedding layer alone. Truncating to the top-N words forces everything else to <code>[UNK]</code>, which destroys information silently — the model has no way to recover what word was there</li>
+<li><strong>Under-trained embeddings</strong>: rare words appear too infrequently to accumulate meaningful gradient signal. They occupy slots in the vocabulary without learning useful representations — wasted capacity</li>
+<li><strong>Language boundary failures</strong>: languages without clear word boundaries (Japanese, Chinese, Thai) have no natural whitespace to split on. Word tokenization either silently fails or requires expensive language-specific preprocessing at training and inference time</li>
+</ul>
+</div>
+</div>
 </section>
 <section id="subword-tokenization" class="level3">
 <h3 class="anchored" data-anchor-id="subword-tokenization">Subword Tokenization</h3>
-<p>Split words into smaller parts based on the most frequent sub-strings. Therefore, we want to keep the most frequent words as unique entities but split the rare words into smaller units to allow us to deal with misspellings and complex words. This will help us achieve the best of both wolds: 1) Manageable vocabulary size 2) Keep frequent words as their own entities 3) And deal with complex and misspelling words</p>
-<p>The subword tokenizers are typically learned from pretraining corpus using statistical rules and algorithms. We will cover the most common ones: <em>WordPiece</em> and <em>SentencePiece</em>.</p>
+<p>Subword tokenization is the engineered middle ground between the two extremes. The core insight: <strong>most words in any language are built from a small set of recurring morphemes</strong> — prefixes, roots, suffixes. “tokenization”, “tokenizer”, “tokenized” all share the root “token”. Word tokenization throws that structure away by treating each form as an unrelated atomic entry. Character tokenization preserves the raw signal but forces the model to discover linguistic structure from scratch, without any priors.</p>
+<p>Subword algorithms exploit this structure directly. They learn a vocabulary of high-frequency subword units from a large pretraining corpus. Common words like “love” stay as single tokens. Rare or novel words get decomposed into familiar pieces: “tokenization” → <code>["token", "##ization"]</code> in WordPiece, or <code>["▁token", "ization"]</code> in SentencePiece. The model has seen “token” thousands of times and has a rich representation for it — that representation is now available even when encountering “detokenization” for the first time.</p>
+<p>This also handles misspellings and out-of-domain terms gracefully. “GPT-4o” doesn’t need to be in the vocabulary — it gets decomposed into known subwords rather than collapsing to <code>[UNK]</code>.</p>
+<p>Two algorithms dominate modern NLP: <strong>WordPiece</strong> (BERT, DistilBERT) and <strong>BPE via SentencePiece</strong> (XLM-R, LLaMA, GPT-family models). Both learn subword vocabularies from corpus statistics, but they use different objectives and produce different tokenization behavior — differences that matter when debugging cross-lingual failures or unexpected token splits.</p>
 <section id="wordpiece" class="level4">
 <h4 class="anchored" data-anchor-id="wordpiece">WordPiece</h4>
-<p><a href="https://arxiv.org/abs/1609.08144v2">WordPiece</a> tokenizer is used by the <a href="https://arxiv.org/abs/1910.01108">DistilBERT</a> model. The vocabulary is first initialized with individual characters in the language, then the most frequent combinations of symbols in the vocabulary are iteratively added to the vocabulary. The process is:</p>
+<p><a href="https://arxiv.org/abs/1609.08144v2">WordPiece</a> is the subword algorithm behind BERT and DistilBERT. Like BPE, it starts with a character-level vocabulary and iteratively merges pairs — but the key difference is in <em>how</em> it chooses which pair to merge next.</p>
+<p>BPE picks the most frequent pair. WordPiece picks the pair that <strong>maximizes the likelihood of the training corpus</strong> when merged. Concretely, for a candidate pair <span class="math inline">\((u, v)\)</span>, it evaluates:</p>
+<p><span class="math display">\[\text{score}(u, v) = \frac{\text{count}(uv)}{\text{count}(u) \times \text{count}(v)}\]</span></p>
+<p>This is a pointwise mutual information criterion: it rewards pairs that appear together more than their individual frequencies would predict. Merging “##iz” with “##ation” scores high not just because the bigram is frequent, but because seeing “##iz” almost always predicts “##ation” — the merge buys maximum information.</p>
+<p>The training process:</p>
 <ol type="1">
-<li>Initialize the vocabulary with all the characters in the text</li>
-<li>Build a language model on the training corpus using vocabulary built previously</li>
-<li>Generate a new word by combining two units out of the current vocabulary to increment the word vocabulary by one. Choose the new word unit out of all the possible ones that increases the likelihood on the training data the most when added to the model</li>
-<li>Goto 2 until a predefined limit of vocabulary size is reached or the likelihood increase falls below a certain threshold</li>
+<li>Initialize the vocabulary with all characters in the corpus, prepending <code>##</code> to all characters that don’t start a word</li>
+<li>Score every adjacent pair using the PMI formula above</li>
+<li>Merge the highest-scoring pair and add it to the vocabulary</li>
+<li>Repeat until the vocabulary reaches the target size (BERT uses 30,000)</li>
 </ol>
-<p>Let’s illustrate by example using 🤗 transformers library.</p>
+<p>The <code>##</code> prefix is the signature of WordPiece. It marks continuation subwords — pieces that are <em>not</em> at the start of a word boundary. So <code>["nl", "##p"]</code> means: “nl” starts a word, “##p” continues it. Reconstructing the original word means stripping <code>##</code> and concatenating.</p>
 <div id="99b30f6a-2857-4850-9b6d-7ccfbd2ec75b" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> DistilBertTokenizer</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -449,17 +584,29 @@ ga('send', {
 <pre><code>['[CLS]', 'i', 'love', 'nl', '##p', '!', '[SEP]']</code></pre>
 </div>
 </div>
-<p>Let’s explain the output of the DistilBERT tokenizer:</p>
+<p>Reading the DistilBERT output token by token:</p>
 <ul>
-<li><code>[CLS]</code> is a special token that is used to indicate the start of a sequence</li>
-<li><code>[SEP]</code> is also a special token to separate multiple sequences</li>
-<li><code>##</code> prefix indicates that the previous string isn’t whitespace
-<ul>
-<li>This shows that nlp is not a common token, so it was split into two tokens</li>
-</ul></li>
-<li>We can also see that <code>!</code> has its own token</li>
+<li><code>[CLS]</code> — a special classification token prepended to every sequence. Its final hidden state is used as the aggregate sequence representation for classification tasks</li>
+<li><code>i</code> — “I” was lowercased (DistilBERT uses <code>distilbert-base-**uncased**</code>)</li>
+<li><code>love</code> — a common English word; gets its own token</li>
+<li><code>nl</code> — the first subword of “NLP”. “NLP” is rare enough in BERT’s training corpus that it was never merged into a single token</li>
+<li><code>##p</code> — continues from “nl”. The <code>##</code> prefix signals “this piece is not at a word boundary — attach it to the previous token”</li>
+<li><code>!</code> — punctuation gets its own token</li>
+<li><code>[SEP]</code> — marks the end of a sequence (or the boundary between two sequences in sentence-pair tasks)</li>
 </ul>
-<p>We can reconstruct that encoded text as follows:</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Decoding the <code>##</code> Prefix
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>When you see <code>##</code> in WordPiece output, it means: strip the <code>##</code> and concatenate directly to the previous token. <code>["nl", "##p"]</code> → <code>"nlp"</code>. <code>["un", "##believ", "##able"]</code> → <code>"unbelievable"</code>. The <code>##</code> is how WordPiece encodes which subwords are word-internal vs.&nbsp;word-initial — critical for reconstructing the original string.</p>
+</div>
+</div>
 <div id="211d4098-2821-4fd3-9a0c-c404f4ac3ec9" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>tokenizer.convert_tokens_to_string(</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    tokenizer.convert_ids_to_tokens(encoded_text[<span class="st">"input_ids"</span>])</span>
@@ -471,15 +618,30 @@ ga('send', {
 </section>
 <section id="sentencepiece" class="level4">
 <h4 class="anchored" data-anchor-id="sentencepiece">SentencePiece</h4>
-<p><a href="">SentencePiece</a> implements <strong>byte-pair-encoding</strong> (BPE) and unigram language modeling. It encodes the raw text as a sequence of Unicode characters. This is very useful in multilingual corpora because many languages, such as Japanese, don’t have whitespace characters. Also, it is agnostic about accents and punctuations. That is why it is commonly used in multilingual model training.</p>
-<p>Byte-pair-encoding works as follows:</p>
+<p><a href="https://arxiv.org/abs/1808.06226">SentencePiece</a> is a language-agnostic tokenization library that implements both BPE and unigram language model algorithms. Two properties make it the dominant choice for multilingual models.</p>
+<p><strong>First: it treats the input as a raw Unicode character stream</strong> — no language-specific pretokenization required. It never assumes whitespace marks word boundaries, which means it works equally well on English, Chinese, Japanese, Arabic, and any language mixture. This is why XLM-R, mT5, and LLaMA all use SentencePiece.</p>
+<p><strong>Second: it uses <code>▁</code> (U+2581, lower one-eighth block) to encode the start of a new word.</strong> Rather than marking continuation pieces like WordPiece does with <code>##</code>, SentencePiece marks word-<em>starts</em>. A <code>▁</code> at the beginning of a token means “there was a space before this character in the original text.” Absence of <code>▁</code> means “this token is a continuation.”</p>
+<p>The BPE algorithm it implements:</p>
 <ol type="1">
-<li>Initialize the vocabulary with all the characters in the text plus end-of-word symbol</li>
-<li>Find the most common adjacent characters</li>
-<li>Replace instances of the character pair with the new subword</li>
-<li>Goto step 2 until desired vocab size is reached</li>
+<li>Initialize the vocabulary with individual Unicode characters plus an end-of-word marker</li>
+<li>Count all adjacent character pairs across the corpus</li>
+<li>Merge the most frequent pair into a new subword unit</li>
+<li>Repeat until the vocabulary reaches the target size</li>
 </ol>
-<p>Let’s again use 🤗 transformers library to tokenize the same text.</p>
+<p>Unlike WordPiece’s PMI-based selection, BPE uses raw frequency. It’s simpler but produces similar results in practice — both algorithms converge on vocabularies dominated by common morphemes.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+BPE vs.&nbsp;Unigram in SentencePiece
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>SentencePiece supports two algorithms. BPE builds the vocabulary bottom-up by merging. Unigram starts with a large candidate vocabulary and prunes it by removing tokens that minimally reduce the likelihood of the training corpus — a top-down approach. Unigram is used by XLNet and some multilingual models; BPE is more common. Both are interchangeable in the SentencePiece API.</p>
+</div>
+</div>
 <div id="12596fb8-0a5a-439c-aa79-5bc0ab181f9c" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> XLMRobertaTokenizer</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -496,17 +658,56 @@ ga('send', {
 <pre><code>['&lt;s&gt;', '▁I', '▁love', '▁N', 'LP', '!', '&lt;/s&gt;']</code></pre>
 </div>
 </div>
-<p>Let’s explain the output of the XLM-ROBERTA tokenizer:</p>
+<p>Reading the XLM-R output token by token:</p>
 <ul>
-<li><code>&lt;s&gt;</code> is a special token that is used to indicate the start of a sequence</li>
-<li><code>&lt;/s&gt;</code> is also a special token to indicate the end of the sequence</li>
-<li><code>_</code> prefix indicates that the previous string is whitespace
-<ul>
-<li>This shows that nlp is not a common token, so it was split into two tokens</li>
-</ul></li>
-<li>We can also see that <code>!</code> has its own token</li>
+<li><code>&lt;s&gt;</code> — sequence start token (XLM-R’s equivalent of <code>[CLS]</code>)</li>
+<li><code>▁I</code> — the <code>▁</code> prefix means “there was a space before this character.” Since “I” starts the sentence (treated as if preceded by whitespace), it gets <code>▁</code></li>
+<li><code>▁love</code> — common word, single token; <code>▁</code> marks it as word-initial</li>
+<li><code>▁N</code> — “NLP” is split; <code>▁N</code> is the word-initial piece</li>
+<li><code>LP</code> — continues from <code>▁N</code>, no <code>▁</code> prefix (it’s a word-internal continuation)</li>
+<li><code>!</code> — punctuation token</li>
+<li><code>&lt;/s&gt;</code> — sequence end token (XLM-R’s equivalent of <code>[SEP]</code>)</li>
 </ul>
-<p>We can reconstruct that encoded text as follows:</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+WordPiece <code>##</code> vs.&nbsp;SentencePiece <code>▁</code> — Two Sides of the Same Coin
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>These two prefixes encode word boundary information in opposite ways:</p>
+<table class="table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tokenizer</th>
+<th>Marker</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>WordPiece (BERT)</td>
+<td><code>##token</code></td>
+<td>This piece continues the previous word</td>
+</tr>
+<tr class="even">
+<td>SentencePiece (XLM-R, LLaMA)</td>
+<td><code>▁token</code></td>
+<td>A space preceded this character — new word starts here</td>
+</tr>
+</tbody>
+</table>
+<p>Both fully encode the original whitespace and allow perfect string reconstruction. The difference is convention, not capability. But you need to know which convention a tokenizer uses when writing postprocessing code to detokenize outputs.</p>
+</div>
+</div>
 <div id="75c7acd6-1fc1-4b12-9e38-a39ca5ceeca8" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>tokenizer.convert_tokens_to_string(</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    tokenizer.convert_ids_to_tokens(encoded_text[<span class="st">"input_ids"</span>])</span>
@@ -520,8 +721,26 @@ ga('send', {
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<p>Through this post, we covered three tokenization strategies along with their advantages and challenges/limitations. We mostly use tokenizers from well-known libraries such as <a href="https://spacy.io/">spaCy</a> because it is very hard to get it right ourselves.</p>
-<p><strong>NB</strong>: When using pretrained models such as DistilBERT, we must use the same tokenizer that the model used during training. Otherwise, what the model assumes <code>token_id = 1</code> is will be completely different than what the new <code>token_id = 1</code> represents. It has the same effect as shuffling the vocabulary.</p>
+<p>The three tokenization strategies form a clear hierarchy in practice:</p>
+<ul>
+<li><p><strong>Character tokenization</strong> is essentially unused in production NLP. Sequence lengths become prohibitively long for Transformer attention, and the model must learn linguistic structure entirely from scratch. It survives in niche applications: character-level language models, certain byte-level models (GPT-2 uses byte-level BPE as a starting point), and as a fallback for extremely small vocabularies.</p></li>
+<li><p><strong>Word tokenization</strong> appears in legacy systems and simple bag-of-words pipelines, but fails at scale. Vocabulary explosion, <code>[UNK]</code> collapse, and multilingual brittleness make it unsuitable for anything pretrained on broad corpora.</p></li>
+<li><p><strong>Subword tokenization</strong> is the universal standard for pretrained language models. WordPiece and SentencePiece BPE both solve the core trade-offs: bounded vocabulary, graceful OOV handling, multilingual coverage, and sequences short enough for Transformer attention.</p></li>
+</ul>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Always Use the Tokenizer the Model Was Trained With
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>When fine-tuning a pretrained model, you must use the <strong>exact same tokenizer</strong> — not just the same algorithm, but the same vocabulary file. The model’s embedding matrix maps token ID 1045 to a learned vector for the word “i” (in DistilBERT). Swap in a different tokenizer and ID 1045 now refers to something else entirely. The embeddings become noise, the model is unrecoverable, and fine-tuning won’t fix it. This applies to vocabulary size, normalization rules, and special token placements — all of it must match pretraining exactly.</p>
+</div>
+</div>
+<p>Most practical work doesn’t require building tokenizers from scratch — Hugging Face <code>tokenizers</code> and SentencePiece handle it. What matters operationally is understanding the output: recognizing <code>##</code> vs <code>▁</code> markers, knowing which special tokens a model expects and in what order, and catching normalization surprises (casing, accent stripping) before they cause silent failures downstream.</p>
 
 
 </section>
@@ -1189,7 +1408,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"loop":false,"closeEffect":"zoom","descPosition":"bottom","selector":".lightbox","openEffect":"zoom"});
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","closeEffect":"zoom","loop":false,"openEffect":"zoom","descPosition":"bottom"});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;
