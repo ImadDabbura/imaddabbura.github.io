@@ -529,7 +529,7 @@ The Trade-off Triangle
 <pre class="mermaid mermaid-js">flowchart TD
     subgraph forward["Forward Mode (one pass per input)"]
         direction LR
-        x1f["x₁"] --&gt; |"∂/∂x₁"| af["a"] --&gt; |"∂/∂x₁"| bf["b"] --&gt; |"∂/∂x₁"| Lf["L"]
+        x1f["x₁"] --&gt; |"∂a/∂x₁"| af["a"] --&gt; |"∂b/∂x₁"| bf["b"] --&gt; |"∂L/∂x₁"| Lf["L"]
     end
 
     subgraph reverse["Reverse Mode (one pass for ALL inputs)"]
@@ -595,7 +595,7 @@ Gradients as Directional Information
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The gradient at each node tells you: <em>“How much should this value change to decrease the loss most steeply?”</em> It’s a local, linear approximation of the loss landscape — the direction of steepest descent (or ascent, if you negate it).</p>
+<p>The gradient at each node tells you: <em>“In which direction would changing this value increase the loss most steeply?”</em> It points toward steepest <strong>ascent</strong> — the direction of maximum loss increase. To decrease the loss, we move in the <strong>negative</strong> gradient direction. This is why gradient descent subtracts the gradient from the parameters: <span class="math inline">\(\theta \leftarrow \theta - \alpha \nabla_\theta L\)</span>.</p>
 </div>
 </div>
 <p>One powerful consequence: the backward pass itself builds a computation graph for the gradients. This means you can compute <strong>gradients of gradients</strong> simply by adding more operations — which is exactly what second-order methods and some meta-learning approaches do.</p>
@@ -847,7 +847,7 @@ im2col Memory Overhead
 <h3 class="anchored" data-anchor-id="why-initialization-matters-more-than-you-think">Why Initialization Matters More Than You Think</h3>
 <p>Two observations that changed how I think about initialization:</p>
 <ol type="1">
-<li><p><strong>The effect of initialization persists throughout training.</strong> Bad initialization affects the relative norms of activations and gradients <em>at every step</em>. If you don’t initialize appropriately (e.g., using <span class="math inline">\(\frac{2}{n}\)</span> scaling for ReLU networks, known as He initialization), the L2-norm of activations or gradients will drift — leading to vanishing signals or exploding values.</p></li>
+<li><p><strong>The effect of initialization persists throughout training.</strong> Bad initialization affects the relative norms of activations and gradients <em>at every step</em>. If you don’t initialize appropriately (e.g., using a standard deviation of <span class="math inline">\(\sqrt{\frac{2}{n}}\)</span> for ReLU networks, known as He initialization), the L2-norm of activations or gradients will drift — leading to vanishing signals or exploding values.</p></li>
 <li><p><strong>Weights don’t move far from their initial values.</strong> This is surprising. If you plot the variance of weights before and after training for each layer, you’ll see remarkably similar values. The weights shift in certain directions, but relative to their initial magnitude, the change is small — especially for deep networks.</p></li>
 </ol>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -918,7 +918,7 @@ Choosing Between Them
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>Use BatchNorm</strong> for CNNs with reasonably large batches (≥32). <strong>Use LayerNorm</strong> for Transformers, RNNs, and any setting where batch size is small or variable. This isn’t just convention — it follows from the structural properties of each approach.</p>
+<p><strong>Use BatchNorm</strong> for CNNs with reasonably large batches (≥32). <strong>Use LayerNorm</strong> for Transformers, RNNs, and any setting where batch size is small or variable.</p>
 </div>
 </div>
 <p><strong>Key takeaway:</strong> Normalization layers fix the activation drift that initialization can only partially prevent. BatchNorm and LayerNorm make different trade-offs about <em>what to normalize over</em>, and the right choice depends on your architecture and batch size.</p>
@@ -927,7 +927,7 @@ Choosing Between Them
 </section>
 <section id="regularization-controlling-complexity" class="level2">
 <h2 class="anchored" data-anchor-id="regularization-controlling-complexity">Regularization: Controlling Complexity</h2>
-<p>Regularization prevents models from memorizing the training data. But the story has a twist that’s often overlooked.</p>
+<p>Regularization prevents models from memorizing the training data, forcing them to learn patterns that generalize to unseen examples.</p>
 <section id="implicit-regularization" class="level3">
 <h3 class="anchored" data-anchor-id="implicit-regularization">Implicit Regularization</h3>
 <p>Before you add <em>any</em> explicit regularization, your training procedure already constrains the model. <strong>SGD with a particular initialization</strong> only explores a subset of all possible neural networks. The initialization defines the starting point, and the optimizer’s dynamics (step size, momentum, batch sampling) determine the trajectory through weight space.</p>
@@ -968,7 +968,7 @@ L2 Regularization ≠ Weight Decay (for Adam!)
 <li><strong>Global GPU memory:</strong> 10–80 GB depending on the device — this is the typical bottleneck</li>
 <li><strong>CPU RAM:</strong> 64–512 GB — large but slow to access from GPU</li>
 </ul>
-<p>Most large models can’t fit entirely in GPU global memory during training, because we need to store: model parameters, optimizer state (2× or 3× model size for Adam), activations (saved for backward), and gradients.</p>
+<p>Most large models can’t fit entirely in GPU global memory during training, because we need to store: model parameters, optimizer state (2x or 3x model size for Adam), activations (saved for backward), and gradients.</p>
 </section>
 <section id="memory-saving-techniques" class="level3">
 <h3 class="anchored" data-anchor-id="memory-saving-techniques">Memory-Saving Techniques</h3>
@@ -1116,7 +1116,7 @@ When Communication Dominates
 <li><strong>Network bandwidth is low</strong> (especially across nodes vs.&nbsp;within a node with NVLink)</li>
 <li><strong>Gradient compression</strong> isn’t used</li>
 </ul>
-<p>Rule of thumb: if your per-step compute time is less than 3× the gradient synchronization time, communication is your bottleneck. Scale batch size or use gradient compression/accumulation to amortize the cost.</p>
+<p>Rule of thumb: if your per-step compute time is less than 3x the gradient synchronization time, communication is your bottleneck. Scale batch size or use gradient compression/accumulation to amortize the cost.</p>
 </div>
 </div>
 </section>
@@ -1184,7 +1184,7 @@ Convolution as Matrix Multiplication
 <section id="recurrent-neural-networks-rnns" class="level3">
 <h3 class="anchored" data-anchor-id="recurrent-neural-networks-rnns">Recurrent Neural Networks (RNNs)</h3>
 <p>RNNs address temporal dependencies by maintaining a <strong>hidden state</strong> that gets updated at each time step as a function of the current input and the previous hidden state. In theory, the last hidden state captures the entire input history.</p>
-<p>In practice, the hidden state is a bottleneck. The entire past is <em>compacted</em> into a single vector, and information from early time steps (<code>x₁</code>) gets diluted compared to recent ones (<code>xₜ</code>).</p>
+<p>In practice, the hidden state is a bottleneck. The entire past is <em>compacted</em> into a single vector, and information from early time steps (<span class="math inline">\(x_1\)</span>) gets diluted compared to recent ones (<span class="math inline">\(x_t\)</span>).</p>
 <p><strong>Backpropagation Through Time (BPTT):</strong> Because weights are shared across time steps, gradients must flow through the entire unrolled sequence. If the dominant eigenvalue of the weight matrix is less than 1, gradients <strong>vanish</strong> exponentially with sequence length. Greater than 1, they <strong>explode</strong>.</p>
 </section>
 <section id="lstm-gating-the-information-flow" class="level3">

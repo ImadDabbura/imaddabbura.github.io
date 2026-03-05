@@ -102,7 +102,7 @@ Reverse mode flips the direction. We walk from the **output back to inputs**, co
 flowchart TD
     subgraph forward["Forward Mode (one pass per input)"]
         direction LR
-        x1f["x₁"] --> |"∂/∂x₁"| af["a"] --> |"∂/∂x₁"| bf["b"] --> |"∂/∂x₁"| Lf["L"]
+        x1f["x₁"] --> |"∂a/∂x₁"| af["a"] --> |"∂b/∂x₁"| bf["b"] --> |"∂L/∂x₁"| Lf["L"]
     end
 
     subgraph reverse["Reverse Mode (one pass for ALL inputs)"]
@@ -143,7 +143,7 @@ The dashed arrows show the backward pass, which retraces the forward graph in re
 
 ::: {.callout-tip}
 ## Gradients as Directional Information
-The gradient at each node tells you: *"How much should this value change to decrease the loss most steeply?"* It's a local, linear approximation of the loss landscape — the direction of steepest descent (or ascent, if you negate it).
+The gradient at each node tells you: *"In which direction would changing this value increase the loss most steeply?"* It points toward steepest **ascent** — the direction of maximum loss increase. To decrease the loss, we move in the **negative** gradient direction. This is why gradient descent subtracts the gradient from the parameters: $\theta \leftarrow \theta - \alpha \nabla_\theta L$.
 :::
 
 One powerful consequence: the backward pass itself builds a computation graph for the gradients. This means you can compute **gradients of gradients** simply by adding more operations — which is exactly what second-order methods and some meta-learning approaches do.
@@ -327,7 +327,7 @@ Weight initialization might seem like a minor detail — just pick some random n
 
 Two observations that changed how I think about initialization:
 
-1. **The effect of initialization persists throughout training.** Bad initialization affects the relative norms of activations and gradients *at every step*. If you don't initialize appropriately (e.g., using $\frac{2}{n}$ scaling for ReLU networks, known as He initialization), the L2-norm of activations or gradients will drift — leading to vanishing signals or exploding values.
+1. **The effect of initialization persists throughout training.** Bad initialization affects the relative norms of activations and gradients *at every step*. If you don't initialize appropriately (e.g., using a standard deviation of $\sqrt{\frac{2}{n}}$ for ReLU networks, known as He initialization), the L2-norm of activations or gradients will drift — leading to vanishing signals or exploding values.
 
 2. **Weights don't move far from their initial values.** This is surprising. If you plot the variance of weights before and after training for each layer, you'll see remarkably similar values. The weights shift in certain directions, but relative to their initial magnitude, the change is small — especially for deep networks.
 
@@ -385,7 +385,7 @@ Layer Normalization normalizes **across all features** for each sample independe
 
 ::: {.callout-important}
 ## Choosing Between Them
-**Use BatchNorm** for CNNs with reasonably large batches (≥32). **Use LayerNorm** for Transformers, RNNs, and any setting where batch size is small or variable. This isn't just convention — it follows from the structural properties of each approach.
+**Use BatchNorm** for CNNs with reasonably large batches (≥32). **Use LayerNorm** for Transformers, RNNs, and any setting where batch size is small or variable.
 :::
 
 **Key takeaway:** Normalization layers fix the activation drift that initialization can only partially prevent. BatchNorm and LayerNorm make different trade-offs about *what to normalize over*, and the right choice depends on your architecture and batch size.
@@ -394,7 +394,7 @@ Layer Normalization normalizes **across all features** for each sample independe
 
 ## Regularization: Controlling Complexity
 
-Regularization prevents models from memorizing the training data. But the story has a twist that's often overlooked.
+Regularization prevents models from memorizing the training data, forcing them to learn patterns that generalize to unseen examples.
 
 ### Implicit Regularization
 
@@ -435,7 +435,7 @@ The memory hierarchy tells the story:
 - **Global GPU memory:** 10–80 GB depending on the device — this is the typical bottleneck
 - **CPU RAM:** 64–512 GB — large but slow to access from GPU
 
-Most large models can't fit entirely in GPU global memory during training, because we need to store: model parameters, optimizer state (2× or 3× model size for Adam), activations (saved for backward), and gradients.
+Most large models can't fit entirely in GPU global memory during training, because we need to store: model parameters, optimizer state (2x or 3x model size for Adam), activations (saved for backward), and gradients.
 
 ### Memory-Saving Techniques
 
@@ -529,7 +529,7 @@ Communication overhead dominates training time when:
 - **Network bandwidth is low** (especially across nodes vs. within a node with NVLink)
 - **Gradient compression** isn't used
 
-Rule of thumb: if your per-step compute time is less than 3× the gradient synchronization time, communication is your bottleneck. Scale batch size or use gradient compression/accumulation to amortize the cost.
+Rule of thumb: if your per-step compute time is less than 3x the gradient synchronization time, communication is your bottleneck. Scale batch size or use gradient compression/accumulation to amortize the cost.
 :::
 
 #### Model Parallelism (Pipeline Parallelism)
@@ -567,7 +567,7 @@ We can express convolution as a matrix multiplication where the weight matrix ha
 
 RNNs address temporal dependencies by maintaining a **hidden state** that gets updated at each time step as a function of the current input and the previous hidden state. In theory, the last hidden state captures the entire input history.
 
-In practice, the hidden state is a bottleneck. The entire past is *compacted* into a single vector, and information from early time steps (`x₁`) gets diluted compared to recent ones (`xₜ`).
+In practice, the hidden state is a bottleneck. The entire past is *compacted* into a single vector, and information from early time steps ($x_1$) gets diluted compared to recent ones ($x_t$).
 
 **Backpropagation Through Time (BPTT):** Because weights are shared across time steps, gradients must flow through the entire unrolled sequence. If the dominant eigenvalue of the weight matrix is less than 1, gradients **vanish** exponentially with sequence length. Greater than 1, they **explode**.
 
