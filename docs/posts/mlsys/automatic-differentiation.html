@@ -45,9 +45,6 @@ ul.task-list li input[type="checkbox"] {
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
-<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
-<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -117,15 +114,48 @@ ga('send', {
 background-size: cover;
       }
 </style>
+<meta name="mermaid-theme" content="default">
+<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../assets/posts.css">
 <meta property="og:title" content="Imad Dabbura - Automatic Differentiation Demystified">
-<meta property="og:description" content="From dual numbers to backpropagation, uncover the inner workings of forward and reverse mode AD and the performance trade-offs that shape deep learning">
+<meta property="og:description" content="From dual numbers to backpropagation — the intuition, the trade-offs, and what breaks in practice for LLM training">
 <meta property="og:image" content="https://imaddabbura.github.io/posts/mlsys/images/automatic-differentiation-image.jpeg">
 <meta property="og:site_name" content="Imad Dabbura">
 <meta name="twitter:title" content="Imad Dabbura - Automatic Differentiation Demystified">
-<meta name="twitter:description" content="From dual numbers to backpropagation, uncover the inner workings of forward and reverse mode AD and the performance trade-offs that shape deep learning">
+<meta name="twitter:description" content="From dual numbers to backpropagation — the intuition, the trade-offs, and what breaks in practice for LLM training">
 <meta name="twitter:image" content="https://imaddabbura.github.io/posts/mlsys/images/automatic-differentiation-image.jpeg">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
@@ -228,7 +258,7 @@ background-size: cover;
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">Automatic Differentiation Demystified</h1>
-            <p class="subtitle lead">From dual numbers to backpropagation, uncover the inner workings of forward and reverse mode AD and the performance trade-offs that shape deep learning</p>
+            <p class="subtitle lead">From dual numbers to backpropagation — the intuition, the trade-offs, and what breaks in practice for LLM training</p>
                                 <div class="quarto-categories">
                 <div class="quarto-category">MLSys</div>
               </div>
@@ -255,7 +285,7 @@ background-size: cover;
       <div>
       <div class="quarto-title-meta-heading">Modified</div>
       <div class="quarto-title-meta-contents">
-        <p class="date-modified">February 3, 2024</p>
+        <p class="date-modified">May 10, 2025</p>
       </div>
     </div>
       
@@ -270,11 +300,17 @@ background-size: cover;
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#forward-mode-ad-from-input-to-output" id="toc-forward-mode-ad-from-input-to-output" class="nav-link" data-scroll-target="#forward-mode-ad-from-input-to-output">Forward-mode AD: From Input to Output</a></li>
-  <li><a href="#reverse-mode-ad-the-power-of-reverse-computation" id="toc-reverse-mode-ad-the-power-of-reverse-computation" class="nav-link" data-scroll-target="#reverse-mode-ad-the-power-of-reverse-computation">Reverse-mode AD: The Power of Reverse Computation</a></li>
-  <li><a href="#memory-usage-and-performance-considerations" id="toc-memory-usage-and-performance-considerations" class="nav-link" data-scroll-target="#memory-usage-and-performance-considerations">Memory Usage and Performance Considerations</a></li>
-  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#the-derivative-engine-behind-every-loss.backward" id="toc-the-derivative-engine-behind-every-loss.backward" class="nav-link active" data-scroll-target="#the-derivative-engine-behind-every-loss.backward">The Derivative Engine Behind Every <code>loss.backward()</code></a></li>
+  <li><a href="#why-not-just-use-calculus-or-finite-differences" id="toc-why-not-just-use-calculus-or-finite-differences" class="nav-link" data-scroll-target="#why-not-just-use-calculus-or-finite-differences">Why Not Just Use Calculus or Finite Differences?</a></li>
+  <li><a href="#forward-mode-ad-sensitivity-flowing-downstream" id="toc-forward-mode-ad-sensitivity-flowing-downstream" class="nav-link" data-scroll-target="#forward-mode-ad-sensitivity-flowing-downstream">Forward Mode AD: Sensitivity Flowing Downstream</a></li>
+  <li><a href="#reverse-mode-ad-tracing-blame-upstream" id="toc-reverse-mode-ad-tracing-blame-upstream" class="nav-link" data-scroll-target="#reverse-mode-ad-tracing-blame-upstream">Reverse Mode AD: Tracing Blame Upstream</a>
+  <ul class="collapse">
+  <li><a href="#the-unavoidable-memory-cost" id="toc-the-unavoidable-memory-cost" class="nav-link" data-scroll-target="#the-unavoidable-memory-cost">The Unavoidable Memory Cost</a></li>
+  <li><a href="#gradient-checkpointing-buying-memory-back-with-compute" id="toc-gradient-checkpointing-buying-memory-back-with-compute" class="nav-link" data-scroll-target="#gradient-checkpointing-buying-memory-back-with-compute">Gradient Checkpointing: Buying Memory Back with Compute</a></li>
+  </ul></li>
+  <li><a href="#the-trade-off-stated-clearly" id="toc-the-trade-off-stated-clearly" class="nav-link" data-scroll-target="#the-trade-off-stated-clearly">The Trade-off, Stated Clearly</a></li>
+  <li><a href="#what-breaks-in-practice" id="toc-what-breaks-in-practice" class="nav-link" data-scroll-target="#what-breaks-in-practice">What Breaks in Practice</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key Takeaways</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -285,71 +321,293 @@ background-size: cover;
 
 
 
-<section id="introduction" class="level2">
-<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>Automatic Differentiation (AD) is a fundamental technique in modern machine learning, particularly crucial for training neural networks and optimizing complex models. In this post, we’ll dive deep into the two main modes of AD: Forward Mode and Reverse-mode, exploring their mechanisms, advantages, and trade-offs.</p>
+<section id="the-derivative-engine-behind-every-loss.backward" class="level2">
+<h2 class="anchored" data-anchor-id="the-derivative-engine-behind-every-loss.backward">The Derivative Engine Behind Every <code>loss.backward()</code></h2>
+<p>Every time you train a neural network, something computes exact derivatives through millions of operations automatically. You call <code>loss.backward()</code> and gradients appear — but <em>how</em>? And why does training a 7B-parameter LLM consume 5x more GPU memory than running inference on it?</p>
+<p>The answer to both questions is <strong>Automatic Differentiation (AD)</strong>: a family of techniques for computing exact derivatives through arbitrary code, efficiently. Understanding it changes how you reason about memory budgets, gradient flow failures, and why certain training tricks (gradient checkpointing, mixed precision) exist at all.</p>
+<p>There are two fundamentally different approaches — <strong>forward mode</strong> and <strong>reverse mode</strong> — and the choice between them explains why deep learning frameworks are built the way they are.</p>
 </section>
-<section id="forward-mode-ad-from-input-to-output" class="level2">
-<h2 class="anchored" data-anchor-id="forward-mode-ad-from-input-to-output">Forward-mode AD: From Input to Output</h2>
-<p><a href="https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/ForwardAD.png/500px-ForwardAD.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/ForwardAD.png/500px-ForwardAD.png" class="img-fluid"></a></p>
-<p>Forward Mode AD operates by propagating derivatives from input nodes to output nodes in a computational graph. At each step, it calculates the partial derivative of the current node with respect to the input node. This mode implements a straightforward approach to computing derivatives, making it particularly intuitive to understand.</p>
-<p>Key features:</p>
-<ol type="1">
-<li><p><strong>Multiple Passes Required</strong>: For a function with <code>n</code> inputs, Forward Mode AD requires <code>n</code> separate forward passes to compute all necessary derivatives. This characteristic makes it less efficient for functions with many input variables, which is often the case in deep learning applications as most of the loss functions are scalars.</p></li>
-<li><p><strong>Implementation Using Dual Numbers</strong>: Forward Mode AD typically uses dual numbers (a + bε) to track both the value and its derivative simultaneously during computation. This elegant mathematical approach allows for efficient derivative computation alongside function evaluation.</p></li>
-<li><p><strong>Memory Efficiency</strong>: One advantage of Forward Mode AD is its relatively lower memory requirements compared to Reverse-mode. Since it doesn’t need to store intermediate results for backpropagation, it can be more memory-efficient for certain types of computations.</p></li>
-</ol>
+<section id="why-not-just-use-calculus-or-finite-differences" class="level2">
+<h2 class="anchored" data-anchor-id="why-not-just-use-calculus-or-finite-differences">Why Not Just Use Calculus or Finite Differences?</h2>
+<p>Before getting to AD, it helps to understand what it replaced.</p>
+<p><strong>Numerical differentiation</strong> approximates the derivative using finite differences: <span class="math inline">\(f'(x) \approx \frac{f(x+h) - f(x)}{h}\)</span> for some small <span class="math inline">\(h\)</span>. It’s dead simple but has two fatal flaws: it requires one extra forward pass <em>per parameter</em> (catastrophic for millions of parameters), and floating-point subtraction of nearly-equal numbers amplifies numerical error badly.</p>
+<p><strong>Symbolic differentiation</strong> (what a computer algebra system does) applies calculus rules to produce a closed-form derivative expression. It’s exact, but the resulting expressions grow exponentially with computation depth — a 100-layer network would produce a gradient expression no machine could reasonably evaluate.</p>
+<p>AD is neither. It applies the chain rule mechanically at each elementary operation, accumulating intermediate values rather than symbolic expressions. The result is exact (to floating-point precision) and efficient — no expression explosion, no extra passes per parameter.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Three Ways to Differentiate Code
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<table class="table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>Accuracy</th>
+<th>Cost</th>
+<th>Practical for ML?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Numerical (finite diff)</td>
+<td>Approximate</td>
+<td>1 extra pass per input</td>
+<td>❌ Too slow</td>
+</tr>
+<tr class="even">
+<td>Symbolic</td>
+<td>Exact</td>
+<td>Expression explosion</td>
+<td>❌ Intractable</td>
+</tr>
+<tr class="odd">
+<td>AD — forward mode</td>
+<td>Exact</td>
+<td>1 pass per input</td>
+<td>⚠️ Only if few inputs</td>
+</tr>
+<tr class="even">
+<td>AD — reverse mode</td>
+<td>Exact</td>
+<td>1 pass per output</td>
+<td>✅ Standard choice</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </section>
-<section id="reverse-mode-ad-the-power-of-reverse-computation" class="level2">
-<h2 class="anchored" data-anchor-id="reverse-mode-ad-the-power-of-reverse-computation">Reverse-mode AD: The Power of Reverse Computation</h2>
-<p><a href="images/reverse-mode-AD.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="images/reverse-mode-AD.png" class="img-fluid"></a></p>
-<p>Reverse-mode AD, has become the cornerstone of modern deep learning frameworks. This approach computes derivatives by working backwards from the output to the inputs, making it particularly efficient for functions with many inputs but few outputs.</p>
-<p>key features:</p>
-<ol type="1">
-<li><p><strong>Single Pass Efficiency</strong>: One of the most significant advantages of Reverse-mode AD is its ability to compute gradients with respect to all input variables in a single backward pass. This makes it highly efficient for typical deep learning scenarios where we have scalar loss functions but numerous parameters.</p></li>
-<li><p><strong>Gradient Computation</strong>: The gradients computed at each node indicate how much that node needs to be adjusted to achieve the steepest ascent/descent direction locally. This information is crucial for optimization algorithms like gradient descent.</p></li>
-<li><p><strong>Hardware Optimization</strong>: Reverse-mode AD allows for various optimizations that can leverage underlying hardware capabilities. Framework implementations can fuse operations and utilize parallel processing to enhance performance.</p></li>
-</ol>
-<p>Pros:</p>
+<section id="forward-mode-ad-sensitivity-flowing-downstream" class="level2">
+<h2 class="anchored" data-anchor-id="forward-mode-ad-sensitivity-flowing-downstream">Forward Mode AD: Sensitivity Flowing Downstream</h2>
+<p>Forward mode AD propagates <strong>derivatives alongside values</strong> as computation flows from inputs to outputs. At each operation, it tracks not just the result but how sensitive that result is to a chosen input.</p>
+<p>The elegant implementation uses <strong>dual numbers</strong>: instead of a scalar <span class="math inline">\(x\)</span>, carry a pair <span class="math inline">\((x,\ \dot{x})\)</span> where <span class="math inline">\(\dot{x}\)</span> represents the derivative of <span class="math inline">\(x\)</span> with respect to some chosen input <span class="math inline">\(x_i\)</span>. Operations on dual numbers automatically propagate the derivative via the chain rule — you never write it explicitly:</p>
+<p><span class="math display">\[f(a + b\varepsilon) \approx f(a) + f'(a)\cdot b\varepsilon \qquad (\varepsilon^2 = 0)\]</span></p>
+<p>The <span class="math inline">\(\varepsilon\)</span> coefficient carries the derivative forward through every arithmetic operation.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    x1["x₁\n(x₁, ẋ₁=1)"] --&gt; mul["×"]
+    x2["x₂\n(x₂, ẋ₂=0)"] --&gt; mul
+    mul --&gt;|"(x₁x₂, x₂·1)"| add["+"]
+    x3["x₃\n(x₃, ẋ₃=0)"] --&gt; add
+    add --&gt;|"(x₁x₂+x₃, x₂)"| L["L\n∂L/∂x₁ = x₂"]
+</pre>
+</div>
+<p></p><figcaption> Forward mode propagates (value, derivative) pairs from inputs to output. The derivative component tracks sensitivity w.r.t. one chosen input. Here, the seed is set for x₁, so x₂’s dot is 0.</figcaption> </figure><p></p>
+</div>
+</div>
+</div>
+<p>The critical limitation: the initial <strong>seed vector</strong> — the <span class="math inline">\((0,\ldots,1,\ldots,0)\)</span> that selects which input you’re differentiating with respect to — means one forward pass gives you the sensitivity with respect to <em>one</em> input. Getting gradients for all <span class="math inline">\(n\)</span> inputs requires <span class="math inline">\(n\)</span> passes.</p>
+<p>For a 7B-parameter LLM, that’s 7 billion passes to compute a single gradient update. Forward mode is not the answer for ML.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+When Forward Mode Wins
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Forward mode is efficient when <strong>outputs greatly outnumber inputs</strong> — the opposite of ML. It shines in scientific computing: a simulation with 3 input parameters and 10,000 output metrics needs only 3 forward passes, not 10,000. In ML the ratio is reversed: millions of inputs (parameters), one output (scalar loss). Reverse mode exists to handle exactly this case.</p>
+</div>
+</div>
+</section>
+<section id="reverse-mode-ad-tracing-blame-upstream" class="level2">
+<h2 class="anchored" data-anchor-id="reverse-mode-ad-tracing-blame-upstream">Reverse Mode AD: Tracing Blame Upstream</h2>
+<p>Reverse mode flips the direction. Instead of asking “how does changing this input affect the output?”, it asks “how much did each node contribute to this output?”</p>
+<p>The key insight: for a scalar output (a loss function), <strong>one backward pass distributes gradient credit back to every node in the graph simultaneously</strong>. One pass. All gradients.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    subgraph fwd ["① Forward Pass — compute and store"]
+        direction LR
+        x["x"] --&gt; mul["mul"] --&gt; add["add"] --&gt; L["L (scalar)"]
+        w["w"] --&gt; mul
+        b["b"] --&gt; add
+    end
+    subgraph bwd ["② Backward Pass — propagate gradients"]
+        direction RL
+        dL["∂L/∂L = 1"] --&gt; dadd["∂L/∂add"] --&gt; dmul["∂L/∂mul"]
+        dmul --&gt; dx["∂L/∂x"]
+        dmul --&gt; dw["∂L/∂w"]
+        dadd --&gt; db["∂L/∂b"]
+    end
+    fwd --&gt; bwd
+</pre>
+</div>
+<p></p><figcaption> Reverse mode runs two phases: a forward pass that computes and stores all intermediate values, then a backward pass that propagates ∂L/∂· back to every node.</figcaption> </figure><p></p>
+</div>
+</div>
+</div>
+<section id="the-unavoidable-memory-cost" class="level3">
+<h3 class="anchored" data-anchor-id="the-unavoidable-memory-cost">The Unavoidable Memory Cost</h3>
+<p>Here’s the catch. To compute gradients during the backward pass, each operation needs its <strong>inputs from the forward pass</strong>. For a <code>mul</code> node computing <span class="math inline">\(z = w \cdot x\)</span>, the backward step needs both <span class="math inline">\(w\)</span> and <span class="math inline">\(x\)</span> to distribute credit:</p>
+<p><span class="math display">\[\frac{\partial L}{\partial w} = x \cdot \frac{\partial L}{\partial z}, \qquad \frac{\partial L}{\partial x} = w \cdot \frac{\partial L}{\partial z}\]</span></p>
+<p>So the framework must <strong>keep every intermediate tensor alive</strong> until the backward pass consumes it. The consequence:</p>
 <ul>
-<li>Highly efficient for functions with many inputs and few outputs (typical in deep learning)</li>
-<li>Enables sophisticated hardware optimizations and operation fusion</li>
+<li><strong>Inference</strong>: each layer’s activations can be discarded once the next layer is computed → memory is roughly <span class="math inline">\(O(1)\)</span> in depth</li>
+<li><strong>Training</strong>: all activations must survive until their gradient is computed → memory is <span class="math inline">\(O(N)\)</span> in depth</li>
 </ul>
-<p>Cons:</p>
-<ul>
-<li>Requires storing intermediate results during computation</li>
-<li>Higher memory usage due to maintaining input tensors and operations for gradient computation
-<ul>
-<li>Memory requirements can become significant for large models or batch sizes</li>
-</ul></li>
-</ul>
+<p>This is why training a transformer consumes so much more memory than running inference on it. At large batch sizes, forward activations alone can dwarf the parameter memory.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Why Your GPU OOMs During Training But Not Inference
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>During inference, each layer’s output overwrites the previous buffer — memory stays roughly constant regardless of model depth. During training, every layer’s output must survive until the backward pass reaches it. A 24-layer transformer holds 24 layers of activations simultaneously. Scale batch size by 4x and activation memory scales 4x too — parameters don’t budge, activations do. This is the first thing to check when you hit an OOM that doesn’t happen at inference time.</p>
+</div>
+</div>
 </section>
-<section id="memory-usage-and-performance-considerations" class="level2">
-<h2 class="anchored" data-anchor-id="memory-usage-and-performance-considerations">Memory Usage and Performance Considerations</h2>
-<p>The choice between Forward and Reverse-mode AD often comes down to memory-performance trade-offs:</p>
+<section id="gradient-checkpointing-buying-memory-back-with-compute" class="level3">
+<h3 class="anchored" data-anchor-id="gradient-checkpointing-buying-memory-back-with-compute">Gradient Checkpointing: Buying Memory Back with Compute</h3>
+<p>The standard solution to activation memory pressure is <strong>gradient checkpointing</strong> (also called activation recomputation): don’t store all activations during the forward pass. Store only at segment boundaries — <strong>checkpoints</strong> — and recompute intermediate activations on-the-fly during the backward pass when they’re needed.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    subgraph s1 ["Segment 1"]
+        L1["Layer 1"] --&gt; L2["Layer 2"] --&gt; L3["Layer 3"]
+    end
+    subgraph s2 ["Segment 2"]
+        L4["Layer 4"] --&gt; L5["Layer 5"] --&gt; L6["Layer 6"]
+    end
+    s1 --&gt;|"✓ checkpoint"| s2
+    style L1 fill:#e8f5e9
+    style L3 fill:#e8f5e9
+    style L4 fill:#e8f5e9
+    style L6 fill:#e8f5e9
+</pre>
+</div>
+<p></p><figcaption> Checkpointing stores activations only at segment boundaries (green). During backward, each segment re-runs its forward pass to recover the discarded intermediates.</figcaption> </figure><p></p>
+</div>
+</div>
+</div>
+<table class="table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Strategy</th>
+<th>Activation memory</th>
+<th>Compute overhead</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>No checkpointing</td>
+<td><span class="math inline">\(O(N)\)</span> layers</td>
+<td>None</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\sqrt{N}\)</span> checkpoints</td>
+<td><span class="math inline">\(O(\sqrt{N})\)</span> layers</td>
+<td>~1 extra forward pass</td>
+</tr>
+<tr class="odd">
+<td>Recompute everything</td>
+<td><span class="math inline">\(O(1)\)</span></td>
+<td>Up to <span class="math inline">\(N\)</span> extra forward passes</td>
+</tr>
+</tbody>
+</table>
+<p>The sweet spot for most LLM training is <span class="math inline">\(\sqrt{N}\)</span> checkpoints — roughly one extra forward pass in exchange for a meaningful memory reduction. This is what <code>torch.utils.checkpoint.checkpoint_sequential</code> implements.</p>
+</section>
+</section>
+<section id="the-trade-off-stated-clearly" class="level2">
+<h2 class="anchored" data-anchor-id="the-trade-off-stated-clearly">The Trade-off, Stated Clearly</h2>
+<table class="table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Forward Mode</th>
+<th>Reverse Mode</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Passes needed</strong></td>
+<td>1 per input variable</td>
+<td>1 per output variable</td>
+</tr>
+<tr class="even">
+<td><strong>Best for</strong></td>
+<td>Few inputs, many outputs</td>
+<td>Many inputs, few outputs (ML)</td>
+</tr>
+<tr class="odd">
+<td><strong>Memory overhead</strong></td>
+<td>Low — no stored intermediates</td>
+<td>High — all intermediates stored</td>
+</tr>
+<tr class="even">
+<td><strong>What frameworks use</strong></td>
+<td>Occasionally for Jacobians</td>
+<td>Always for gradient-based training</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The Jacobian Perspective
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Forward mode naturally computes a <strong>Jacobian-vector product (JVP)</strong> — the full Jacobian multiplied by a chosen input direction. Reverse mode naturally computes a <strong>vector-Jacobian product (VJP)</strong> — a chosen output direction multiplied by the full Jacobian. For a scalar loss, the VJP with direction <span class="math inline">\([1]\)</span> gives you the complete gradient vector in one pass. This is the mathematical reason reverse mode dominates ML training.</p>
+</div>
+</div>
+</section>
+<section id="what-breaks-in-practice" class="level2">
+<h2 class="anchored" data-anchor-id="what-breaks-in-practice">What Breaks in Practice</h2>
+<p><strong>Gradient flow failures.</strong> In reverse mode, gradients are products of local Jacobians chained across all layers. If any factor is consistently small (saturating activations, poor initialization) or large (unbounded weights), the gradient signal degrades before reaching early layers. This is the vanishing/exploding gradient problem — it’s not specific to RNNs, it’s a structural property of deep reverse-mode computation.</p>
+<p><strong>Silent NaN propagation.</strong> A NaN anywhere in the forward pass propagates silently through the computation graph. During backward, every gradient flowing through the affected node becomes NaN, and the weight update corrupts the entire model. Use <code>torch.autograd.set_detect_anomaly(True)</code> to get a traceback pointing to the originating operation — invaluable for tracking these down.</p>
+<p><strong>In-place operations on tensors with gradients.</strong> In-place ops (e.g., <code>x += 1</code>) can modify a tensor that the backward pass expects to find unchanged. PyTorch raises a runtime error when it detects this, but the error message can be confusing. The fix is simple: avoid in-place ops on any tensor that requires gradients, or clone before modifying.</p>
+</section>
+<section id="key-takeaways" class="level2">
+<h2 class="anchored" data-anchor-id="key-takeaways">Key Takeaways</h2>
 <ol type="1">
-<li><strong>Memory Patterns</strong>:
-<ul>
-<li>Forward Mode AD can achieve up to 1.97 times memory reduction compared to baseline models</li>
-<li>Reverse-mode AD requires more memory but offers better computational efficiency for typical deep learning scenarios</li>
-</ul></li>
-<li><strong>Performance Impact</strong>:
-<ul>
-<li>Forward Mode AD can show up to 20% performance improvement over recomputation methods under similar memory constraints</li>
-<li>Reverse-mode AD’s efficiency makes it the preferred choice for deep learning despite higher memory requirements</li>
-</ul></li>
+<li><p><strong>AD is not numerical or symbolic differentiation.</strong> It applies the chain rule exactly at each elementary operation — no approximation, no expression explosion.</p></li>
+<li><p><strong>Forward mode needs one pass per input; reverse mode needs one pass per output.</strong> For ML — scalar loss, millions of parameters — reverse mode wins unconditionally.</p></li>
+<li><p><strong>The cost of reverse mode is memory.</strong> Every intermediate tensor from the forward pass must stay alive for the backward pass. This is the root cause of training using far more memory than inference.</p></li>
+<li><p><strong>Gradient checkpointing trades compute for memory.</strong> Store only at segment boundaries, recompute the rest during backward. Expect roughly one extra forward pass overhead for a meaningful memory reduction.</p></li>
+<li><p><strong>Most gradient problems are reverse-mode problems.</strong> Vanishing/exploding gradients, NaN propagation, and in-place op errors all stem from how reverse-mode AD chains local Jacobians through the computation graph. Understanding the mechanism is the fastest path to diagnosing them.</p></li>
 </ol>
-</section>
-<section id="conclusion" class="level2">
-<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<p>Both Forward and Reverse-mode AD have their place in modern machine learning. While Forward Mode AD offers better memory efficiency and is suitable for functions with few inputs, Reverse-mode AD has become the de facto standard in deep learning due to its computational efficiency with scalar loss functions and many parameters. Understanding these trade-offs is crucial for choosing the right approach for specific applications and optimizing model training processes.</p>
-<p>The choice between the two modes ultimately depends on your specific use case, considering factors such as:</p>
-<ul>
-<li>The ratio of input to output variables</li>
-<li>Available memory resources</li>
-<li>Computational efficiency requirements</li>
-<li>Hardware optimization capabilities</li>
-</ul>
 
 
 </section>
@@ -1017,31 +1275,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"descPosition":"bottom","closeEffect":"zoom","selector":".lightbox","loop":false,"openEffect":"zoom"});
-window.onload = () => {
-  lightboxQuarto.on('slide_before_load', (data) => {
-    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
-    const href = trigger.getAttribute('href');
-    if (href !== null) {
-      const imgEl = window.document.querySelector(`a[href="${href}"] img`);
-      if (imgEl !== null) {
-        const srcAttr = imgEl.getAttribute("src");
-        if (srcAttr && srcAttr.startsWith("data:")) {
-          slideConfig.href = srcAttr;
-        }
-      }
-    } 
-  });
-
-  lightboxQuarto.on('slide_after_load', (data) => {
-    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
-    if (window.Quarto?.typesetMath) {
-      window.Quarto.typesetMath(slideNode);
-    }
-  });
-
-};
-          </script>
 
 
 
