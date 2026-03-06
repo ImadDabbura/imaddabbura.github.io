@@ -9,7 +9,7 @@
 <meta name="author" content="Imad Dabbura">
 <meta name="dcterms.date" content="2024-06-09">
 
-<title>Imad Dabbura - Why You Should Ditch Softmax in Your Neural Network’s Final Layer</title>
+<title>Imad Dabbura - Why Your Final Layer Shouldn’t Have Softmax</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,6 +21,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -114,6 +148,10 @@ ga('send', {
 background-size: cover;
       }
 </style>
+<meta name="mermaid-theme" content="default">
+<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -146,12 +184,12 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="../../assets/posts.css">
-<meta property="og:title" content="Imad Dabbura - Why You Should Ditch Softmax in Your Neural Network’s Final Layer">
-<meta property="og:description" content="Discover the hidden drawbacks of softmax—and why raw logits often lead to faster, more stable, and more accurate training">
+<meta property="og:title" content="Imad Dabbura - Why Your Final Layer Shouldn’t Have Softmax">
+<meta property="og:description" content="The log-sum-exp trick, numerical instability, and when raw logits are the right choice">
 <meta property="og:image" content="https://imaddabbura.github.io/posts/dl/softmax-img.jpeg">
 <meta property="og:site_name" content="Imad Dabbura">
-<meta name="twitter:title" content="Imad Dabbura - Why You Should Ditch Softmax in Your Neural Network’s Final Layer">
-<meta name="twitter:description" content="Discover the hidden drawbacks of softmax—and why raw logits often lead to faster, more stable, and more accurate training">
+<meta name="twitter:title" content="Imad Dabbura - Why Your Final Layer Shouldn’t Have Softmax">
+<meta name="twitter:description" content="The log-sum-exp trick, numerical instability, and when raw logits are the right choice">
 <meta name="twitter:image" content="https://imaddabbura.github.io/posts/dl/softmax-img.jpeg">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
@@ -253,8 +291,8 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Why You Should Ditch Softmax in Your Neural Network’s Final Layer</h1>
-            <p class="subtitle lead">Discover the hidden drawbacks of softmax—and why raw logits often lead to faster, more stable, and more accurate training</p>
+      <h1 class="title">Why Your Final Layer Shouldn’t Have Softmax</h1>
+            <p class="subtitle lead">The log-sum-exp trick, numerical instability, and when raw logits are the right choice</p>
                                 <div class="quarto-categories">
                 <div class="quarto-category">Deep Learning</div>
               </div>
@@ -281,7 +319,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Modified</div>
       <div class="quarto-title-meta-contents">
-        <p class="date-modified">June 9, 2024</p>
+        <p class="date-modified">March 6, 2026</p>
       </div>
     </div>
       
@@ -296,17 +334,13 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#what-is-softmax" id="toc-what-is-softmax" class="nav-link" data-scroll-target="#what-is-softmax">What Is Softmax?</a></li>
-  <li><a href="#cons-of-using-softmax-in-the-final-layer" id="toc-cons-of-using-softmax-in-the-final-layer" class="nav-link" data-scroll-target="#cons-of-using-softmax-in-the-final-layer">Cons of Using Softmax in the Final Layer</a>
-  <ul class="collapse">
-  <li><a href="#redundancy-with-loss-functions" id="toc-redundancy-with-loss-functions" class="nav-link" data-scroll-target="#redundancy-with-loss-functions">Redundancy with Loss Functions</a></li>
-  <li><a href="#numerical-instability" id="toc-numerical-instability" class="nav-link" data-scroll-target="#numerical-instability">Numerical Instability</a></li>
-  <li><a href="#training-instability" id="toc-training-instability" class="nav-link" data-scroll-target="#training-instability">Training Instability</a></li>
-  <li><a href="#loss-of-interpretability-for-certain-tasks" id="toc-loss-of-interpretability-for-certain-tasks" class="nav-link" data-scroll-target="#loss-of-interpretability-for-certain-tasks">Loss of Interpretability for Certain Tasks</a></li>
-  <li><a href="#encourages-overconfidence-in-predictions" id="toc-encourages-overconfidence-in-predictions" class="nav-link" data-scroll-target="#encourages-overconfidence-in-predictions">Encourages Overconfidence in Predictions</a></li>
-  </ul></li>
-  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#a-common-mistake-thats-hard-to-see" id="toc-a-common-mistake-thats-hard-to-see" class="nav-link active" data-scroll-target="#a-common-mistake-thats-hard-to-see">A Common Mistake That’s Hard to See</a></li>
+  <li><a href="#what-softmax-does" id="toc-what-softmax-does" class="nav-link" data-scroll-target="#what-softmax-does">What Softmax Does</a></li>
+  <li><a href="#the-log-sum-exp-trick" id="toc-the-log-sum-exp-trick" class="nav-link" data-scroll-target="#the-log-sum-exp-trick">The Log-Sum-Exp Trick</a></li>
+  <li><a href="#multi-label-classification-the-wrong-prior" id="toc-multi-label-classification-the-wrong-prior" class="nav-link" data-scroll-target="#multi-label-classification-the-wrong-prior">Multi-Label Classification: The Wrong Prior</a></li>
+  <li><a href="#softmax-and-overconfidence" id="toc-softmax-and-overconfidence" class="nav-link" data-scroll-target="#softmax-and-overconfidence">Softmax and Overconfidence</a></li>
+  <li><a href="#when-softmax-belongs" id="toc-when-softmax-belongs" class="nav-link" data-scroll-target="#when-softmax-belongs">When Softmax Belongs</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key Takeaways</a></li>
   <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources">Resources</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
@@ -318,91 +352,171 @@ window.Quarto = {
 
 
 
-<section id="introduction" class="level2">
-<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>When designing a neural network, particularly for classification tasks, the choice of the final layer is a crucial design decision. Many practitioners instinctively apply a <strong>softmax activation</strong> to the logits (the raw, unnormalized outputs of the final layer) to produce a probability distribution over the classes. While softmax has its uses, there are several drawbacks to applying it directly in the final layer, making it preferable to leave the final layer as raw logits in many cases. This article explores <strong>why using raw logits is often better</strong>, focusing on the <strong>cons of softmax activation</strong> and providing resources for further understanding.</p>
+<section id="a-common-mistake-thats-hard-to-see" class="level2">
+<h2 class="anchored" data-anchor-id="a-common-mistake-thats-hard-to-see">A Common Mistake That’s Hard to See</h2>
+<p>If you’ve built a classifier in PyTorch, you’ve probably seen <code>nn.Softmax</code> and <code>nn.CrossEntropyLoss</code> in the same codebase. You may have even used them together — softmax at the end of the model, cross-entropy as the loss. The code runs, the loss decreases, the model converges. Everything looks fine.</p>
+<p>But something is wrong. <code>nn.CrossEntropyLoss</code> already applies softmax internally. Applying it again in the model’s final layer means softmax is computed twice — and the gradients computed during backpropagation are the gradients of the wrong function. The model still learns, just more slowly, less stably, and to a worse optimum.</p>
+<p>This post unpacks <em>why</em> — starting with what softmax actually does, then working through the numerical stability mechanism that motivates keeping raw logits, and finishing with a clear picture of when softmax belongs and when it doesn’t.</p>
 </section>
-<section id="what-is-softmax" class="level2">
-<h2 class="anchored" data-anchor-id="what-is-softmax">What Is Softmax?</h2>
-<p>The softmax function transforms a vector of raw logits into a probability distribution. For a vector of logits ( z ), the softmax function is defined as:</p>
-<p><span class="math display">\[\text{softmax}(z_i) = \frac{\exp(z_i)}{\sum_{j} \exp(z_j)}\]</span></p>
-<p>This ensures the output values are in the range ([0, 1]) and sum to 1, representing probabilities for each class.</p>
-<p>While this sounds appealing, there are several drawbacks to applying softmax directly in the output layer of a neural network.</p>
+<section id="what-softmax-does" class="level2">
+<h2 class="anchored" data-anchor-id="what-softmax-does">What Softmax Does</h2>
+<p>The softmax function takes a vector of raw scores — <strong>logits</strong> — and squashes them into a probability distribution:</p>
+<p><span class="math display">\[\text{softmax}(z_i) = \frac{e^{z_i}}{\sum_j e^{z_j}}\]</span></p>
+<p>The outputs are in <span class="math inline">\([0, 1]\)</span> and sum to 1. For a ten-class classifier, softmax turns a vector like <span class="math inline">\([2.1,\ -0.3,\ 0.8,\ \ldots]\)</span> into a proper probability distribution over the ten classes. This seems like exactly the right thing to do before computing a loss that expects probabilities.</p>
+<p>The problem isn’t what softmax does. It’s <em>where</em> you do it — and whether the operation downstream already does it better.</p>
 </section>
-<section id="cons-of-using-softmax-in-the-final-layer" class="level2">
-<h2 class="anchored" data-anchor-id="cons-of-using-softmax-in-the-final-layer">Cons of Using Softmax in the Final Layer</h2>
-<section id="redundancy-with-loss-functions" class="level3">
-<h3 class="anchored" data-anchor-id="redundancy-with-loss-functions">Redundancy with Loss Functions</h3>
-<p>Many popular loss functions, such as the <strong>categorical cross-entropy loss</strong>, already include the softmax operation internally. For instance:</p>
-<ul>
-<li>In frameworks like TensorFlow and PyTorch, the <code>CrossEntropyLoss</code> function expects raw logits as input and applies the softmax internally during the calculation.</li>
-<li>If you pre-apply softmax in the final layer and then pass the results to the cross-entropy loss, you introduce <strong>numerical instability</strong> and redundancy.</li>
-</ul>
-<p>This redundancy can lead to issues such as:</p>
-<ul>
-<li><strong>Reduced numerical precision</strong> due to the compounding of exponents in the softmax calculation.</li>
-<li><strong>Higher computational cost</strong>, as softmax is unnecessarily computed twice.</li>
-</ul>
+<section id="the-log-sum-exp-trick" class="level2">
+<h2 class="anchored" data-anchor-id="the-log-sum-exp-trick">The Log-Sum-Exp Trick</h2>
+<p>To understand why <code>CrossEntropyLoss</code> wants raw logits, we need to look at what it computes. Cross-entropy loss for the true class <span class="math inline">\(y\)</span> is:</p>
+<p><span class="math display">\[\mathcal{L} = -\log\left(\frac{e^{z_y}}{\sum_j e^{z_j}}\right) = -z_y + \log\sum_j e^{z_j}\]</span></p>
+<p>The second term — <span class="math inline">\(\log\sum_j e^{z_j}\)</span> — is the <strong>log-sum-exp (LSE)</strong>, and it’s numerically dangerous. If any logit is large, the exponent overflows to <code>inf</code> before the log can bring it back down:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> torch.tensor([<span class="fl">1000.0</span>, <span class="fl">1001.0</span>, <span class="fl">1002.0</span>])</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>torch.softmax(z, dim<span class="op">=</span><span class="dv">0</span>)  <span class="co"># → tensor([nan, nan, nan])</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The standard fix is the <strong>log-sum-exp trick</strong>: subtract the maximum logit before exponentiating.</p>
+<p><span class="math display">\[\log\sum_j e^{z_j} = c + \log\sum_j e^{z_j - c}, \quad c = \max_j z_j\]</span></p>
+<p>Subtracting <span class="math inline">\(c = \max_j z_j\)</span> keeps all terms in <span class="math inline">\([e^{-\infty},\ 1]\)</span> — never overflowing, never underflowing. The mathematical result is identical; the numerical result is stable.</p>
+<p>This is exactly what <code>nn.CrossEntropyLoss</code> does internally. It doesn’t apply softmax and then compute cross-entropy — it <strong>fuses both operations</strong> into one numerically stable pass using the LSE trick. Passing raw logits is what makes this possible.</p>
+<p>If you apply softmax first, the loss function receives <span class="math inline">\(p_i = e^{z_i}/\sum e^{z_j}\)</span> instead of raw logits and then applies its own log-softmax to those values — effectively computing <span class="math inline">\(\log(\text{softmax}(\text{softmax}(z)))\)</span>. The numbers are wrong and the gradients are wrong.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    subgraph bad ["❌ Double Application"]
+        direction LR
+        z1["Logits z"] --&gt; s1["nn.Softmax"] --&gt; p1["Probs p"] --&gt; ce1["CrossEntropyLoss\nlog-softmax(p)"]
+    end
+    subgraph good ["✅ Correct"]
+        direction LR
+        z2["Logits z"] --&gt; ce2["CrossEntropyLoss\nlog-softmax(z) — fused, stable"]
+    end
+</pre>
+</div>
+<p></p><figcaption> Left: pre-applying softmax breaks the fused computation, producing gradients of the wrong function. Right: raw logits let CrossEntropyLoss apply the log-sum-exp trick internally.</figcaption> </figure><p></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The Practical Rule
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>nn.CrossEntropyLoss</code> (PyTorch) and <code>tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)</code> (TensorFlow) both expect <strong>raw logits</strong>. The loss handles the stable, fused computation internally. Don’t apply softmax to the final layer of a classifier.</p>
+</div>
+</div>
 </section>
-<section id="numerical-instability" class="level3">
-<h3 class="anchored" data-anchor-id="numerical-instability">Numerical Instability</h3>
-<p>Softmax involves exponentiating the logits, which can lead to <strong>overflow or underflow</strong> issues, particularly when working with large or small logits. For example:</p>
-<ul>
-<li>If logits are extremely large (e.g., ( z_i = 1000 )), the exponential term ( (z_i) ) can result in infinity, causing numerical instability.</li>
-<li>Similarly, if logits are very small (e.g., ( z_i = -1000 )), the exponential term becomes close to zero, leading to loss of precision.</li>
-</ul>
-<p>By keeping the logits raw, you avoid these issues because modern loss functions (like cross-entropy) are designed to handle raw logits more effectively.</p>
+<section id="multi-label-classification-the-wrong-prior" class="level2">
+<h2 class="anchored" data-anchor-id="multi-label-classification-the-wrong-prior">Multi-Label Classification: The Wrong Prior</h2>
+<p>Softmax enforces <strong>competition</strong> between classes: increasing one class’s probability necessarily decreases the others. This is the correct structure for single-label tasks — exactly one class is true — and entirely the wrong structure for multi-label tasks, where multiple classes can be true simultaneously.</p>
+<p>Consider a document classifier that assigns topics like “machine learning,” “software engineering,” and “career advice.” A document can belong to all three. Softmax forces these to compete: pushing “machine learning” up automatically pushes the others down. The model is fighting its own output structure.</p>
+<p>There’s a deeper problem. Because softmax outputs always sum to 1, <strong>the model is structurally forced to predict high confidence for exactly one class</strong> — regardless of the input. If an image contains no objects from the training categories, softmax still redistributes its probability mass across the classes and picks a winner. If an image contains three objects, softmax still collapses to one. It has no way to say “multiple things are present” or “nothing relevant is here” — the sum-to-one constraint makes both answers impossible.</p>
+<p>For multi-label classification, the correct output is <strong>sigmoid</strong>, applied independently per class:</p>
+<p><span class="math display">\[\sigma(z_i) = \frac{1}{1 + e^{-z_i}}\]</span></p>
+<p>Each output is an independent probability in <span class="math inline">\([0, 1]\)</span> with no constraint that they sum to 1. Use <code>nn.BCEWithLogitsLoss</code> — which applies sigmoid internally with the same kind of numerical stability fusion — rather than sigmoid in the model followed by <code>nn.BCELoss</code>.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Choosing the Right Output Layer
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<table class="table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Task</th>
+<th>Loss function</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Single-label classification</td>
+<td><code>nn.CrossEntropyLoss</code></td>
+<td>Expects raw logits; applies log-softmax internally</td>
+</tr>
+<tr class="even">
+<td>Multi-label classification</td>
+<td><code>nn.BCEWithLogitsLoss</code></td>
+<td>Expects raw logits; applies sigmoid internally</td>
+</tr>
+<tr class="odd">
+<td>Binary classification</td>
+<td><code>nn.BCEWithLogitsLoss</code></td>
+<td>Same as above</td>
+</tr>
+<tr class="even">
+<td>Probabilities at inference</td>
+<td>Apply <code>softmax</code> <em>after</em> training</td>
+<td>Not during training</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </section>
-<section id="training-instability" class="level3">
-<h3 class="anchored" data-anchor-id="training-instability">Training Instability</h3>
-<p>Using softmax in the final layer can lead to <strong>training instability</strong>, especially when the model produces logits with large magnitudes or when the dataset has imbalanced classes. Here’s why:</p>
-<ul>
-<li><strong>Exploding Gradients:</strong> The softmax function uses exponential terms, which can grow very large when the logits are large. This can cause gradients to explode, leading to unstable updates during backpropagation.</li>
-<li><strong>Vanishing Gradients:</strong> If one logit is much larger than the others, the softmax output will assign nearly all the probability to that class, causing the gradients for other classes to approach zero. This can slow down training or make it harder for the model to learn meaningful updates for underrepresented classes.</li>
-<li><strong>Imbalance Sensitivity:</strong> In the case of class imbalance, softmax can exacerbate the problem by driving the model to overfit to the majority class, as the softmax probabilities heavily favor the dominant logits. Raw logits give the loss function more room to handle such imbalances effectively.</li>
-</ul>
-<p>By leaving the final layer as raw logits, you mitigate these risks, as the loss function can better manage the relationship between logits and gradients without the constraints imposed by softmax.</p>
+<section id="softmax-and-overconfidence" class="level2">
+<h2 class="anchored" data-anchor-id="softmax-and-overconfidence">Softmax and Overconfidence</h2>
+<p>Softmax is sensitive to the <strong>scale</strong> of the logits, not just their relative ordering. Logits <span class="math inline">\([3,\ 1,\ 0]\)</span> and <span class="math inline">\([300,\ 100,\ 0]\)</span> produce the same ranking but very different softmax outputs — the scaled version concentrates nearly all probability mass on the top class. As training progresses, logit magnitudes tend to grow, and softmax increasingly exaggerates these differences.</p>
+<p>The result is systematic overconfidence: a model that outputs near-100% probability on examples it gets wrong. The <a href="https://arxiv.org/abs/1706.04599">Guo et al.&nbsp;2017 calibration paper</a> showed this is a consistent property of modern neural networks, not a training artifact.</p>
+<p>The standard fix is <strong>temperature scaling</strong>: divide logits by a learned scalar <span class="math inline">\(T &gt; 1\)</span> before applying softmax at inference time.</p>
+<p><span class="math display">\[p_i = \text{softmax}(z_i / T)\]</span></p>
+<p><span class="math inline">\(T &gt; 1\)</span> flattens the distribution (less confident); <span class="math inline">\(T &lt; 1\)</span> sharpens it. <span class="math inline">\(T\)</span> is fit on a held-out validation set after training finishes. Crucially, this only works if the model was trained on raw logits — the scale information that temperature scaling adjusts is preserved through training and only consumed at inference.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The Calibration Connection
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Post-hoc calibration methods (temperature scaling, Platt scaling, isotonic regression) all operate on the raw logit magnitudes that accumulate through training. If your output layer applies softmax during training, the scale information is destroyed before calibration is attempted — the calibration methods have nothing useful to fit.</p>
+</div>
+</div>
 </section>
-<section id="loss-of-interpretability-for-certain-tasks" class="level3">
-<h3 class="anchored" data-anchor-id="loss-of-interpretability-for-certain-tasks">Loss of Interpretability for Certain Tasks</h3>
-<p>Softmax enforces a <strong>probability distribution</strong> on the output, which may not always be desirable. For example:</p>
-<ul>
-<li>In multi-label classification tasks, where multiple classes can be “true” simultaneously, softmax forces the outputs to compete against each other, which can lead to incorrect predictions. In such cases, <strong>sigmoid activation</strong> is often used instead, or raw logits are left for downstream processing.</li>
-<li>In some advanced machine learning tasks, raw logits provide more flexibility for interpretation or post-processing, which is lost when softmax is applied.</li>
-</ul>
+<section id="when-softmax-belongs" class="level2">
+<h2 class="anchored" data-anchor-id="when-softmax-belongs">When Softmax Belongs</h2>
+<p>Removing softmax from the final classification layer doesn’t mean it’s always wrong — it means the structure it imposes (mutual exclusivity, sum-to-one) has to match what the computation actually needs.</p>
+<p><strong>Attention mechanisms.</strong> The scaled dot-product attention in Transformers applies softmax to produce a distribution over positions. This is exactly right: each query should distribute its weight across keys, and the competition structure is intentional. There’s no fused loss downstream computing log-softmax again.</p>
+<p><strong>Contrastive learning.</strong> Methods like CLIP apply softmax across the batch as part of the contrastive loss. The within-batch competition is the learning signal.</p>
+<p><strong>Inference-time probabilities.</strong> If downstream code requires calibrated probabilities — confidence thresholds, ensemble averaging, displaying to users — apply softmax to the final logits after the forward pass, outside the model:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> torch.no_grad():</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    logits <span class="op">=</span> model(x)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    probs <span class="op">=</span> torch.softmax(logits, dim<span class="op">=-</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The pattern: softmax belongs when the distribution semantics genuinely fit the computation, and when nothing downstream is already computing a fused version of it.</p>
 </section>
-<section id="encourages-overconfidence-in-predictions" class="level3">
-<h3 class="anchored" data-anchor-id="encourages-overconfidence-in-predictions">Encourages Overconfidence in Predictions</h3>
-<p>Softmax tends to amplify the confidence of predictions by exaggerating the differences between logits. For example:</p>
-<ul>
-<li>If two logits are close in value, the softmax output will still assign a disproportionately high probability to the larger logit.</li>
-<li>This can lead to <strong>overconfident predictions</strong>, even when the model is unsure (i.e., the logits are close in value). Overconfidence can make it harder to assess the true uncertainty of the model.</li>
-</ul>
-<p>By keeping raw logits, you retain the original scale of the outputs, which can be useful for understanding the model’s confidence and uncertainty.</p>
-</section>
-</section>
-<section id="conclusion" class="level2">
-<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<p>While softmax is a widely used activation function, its application as the final layer in a neural network is not always the best choice. Its <strong>redundancy with loss functions</strong>, <strong>numerical instability</strong>, <strong>training instability</strong>, <strong>loss of interpretability</strong>, <strong>lack of flexibility for post-processing</strong>, and <strong>tendency to encourage overconfidence</strong> are significant drawbacks. By keeping the final layer as raw logits, you maintain numerical stability, computational efficiency, and flexibility for downstream tasks.</p>
-<p>In modern machine learning workflows, it is often better to leave the last layer as raw logits and let the loss function or downstream processing handle the conversion to probabilities when needed. This approach not only avoids the pitfalls of softmax but also aligns better with best practices in many frameworks.</p>
-<p>For a deeper dive into this topic, check out the resources provided above to enhance your understanding of raw logits and softmax!</p>
+<section id="key-takeaways" class="level2">
+<h2 class="anchored" data-anchor-id="key-takeaways">Key Takeaways</h2>
+<ol type="1">
+<li><p><strong>Don’t apply softmax in your model’s final layer for classification.</strong> <code>nn.CrossEntropyLoss</code> expects raw logits and applies a fused, numerically stable log-softmax internally using the log-sum-exp trick. Pre-applying softmax computes gradients of the wrong function.</p></li>
+<li><p><strong>The numerical instability is real and silent.</strong> Large logits overflow naive softmax — you get <code>nan</code> losses and corrupted gradients, often without a clear error. The fused implementation avoids this entirely.</p></li>
+<li><p><strong>Multi-label tasks need sigmoid, not softmax.</strong> Softmax enforces mutual exclusivity. For tasks where multiple labels are simultaneously valid, use <code>nn.BCEWithLogitsLoss</code> with raw logits.</p></li>
+<li><p><strong>Overconfidence is a logit scale problem.</strong> Softmax exaggerates differences as magnitudes grow through training. Temperature scaling is the standard fix — but only if raw logit scale is preserved through training.</p></li>
+<li><p><strong>Softmax has legitimate uses.</strong> Attention weights, contrastive losses, and inference-time probability outputs are correct applications. The question is always whether competition semantics fit the problem, and whether a fused stable implementation already handles the math downstream.</p></li>
+</ol>
 </section>
 <section id="resources" class="level2">
 <h2 class="anchored" data-anchor-id="resources">Resources</h2>
-<p>If you want to dive deeper into this topic, here are some resources to help you learn more about raw logits, softmax, and their implications in neural networks:</p>
 <ol type="1">
-<li><a href="https://www.deeplearningbook.org/"><strong>Deep Learning Book by Ian Goodfellow et al.</strong></a>
-<ul>
-<li>Chapter 6 on “Feedforward Networks” provides a detailed explanation of softmax and alternatives for output layers.</li>
-</ul></li>
-<li><a href="https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html"><strong>PyTorch Documentation on CrossEntropyLoss</strong></a>
-<ul>
-<li>Explains why you should use raw logits with <code>CrossEntropyLoss</code> and how the loss function integrates softmax internally.</li>
-</ul></li>
-<li><strong><a href="https://arxiv.org/abs/1706.04599">On Calibration of Modern Neural Networks</a></strong>
-<ul>
-<li>Discusses softmax’s tendency to produce overconfident predictions and explores techniques for improving calibration.</li>
-</ul></li>
+<li><a href="https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html"><strong>PyTorch Documentation — CrossEntropyLoss</strong></a> — Documents why raw logits are expected and how log-softmax is fused internally.</li>
+<li><a href="https://arxiv.org/abs/1706.04599"><strong>On Calibration of Modern Neural Networks</strong></a> — Guo et al.&nbsp;on systematic softmax overconfidence and temperature scaling as the practical fix.</li>
+<li><a href="https://www.deeplearningbook.org/"><strong>Deep Learning Book — Chapter 6</strong></a> — Goodfellow et al.&nbsp;on output units and loss function design for classification.</li>
 </ol>
 
 
