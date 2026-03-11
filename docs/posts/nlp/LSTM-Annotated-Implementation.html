@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Imad Dabbura">
-<meta name="dcterms.date" content="2022-12-10">
+<meta name="dcterms.date" content="2020-03-10">
 
 <title>Imad Dabbura - Inside LSTMs: Implementing and Optimizing Sequential Models from First Principles</title>
 <style>
@@ -309,7 +309,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">December 10, 2022</p>
+        <p class="date">March 10, 2020</p>
       </div>
     </div>
     
@@ -430,7 +430,7 @@ The Fundamental Issue
 <p>The cell state update is <strong>additive</strong>: when the forget gate <span class="math inline">\(f_t\)</span> is close to 1 and the input gate <span class="math inline">\(i_t\)</span> is close to 0, the cell state passes through <em>unchanged</em>: <span class="math inline">\(c_t \approx c_{t-1}\)</span>. Gradients flow backward through time with minimal decay — no weight matrix or nonlinearity in the way.</p>
 <p>If this looks familiar, it should — it’s the same principle behind <strong>residual connections</strong> in ResNets. In a ResNet, each layer computes <span class="math inline">\(y = F(x) + x\)</span>: the input passes through unchanged, and the layer only learns the <em>residual</em>. The LSTM cell state works the same way, but across <strong>time instead of depth</strong>: the previous cell state passes through (scaled by <span class="math inline">\(f_t\)</span>), and the network adds a residual update (<span class="math inline">\(i_t \odot g_t\)</span>). Both create a gradient highway. ResNets made it possible to train 100+ layer networks; the LSTM cell state makes it possible to learn dependencies across 100+ time steps. Same insight, different axis.</p>
 <p align="center">
-<img src="lstm-cell.jpeg" style="width: 500px;"><br>
+<img src="images/lstm-cell.jpeg" style="width: 500px;"><br>
 
 </p><center>
 <u><b><font color="00b7e4">Figure 1:</font></b></u> The LSTM cell. The horizontal line at the top is the cell state — the “highway” through time. The four yellow boxes (<span class="math inline">\(\sigma, \sigma, \tanh, \sigma\)</span>) are the forget, input, cell, and output gates respectively. The cell state is updated additively (the ⊕ node), while the gates use element-wise multiplication (⊗) to control information flow.
