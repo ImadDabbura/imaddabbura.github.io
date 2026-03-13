@@ -429,12 +429,16 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>If you’ve called <code>from transformers import BertModel</code> or prompted GPT-4, you’ve used a Transformer. But <em>what actually happens</em> when it processes text? Why does attention use three separate projections — Q, K, and V? Why does the decoder need a causal mask? And how did a single 2017 translation paper become the foundation of essentially all modern AI?</p>
 <p>The best way to answer these questions is to build one yourself — understanding the motivation behind every design choice before any code. In this post, we start with the problem that motivated the Transformer (sequential bottlenecks in RNNs), build the attention mechanism step by step, implement each component in PyTorch with annotated shapes, and assemble all three architecture variants from scratch.</p>
-<p align="center">
-<img src="images/full-transformer-architecture.png" width="600px"><br>
-</p>
-<blockquote class="blockquote">
-<p><strong>Figure 1:</strong> The encoder-decoder Transformer (Vaswani et al., 2017) — the architecture we’ll build in this post. <strong>Left stack (Encoder):</strong> reads the full source sequence; every token attends to every other token with no masking. <strong>Right stack (Decoder):</strong> generates the target sequence one token at a time; each layer has three sublayers: ① masked self-attention (tokens attend only to past positions), ② <strong>cross-attention</strong> (Q from decoder, K and V from the encoder output — the arrow connecting the two stacks), and ③ a feed-forward network. <strong>“N×”</strong> means the layer block repeats N times (typically 6–12). <strong>Add &amp; Norm</strong> is a residual connection followed by LayerNorm. The <strong>Linear + Softmax</strong> at the top projects the decoder’s final representation to a probability distribution over the vocabulary. Every component labelled here has its own section below. (<a href="https://lilianweng.github.io/posts/2023-01-27-the-transformer-family-v2/">source</a>)</p>
-</blockquote>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/full-transformer-architecture.png" class="lightbox" data-glightbox="description: .lightbox-desc-1" data-gallery="quarto-lightbox-gallery-1" title="Figure 1: The encoder-decoder Transformer (Vaswani et al., 2017) — the architecture we’ll build in this post. Left stack (Encoder): reads the full source sequence; every token attends to every other token with no masking. Right stack (Decoder): generates the target sequence one token at a time; each layer has three sublayers: ① masked self-attention (tokens attend only to past positions), ② cross-attention (Q from decoder, K and V from the encoder output — the arrow connecting the two stacks), and ③ a feed-forward network. “N×” means the layer block repeats N times (typically 6–12). Add &amp; Norm is a residual connection followed by LayerNorm. The Linear + Softmax at the top projects the decoder’s final representation to a probability distribution over the vocabulary. Every component labelled here has its own section below. (source)"><img src="images/full-transformer-architecture.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600" alt="Figure 1: The encoder-decoder Transformer (Vaswani et al., 2017) — the architecture we’ll build in this post. Left stack (Encoder): reads the full source sequence; every token attends to every other token with no masking. Right stack (Decoder): generates the target sequence one token at a time; each layer has three sublayers: ① masked self-attention (tokens attend only to past positions), ② cross-attention (Q from decoder, K and V from the encoder output — the arrow connecting the two stacks), and ③ a feed-forward network. “N×” means the layer block repeats N times (typically 6–12). Add &amp; Norm is a residual connection followed by LayerNorm. The Linear + Softmax at the top projects the decoder’s final representation to a probability distribution over the vocabulary. Every component labelled here has its own section below. (source)"></a></p>
+</figure>
+</div>
+<figcaption><strong>Figure 1:</strong> The encoder-decoder Transformer (Vaswani et al., 2017) — the architecture we’ll build in this post. <strong>Left stack (Encoder):</strong> reads the full source sequence; every token attends to every other token with no masking. <strong>Right stack (Decoder):</strong> generates the target sequence one token at a time; each layer has three sublayers: ① masked self-attention (tokens attend only to past positions), ② <strong>cross-attention</strong> (Q from decoder, K and V from the encoder output — the arrow connecting the two stacks), and ③ a feed-forward network. <strong>“N×”</strong> means the layer block repeats N times (typically 6–12). <strong>Add &amp; Norm</strong> is a residual connection followed by LayerNorm. The <strong>Linear + Softmax</strong> at the top projects the decoder’s final representation to a probability distribution over the vocabulary. Every component labelled here has its own section below. (<a href="https://lilianweng.github.io/posts/2023-01-27-the-transformer-family-v2/">source</a>)</figcaption>
+</figure>
+</div>
 <p>By the end, you will be able to:</p>
 <ol type="1">
 <li>Explain <em>why</em> each component exists, not just what it does</li>
@@ -750,7 +754,7 @@ Implementation Note
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="Transformer-Architecture-Explained_files/figure-html/cell-5-output-1.png" class="lightbox" data-glightbox="description: .lightbox-desc-1" data-gallery="quarto-lightbox-gallery-1" title="Figure 2: Sinusoidal positional encoding. Each column is a unique fingerprint for one position. Low-frequency components (bottom rows) vary slowly — encoding coarse, sentence-level position. High-frequency components (top rows) vary quickly — encoding fine, word-level position. Together, every position from 0 to max_seq_len gets a unique vector."><img src="Transformer-Architecture-Explained_files/figure-html/cell-5-output-1.png" class="img-fluid figure-img" alt="Figure 2: Sinusoidal positional encoding. Each column is a unique fingerprint for one position. Low-frequency components (bottom rows) vary slowly — encoding coarse, sentence-level position. High-frequency components (top rows) vary quickly — encoding fine, word-level position. Together, every position from 0 to max_seq_len gets a unique vector."></a></p>
+<p><a href="Transformer-Architecture-Explained_files/figure-html/cell-5-output-1.png" class="lightbox" data-glightbox="description: .lightbox-desc-2" data-gallery="quarto-lightbox-gallery-2" title="Figure 2: Sinusoidal positional encoding. Each column is a unique fingerprint for one position. Low-frequency components (bottom rows) vary slowly — encoding coarse, sentence-level position. High-frequency components (top rows) vary quickly — encoding fine, word-level position. Together, every position from 0 to max_seq_len gets a unique vector."><img src="Transformer-Architecture-Explained_files/figure-html/cell-5-output-1.png" class="img-fluid figure-img" alt="Figure 2: Sinusoidal positional encoding. Each column is a unique fingerprint for one position. Low-frequency components (bottom rows) vary slowly — encoding coarse, sentence-level position. High-frequency components (top rows) vary quickly — encoding fine, word-level position. Together, every position from 0 to max_seq_len gets a unique vector."></a></p>
 <figcaption><strong>Figure 2:</strong> Sinusoidal positional encoding. Each column is a unique fingerprint for one position. Low-frequency components (bottom rows) vary slowly — encoding coarse, sentence-level position. High-frequency components (top rows) vary quickly — encoding fine, word-level position. Together, every position from 0 to max_seq_len gets a unique vector.</figcaption>
 </figure>
 </div>
@@ -784,21 +788,6 @@ Implementation Note
 <p><strong>Step 3 — Softmax row-wise</strong> (each row sums to 1):</p>
 <p><span class="math display">\[\text{weights} = \begin{bmatrix} 0.27 &amp; 0.27 &amp; 0.46 \\ 0.33 &amp; 0.33 &amp; 0.33 \\ 0.21 &amp; 0.39 &amp; 0.39 \end{bmatrix}\]</span></p>
 <p>Row 1 (token “the”): attends most strongly to “sat” (0.46). Row 2 (“cat”): distributes evenly. Row 3 (“sat”): attends most to “cat” and itself.</p>
-<p><strong>Step 4 — Multiply by V</strong> (shape <code>3 × head_dim</code>): The output for each token is a weighted combination of all value vectors, with weights from the softmax step. Token “the” will receive a mix of all three value vectors, weighted 27%/27%/46%. The output is a <strong>contextualized representation</strong> — the same token in a different sentence would produce different weights and therefore a different output vector.</p>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-The Departure from Static Embeddings
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Notice what just happened: the token “the” — which starts with a fixed embedding vector identical in every sentence — now has a representation shaped by the presence of “cat” and “sat.” Run the same token through a different sentence (“the table broke”), and it emerges from attention with a different output vector.</p>
-<p>This is the fundamental departure from static word embeddings like word2vec or GloVe: those give every token a single, context-free vector that never changes. A Transformer gives every token a <em>contextual</em> representation — numerically different depending on what surrounds it. “bank” in “river bank” and “bank” in “bank account” start with the same embedding but diverge after attention. This is why Transformer-based representations are so dramatically better at tasks requiring word sense disambiguation, coreference resolution, and syntactic parsing.</p>
-</div>
-</div>
 <div id="aa000002-at00-heat-map0-000000000002" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
@@ -842,10 +831,25 @@ The Departure from Static Embeddings
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="Transformer-Architecture-Explained_files/figure-html/cell-6-output-1.png" class="lightbox" data-glightbox="description: .lightbox-desc-2" data-gallery="quarto-lightbox-gallery-2" title="Figure 3: Attention weights for the [‘the’, ‘cat’, ‘sat’] example. Rows are query tokens; columns are keys. Each row is a probability distribution — how much each token attends to every other token."><img src="Transformer-Architecture-Explained_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img" alt="Figure 3: Attention weights for the [‘the’, ‘cat’, ‘sat’] example. Rows are query tokens; columns are keys. Each row is a probability distribution — how much each token attends to every other token."></a></p>
+<p><a href="Transformer-Architecture-Explained_files/figure-html/cell-6-output-1.png" class="lightbox" data-glightbox="description: .lightbox-desc-3" data-gallery="quarto-lightbox-gallery-3" title="Figure 3: Attention weights for the [‘the’, ‘cat’, ‘sat’] example. Rows are query tokens; columns are keys. Each row is a probability distribution — how much each token attends to every other token."><img src="Transformer-Architecture-Explained_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img" alt="Figure 3: Attention weights for the [‘the’, ‘cat’, ‘sat’] example. Rows are query tokens; columns are keys. Each row is a probability distribution — how much each token attends to every other token."></a></p>
 <figcaption><strong>Figure 3:</strong> Attention weights for the [‘the’, ‘cat’, ‘sat’] example. Rows are query tokens; columns are keys. Each row is a probability distribution — how much each token attends to every other token.</figcaption>
 </figure>
 </div>
+</div>
+</div>
+<p><strong>Step 4 — Multiply by V</strong> (shape <code>3 × head_dim</code>): The output for each token is a weighted combination of all value vectors, with weights from the softmax step. Token “the” will receive a mix of all three value vectors, weighted 27%/27%/46%. The output is a <strong>contextualized representation</strong> — the same token in a different sentence would produce different weights and therefore a different output vector.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The Departure from Static Embeddings
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Notice what just happened: the token “the” — which starts with a fixed embedding vector identical in every sentence — now has a representation shaped by the presence of “cat” and “sat.” Run the same token through a different sentence (“the table broke”), and it emerges from attention with a different output vector.</p>
+<p>This is the fundamental departure from static word embeddings like word2vec or GloVe: those give every token a single, context-free vector that never changes. A Transformer gives every token a <em>contextual</em> representation — numerically different depending on what surrounds it. “bank” in “river bank” and “bank” in “bank account” start with the same embedding but diverge after attention. This is why Transformer-based representations are so dramatically better at tasks requiring word sense disambiguation, coreference resolution, and syntactic parsing.</p>
 </div>
 </div>
 </section>
@@ -884,14 +888,16 @@ Token 4:    ✓    ✓    ✓    ✓</code></pre>
 <p>The generalization is worth stating explicitly: <strong>any two sequences can be related through cross-attention</strong>, simply by using one as the source of Q and the other as the source of K and V. This is the same operation that connects modalities in vision-language models (text queries attend to image patch keys/values), that lets perceiver architectures compress long inputs (a small set of learned query vectors attends to a large input), and that underlies virtually all multi-modal conditioning. Cross-attention is not a feature of encoder-decoder models — it is a universal conditioning primitive.</p>
 <p>The full attention equation:</p>
 <p><span class="math display">\[\text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{QK^T}{\sqrt{d_k}}\right)V\]</span></p>
-<p align="center">
-<img src="images/scaled-dot-product-attention.png" height="350px"><br>
-
-</p><center>
-<u><b>Figure 4:</b></u> Scaled Dot-Product Attention (<a href="https://ar5iv.labs.arxiv.org/html/1706.03762">source</a>)
-</center>
-
-<p></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/scaled-dot-product-attention.png" class="lightbox" data-glightbox="description: .lightbox-desc-4" data-gallery="quarto-lightbox-gallery-4" title="Figure 4: Scaled Dot-Product Attention (source)"><img src="images/scaled-dot-product-attention.png" class="img-fluid quarto-figure quarto-figure-center figure-img" alt="Figure 4: Scaled Dot-Product Attention (source)"></a></p>
+</figure>
+</div>
+<figcaption><strong>Figure 4:</strong> Scaled Dot-Product Attention (<a href="https://ar5iv.labs.arxiv.org/html/1706.03762">source</a>)</figcaption>
+</figure>
+</div>
 </section>
 <section id="the-quadratic-cost-attentions-fundamental-bottleneck" class="level3">
 <h3 class="anchored" data-anchor-id="the-quadratic-cost-attentions-fundamental-bottleneck">5.7 The Quadratic Cost: Attention’s Fundamental Bottleneck</h3>
@@ -983,14 +989,16 @@ FlashAttention Changes the Hardware Utilization, Not the Complexity
 <p>This subspace separation is the mechanism that makes specialization both possible and stable. Head 3’s attention weights are determined by <span class="math inline">\(W_Q^3 \cdot W_K^3\)</span> inner products, which have nothing to do with what <span class="math inline">\(W_Q^7 \cdot W_K^7\)</span> computes for head 7. Because they project into orthogonal subspaces of the embedding, heads don’t interfere with each other — a coreference head and a subject-finding head can coexist without one corrupting the other.</p>
 <p>Empirical findings from BERTology (Clark et al., 2019) confirm that this specialization emerges after training: some heads consistently track syntactic dependencies across the entire network; others attend primarily to adjacent tokens, effectively implementing a local sliding window; some heads in BERT-style models attend heavily to the <code>[SEP]</code> token — a kind of “no-op” head that routes excess attention somewhere harmless when no strong relationship exists.</p>
 <p>Importantly, this specialization is <strong>not designed in</strong>. It arises entirely from the training signal. The architecture only provides the capacity for parallel, independent subspace projections; training discovers what each subspace should track.</p>
-<p align="center">
-<img src="images/multi-head-attention.png" height="350px"><br>
-
-</p><center>
-<u><b>Figure 5:</b></u> Multi-Head Attention with several attention layers running in parallel (<a href="https://ar5iv.labs.arxiv.org/html/1706.03762">source</a>)
-</center>
-
-<p></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/multi-head-attention.png" class="lightbox" data-glightbox="description: .lightbox-desc-5" data-gallery="quarto-lightbox-gallery-5" title="Figure 5: Multi-Head Attention with several attention layers running in parallel (source)"><img src="images/multi-head-attention.png" class="img-fluid quarto-figure quarto-figure-center figure-img" alt="Figure 5: Multi-Head Attention with several attention layers running in parallel (source)"></a></p>
+</figure>
+</div>
+<figcaption><strong>Figure 5:</strong> Multi-Head Attention with several attention layers running in parallel (<a href="https://ar5iv.labs.arxiv.org/html/1706.03762">source</a>)</figcaption>
+</figure>
+</div>
 </section>
 <section id="implementation-parallel-heads-final-projection" class="level3">
 <h3 class="anchored" data-anchor-id="implementation-parallel-heads-final-projection">6.2 Implementation: Parallel Heads, Final Projection</h3>
@@ -1159,7 +1167,7 @@ Pedagogical vs.&nbsp;Efficient Implementation
     end
 </pre>
 </div>
-<p></p><figcaption> Post-LayerNorm (left) vs Pre-LayerNorm (right). Modern models use Pre-LN.</figcaption> </figure><p></p>
+<p></p><figcaption> <strong>Figure 6:</strong> Post-LayerNorm (left) vs Pre-LayerNorm (right). Modern models use Pre-LN.</figcaption> </figure><p></p>
 </div>
 </div>
 </div>
@@ -1212,14 +1220,12 @@ Pedagogical vs.&nbsp;Efficient Implementation
 <p><span class="math display">\[\frac{\partial L}{\partial x} = \frac{\partial L}{\partial y} \cdot \left(1 + \frac{\partial F}{\partial x}\right)\]</span></p>
 <p>The term <span class="math inline">\(\frac{\partial L}{\partial y}\)</span> reaches <span class="math inline">\(x\)</span> directly, through the identity path — regardless of what <span class="math inline">\(F(x)\)</span> does. Even if <span class="math inline">\(F\)</span> has saturated activations or near-zero gradients, the loss signal still flows back to earlier layers. This is why ResNets with skip connections can be trained to hundreds of layers while the same architecture without them fails beyond a dozen.</p>
 <p><strong>Loss landscape smoothing.</strong> He et al.&nbsp;(2016) visualized the loss surfaces of deep networks with and without skip connections. Without them: chaotic, sharp, with many high-curvature local minima that trap gradient descent. With them: smooth, convex, much more navigable.</p>
-<p align="center">
-<img src="images/loss-landscape-with-skip-connections.png" width="600px"><br>
-
-</p><center>
-<u><b>Figure 6:</b></u> Loss surfaces of ResNet-56 with/without skip connections (<a href="https://arxiv.labs.arxiv.org/html/1712.09913">source</a>)
-</center>
-
-<p></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/loss-landscape-with-skip-connections.png" class="lightbox" data-glightbox="description: .lightbox-desc-6" data-gallery="quarto-lightbox-gallery-6" title="Figure 7: Loss surfaces of ResNet-56 with/without skip connections (source)"><img src="images/loss-landscape-with-skip-connections.png" class="img-fluid figure-img" alt="Figure 7: Loss surfaces of ResNet-56 with/without skip connections (source)"></a></p>
+<figcaption><strong>Figure 7:</strong> Loss surfaces of ResNet-56 with/without skip connections (<a href="https://arxiv.labs.arxiv.org/html/1712.09913">source</a>)</figcaption>
+</figure>
+</div>
 <p><strong>The forgetting argument.</strong> Without skip connections, each layer must preserve all useful information from its input in its output — if the layer wants to pass something unchanged, it must learn to do so explicitly. With skip connections, the <strong>default is identity</strong> — the layer only needs to learn what to <em>add</em>, not what to keep. This dramatically reduces the effective depth that the gradient must overcome.</p>
 <p>However, training deep networks reliably requires one more ingredient beyond gradient highways — preventing the network from memorizing noise. That is dropout’s job.</p>
 </section>
@@ -1246,14 +1252,12 @@ Modern Large Models Often Skip Dropout
 <p>LLaMA, Mistral, and other recent large models use no dropout at all. At sufficient scale with enough data, the regularization effect of dropout is less necessary, and it slows training. Dropout remains important for smaller models trained on limited data, and for fine-tuning where overfitting is a risk.</p>
 </div>
 </div>
-<p align="center">
-<img src="images/dropout.png" width="600px"><br>
-
-</p><center>
-<u><b>Figure 7:</b></u> Left: standard neural net. Right: thinned net after applying dropout — crossed units are dropped. (<a href="https://www.cs.toronto.edu/~rsalakhu/papers/srivastava14a.pdf">source</a>)
-</center>
-
-<p></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/dropout.png" class="lightbox" data-glightbox="description: .lightbox-desc-7" data-gallery="quarto-lightbox-gallery-7" title="Figure 8: Left: standard neural net. Right: thinned net after applying dropout — crossed units are dropped. (source)"><img src="images/dropout.png" class="img-fluid figure-img" alt="Figure 8: Left: standard neural net. Right: thinned net after applying dropout — crossed units are dropped. (source)"></a></p>
+<figcaption><strong>Figure 8:</strong> Left: standard neural net. Right: thinned net after applying dropout — crossed units are dropped. (<a href="https://www.cs.toronto.edu/~rsalakhu/papers/srivastava14a.pdf">source</a>)</figcaption>
+</figure>
+</div>
 <p>With all the individual components understood — attention, FFN, LayerNorm, skip connections, dropout — it’s time to see how they snap together into a complete layer.</p>
 </section>
 <section id="assembling-the-encoder-layer" class="level2">
@@ -1513,7 +1517,7 @@ t₃"]
     D --&gt; A
 </pre>
 </div>
-<p></p><figcaption> Autoregressive generation loop in decoder-only models.</figcaption> </figure><p></p>
+<p></p><figcaption> <strong>Figure 9:</strong> Autoregressive generation loop in decoder-only models.</figcaption> </figure><p></p>
 </div>
 </div>
 </div>
@@ -1827,8 +1831,13 @@ The Core Architecture Is Stable
 
 
 <div class="hidden" aria-hidden="true">
-<span class="glightbox-desc lightbox-desc-1"><strong>Figure 2:</strong> Sinusoidal positional encoding. Each column is a unique fingerprint for one position. Low-frequency components (bottom rows) vary slowly — encoding coarse, sentence-level position. High-frequency components (top rows) vary quickly — encoding fine, word-level position. Together, every position from 0 to max_seq_len gets a unique vector.</span>
-<span class="glightbox-desc lightbox-desc-2"><strong>Figure 3:</strong> Attention weights for the [‘the’, ‘cat’, ‘sat’] example. Rows are query tokens; columns are keys. Each row is a probability distribution — how much each token attends to every other token.</span>
+<span class="glightbox-desc lightbox-desc-1"><strong>Figure 1:</strong> The encoder-decoder Transformer (Vaswani et al., 2017) — the architecture we’ll build in this post. <strong>Left stack (Encoder):</strong> reads the full source sequence; every token attends to every other token with no masking. <strong>Right stack (Decoder):</strong> generates the target sequence one token at a time; each layer has three sublayers: ① masked self-attention (tokens attend only to past positions), ② <strong>cross-attention</strong> (Q from decoder, K and V from the encoder output — the arrow connecting the two stacks), and ③ a feed-forward network. <strong>“N×”</strong> means the layer block repeats N times (typically 6–12). <strong>Add &amp; Norm</strong> is a residual connection followed by LayerNorm. The <strong>Linear + Softmax</strong> at the top projects the decoder’s final representation to a probability distribution over the vocabulary. Every component labelled here has its own section below. (<a href="https://lilianweng.github.io/posts/2023-01-27-the-transformer-family-v2/">source</a>)</span>
+<span class="glightbox-desc lightbox-desc-2"><strong>Figure 2:</strong> Sinusoidal positional encoding. Each column is a unique fingerprint for one position. Low-frequency components (bottom rows) vary slowly — encoding coarse, sentence-level position. High-frequency components (top rows) vary quickly — encoding fine, word-level position. Together, every position from 0 to max_seq_len gets a unique vector.</span>
+<span class="glightbox-desc lightbox-desc-3"><strong>Figure 3:</strong> Attention weights for the [‘the’, ‘cat’, ‘sat’] example. Rows are query tokens; columns are keys. Each row is a probability distribution — how much each token attends to every other token.</span>
+<span class="glightbox-desc lightbox-desc-4"><strong>Figure 4:</strong> Scaled Dot-Product Attention (<a href="https://ar5iv.labs.arxiv.org/html/1706.03762">source</a>)</span>
+<span class="glightbox-desc lightbox-desc-5"><strong>Figure 5:</strong> Multi-Head Attention with several attention layers running in parallel (<a href="https://ar5iv.labs.arxiv.org/html/1706.03762">source</a>)</span>
+<span class="glightbox-desc lightbox-desc-6"><strong>Figure 7:</strong> Loss surfaces of ResNet-56 with/without skip connections (<a href="https://arxiv.labs.arxiv.org/html/1712.09913">source</a>)</span>
+<span class="glightbox-desc lightbox-desc-7"><strong>Figure 8:</strong> Left: standard neural net. Right: thinned net after applying dropout — crossed units are dropped. (<a href="https://www.cs.toronto.edu/~rsalakhu/papers/srivastava14a.pdf">source</a>)</span>
 </div>
 </section>
 
@@ -2495,7 +2504,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
+<<<<<<< Updated upstream
 <script>var lightboxQuarto = GLightbox({"selector":".lightbox","closeEffect":"zoom","descPosition":"bottom","openEffect":"zoom","loop":false});
+||||||| Stash base
+<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","closeEffect":"zoom","loop":false,"descPosition":"bottom","selector":".lightbox"});
+=======
+<script>var lightboxQuarto = GLightbox({"descPosition":"bottom","loop":false,"closeEffect":"zoom","selector":".lightbox","openEffect":"zoom"});
+>>>>>>> Stashed changes
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;
