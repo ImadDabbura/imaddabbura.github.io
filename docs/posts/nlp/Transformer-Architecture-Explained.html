@@ -191,15 +191,15 @@ window.Quarto = {
 <meta property="og:description" content="An intuition-first, reference-grade breakdown of every building block—from why attention was invented to how encoder, decoder, and encoder-decoder architectures work">
 <meta property="og:image" content="https://imaddabbura.github.io/posts/nlp/images/transformer-arch.png">
 <meta property="og:site_name" content="Imad Dabbura">
-<meta property="og:image:height" content="958">
-<meta property="og:image:width" content="673">
+<meta property="og:image:height" content="1024">
+<meta property="og:image:width" content="1536">
 <meta name="twitter:title" content="Imad Dabbura - The Transformer Architecture: A Deep Dive">
 <meta name="twitter:description" content="An intuition-first, reference-grade breakdown of every building block—from why attention was invented to how encoder, decoder, and encoder-decoder architectures work">
 <meta name="twitter:image" content="https://imaddabbura.github.io/posts/nlp/images/transformer-arch.png">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image-height" content="958">
-<meta name="twitter:image-width" content="673">
+<meta name="twitter:image-height" content="1024">
+<meta name="twitter:image-width" content="1536">
 </head>
 
 <body class="nav-fixed">
@@ -441,10 +441,10 @@ window.Quarto = {
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="images/full-transformer-architecture.png" class="lightbox" data-glightbox="description: .lightbox-desc-1" data-gallery="quarto-lightbox-gallery-1" title="Figure 1: The encoder-decoder Transformer (Vaswani et al., 2017) — the architecture we’ll build in this post. Left stack (Encoder): reads the full source sequence; every token attends to every other token with no masking. Right stack (Decoder): generates the target sequence one token at a time; each layer has three sublayers: ① masked self-attention (tokens attend only to past positions), ② cross-attention (Q from decoder, K and V from the encoder output — the arrow connecting the two stacks), and ③ a feed-forward network. “N×” means the layer block repeats N times (typically 6–12). Add &amp; Norm is a residual connection followed by LayerNorm. The Linear + Softmax at the top projects the decoder’s final representation to a probability distribution over the vocabulary. Every component labelled here has its own section below. (source)"><img src="images/full-transformer-architecture.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600" alt="Figure 1: The encoder-decoder Transformer (Vaswani et al., 2017) — the architecture we’ll build in this post. Left stack (Encoder): reads the full source sequence; every token attends to every other token with no masking. Right stack (Decoder): generates the target sequence one token at a time; each layer has three sublayers: ① masked self-attention (tokens attend only to past positions), ② cross-attention (Q from decoder, K and V from the encoder output — the arrow connecting the two stacks), and ③ a feed-forward network. “N×” means the layer block repeats N times (typically 6–12). Add &amp; Norm is a residual connection followed by LayerNorm. The Linear + Softmax at the top projects the decoder’s final representation to a probability distribution over the vocabulary. Every component labelled here has its own section below. (source)"></a></p>
+<p><a href="images/transformer-arch.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" data-glightbox="description: .lightbox-desc-1" title="Figure 1: The encoder-decoder Transformer (Vaswani et al., 2017) — the architecture we’ll build in this post. Left stack (Encoder): reads the full source sequence; every token attends to every other token with no masking. Right stack (Decoder): generates the target sequence one token at a time; each layer has three sublayers: ① masked self-attention (tokens attend only to past positions), ② cross-attention (Q from decoder, K and V from the encoder output — the arrow connecting the two stacks), and ③ a feed-forward network. “N×” means the layer block repeats N times (typically 6–12). Add &amp; Norm is a residual connection followed by LayerNorm. The Linear + Softmax at the top projects the decoder’s final representation to a probability distribution over the vocabulary. Every component labelled here has its own section below. (source)"><img src="images/transformer-arch.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600" alt="Figure 1: The encoder-decoder Transformer (Vaswani et al., 2017) — the architecture we’ll build in this post. Left stack (Encoder): reads the full source sequence; every token attends to every other token with no masking. Right stack (Decoder): generates the target sequence one token at a time; each layer has three sublayers: ① masked self-attention (tokens attend only to past positions), ② cross-attention (Q from decoder, K and V from the encoder output — the arrow connecting the two stacks), and ③ a feed-forward network. “N×” means the layer block repeats N times (typically 6–12). Add &amp; Norm is a residual connection followed by LayerNorm. The Linear + Softmax at the top projects the decoder’s final representation to a probability distribution over the vocabulary. Every component labelled here has its own section below. (source)"></a></p>
 </figure>
 </div>
-<figcaption><strong>Figure 1:</strong> The encoder-decoder Transformer (Vaswani et al., 2017) — the architecture we’ll build in this post. <strong>Left stack (Encoder):</strong> reads the full source sequence; every token attends to every other token with no masking. <strong>Right stack (Decoder):</strong> generates the target sequence one token at a time; each layer has three sublayers: ① masked self-attention (tokens attend only to past positions), ② <strong>cross-attention</strong> (Q from decoder, K and V from the encoder output — the arrow connecting the two stacks), and ③ a feed-forward network. <strong>“N×”</strong> means the layer block repeats N times (typically 6–12). <strong>Add &amp; Norm</strong> is a residual connection followed by LayerNorm. The <strong>Linear + Softmax</strong> at the top projects the decoder’s final representation to a probability distribution over the vocabulary. Every component labelled here has its own section below. (<a href="https://lilianweng.github.io/posts/2023-01-27-the-transformer-family-v2/">source</a>)</figcaption>
+<figcaption><strong>Figure 1:</strong> The encoder-decoder Transformer (Vaswani et al., 2017) — the architecture we’ll build in this post. <strong>Left stack (Encoder):</strong> reads the full source sequence; every token attends to every other token with no masking. <strong>Right stack (Decoder):</strong> generates the target sequence one token at a time; each layer has three sublayers: ① masked self-attention (tokens attend only to past positions), ② <strong>cross-attention</strong> (Q from decoder, K and V from the encoder output — the arrow connecting the two stacks), and ③ a feed-forward network. <strong>“N×”</strong> means the layer block repeats N times (typically 6–12). <strong>Add &amp; Norm</strong> is a residual connection followed by LayerNorm. The <strong>Linear + Softmax</strong> at the top projects the decoder’s final representation to a probability distribution over the vocabulary. Every component labelled here has its own section below. (<a href="https://arxiv.org/abs/1706.03762">source</a>)</figcaption>
 </figure>
 </div>
 </section>
@@ -560,7 +560,7 @@ The Key Insight
 <p><em>An embedding turns a name tag into a GPS coordinate — suddenly you can measure distance, find neighbors, and do arithmetic.</em></p>
 </blockquote>
 <p><strong>Shape:</strong> <code>B × T</code> (integer IDs) → <code>B × T × embed_dim</code> (float vectors)</p>
-<p><strong>Weight tying.</strong> In most language models, the embedding matrix is <em>reused</em> as the output projection at the end of the network — the final linear layer that maps from <code>d_model</code> back to <code>vocab_sz</code> uses the same weights, transposed. This is called <strong>weight tying</strong>. The intuition is elegant: the vector the model uses to <em>recognize</em> the token “cat” on the way in is the same vector it uses to <em>score</em> “cat” as a candidate output on the way out. Weight tying halves the parameter count for the vocabulary components (often 30–100K tokens × 768 dims = a significant share of total parameters) and consistently improves training because the input and output representations are kept aligned.</p>
+<p><strong>Weight tying.</strong> In most language models, the embedding matrix is <em>reused</em> as the output projection at the end of the network — the final linear layer that maps from <code>d_model</code> back to <code>vocab_sz</code> uses the same weights, transposed. This is called <strong>weight tying</strong>. The core intuition: if two tokens have similar embeddings (i.e., they are semantically close), they should also receive similar probabilities when the model generates the next-token distribution. Since the LM head scores each candidate token by taking the dot product of the model’s output vector with that token’s embedding row, tokens whose embedding vectors are close to the output vector will score similarly — producing nearby probabilities. Weight tying enforces this consistency directly: the same geometry that groups similar tokens together in the input space also determines their relative scores in the output distribution. As a bonus, it halves the parameter count for the vocabulary components (often 30–100K tokens × 768 dims = a significant share of total parameters) and keeps input and output representations aligned throughout training.</p>
 </section>
 <section id="positional-encodings" class="level3">
 <h3 class="anchored" data-anchor-id="positional-encodings">4.2 Positional Encodings</h3>
@@ -742,7 +742,7 @@ Implementation Note
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="Transformer-Architecture-Explained_files/figure-html/cell-5-output-1.png" class="lightbox" data-glightbox="description: .lightbox-desc-2" data-gallery="quarto-lightbox-gallery-2" title="Figure 2: Sinusoidal positional encoding. Each column is a unique fingerprint for one position. Low-frequency components (bottom rows) vary slowly — encoding coarse, sentence-level position. High-frequency components (top rows) vary quickly — encoding fine, word-level position. Together, every position from 0 to max_seq_len gets a unique vector."><img src="Transformer-Architecture-Explained_files/figure-html/cell-5-output-1.png" class="img-fluid figure-img" alt="Figure 2: Sinusoidal positional encoding. Each column is a unique fingerprint for one position. Low-frequency components (bottom rows) vary slowly — encoding coarse, sentence-level position. High-frequency components (top rows) vary quickly — encoding fine, word-level position. Together, every position from 0 to max_seq_len gets a unique vector."></a></p>
+<p><a href="Transformer-Architecture-Explained_files/figure-html/cell-5-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" data-glightbox="description: .lightbox-desc-2" title="Figure 2: Sinusoidal positional encoding. Each column is a unique fingerprint for one position. Low-frequency components (bottom rows) vary slowly — encoding coarse, sentence-level position. High-frequency components (top rows) vary quickly — encoding fine, word-level position. Together, every position from 0 to max_seq_len gets a unique vector."><img src="Transformer-Architecture-Explained_files/figure-html/cell-5-output-1.png" class="img-fluid figure-img" alt="Figure 2: Sinusoidal positional encoding. Each column is a unique fingerprint for one position. Low-frequency components (bottom rows) vary slowly — encoding coarse, sentence-level position. High-frequency components (top rows) vary quickly — encoding fine, word-level position. Together, every position from 0 to max_seq_len gets a unique vector."></a></p>
 <figcaption><strong>Figure 2:</strong> Sinusoidal positional encoding. Each column is a unique fingerprint for one position. Low-frequency components (bottom rows) vary slowly — encoding coarse, sentence-level position. High-frequency components (top rows) vary quickly — encoding fine, word-level position. Together, every position from 0 to max_seq_len gets a unique vector.</figcaption>
 </figure>
 </div>
@@ -776,54 +776,15 @@ Implementation Note
 <p><strong>Step 3 — Softmax row-wise</strong> (each row sums to 1):</p>
 <p><span class="math display">\[\text{weights} = \begin{bmatrix} 0.27 &amp; 0.27 &amp; 0.46 \\ 0.33 &amp; 0.33 &amp; 0.33 \\ 0.21 &amp; 0.39 &amp; 0.39 \end{bmatrix}\]</span></p>
 <p>Row 1 (token “the”): attends most strongly to “sat” (0.46). Row 2 (“cat”): distributes evenly. Row 3 (“sat”): attends most to “cat” and itself.</p>
-<div id="aa000002-at00-heat-map0-000000000002" class="cell" data-execution_count="1">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>matplotlib.rcParams[<span class="st">"figure.dpi"</span>] <span class="op">=</span> <span class="dv">150</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>tokens  <span class="op">=</span> [<span class="st">"the"</span>, <span class="st">"cat"</span>, <span class="st">"sat"</span>]</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> np.array([</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    [<span class="fl">0.27</span>, <span class="fl">0.27</span>, <span class="fl">0.46</span>],   <span class="co"># "the" attends most to "sat"</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    [<span class="fl">0.33</span>, <span class="fl">0.33</span>, <span class="fl">0.33</span>],   <span class="co"># "cat" distributes evenly</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    [<span class="fl">0.21</span>, <span class="fl">0.39</span>, <span class="fl">0.39</span>],   <span class="co"># "sat" attends most to "cat" and itself</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>])</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="fl">4.5</span>, <span class="fl">3.8</span>))</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>im <span class="op">=</span> ax.imshow(weights, cmap<span class="op">=</span><span class="st">"Blues"</span>, vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="fl">0.55</span>)</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>ax.set_xticks(<span class="bu">range</span>(<span class="dv">3</span>))</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>ax.set_yticks(<span class="bu">range</span>(<span class="dv">3</span>))</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>ax.set_xticklabels(tokens, fontsize<span class="op">=</span><span class="dv">13</span>)</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>ax.set_yticklabels(tokens, fontsize<span class="op">=</span><span class="dv">13</span>)</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"Attends to  →  (Key)"</span>, fontsize<span class="op">=</span><span class="dv">11</span>)</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Query token"</span>, fontsize<span class="op">=</span><span class="dv">11</span>)</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Attention weights  —  single head</span><span class="ch">\n</span><span class="st">(each row sums to 1)"</span>, fontsize<span class="op">=</span><span class="dv">11</span>, pad<span class="op">=</span><span class="dv">8</span>)</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>):</span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>):</span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>        ax.text(</span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>            j, i, <span class="ss">f"</span><span class="sc">{</span>weights[i, j]<span class="sc">:.2f}</span><span class="ss">"</span>,</span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>            ha<span class="op">=</span><span class="st">"center"</span>, va<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="dv">13</span>,</span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>            color<span class="op">=</span><span class="st">"white"</span> <span class="cf">if</span> weights[i, j] <span class="op">&gt;</span> <span class="fl">0.38</span> <span class="cf">else</span> <span class="st">"#222222"</span>,</span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>            fontweight<span class="op">=</span><span class="st">"bold"</span></span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>plt.colorbar(im, ax<span class="op">=</span>ax, fraction<span class="op">=</span><span class="fl">0.046</span>, pad<span class="op">=</span><span class="fl">0.04</span>, label<span class="op">=</span><span class="st">"Attention weight"</span>)</span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">"attention-heatmap.png"</span>, dpi<span class="op">=</span><span class="dv">150</span>, bbox_inches<span class="op">=</span><span class="st">"tight"</span>)</span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="Transformer-Architecture-Explained_files/figure-html/cell-6-output-1.png" class="lightbox" data-glightbox="description: .lightbox-desc-3" data-gallery="quarto-lightbox-gallery-3" title="Figure 3: Attention weights for the [‘the’, ‘cat’, ‘sat’] example. Rows are query tokens; columns are keys. Each row is a probability distribution — how much each token attends to every other token."><img src="Transformer-Architecture-Explained_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img" alt="Figure 3: Attention weights for the [‘the’, ‘cat’, ‘sat’] example. Rows are query tokens; columns are keys. Each row is a probability distribution — how much each token attends to every other token."></a></p>
-<figcaption><strong>Figure 3:</strong> Attention weights for the [‘the’, ‘cat’, ‘sat’] example. Rows are query tokens; columns are keys. Each row is a probability distribution — how much each token attends to every other token.</figcaption>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/attention-weights-matrix.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" data-glightbox="description: .lightbox-desc-3" title="Figure 3: Attention weights for the [‘the’, ‘cat’, ‘sat’] example. Rows are query tokens; columns are keys. Each row is a probability distribution — how much each token attends to every other token."><img src="images/attention-weights-matrix.png" class="quarto-figure quarto-figure-center figure-img" width="400" height="400" alt="Figure 3: Attention weights for the [‘the’, ‘cat’, ‘sat’] example. Rows are query tokens; columns are keys. Each row is a probability distribution — how much each token attends to every other token."></a></p>
 </figure>
 </div>
-</div>
+<figcaption><strong>Figure 3:</strong> Attention weights for the [‘the’, ‘cat’, ‘sat’] example. Rows are query tokens; columns are keys. Each row is a probability distribution — how much each token attends to every other token.</figcaption>
+</figure>
 </div>
 <p><strong>Step 4 — Multiply by V</strong> (shape <code>3 × head_dim</code>): The output for each token is a weighted combination of all value vectors, with weights from the softmax step. Token “the” will receive a mix of all three value vectors, weighted 27%/27%/46%. The output is a <strong>contextualized representation</strong> — the same token in a different sentence would produce different weights and therefore a different output vector.</p>
 <div class="callout callout-style-default callout-important callout-titled">
@@ -861,16 +822,15 @@ The Departure from Static Embeddings
 <section id="causal-masking-decoder-only" class="level3">
 <h3 class="anchored" data-anchor-id="causal-masking-decoder-only">5.5 Causal Masking (Decoder Only)</h3>
 <p>In a language model, the task is to predict the next token from all previous tokens. If the model can see token <span class="math inline">\(t+1\)</span> while predicting token <span class="math inline">\(t\)</span>, that is data leakage — the model would just copy the future token rather than learning to predict it.</p>
-<p>The Transformer prevents this with a <strong>causal mask</strong>: before applying softmax, all positions in the upper triangle of the <span class="math inline">\(T \times T\)</span> attention weight matrix are set to <span class="math inline">\(-\infty\)</span>. The resulting mask for a 5-token sequence looks like this — allowed positions in green, blocked positions in red:</p>
-<div id="aa000003-cm00-heat-map0-000000000003" class="cell">
-<div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="Transformer-Architecture-Explained_files/figure-html/cell-7-output-1.png" class="lightbox" data-glightbox="description: .lightbox-desc-4" data-gallery="quarto-lightbox-gallery-4" title="Figure 4: Causal mask for a 5-token sequence. Green cells (✓) are positions the query token is allowed to attend to; red cells (−∞) are masked out and become 0 after softmax. Each row is a query token; each column is a key token."><img src="Transformer-Architecture-Explained_files/figure-html/cell-7-output-1.png" class="img-fluid figure-img" alt="Figure 4: Causal mask for a 5-token sequence. Green cells (✓) are positions the query token is allowed to attend to; red cells (−∞) are masked out and become 0 after softmax. Each row is a query token; each column is a key token."></a></p>
-<figcaption><strong>Figure 4:</strong> Causal mask for a 5-token sequence. Green cells (✓) are positions the query token is allowed to attend to; red cells (−∞) are masked out and become 0 after softmax. Each row is a query token; each column is a key token.</figcaption>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/causal-mask-matrix.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" data-glightbox="description: .lightbox-desc-4" title="Figure 4: Causal mask for a 5-token sequence. Green cells (✓) are positions the query token is allowed to attend to; red cells (−∞) are masked out and become 0 after softmax. Each row is a query token; each column is a key token."><img src="images/causal-mask-matrix.png" class="img-fluid quarto-figure quarto-figure-center figure-img" alt="Figure 4: Causal mask for a 5-token sequence. Green cells (✓) are positions the query token is allowed to attend to; red cells (−∞) are masked out and become 0 after softmax. Each row is a query token; each column is a key token."></a></p>
 </figure>
 </div>
-</div>
+<figcaption><strong>Figure 4:</strong> Causal mask for a 5-token sequence. Green cells (✓) are positions the query token is allowed to attend to; red cells (−∞) are masked out and become 0 after softmax. Each row is a query token; each column is a key token.</figcaption>
+</figure>
 </div>
 <p>After softmax, <span class="math inline">\(-\infty\)</span> becomes exactly 0. Token 1 can only attend to itself. Token 3 can attend to tokens 1, 2, and 3 but not 4. The mask enforces a strict information asymmetry: <strong>you can read anything in the past, but nothing in the future</strong>.</p>
 <p>This is implemented by registering a lower-triangular buffer in the <code>AttentionHead</code> and calling <code>masked_fill</code> before softmax.</p>
@@ -886,10 +846,10 @@ The Departure from Static Embeddings
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="images/scaled-dot-product-attention.png" class="lightbox" data-glightbox="description: .lightbox-desc-5" data-gallery="quarto-lightbox-gallery-5" title="Figure 5: Scaled Dot-Product Attention (source)"><img src="images/scaled-dot-product-attention.png" class="img-fluid quarto-figure quarto-figure-center figure-img" alt="Figure 5: Scaled Dot-Product Attention (source)"></a></p>
+<p><a href="images/scaled-dot-product-attention.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" data-glightbox="description: .lightbox-desc-5" title="Figure 5: Scaled Dot-Product Attention (source)"><img src="images/scaled-dot-product-attention.png" class="quarto-figure quarto-figure-center figure-img" height="400" alt="Figure 5: Scaled Dot-Product Attention (source)"></a></p>
 </figure>
 </div>
-<figcaption><strong>Figure 5:</strong> Scaled Dot-Product Attention (<a href="https://ar5iv.labs.arxiv.org/html/1706.03762">source</a>)</figcaption>
+<figcaption><strong>Figure 5:</strong> Scaled Dot-Product Attention (<a href="https://arxiv.org/abs/1706.03762">source</a>)</figcaption>
 </figure>
 </div>
 </section>
@@ -937,33 +897,33 @@ FlashAttention Changes the Hardware Utilization, Not the Complexity
 </div>
 </div>
 <div id="0540e571-f6de-49d2-9535-e91755a7a78f" class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> AttentionHead(nn.Module):</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config, head_dim, is_decoder<span class="op">=</span><span class="va">False</span>) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.q <span class="op">=</span> nn.Linear(config.embed_dim, head_dim, bias<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.k <span class="op">=</span> nn.Linear(config.embed_dim, head_dim, bias<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.v <span class="op">=</span> nn.Linear(config.embed_dim, head_dim, bias<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.is_decoder <span class="op">=</span> is_decoder</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.is_decoder:</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.register_buffer(</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>                <span class="st">"mask"</span>, torch.tril(torch.ones(config.block_sz, config.block_sz))</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, query, key, value):</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        <span class="co">## query: B x T_q x embed_dim  (source of queries)</span></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        <span class="co">## key:   B x T_k x embed_dim  (source of keys)</span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        <span class="co">## value: B x T_k x embed_dim  (source of values)</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>        q <span class="op">=</span> <span class="va">self</span>.q(query)  <span class="co">## B x T_q x head_dim</span></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        k <span class="op">=</span> <span class="va">self</span>.k(key)    <span class="co">## B x T_k x head_dim</span></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>        v <span class="op">=</span> <span class="va">self</span>.v(value)  <span class="co">## B x T_k x head_dim</span></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>        <span class="co">## w: B x T_q x T_k  — pairwise similarity between every query and every key</span></span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        w <span class="op">=</span> q <span class="op">@</span> k.transpose(<span class="dv">2</span>, <span class="dv">1</span>) <span class="op">/</span> (k.shape[<span class="op">-</span><span class="dv">1</span>] <span class="op">**</span> <span class="fl">0.5</span>)</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.is_decoder:</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>            T <span class="op">=</span> w.shape[<span class="op">-</span><span class="dv">1</span>]</span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>            w <span class="op">=</span> w.masked_fill(<span class="va">self</span>.mask[:T, :T] <span class="op">==</span> <span class="dv">0</span>, <span class="op">-</span><span class="bu">float</span>(<span class="st">"inf"</span>))</span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>        w <span class="op">=</span> F.softmax(w, dim<span class="op">=-</span><span class="dv">1</span>)</span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>        <span class="co">## output: B x T_q x head_dim</span></span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> w <span class="op">@</span> v</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> AttentionHead(nn.Module):</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config, head_dim, is_decoder<span class="op">=</span><span class="va">False</span>) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.q <span class="op">=</span> nn.Linear(config.embed_dim, head_dim, bias<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.k <span class="op">=</span> nn.Linear(config.embed_dim, head_dim, bias<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.v <span class="op">=</span> nn.Linear(config.embed_dim, head_dim, bias<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.is_decoder <span class="op">=</span> is_decoder</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.is_decoder:</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.register_buffer(</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>                <span class="st">"mask"</span>, torch.tril(torch.ones(config.block_sz, config.block_sz))</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, query, key, value):</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        <span class="co">## query: B x T_q x embed_dim  (source of queries)</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>        <span class="co">## key:   B x T_k x embed_dim  (source of keys)</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        <span class="co">## value: B x T_k x embed_dim  (source of values)</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        q <span class="op">=</span> <span class="va">self</span>.q(query)  <span class="co">## B x T_q x head_dim</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>        k <span class="op">=</span> <span class="va">self</span>.k(key)    <span class="co">## B x T_k x head_dim</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>        v <span class="op">=</span> <span class="va">self</span>.v(value)  <span class="co">## B x T_k x head_dim</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>        <span class="co">## w: B x T_q x T_k  — pairwise similarity between every query and every key</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>        w <span class="op">=</span> q <span class="op">@</span> k.transpose(<span class="dv">2</span>, <span class="dv">1</span>) <span class="op">/</span> (k.shape[<span class="op">-</span><span class="dv">1</span>] <span class="op">**</span> <span class="fl">0.5</span>)</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.is_decoder:</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>            T <span class="op">=</span> w.shape[<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>            w <span class="op">=</span> w.masked_fill(<span class="va">self</span>.mask[:T, :T] <span class="op">==</span> <span class="dv">0</span>, <span class="op">-</span><span class="bu">float</span>(<span class="st">"inf"</span>))</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>        w <span class="op">=</span> F.softmax(w, dim<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>        <span class="co">## output: B x T_q x head_dim</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> w <span class="op">@</span> v</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -987,10 +947,10 @@ FlashAttention Changes the Hardware Utilization, Not the Complexity
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="images/multi-head-attention.png" class="lightbox" data-glightbox="description: .lightbox-desc-6" data-gallery="quarto-lightbox-gallery-6" title="Figure 6: Multi-Head Attention with several attention layers running in parallel (source)"><img src="images/multi-head-attention.png" class="img-fluid quarto-figure quarto-figure-center figure-img" alt="Figure 6: Multi-Head Attention with several attention layers running in parallel (source)"></a></p>
+<p><a href="images/multi-head-attention.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" data-glightbox="description: .lightbox-desc-6" title="Figure 6: Multi-Head Attention with several attention layers running in parallel (source)"><img src="images/multi-head-attention.png" class="quarto-figure quarto-figure-center figure-img" height="400" alt="Figure 6: Multi-Head Attention with several attention layers running in parallel (source)"></a></p>
 </figure>
 </div>
-<figcaption><strong>Figure 6:</strong> Multi-Head Attention with several attention layers running in parallel (<a href="https://ar5iv.labs.arxiv.org/html/1706.03762">source</a>)</figcaption>
+<figcaption><strong>Figure 6:</strong> Multi-Head Attention with several attention layers running in parallel (<a href="https://arxiv.org/abs/1706.03762">source</a>)</figcaption>
 </figure>
 </div>
 </section>
@@ -1013,26 +973,26 @@ Pedagogical vs.&nbsp;Efficient Implementation
 </div>
 <p>However, there is still a problem: multi-head attention is a weighted <em>averaging</em> operation — it is linear in V. Stacking multiple attention layers with nothing in between collapses to a single linear transformation. The network needs nonlinearity. That is the feed-forward network’s job.</p>
 <div id="cf91afcc-af53-4bd9-84c6-bd3dd69bd49f" class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MultiHeadAttention(nn.Module):</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config, is_decoder<span class="op">=</span><span class="va">False</span>) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        head_dim <span class="op">=</span> config.embed_dim <span class="op">//</span> config.num_attention_heads</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.heads <span class="op">=</span> nn.ModuleList(</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>            [</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>                AttentionHead(config, head_dim, is_decoder)</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(config.num_attention_heads)</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>            ]</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">## Final projection mixes information across heads: embed_dim -&gt; embed_dim</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.output_proj <span class="op">=</span> nn.Linear(config.embed_dim, config.embed_dim)</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, query, key, value):</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        <span class="co">## query: B x T_q x embed_dim</span></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        <span class="co">## key:   B x T_k x embed_dim</span></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        <span class="co">## value: B x T_k x embed_dim</span></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>        <span class="co">## Each head produces B x T_q x head_dim; cat gives B x T_q x embed_dim</span></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> torch.cat([head(query, key, value) <span class="cf">for</span> head <span class="kw">in</span> <span class="va">self</span>.heads], dim<span class="op">=-</span><span class="dv">1</span>)</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.output_proj(x)  <span class="co">## B x T_q x embed_dim</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MultiHeadAttention(nn.Module):</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config, is_decoder<span class="op">=</span><span class="va">False</span>) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        head_dim <span class="op">=</span> config.embed_dim <span class="op">//</span> config.num_attention_heads</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.heads <span class="op">=</span> nn.ModuleList(</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>            [</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                AttentionHead(config, head_dim, is_decoder)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(config.num_attention_heads)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>            ]</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">## Final projection mixes information across heads: embed_dim -&gt; embed_dim</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.output_proj <span class="op">=</span> nn.Linear(config.embed_dim, config.embed_dim)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, query, key, value):</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        <span class="co">## query: B x T_q x embed_dim</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        <span class="co">## key:   B x T_k x embed_dim</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>        <span class="co">## value: B x T_k x embed_dim</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        <span class="co">## Each head produces B x T_q x head_dim; cat gives B x T_q x embed_dim</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> torch.cat([head(query, key, value) <span class="cf">for</span> head <span class="kw">in</span> <span class="va">self</span>.heads], dim<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.output_proj(x)  <span class="co">## B x T_q x embed_dim</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -1075,19 +1035,19 @@ Note
 </div>
 </div>
 <div id="c7ceda3b-1880-495c-8a32-04005afe4260" class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> FeedForwardNN(nn.Module):</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config):</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        <span class="co">## Expand to 4x hidden dim, then contract back — most capacity lives here</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.l1 <span class="op">=</span> nn.Linear(config.embed_dim, config.intermediate_sz)</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.l2 <span class="op">=</span> nn.Linear(config.intermediate_sz, config.embed_dim)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.dropout <span class="op">=</span> nn.Dropout(config.hidden_dropout_prob)</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">## x:        B x T x embed_dim</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">## after l1: B x T x intermediate_sz  (expand)</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        <span class="co">## after l2: B x T x embed_dim        (contract)</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.dropout(<span class="va">self</span>.l2(F.gelu(<span class="va">self</span>.l1(x))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> FeedForwardNN(nn.Module):</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config):</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        <span class="co">## Expand to 4x hidden dim, then contract back — most capacity lives here</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.l1 <span class="op">=</span> nn.Linear(config.embed_dim, config.intermediate_sz)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.l2 <span class="op">=</span> nn.Linear(config.intermediate_sz, config.embed_dim)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.dropout <span class="op">=</span> nn.Dropout(config.hidden_dropout_prob)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">## x:        B x T x embed_dim</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">## after l1: B x T x intermediate_sz  (expand)</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        <span class="co">## after l2: B x T x embed_dim        (contract)</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.dropout(<span class="va">self</span>.l2(F.gelu(<span class="va">self</span>.l1(x))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -1229,7 +1189,7 @@ Note
 <p><strong>Loss landscape smoothing.</strong> He et al.&nbsp;(2016) visualized the loss surfaces of deep networks with and without skip connections. Without them: chaotic, sharp, with many high-curvature local minima that trap gradient descent. With them: smooth, convex, much more navigable.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="images/loss-landscape-with-skip-connections.png" class="lightbox" data-glightbox="description: .lightbox-desc-7" data-gallery="quarto-lightbox-gallery-7" title="Figure 8: Loss surfaces of ResNet-56 with/without skip connections (source)"><img src="images/loss-landscape-with-skip-connections.png" class="img-fluid figure-img" alt="Figure 8: Loss surfaces of ResNet-56 with/without skip connections (source)"></a></p>
+<p><a href="images/loss-landscape-with-skip-connections.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7" data-glightbox="description: .lightbox-desc-7" title="Figure 8: Loss surfaces of ResNet-56 with/without skip connections (source)"><img src="images/loss-landscape-with-skip-connections.png" class="img-fluid figure-img" alt="Figure 8: Loss surfaces of ResNet-56 with/without skip connections (source)"></a></p>
 <figcaption><strong>Figure 8:</strong> Loss surfaces of ResNet-56 with/without skip connections (<a href="https://arxiv.labs.arxiv.org/html/1712.09913">source</a>)</figcaption>
 </figure>
 </div>
@@ -1261,7 +1221,7 @@ Modern Large Models Often Skip Dropout
 </div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="images/dropout.png" class="lightbox" data-glightbox="description: .lightbox-desc-8" data-gallery="quarto-lightbox-gallery-8" title="Figure 9: Left: standard neural net. Right: thinned net after applying dropout — crossed units are dropped. (source)"><img src="images/dropout.png" class="img-fluid figure-img" alt="Figure 9: Left: standard neural net. Right: thinned net after applying dropout — crossed units are dropped. (source)"></a></p>
+<p><a href="images/dropout.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8" data-glightbox="description: .lightbox-desc-8" title="Figure 9: Left: standard neural net. Right: thinned net after applying dropout — crossed units are dropped. (source)"><img src="images/dropout.png" class="img-fluid figure-img" alt="Figure 9: Left: standard neural net. Right: thinned net after applying dropout — crossed units are dropped. (source)"></a></p>
 <figcaption><strong>Figure 9:</strong> Left: standard neural net. Right: thinned net after applying dropout — crossed units are dropped. (<a href="https://www.cs.toronto.edu/~rsalakhu/papers/srivastava14a.pdf">source</a>)</figcaption>
 </figure>
 </div>
@@ -1358,39 +1318,39 @@ Post-LN in the Code
 </div>
 </div>
 <div id="b25d08fb-7099-40a1-9175-f53442e43b89" class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> EncoderLayer(nn.Module):</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config):</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.attn <span class="op">=</span> MultiHeadAttention(config)</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.ff <span class="op">=</span> FeedForwardNN(config)</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.layer_norm_1 <span class="op">=</span> nn.LayerNorm(config.embed_dim)</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.layer_norm_2 <span class="op">=</span> nn.LayerNorm(config.embed_dim)</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">## x: B x T x embed_dim  (input and output shape are identical)</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">##</span></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        <span class="co">## Post-LayerNorm arrangement (original Transformer paper):</span></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.layer_norm_1(x <span class="op">+</span> <span class="va">self</span>.attn(x, x, x))  <span class="co">## bidirectional self-attention</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.layer_norm_2(x <span class="op">+</span> <span class="va">self</span>.ff(x))</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>        <span class="co">##</span></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>        <span class="co">## Pre-LayerNorm alternative (GPT-2+, more stable — recommended for new models):</span></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>        <span class="co">## x = x + self.attn(self.layer_norm_1(x), self.layer_norm_1(x), self.layer_norm_1(x))</span></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>        <span class="co">## x = x + self.ff(self.layer_norm_2(x))</span></span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x  <span class="co">## B x T x embed_dim</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> EncoderLayer(nn.Module):</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config):</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.attn <span class="op">=</span> MultiHeadAttention(config)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.ff <span class="op">=</span> FeedForwardNN(config)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.layer_norm_1 <span class="op">=</span> nn.LayerNorm(config.embed_dim)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.layer_norm_2 <span class="op">=</span> nn.LayerNorm(config.embed_dim)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">## x: B x T x embed_dim  (input and output shape are identical)</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">##</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        <span class="co">## Post-LayerNorm arrangement (original Transformer paper):</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.layer_norm_1(x <span class="op">+</span> <span class="va">self</span>.attn(x, x, x))  <span class="co">## bidirectional self-attention</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.layer_norm_2(x <span class="op">+</span> <span class="va">self</span>.ff(x))</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>        <span class="co">##</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>        <span class="co">## Pre-LayerNorm alternative (GPT-2+, more stable — recommended for new models):</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>        <span class="co">## x = x + self.attn(self.layer_norm_1(x), self.layer_norm_1(x), self.layer_norm_1(x))</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>        <span class="co">## x = x + self.ff(self.layer_norm_2(x))</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x  <span class="co">## B x T x embed_dim</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="af565905-5b13-4773-b44f-d0a2e78a3831" class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> TransformerEncoder(nn.Module):</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.embeddings <span class="op">=</span> Embeddings(config)</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.encoder_blocks <span class="op">=</span> nn.Sequential(</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>            <span class="op">*</span>[EncoderLayer(config) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(config.num_hidden_layers)]</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">## x:    B x T  (integer token IDs)</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.embeddings(x)        <span class="co">## B x T x embed_dim</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.encoder_blocks(x)  <span class="co">## B x T x embed_dim</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> TransformerEncoder(nn.Module):</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.embeddings <span class="op">=</span> Embeddings(config)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.encoder_blocks <span class="op">=</span> nn.Sequential(</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>            <span class="op">*</span>[EncoderLayer(config) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(config.num_hidden_layers)]</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">## x:    B x T  (integer token IDs)</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.embeddings(x)        <span class="co">## B x T x embed_dim</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.encoder_blocks(x)  <span class="co">## B x T x embed_dim</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="assembling-the-decoder-layer" class="level2">
@@ -1493,34 +1453,34 @@ Note on the Code Below
 </div>
 </div>
 <div id="d684880a-3132-487a-ab51-fc3b20978e5f" class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> DecoderLayer(nn.Module):</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config):</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.attn <span class="op">=</span> MultiHeadAttention(config, is_decoder<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.ff <span class="op">=</span> FeedForwardNN(config)</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.layer_norm_1 <span class="op">=</span> nn.LayerNorm(config.embed_dim)</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.layer_norm_2 <span class="op">=</span> nn.LayerNorm(config.embed_dim)</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">## x: B x T x embed_dim</span></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">## Masked self-attention: each token only attends to past and current positions</span></span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.layer_norm_1(x <span class="op">+</span> <span class="va">self</span>.attn(x, x, x))</span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.layer_norm_2(x <span class="op">+</span> <span class="va">self</span>.ff(x))</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x  <span class="co">## B x T x embed_dim</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> DecoderLayer(nn.Module):</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config):</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.attn <span class="op">=</span> MultiHeadAttention(config, is_decoder<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.ff <span class="op">=</span> FeedForwardNN(config)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.layer_norm_1 <span class="op">=</span> nn.LayerNorm(config.embed_dim)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.layer_norm_2 <span class="op">=</span> nn.LayerNorm(config.embed_dim)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">## x: B x T x embed_dim</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">## Masked self-attention: each token only attends to past and current positions</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.layer_norm_1(x <span class="op">+</span> <span class="va">self</span>.attn(x, x, x))</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.layer_norm_2(x <span class="op">+</span> <span class="va">self</span>.ff(x))</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x  <span class="co">## B x T x embed_dim</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="89f920e8-82b9-4975-841d-94613c5bfa7d" class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> TransformerDecoder(nn.Module):</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.embeddings <span class="op">=</span> Embeddings(config)</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.decoder_blocks <span class="op">=</span> nn.Sequential(</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>            <span class="op">*</span>[DecoderLayer(config) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(config.num_hidden_layers)]</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">## x:    B x T  (integer token IDs)</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.embeddings(x)         <span class="co">## B x T x embed_dim</span></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.decoder_blocks(x)  <span class="co">## B x T x embed_dim</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> TransformerDecoder(nn.Module):</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.embeddings <span class="op">=</span> Embeddings(config)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.decoder_blocks <span class="op">=</span> nn.Sequential(</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>            <span class="op">*</span>[DecoderLayer(config) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(config.num_hidden_layers)]</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">## x:    B x T  (integer token IDs)</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.embeddings(x)         <span class="co">## B x T x embed_dim</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.decoder_blocks(x)  <span class="co">## B x T x embed_dim</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="architecture-variants" class="level2">
@@ -1594,20 +1554,20 @@ Why [CLS] and Not Mean Pooling?
 </div>
 </div>
 <div id="df92c42f-8650-4ef6-9865-686d183d61cc" class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> TransformerForSequenceClassification(nn.Module):</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config):</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.encoder <span class="op">=</span> TransformerEncoder(config)</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.dropout <span class="op">=</span> nn.Dropout(config.hidden_dropout_prob)</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.classifier <span class="op">=</span> nn.Linear(config.embed_dim, config.num_classes)</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>        <span class="co">## x:              B x T  (integer token IDs)</span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">## encoder output: B x T x embed_dim</span></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">## [CLS] vector:   B x embed_dim  (position 0 aggregates sequence meaning)</span></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>        <span class="co">## logits:         B x num_classes</span></span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>        cls_output <span class="op">=</span> <span class="va">self</span>.encoder(x)[:, <span class="dv">0</span>, :]</span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.classifier(<span class="va">self</span>.dropout(cls_output))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> TransformerForSequenceClassification(nn.Module):</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config):</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.encoder <span class="op">=</span> TransformerEncoder(config)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.dropout <span class="op">=</span> nn.Dropout(config.hidden_dropout_prob)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.classifier <span class="op">=</span> nn.Linear(config.embed_dim, config.num_classes)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>        <span class="co">## x:              B x T  (integer token IDs)</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">## encoder output: B x T x embed_dim</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">## [CLS] vector:   B x embed_dim  (position 0 aggregates sequence meaning)</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>        <span class="co">## logits:         B x num_classes</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>        cls_output <span class="op">=</span> <span class="va">self</span>.encoder(x)[:, <span class="dv">0</span>, :]</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.classifier(<span class="va">self</span>.dropout(cls_output))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="decoder-only-architecture" class="level3">
@@ -1652,86 +1612,86 @@ t₃"]
 <p><strong>KV caching: why inference is efficient.</strong> The loop as described implies re-computing attention over the full growing sequence at every step — which would scale as <span class="math inline">\(O(T^2)\)</span> for a <span class="math inline">\(T\)</span>-token generation. Production systems avoid this with a <strong>KV cache</strong>: the K and V tensors for all past positions are stored after their first computation and reused on every subsequent step. Only the new token’s Q needs to be computed; it attends to the cached K/V from all prior positions. Each generation step then costs <span class="math inline">\(O(T \cdot d)\)</span> instead of <span class="math inline">\(O(T^2 \cdot d)\)</span>.</p>
 <p>The KV cache is a first-class engineering constraint in LLM deployment. For a model with <span class="math inline">\(L\)</span> layers, <span class="math inline">\(H\)</span> heads, head dimension <span class="math inline">\(d_k\)</span>, and current sequence length <span class="math inline">\(T\)</span>, the cache requires <span class="math inline">\(2 \cdot L \cdot H \cdot d_k \cdot T\)</span> values — for LLaMA-3 70B at 4K context in fp16, that is roughly 5 GB. This is precisely why <strong>Grouped Query Attention (GQA)</strong> exists: by sharing a single K/V head across multiple Q heads, the cache shrinks by a factor of <code>num_heads / num_kv_heads</code> — often 8x. Every major modern model (LLaMA 2/3, Mistral, Gemma) uses GQA for exactly this reason.</p>
 <div id="8d2737a7-c025-4578-882e-0352341d7e95" class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> GPT(nn.Module):</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config):</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.decoder <span class="op">=</span> TransformerDecoder(config)</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.dropout <span class="op">=</span> nn.Dropout(config.hidden_dropout_prob)</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>        <span class="co">## Project from embed_dim to vocab_sz to get next-token logits</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.lm_head <span class="op">=</span> nn.Linear(config.embed_dim, config.vocab_sz, bias<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">## x:       B x T  (integer token IDs)</span></span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">## decoded: B x T x embed_dim</span></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>        <span class="co">## logits:  B x T x vocab_sz  (next-token distribution at every position)</span></span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.dropout(<span class="va">self</span>.decoder(x))</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.lm_head(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> GPT(nn.Module):</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config):</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.decoder <span class="op">=</span> TransformerDecoder(config)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.dropout <span class="op">=</span> nn.Dropout(config.hidden_dropout_prob)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>        <span class="co">## Project from embed_dim to vocab_sz to get next-token logits</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.lm_head <span class="op">=</span> nn.Linear(config.embed_dim, config.vocab_sz, bias<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">## x:       B x T  (integer token IDs)</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">## decoded: B x T x embed_dim</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>        <span class="co">## logits:  B x T x vocab_sz  (next-token distribution at every position)</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.dropout(<span class="va">self</span>.decoder(x))</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.lm_head(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="b3e1f2a0-seq2-seq0-0000-000000000001" class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> CrossAttentionDecoderLayer(nn.Module):</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Decoder layer with three sublayers:</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">    (1) masked causal self-attention, (2) cross-attention to encoder, (3) FFN.</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config):</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.self_attn    <span class="op">=</span> MultiHeadAttention(config, is_decoder<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.cross_attn   <span class="op">=</span> MultiHeadAttention(config, is_decoder<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.ff           <span class="op">=</span> FeedForwardNN(config)</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.layer_norm_1 <span class="op">=</span> nn.LayerNorm(config.embed_dim)</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.layer_norm_2 <span class="op">=</span> nn.LayerNorm(config.embed_dim)</span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.layer_norm_3 <span class="op">=</span> nn.LayerNorm(config.embed_dim)</span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x, encoder_output):</span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>        <span class="co">## x:              B x T_dec x embed_dim</span></span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>        <span class="co">## encoder_output: B x T_enc x embed_dim</span></span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>        <span class="co">##</span></span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>        <span class="co">## 1. Masked self-attention — decoder tokens attend to each other causally</span></span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.layer_norm_1(x <span class="op">+</span> <span class="va">self</span>.self_attn(x, x, x))</span>
-<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>        <span class="co">## 2. Cross-attention — Q from decoder, K and V from encoder</span></span>
-<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>        <span class="co">##    Every decoder position can attend to all encoder positions</span></span>
-<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.layer_norm_2(x <span class="op">+</span> <span class="va">self</span>.cross_attn(x, encoder_output, encoder_output))</span>
-<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>        <span class="co">## 3. Position-wise FFN</span></span>
-<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.layer_norm_3(x <span class="op">+</span> <span class="va">self</span>.ff(x))</span>
-<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x  <span class="co">## B x T_dec x embed_dim</span></span>
-<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Seq2SeqTransformer(nn.Module):</span>
-<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Encoder-decoder Transformer for sequence-to-sequence tasks</span></span>
-<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a><span class="co">    such as machine translation and summarization.</span></span>
-<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config):</span>
-<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
-<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.encoder_embeddings <span class="op">=</span> Embeddings(config)</span>
-<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.decoder_embeddings <span class="op">=</span> Embeddings(config)</span>
-<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.encoder_blocks <span class="op">=</span> nn.ModuleList(</span>
-<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>            [EncoderLayer(config) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(config.num_hidden_layers)]</span>
-<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.decoder_blocks <span class="op">=</span> nn.ModuleList(</span>
-<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>            [CrossAttentionDecoderLayer(config) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(config.num_hidden_layers)]</span>
-<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.lm_head <span class="op">=</span> nn.Linear(config.embed_dim, config.vocab_sz, bias<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> encode(<span class="va">self</span>, src):</span>
-<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a>        <span class="co">## src: B x T_enc  →  B x T_enc x embed_dim</span></span>
-<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.encoder_embeddings(src)</span>
-<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> block <span class="kw">in</span> <span class="va">self</span>.encoder_blocks:</span>
-<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a>            x <span class="op">=</span> block(x)</span>
-<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x  <span class="co">## B x T_enc x embed_dim</span></span>
-<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> decode(<span class="va">self</span>, tgt, encoder_output):</span>
-<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a>        <span class="co">## tgt:            B x T_dec</span></span>
-<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a>        <span class="co">## encoder_output: B x T_enc x embed_dim</span></span>
-<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.decoder_embeddings(tgt)  <span class="co">## B x T_dec x embed_dim</span></span>
-<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> block <span class="kw">in</span> <span class="va">self</span>.decoder_blocks:</span>
-<span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a>            x <span class="op">=</span> block(x, encoder_output)</span>
-<span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x  <span class="co">## B x T_dec x embed_dim</span></span>
-<span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-59"><a href="#cb15-59" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, src, tgt):</span>
-<span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a>        <span class="co">## src: B x T_enc  (source token IDs, e.g. English)</span></span>
-<span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a>        <span class="co">## tgt: B x T_dec  (target token IDs, e.g. German — teacher-forced during training)</span></span>
-<span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a>        encoder_output <span class="op">=</span> <span class="va">self</span>.encode(src)                    <span class="co">## B x T_enc x embed_dim</span></span>
-<span id="cb15-63"><a href="#cb15-63" aria-hidden="true" tabindex="-1"></a>        decoder_output <span class="op">=</span> <span class="va">self</span>.decode(tgt, encoder_output)    <span class="co">## B x T_dec x embed_dim</span></span>
-<span id="cb15-64"><a href="#cb15-64" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.lm_head(decoder_output)                  <span class="co">## B x T_dec x vocab_sz</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> CrossAttentionDecoderLayer(nn.Module):</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Decoder layer with three sublayers:</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">    (1) masked causal self-attention, (2) cross-attention to encoder, (3) FFN.</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config):</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.self_attn    <span class="op">=</span> MultiHeadAttention(config, is_decoder<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.cross_attn   <span class="op">=</span> MultiHeadAttention(config, is_decoder<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.ff           <span class="op">=</span> FeedForwardNN(config)</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.layer_norm_1 <span class="op">=</span> nn.LayerNorm(config.embed_dim)</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.layer_norm_2 <span class="op">=</span> nn.LayerNorm(config.embed_dim)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.layer_norm_3 <span class="op">=</span> nn.LayerNorm(config.embed_dim)</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x, encoder_output):</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>        <span class="co">## x:              B x T_dec x embed_dim</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>        <span class="co">## encoder_output: B x T_enc x embed_dim</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>        <span class="co">##</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>        <span class="co">## 1. Masked self-attention — decoder tokens attend to each other causally</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.layer_norm_1(x <span class="op">+</span> <span class="va">self</span>.self_attn(x, x, x))</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>        <span class="co">## 2. Cross-attention — Q from decoder, K and V from encoder</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>        <span class="co">##    Every decoder position can attend to all encoder positions</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.layer_norm_2(x <span class="op">+</span> <span class="va">self</span>.cross_attn(x, encoder_output, encoder_output))</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>        <span class="co">## 3. Position-wise FFN</span></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.layer_norm_3(x <span class="op">+</span> <span class="va">self</span>.ff(x))</span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x  <span class="co">## B x T_dec x embed_dim</span></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Seq2SeqTransformer(nn.Module):</span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Encoder-decoder Transformer for sequence-to-sequence tasks</span></span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a><span class="co">    such as machine translation and summarization.</span></span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, config):</span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.encoder_embeddings <span class="op">=</span> Embeddings(config)</span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.decoder_embeddings <span class="op">=</span> Embeddings(config)</span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.encoder_blocks <span class="op">=</span> nn.ModuleList(</span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>            [EncoderLayer(config) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(config.num_hidden_layers)]</span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.decoder_blocks <span class="op">=</span> nn.ModuleList(</span>
+<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a>            [CrossAttentionDecoderLayer(config) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(config.num_hidden_layers)]</span>
+<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.lm_head <span class="op">=</span> nn.Linear(config.embed_dim, config.vocab_sz, bias<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-44"><a href="#cb14-44" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> encode(<span class="va">self</span>, src):</span>
+<span id="cb14-45"><a href="#cb14-45" aria-hidden="true" tabindex="-1"></a>        <span class="co">## src: B x T_enc  →  B x T_enc x embed_dim</span></span>
+<span id="cb14-46"><a href="#cb14-46" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.encoder_embeddings(src)</span>
+<span id="cb14-47"><a href="#cb14-47" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> block <span class="kw">in</span> <span class="va">self</span>.encoder_blocks:</span>
+<span id="cb14-48"><a href="#cb14-48" aria-hidden="true" tabindex="-1"></a>            x <span class="op">=</span> block(x)</span>
+<span id="cb14-49"><a href="#cb14-49" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x  <span class="co">## B x T_enc x embed_dim</span></span>
+<span id="cb14-50"><a href="#cb14-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-51"><a href="#cb14-51" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> decode(<span class="va">self</span>, tgt, encoder_output):</span>
+<span id="cb14-52"><a href="#cb14-52" aria-hidden="true" tabindex="-1"></a>        <span class="co">## tgt:            B x T_dec</span></span>
+<span id="cb14-53"><a href="#cb14-53" aria-hidden="true" tabindex="-1"></a>        <span class="co">## encoder_output: B x T_enc x embed_dim</span></span>
+<span id="cb14-54"><a href="#cb14-54" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.decoder_embeddings(tgt)  <span class="co">## B x T_dec x embed_dim</span></span>
+<span id="cb14-55"><a href="#cb14-55" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> block <span class="kw">in</span> <span class="va">self</span>.decoder_blocks:</span>
+<span id="cb14-56"><a href="#cb14-56" aria-hidden="true" tabindex="-1"></a>            x <span class="op">=</span> block(x, encoder_output)</span>
+<span id="cb14-57"><a href="#cb14-57" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x  <span class="co">## B x T_dec x embed_dim</span></span>
+<span id="cb14-58"><a href="#cb14-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-59"><a href="#cb14-59" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, src, tgt):</span>
+<span id="cb14-60"><a href="#cb14-60" aria-hidden="true" tabindex="-1"></a>        <span class="co">## src: B x T_enc  (source token IDs, e.g. English)</span></span>
+<span id="cb14-61"><a href="#cb14-61" aria-hidden="true" tabindex="-1"></a>        <span class="co">## tgt: B x T_dec  (target token IDs, e.g. German — teacher-forced during training)</span></span>
+<span id="cb14-62"><a href="#cb14-62" aria-hidden="true" tabindex="-1"></a>        encoder_output <span class="op">=</span> <span class="va">self</span>.encode(src)                    <span class="co">## B x T_enc x embed_dim</span></span>
+<span id="cb14-63"><a href="#cb14-63" aria-hidden="true" tabindex="-1"></a>        decoder_output <span class="op">=</span> <span class="va">self</span>.decode(tgt, encoder_output)    <span class="co">## B x T_dec x embed_dim</span></span>
+<span id="cb14-64"><a href="#cb14-64" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.lm_head(decoder_output)                  <span class="co">## B x T_dec x vocab_sz</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="encoder-decoder-architecture" class="level3">
@@ -1942,12 +1902,12 @@ The Core Architecture Is Stable
 
 
 <div class="hidden" aria-hidden="true">
-<span class="glightbox-desc lightbox-desc-1"><strong>Figure 1:</strong> The encoder-decoder Transformer (Vaswani et al., 2017) — the architecture we’ll build in this post. <strong>Left stack (Encoder):</strong> reads the full source sequence; every token attends to every other token with no masking. <strong>Right stack (Decoder):</strong> generates the target sequence one token at a time; each layer has three sublayers: ① masked self-attention (tokens attend only to past positions), ② <strong>cross-attention</strong> (Q from decoder, K and V from the encoder output — the arrow connecting the two stacks), and ③ a feed-forward network. <strong>“N×”</strong> means the layer block repeats N times (typically 6–12). <strong>Add &amp; Norm</strong> is a residual connection followed by LayerNorm. The <strong>Linear + Softmax</strong> at the top projects the decoder’s final representation to a probability distribution over the vocabulary. Every component labelled here has its own section below. (<a href="https://lilianweng.github.io/posts/2023-01-27-the-transformer-family-v2/">source</a>)</span>
+<span class="glightbox-desc lightbox-desc-1"><strong>Figure 1:</strong> The encoder-decoder Transformer (Vaswani et al., 2017) — the architecture we’ll build in this post. <strong>Left stack (Encoder):</strong> reads the full source sequence; every token attends to every other token with no masking. <strong>Right stack (Decoder):</strong> generates the target sequence one token at a time; each layer has three sublayers: ① masked self-attention (tokens attend only to past positions), ② <strong>cross-attention</strong> (Q from decoder, K and V from the encoder output — the arrow connecting the two stacks), and ③ a feed-forward network. <strong>“N×”</strong> means the layer block repeats N times (typically 6–12). <strong>Add &amp; Norm</strong> is a residual connection followed by LayerNorm. The <strong>Linear + Softmax</strong> at the top projects the decoder’s final representation to a probability distribution over the vocabulary. Every component labelled here has its own section below. (<a href="https://arxiv.org/abs/1706.03762">source</a>)</span>
 <span class="glightbox-desc lightbox-desc-2"><strong>Figure 2:</strong> Sinusoidal positional encoding. Each column is a unique fingerprint for one position. Low-frequency components (bottom rows) vary slowly — encoding coarse, sentence-level position. High-frequency components (top rows) vary quickly — encoding fine, word-level position. Together, every position from 0 to max_seq_len gets a unique vector.</span>
 <span class="glightbox-desc lightbox-desc-3"><strong>Figure 3:</strong> Attention weights for the [‘the’, ‘cat’, ‘sat’] example. Rows are query tokens; columns are keys. Each row is a probability distribution — how much each token attends to every other token.</span>
 <span class="glightbox-desc lightbox-desc-4"><strong>Figure 4:</strong> Causal mask for a 5-token sequence. Green cells (✓) are positions the query token is allowed to attend to; red cells (−∞) are masked out and become 0 after softmax. Each row is a query token; each column is a key token.</span>
-<span class="glightbox-desc lightbox-desc-5"><strong>Figure 5:</strong> Scaled Dot-Product Attention (<a href="https://ar5iv.labs.arxiv.org/html/1706.03762">source</a>)</span>
-<span class="glightbox-desc lightbox-desc-6"><strong>Figure 6:</strong> Multi-Head Attention with several attention layers running in parallel (<a href="https://ar5iv.labs.arxiv.org/html/1706.03762">source</a>)</span>
+<span class="glightbox-desc lightbox-desc-5"><strong>Figure 5:</strong> Scaled Dot-Product Attention (<a href="https://arxiv.org/abs/1706.03762">source</a>)</span>
+<span class="glightbox-desc lightbox-desc-6"><strong>Figure 6:</strong> Multi-Head Attention with several attention layers running in parallel (<a href="https://arxiv.org/abs/1706.03762">source</a>)</span>
 <span class="glightbox-desc lightbox-desc-7"><strong>Figure 8:</strong> Loss surfaces of ResNet-56 with/without skip connections (<a href="https://arxiv.labs.arxiv.org/html/1712.09913">source</a>)</span>
 <span class="glightbox-desc lightbox-desc-8"><strong>Figure 9:</strong> Left: standard neural net. Right: thinned net after applying dropout — crossed units are dropped. (<a href="https://www.cs.toronto.edu/~rsalakhu/papers/srivastava14a.pdf">source</a>)</span>
 </div>
@@ -2616,7 +2576,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"loop":false,"descPosition":"bottom","closeEffect":"zoom","selector":".lightbox","openEffect":"zoom"});
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","openEffect":"zoom","descPosition":"bottom","closeEffect":"zoom","loop":false});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;
