@@ -151,15 +151,48 @@ ga('send', {
 background-size: cover;
       }
 </style>
+<meta name="mermaid-theme" content="default">
+<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../assets/posts.css">
 <meta property="og:title" content="Imad Dabbura - Make ML Systems Ship Again">
-<meta property="og:description" content="Use the Theory of Constraints to replace incremental tweaks with step-function wins.">
+<meta property="og:description" content="A practitioner’s guide to finding and fixing the one bottleneck that governs your system’s performance.">
 <meta property="og:image" content="https://imaddabbura.github.io/posts/mlsys/images/network-anomaly-detection-toc.svg">
 <meta property="og:site_name" content="Imad Dabbura">
 <meta name="twitter:title" content="Imad Dabbura - Make ML Systems Ship Again">
-<meta name="twitter:description" content="Use the Theory of Constraints to replace incremental tweaks with step-function wins.">
+<meta name="twitter:description" content="A practitioner’s guide to finding and fixing the one bottleneck that governs your system’s performance.">
 <meta name="twitter:image" content="https://imaddabbura.github.io/posts/mlsys/images/network-anomaly-detection-toc.svg">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
@@ -210,6 +243,10 @@ background-size: cover;
     <a class="nav-link" href="../../projects-index.html"> 
 <span class="menu-text">Projects</span></a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../books-summaries.html"> 
+<span class="menu-text">Books’ Summaries</span></a>
+  </li>  
   <li class="nav-item dropdown ">
     <a class="nav-link dropdown-toggle" href="#" id="nav-menu-more" role="button" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">More</span>
@@ -220,20 +257,16 @@ background-size: cover;
  <span class="dropdown-text">Data Eng.</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../books-summaries.html">
- <span class="dropdown-text">Books’ Summaries</span></a>
-  </li>  
-        <li>
     <a class="dropdown-item" href="../../reading-list.html">
  <span class="dropdown-text">Reading List</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../resume.html">
- <span class="dropdown-text">Resume</span></a>
-  </li>  
-        <li>
     <a class="dropdown-item" href="../../misc-notes.html">
  <span class="dropdown-text">Misc. Notes</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../resume.html">
+ <span class="dropdown-text">Resume</span></a>
   </li>  
     </ul>
   </li>
@@ -262,7 +295,7 @@ background-size: cover;
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">Make ML Systems Ship Again</h1>
-            <p class="subtitle lead">Use the Theory of Constraints to replace incremental tweaks with step-function wins.</p>
+            <p class="subtitle lead">A practitioner’s guide to finding and fixing the one bottleneck that governs your system’s performance.</p>
                                 <div class="quarto-categories">
                 <div class="quarto-category">MLSys</div>
                 <div class="quarto-category">MLOps</div>
@@ -293,7 +326,7 @@ background-size: cover;
       <div>
       <div class="quarto-title-meta-heading">Modified</div>
       <div class="quarto-title-meta-contents">
-        <p class="date-modified">September 24, 2025</p>
+        <p class="date-modified">March 31, 2026</p>
       </div>
     </div>
       
@@ -308,57 +341,41 @@ background-size: cover;
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#introduction-why-theory-of-constraints-matters-for-machine-learning" id="toc-introduction-why-theory-of-constraints-matters-for-machine-learning" class="nav-link active" data-scroll-target="#introduction-why-theory-of-constraints-matters-for-machine-learning">Introduction: Why Theory of Constraints Matters for Machine Learning</a></li>
-  <li><a href="#the-five-stage-framework-overview" id="toc-the-five-stage-framework-overview" class="nav-link" data-scroll-target="#the-five-stage-framework-overview">The Five-Stage Framework Overview</a></li>
-  <li><a href="#stage-1-goal-and-constraint---finding-your-systems-true-bottleneck" id="toc-stage-1-goal-and-constraint---finding-your-systems-true-bottleneck" class="nav-link" data-scroll-target="#stage-1-goal-and-constraint---finding-your-systems-true-bottleneck">Stage 1: Goal and Constraint - Finding Your System’s True Bottleneck</a>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a>
   <ul class="collapse">
-  <li><a href="#defining-goals-through-service-level-objectives" id="toc-defining-goals-through-service-level-objectives" class="nav-link" data-scroll-target="#defining-goals-through-service-level-objectives">Defining Goals Through Service Level Objectives</a></li>
-  <li><a href="#identifying-the-constraint-building-your-constraint-ledger" id="toc-identifying-the-constraint-building-your-constraint-ledger" class="nav-link" data-scroll-target="#identifying-the-constraint-building-your-constraint-ledger">Identifying the Constraint: Building Your Constraint Ledger</a></li>
-  <li><a href="#validating-the-constraint-through-temporary-relief" id="toc-validating-the-constraint-through-temporary-relief" class="nav-link" data-scroll-target="#validating-the-constraint-through-temporary-relief">Validating the Constraint Through Temporary Relief</a></li>
-  <li><a href="#constraint-types-in-ml-systems" id="toc-constraint-types-in-ml-systems" class="nav-link" data-scroll-target="#constraint-types-in-ml-systems">Constraint Types in ML Systems</a></li>
+  <li><a href="#roadmap" id="toc-roadmap" class="nav-link" data-scroll-target="#roadmap">Roadmap</a></li>
   </ul></li>
-  <li><a href="#stage-2-from-constraint-to-problem---understanding-root-causes" id="toc-stage-2-from-constraint-to-problem---understanding-root-causes" class="nav-link" data-scroll-target="#stage-2-from-constraint-to-problem---understanding-root-causes">Stage 2: From Constraint to Problem - Understanding Root Causes</a>
+  <li><a href="#the-theory-of-constraints-in-5-minutes" id="toc-the-theory-of-constraints-in-5-minutes" class="nav-link" data-scroll-target="#the-theory-of-constraints-in-5-minutes">The Theory of Constraints in 5 Minutes</a></li>
+  <li><a href="#step-1-define-what-winning-looks-like" id="toc-step-1-define-what-winning-looks-like" class="nav-link" data-scroll-target="#step-1-define-what-winning-looks-like">Step 1: Define What Winning Looks Like</a></li>
+  <li><a href="#step-2-find-your-bottleneck" id="toc-step-2-find-your-bottleneck" class="nav-link" data-scroll-target="#step-2-find-your-bottleneck">Step 2: Find Your Bottleneck</a>
   <ul class="collapse">
-  <li><a href="#uncovering-the-real-problem" id="toc-uncovering-the-real-problem" class="nav-link" data-scroll-target="#uncovering-the-real-problem">Uncovering the Real Problem</a></li>
-  <li><a href="#applying-five-whys-to-surface-root-causes" id="toc-applying-five-whys-to-surface-root-causes" class="nav-link" data-scroll-target="#applying-five-whys-to-surface-root-causes">Applying Five Whys to Surface Root Causes</a></li>
-  <li><a href="#ml-specific-problem-patterns" id="toc-ml-specific-problem-patterns" class="nav-link" data-scroll-target="#ml-specific-problem-patterns">ML-Specific Problem Patterns</a></li>
+  <li><a href="#validate-before-you-invest" id="toc-validate-before-you-invest" class="nav-link" data-scroll-target="#validate-before-you-invest">Validate Before You Invest</a></li>
   </ul></li>
-  <li><a href="#stage-3-reframing-problems-as-conflicts" id="toc-stage-3-reframing-problems-as-conflicts" class="nav-link" data-scroll-target="#stage-3-reframing-problems-as-conflicts">Stage 3: Reframing Problems as Conflicts</a>
+  <li><a href="#step-3-understand-why-its-stuck" id="toc-step-3-understand-why-its-stuck" class="nav-link" data-scroll-target="#step-3-understand-why-its-stuck">Step 3: Understand Why It’s Stuck</a>
   <ul class="collapse">
-  <li><a href="#the-core-conflict-in-ml-systems" id="toc-the-core-conflict-in-ml-systems" class="nav-link" data-scroll-target="#the-core-conflict-in-ml-systems">The Core Conflict in ML Systems</a></li>
-  <li><a href="#understanding-why-this-conflict-persists" id="toc-understanding-why-this-conflict-persists" class="nav-link" data-scroll-target="#understanding-why-this-conflict-persists">Understanding Why This Conflict Persists</a></li>
-  <li><a href="#ml-systems-characteristic-conflicts" id="toc-ml-systems-characteristic-conflicts" class="nav-link" data-scroll-target="#ml-systems-characteristic-conflicts">ML Systems’ Characteristic Conflicts</a></li>
+  <li><a href="#five-whys-with-evidence" id="toc-five-whys-with-evidence" class="nav-link" data-scroll-target="#five-whys-with-evidence">Five Whys — With Evidence</a></li>
   </ul></li>
-  <li><a href="#stage-4-from-conflict-to-innovation---transcending-tradeoffs" id="toc-stage-4-from-conflict-to-innovation---transcending-tradeoffs" class="nav-link" data-scroll-target="#stage-4-from-conflict-to-innovation---transcending-tradeoffs">Stage 4: From Conflict to Innovation - Transcending Tradeoffs</a>
+  <li><a href="#step-4-see-the-hidden-tradeoff" id="toc-step-4-see-the-hidden-tradeoff" class="nav-link" data-scroll-target="#step-4-see-the-hidden-tradeoff">Step 4: See the Hidden Tradeoff</a>
   <ul class="collapse">
-  <li><a href="#innovation-criteria-for-ml-systems" id="toc-innovation-criteria-for-ml-systems" class="nav-link" data-scroll-target="#innovation-criteria-for-ml-systems">Innovation Criteria for ML Systems</a></li>
-  <li><a href="#the-progressive-analysis-innovation" id="toc-the-progressive-analysis-innovation" class="nav-link" data-scroll-target="#the-progressive-analysis-innovation">The Progressive Analysis Innovation</a></li>
-  <li><a href="#key-innovation-elements" id="toc-key-innovation-elements" class="nav-link" data-scroll-target="#key-innovation-elements">Key Innovation Elements</a></li>
-  <li><a href="#how-this-transcends-the-original-conflict" id="toc-how-this-transcends-the-original-conflict" class="nav-link" data-scroll-target="#how-this-transcends-the-original-conflict">How This Transcends the Original Conflict</a></li>
+  <li><a href="#why-teams-get-stuck" id="toc-why-teams-get-stuck" class="nav-link" data-scroll-target="#why-teams-get-stuck">Why Teams Get Stuck</a></li>
+  <li><a href="#map-your-conflict" id="toc-map-your-conflict" class="nav-link" data-scroll-target="#map-your-conflict">Map Your Conflict</a></li>
   </ul></li>
-  <li><a href="#stage-5-from-innovation-to-experiment---validating-solutions" id="toc-stage-5-from-innovation-to-experiment---validating-solutions" class="nav-link" data-scroll-target="#stage-5-from-innovation-to-experiment---validating-solutions">Stage 5: From Innovation to Experiment - Validating Solutions</a>
+  <li><a href="#step-5-break-the-tradeoff" id="toc-step-5-break-the-tradeoff" class="nav-link" data-scroll-target="#step-5-break-the-tradeoff">Step 5: Break the Tradeoff</a>
   <ul class="collapse">
-  <li><a href="#designing-the-minimum-viable-experiment-mve" id="toc-designing-the-minimum-viable-experiment-mve" class="nav-link" data-scroll-target="#designing-the-minimum-viable-experiment-mve">Designing the Minimum Viable Experiment (MVE)</a></li>
-  <li><a href="#implementation-and-testing" id="toc-implementation-and-testing" class="nav-link" data-scroll-target="#implementation-and-testing">Implementation and Testing</a></li>
-  <li><a href="#results-and-key-insights" id="toc-results-and-key-insights" class="nav-link" data-scroll-target="#results-and-key-insights">Results and Key Insights</a></li>
-  <li><a href="#iteration-based-on-findings" id="toc-iteration-based-on-findings" class="nav-link" data-scroll-target="#iteration-based-on-findings">Iteration Based on Findings</a></li>
-  <li><a href="#production-rollout-strategy" id="toc-production-rollout-strategy" class="nav-link" data-scroll-target="#production-rollout-strategy">Production Rollout Strategy</a></li>
+  <li><a href="#the-thinking-process" id="toc-the-thinking-process" class="nav-link" data-scroll-target="#the-thinking-process">The Thinking Process</a></li>
+  <li><a href="#a-worked-example-progressive-analysis" id="toc-a-worked-example-progressive-analysis" class="nav-link" data-scroll-target="#a-worked-example-progressive-analysis">A Worked Example: Progressive Analysis</a></li>
+  <li><a href="#fix-the-organization-too" id="toc-fix-the-organization-too" class="nav-link" data-scroll-target="#fix-the-organization-too">Fix the Organization Too</a></li>
   </ul></li>
-  <li><a href="#common-pitfalls-and-prevention-strategies" id="toc-common-pitfalls-and-prevention-strategies" class="nav-link" data-scroll-target="#common-pitfalls-and-prevention-strategies">Common Pitfalls and Prevention Strategies</a>
+  <li><a href="#step-6-prove-it-works" id="toc-step-6-prove-it-works" class="nav-link" data-scroll-target="#step-6-prove-it-works">Step 6: Prove It Works</a>
   <ul class="collapse">
-  <li><a href="#pitfall-1-premature-model-optimization" id="toc-pitfall-1-premature-model-optimization" class="nav-link" data-scroll-target="#pitfall-1-premature-model-optimization">Pitfall 1: Premature Model Optimization</a></li>
-  <li><a href="#pitfall-2-feature-creep-without-cost-analysis" id="toc-pitfall-2-feature-creep-without-cost-analysis" class="nav-link" data-scroll-target="#pitfall-2-feature-creep-without-cost-analysis">Pitfall 2: Feature Creep Without Cost Analysis</a></li>
-  <li><a href="#pitfall-3-alert-budget-myopia" id="toc-pitfall-3-alert-budget-myopia" class="nav-link" data-scroll-target="#pitfall-3-alert-budget-myopia">Pitfall 3: Alert Budget Myopia</a></li>
-  <li><a href="#pitfall-4-vanity-metrics-over-business-outcomes" id="toc-pitfall-4-vanity-metrics-over-business-outcomes" class="nav-link" data-scroll-target="#pitfall-4-vanity-metrics-over-business-outcomes">Pitfall 4: Vanity Metrics Over Business Outcomes</a></li>
+  <li><a href="#identify-the-riskiest-assumption" id="toc-identify-the-riskiest-assumption" class="nav-link" data-scroll-target="#identify-the-riskiest-assumption">Identify the Riskiest Assumption</a></li>
+  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">Results</a></li>
+  <li><a href="#what-the-iterations-taught-us" id="toc-what-the-iterations-taught-us" class="nav-link" data-scroll-target="#what-the-iterations-taught-us">What the Iterations Taught Us</a></li>
+  <li><a href="#production-rollout-checklist" id="toc-production-rollout-checklist" class="nav-link" data-scroll-target="#production-rollout-checklist">Production Rollout Checklist</a></li>
+  <li><a href="#gono-go-criteria" id="toc-gono-go-criteria" class="nav-link" data-scroll-target="#gono-go-criteria">Go/No-Go Criteria</a></li>
   </ul></li>
-  <li><a href="#applying-the-framework-complete-system-transformation" id="toc-applying-the-framework-complete-system-transformation" class="nav-link" data-scroll-target="#applying-the-framework-complete-system-transformation">Applying the Framework: Complete System Transformation</a>
-  <ul class="collapse">
-  <li><a href="#starting-point-a-system-in-crisis" id="toc-starting-point-a-system-in-crisis" class="nav-link" data-scroll-target="#starting-point-a-system-in-crisis">Starting Point: A System in Crisis</a></li>
-  <li><a href="#stage-by-stage-transformation" id="toc-stage-by-stage-transformation" class="nav-link" data-scroll-target="#stage-by-stage-transformation">Stage-by-Stage Transformation</a></li>
-  <li><a href="#the-transformed-system" id="toc-the-transformed-system" class="nav-link" data-scroll-target="#the-transformed-system">The Transformed System</a></li>
-  <li><a href="#beyond-the-initial-success" id="toc-beyond-the-initial-success" class="nav-link" data-scroll-target="#beyond-the-initial-success">Beyond the Initial Success</a></li>
-  </ul></li>
-  <li><a href="#conclusion-theory-of-constraints-as-your-ml-operating-system" id="toc-conclusion-theory-of-constraints-as-your-ml-operating-system" class="nav-link" data-scroll-target="#conclusion-theory-of-constraints-as-your-ml-operating-system">Conclusion: Theory of Constraints as Your ML Operating System</a></li>
+  <li><a href="#the-cycle-continues" id="toc-the-cycle-continues" class="nav-link" data-scroll-target="#the-cycle-continues">The Cycle Continues</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
@@ -370,549 +387,644 @@ background-size: cover;
 
 
 
-<section id="introduction-why-theory-of-constraints-matters-for-machine-learning" class="level2">
-<h2 class="anchored" data-anchor-id="introduction-why-theory-of-constraints-matters-for-machine-learning">Introduction: Why Theory of Constraints Matters for Machine Learning</h2>
-<p>You burn six months “optimizing.” Swap in transformers. Squeeze another +0.5% accuracy. Rewrite the feature pipeline. Add a shiny GPU cluster. And still: alert fatigue, missed incidents, and latency that kills real-time response.</p>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>You burn six months “optimizing.” Swap in transformers. Squeeze another +<span class="math inline">\(0.5\%\)</span> accuracy. Rewrite the feature pipeline. Add a shiny GPU cluster. And still: alert fatigue, missed incidents, and latency that kills real-time response.</p>
 <p>That’s optimization theater.</p>
-<p>The Theory of Constraints (ToC) cuts through the noise. Every system has a single, dominant bottleneck at any moment. Find it. Exploit it. Elevate it. Then repeat. For ML teams juggling models, features, infra, and data plumbing, this isn’t philosophy—it’s an operating system. Stop tuning everything. Start fixing the one thing that governs end-to-end throughput, quality, and cost.</p>
-<p>Take network anomaly detection at enterprise scale. Security wants higher recall on stealthy attacks. Ops wants fewer false alarms. Infra wants lower spend. The ML team tries to please everyone: new features, tighter thresholds, fancier models. Results? Nobody’s happy. Because the work targets components, not the constraint that sets the system’s performance ceiling—maybe label latency in feedback loops, maybe stream processing backpressure, maybe human triage capacity. This pattern repeats across fraud, recsys, and forecasting. Parts get optimized. Systems don’t.</p>
-<p><a href="images/ml-pipeline-weak-constraint.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="images/ml-pipeline-weak-constraint.svg" class="img-fluid"></a></p>
-<p>We’ll track a network anomaly detector as it moves through the five ToC stages. It watches enterprise traffic for everything from port scans to exfiltration—and wrestles with the usual security-ML pain: too many false positives, missed low-and-slow attacks, and compute that melts budgets. The domain is network security; the playbook is universal. If you run ML in production, the patterns—and the fixes—apply.</p>
+<p>This pattern shows up everywhere in production ML. Fraud teams add transaction features that never reduce false positives. Recommendation engines get fancier models that don’t move click-through rates. Forecasting pipelines gain complexity without improving planning accuracy. Parts get optimized. Systems don’t.</p>
+<p>This post gives you a systematic method to break out of the cycle. It’s based on the Theory of Constraints — originally developed for manufacturing, but a natural fit for ML systems. We’ll use a network anomaly detection system as our running example, but the playbook works for any ML system in production.</p>
+<section id="roadmap" class="level3">
+<h3 class="anchored" data-anchor-id="roadmap">Roadmap</h3>
+<table class="table">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 46%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Section</th>
+<th>What You’ll Learn / Do</th>
+<th>Why It Matters</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>The Theory of Constraints</strong></td>
+<td>The core idea and why single-bottleneck focus works</td>
+<td>Gives you the mental model that makes the steps principled, not arbitrary</td>
+</tr>
+<tr class="even">
+<td><strong>1. Define Winning</strong></td>
+<td>Set SLOs tied to business outcomes</td>
+<td>Stops vanity-metric chasing</td>
+</tr>
+<tr class="odd">
+<td><strong>2. Find the Bottleneck</strong></td>
+<td>Build a constraint ledger</td>
+<td>Focuses effort on the one thing that governs throughput</td>
+</tr>
+<tr class="even">
+<td><strong>3. Understand Why It’s Stuck</strong></td>
+<td>Root-cause analysis</td>
+<td>Prevents solving symptoms</td>
+</tr>
+<tr class="odd">
+<td><strong>4. See the Hidden Tradeoff</strong></td>
+<td>Map the conflict</td>
+<td>Reveals why simple fixes haven’t worked</td>
+</tr>
+<tr class="even">
+<td><strong>5. Break the Tradeoff</strong></td>
+<td>Challenge assumptions, then innovate</td>
+<td>Achieves step-function improvement</td>
+</tr>
+<tr class="odd">
+<td><strong>6. Prove It Works</strong></td>
+<td>Minimum Viable Experiment</td>
+<td>Validates before full investment</td>
+</tr>
+</tbody>
+</table>
 </section>
-<section id="the-five-stage-framework-overview" class="level2">
-<h2 class="anchored" data-anchor-id="the-five-stage-framework-overview">The Five-Stage Framework Overview</h2>
-<p>The Theory of Constraints framework for ML systems consists of five interconnected stages, each building upon insights from the previous stage. We’ll see how each stage applies to our network anomaly detection system, transforming it from a source of frustration to a strategic asset.</p>
-<p><a href="images/circular-flow-5-stages.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="images/circular-flow-5-stages.svg" class="img-fluid"></a></p>
-<p><strong>Stage 1: Goal and Constraint</strong> - We’ll establish Service Level Objectives (SLOs) for our anomaly detection system (not just “detect anomalies” but specific, measurable outcomes) and identify the primary bottleneck preventing success.</p>
-<p><strong>Stage 2: Constraint to Problem</strong> - We’ll dig deeper to understand why our detection system faces this constraint, moving beyond surface symptoms to root causes.</p>
-<p><strong>Stage 3: Problem as Conflict</strong> - We’ll reframe the problem as a fundamental conflict between competing approaches, understanding why simple solutions haven’t worked.</p>
-<p><strong>Stage 4: Conflict to Innovation</strong> - We’ll develop a breakthrough solution using progressive analysis that transcends traditional tradeoffs.</p>
-<p><strong>Stage 5: Innovation to Experiment</strong> - We’ll validate our solution through carefully designed experiments before full deployment.</p>
 </section>
-<section id="stage-1-goal-and-constraint---finding-your-systems-true-bottleneck" class="level2">
-<h2 class="anchored" data-anchor-id="stage-1-goal-and-constraint---finding-your-systems-true-bottleneck">Stage 1: Goal and Constraint - Finding Your System’s True Bottleneck</h2>
-<section id="defining-goals-through-service-level-objectives" class="level3">
-<h3 class="anchored" data-anchor-id="defining-goals-through-service-level-objectives">Defining Goals Through Service Level Objectives</h3>
-<p>Our enterprise network anomaly detection system was initially deployed with a vague goal: “detect malicious network activity.” This ambiguous objective led to unfocused development—the team added every possible feature, tried every new algorithm, yet stakeholders remained unsatisfied. Security incidents still occurred, the operations team was overwhelmed with alerts, and costs spiraled out of control.</p>
-<p>Through stakeholder analysis, we establish clear Service Level Objectives (SLOs):</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode md code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="an">Generic ML System SLO Template:</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>• Time-to-Decision (TTD): 95th percentile ≤ X seconds/minutes</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>• Decision Budget: ≤ N actionable outputs per day</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>• Outcome-Weighted Performance: ≥ Y%</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>• Coverage: ≥ Z% of relevant events processed</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>• Data Loss: ≤ ε% effective drop rate</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>Our NTA System SLOs (evaluated weekly):</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>• TTD (P1 incidents): 95th ≤ 5 minutes from event → alert</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>• Alert Budget: ≤ 10 analyst-actionable alerts/day</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>• Incident-Weighted Recall: ≥ 90%</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>• Flow Coverage: ≥ 95% of relevant events</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>• Data Loss: ≤ 1% effective drop</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>Measurement: synchronized clocks, shared tap, incident-level labels, </span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>deduped correlated alerts</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="the-theory-of-constraints-in-5-minutes" class="level2">
+<h2 class="anchored" data-anchor-id="the-theory-of-constraints-in-5-minutes">The Theory of Constraints in 5 Minutes</h2>
+<p>The traditional approach to improving ML systems is based on a seemingly logical but flawed assumption: if you improve each component, the whole system improves. It doesn’t. <em>The sum of all local improvements doesn’t give you a system improvement.</em></p>
+<p>The breakthrough insight, from Eli Goldratt’s <em>The Goal</em> (1984) and made operational by Alan Barnard’s pairing method, is simple: every system has exactly one constraint at any given moment — the single resource or stage you don’t have enough of. That constraint sets the ceiling for the entire system. Improving anything else delivers diminishing-to-zero returns.</p>
+<p>A factory line can only produce as fast as its slowest machine. If the paint booth takes 10 minutes per car while everything else takes 2 minutes, buying faster welding robots changes nothing. You have to speed up the paint booth — or the line will forever produce one car every 10 minutes.</p>
+<p>In a serial pipeline — which is what most ML systems are — this is even starker than it sounds. Throughput equals the throughput of the slowest stage. If your feature extraction handles 30K records/sec and everything else handles 100K, the system does 30K. Making inference 10x faster? Still 30K. Doubling ingest capacity? Still 30K. Only improving the bottleneck stage moves the number. Every other “optimization” is buying faster welding robots while the paint booth sets the pace.</p>
+<p><a href="images/amdahl-law-optimization.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="images/amdahl-law-optimization.svg" class="img-fluid"></a></p>
+<p>Barnard turns this into a strict chain of focused pairings. Each pairing links a WHAT (what you need) to a HOW (how to get it), maintaining a one-to-one relationship that keeps focus razor-sharp:</p>
+<ol type="1">
+<li><strong>Goal → Constraint</strong>: WHAT do I want? More of the Goal. HOW? By getting more of the Constraint — the single resource I don’t have enough of.</li>
+<li><strong>Constraint → Problem</strong>: WHAT limits the Constraint? The one Problem causing at least 50% of the gap.</li>
+<li><strong>Problem → Conflict</strong>: WHY hasn’t the Problem been solved? Because it’s an unresolved Conflict between two necessary-but-competing approaches.</li>
+<li><strong>Conflict → Innovation</strong>: HOW do I resolve it? With an Innovation that captures the Pros of <em>both</em> the current approach and the new idea. The aim is all the Pros — but some tradeoffs may remain. The key is they’re deliberate and tolerable, not the paralyzing either/or you started with.</li>
+<li><strong>Innovation → Experiment</strong>: HOW do I know it works? With a Minimally Viable Experiment — before building anything.</li>
+</ol>
+<p>The six how-to steps below translate these pairings into ML-systems language. Step 1 defines the Goal (SLOs). Step 2 finds the Constraint (bottleneck). Step 3 uncovers the Problem (root cause). Step 4 maps the Conflict (hidden tradeoff). Step 5 designs the Innovation. Step 6 runs the Experiment.</p>
+<p>So why does this matter for ML specifically? Because ML pipelines are textbook flow systems: ingest → features → inference → action. They have measurable stages with capacity limits. And they accumulate complexity over time — teams add features, models, and infrastructure without ever removing anything. This makes them natural candidates for constraint-based thinking. But ML teams rarely think this way, because they’re trained to optimize <em>models</em>, not <em>systems</em>.</p>
+<p><a href="images/ml-pipeline-weak-constraint.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="images/ml-pipeline-weak-constraint.svg" class="img-fluid"></a></p>
+</section>
+<section id="step-1-define-what-winning-looks-like" class="level2">
+<h2 class="anchored" data-anchor-id="step-1-define-what-winning-looks-like">Step 1: Define What Winning Looks Like</h2>
+<p>Before you can find the bottleneck, you need to define what success actually means — in numbers, not aspirations. “Detect anomalies,” “reduce fraud,” and “improve recommendations” aren’t goals. They’re wishes. Without measurable targets, every team member optimizes for a different thing, and you can’t tell whether you’re constrained by latency, precision, coverage, or something else entirely.</p>
+<p>The fix is Service Level Objectives — specific, measurable thresholds tied to business outcomes:</p>
+<table class="table">
+<colgroup>
+<col style="width: 34%">
+<col style="width: 43%">
+<col style="width: 21%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>SLO Dimension</th>
+<th>What It Measures</th>
+<th>Fill In</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Time-to-Decision (TTD)</strong></td>
+<td>How fast the system produces an actionable output</td>
+<td>p95 ≤ ___</td>
+</tr>
+<tr class="even">
+<td><strong>Decision Budget</strong></td>
+<td>How many outputs a human can realistically handle</td>
+<td>≤ ___ per day</td>
+</tr>
+<tr class="odd">
+<td><strong>Outcome-Weighted Performance</strong></td>
+<td>Accuracy weighted by business impact, not volume</td>
+<td>≥ ___%</td>
+</tr>
+<tr class="even">
+<td><strong>Coverage</strong></td>
+<td>Fraction of relevant events actually processed</td>
+<td>≥ ___%</td>
+</tr>
+<tr class="odd">
+<td><strong>Data Loss</strong></td>
+<td>Events dropped or degraded in transit</td>
+<td>≤ ___%</td>
+</tr>
+</tbody>
+</table>
+<p>These five dimensions force hard conversations. A model with 99% accuracy but 30-minute detection latency fails the TTD target. A model with perfect precision but 500 daily alerts fails the decision budget. The SLOs define the feasible region — and crucially, reveal <em>what’s blocking you</em> from reaching it.</p>
+<p>Here’s how our network anomaly detection system instantiated these:</p>
+<ul>
+<li><strong>TTD</strong>: p95 ≤ 5 minutes from event to alert</li>
+<li><strong>Alert Budget</strong>: ≤ 10 analyst-actionable alerts/day</li>
+<li><strong>Incident-Weighted Recall</strong>: ≥ 90%</li>
+</ul>
+<p>The same template applies to other domains. A fraud detection team might set TTD ≤ 200ms with ≤ 50 manual reviews/day. A recommendation system might target TTD ≤ 100ms with CTR-weighted precision ≥ X%.</p>
 <p><a href="images/slo-hierarchy.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="images/slo-hierarchy.svg" class="img-fluid"></a></p>
-<p>This specific goal immediately clarifies priorities. A model that detects 99% of anomalies but generates 500 alerts per day fails our goal. A model with perfect precision but 30-minute detection latency fails our goal. The SLOs define success and, crucially, reveal what constrains us from achieving them.</p>
+<p>When defining SLOs, involve the people who <em>use</em> the system’s outputs — not just the team that builds it. Security analysts, operations teams, business stakeholders. When they disagree (and they will — security wants recall, ops wants fewer alerts), the SLOs make the tradeoff explicit rather than hiding it inside model thresholds.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Pitfall: Vanity Metrics Over Business Outcomes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Teams optimize metrics that sound impressive but don’t connect to business value. “99.9% precision” means nothing if you’re missing 90% of incidents. “Processing 1M events/second” is irrelevant if decisions take 30 minutes. In our case, we celebrated achieving 99% detection rate on port scans — which the SOC ignored anyway — while missing lateral movement using legitimate credentials. Define SLOs tied to outcomes, not to model scorecards.</p>
+</div>
+</div>
+<p><strong>Key takeaway:</strong> SLOs don’t just measure success — they <em>reveal</em> what’s blocking it. If you can’t meet your TTD target, the bottleneck is somewhere in your latency path. If you can’t meet your alert budget, the bottleneck is in precision or triage capacity.</p>
 </section>
-<section id="identifying-the-constraint-building-your-constraint-ledger" class="level3">
-<h3 class="anchored" data-anchor-id="identifying-the-constraint-building-your-constraint-ledger">Identifying the Constraint: Building Your Constraint Ledger</h3>
-<p>With our SLOs defined, we systematically analyze our anomaly detection pipeline to identify the constraint. We measure capacity and utilization at each stage:</p>
+<section id="step-2-find-your-bottleneck" class="level2">
+<h2 class="anchored" data-anchor-id="step-2-find-your-bottleneck">Step 2: Find Your Bottleneck</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Mental Model
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Your ML pipeline is a series of stages, each with a capacity ceiling. The stage with the lowest effective capacity is your constraint — it sets the ceiling for the entire system. Everything upstream queues up; everything downstream sits idle. Barnard’s memorable shortcut: <em>“Check what you’re waiting for. Where’s the backlog?”</em></p>
+</div>
+</div>
+<p>With SLOs defined, you can systematically measure where the system breaks down. Build a <strong>constraint ledger</strong> — a table measuring capacity, utilization, latency, queue depth, and top failure mode at each pipeline stage:</p>
 <table class="table">
 <colgroup>
 <col style="width: 8%">
-<col style="width: 24%">
+<col style="width: 22%">
 <col style="width: 15%">
 <col style="width: 15%">
-<col style="width: 16%">
-<col style="width: 20%">
+<col style="width: 15%">
+<col style="width: 21%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Stage</th>
-<th>Capacity (records/s)</th>
-<th>Utilization</th>
-<th>p95 Latency</th>
-<th>Queue Length</th>
+<th style="text-align: right;">Capacity (rec/s)</th>
+<th style="text-align: right;">Utilization</th>
+<th style="text-align: right;">p95 Latency</th>
+<th style="text-align: right;">Queue Depth</th>
 <th>Top Failure Mode</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>Ingest</td>
-<td>100K</td>
-<td>60%</td>
-<td>2ms</td>
-<td>0</td>
+<td style="text-align: right;">100K</td>
+<td style="text-align: right;">60%</td>
+<td style="text-align: right;">2ms</td>
+<td style="text-align: right;">0</td>
 <td>burst loss</td>
 </tr>
 <tr class="even">
 <td>Feature-Tier1</td>
-<td>100K</td>
-<td>65%</td>
-<td>5ms</td>
-<td>0</td>
+<td style="text-align: right;">100K</td>
+<td style="text-align: right;">65%</td>
+<td style="text-align: right;">5ms</td>
+<td style="text-align: right;">0</td>
 <td>cache miss</td>
 </tr>
 <tr class="odd">
 <td><strong>Feature-Tier2</strong></td>
-<td><strong>30K</strong></td>
-<td><strong>95%</strong></td>
-<td><strong>50ms</strong></td>
-<td><strong>1.2K</strong></td>
+<td style="text-align: right;"><strong>30K</strong></td>
+<td style="text-align: right;"><strong>95%</strong></td>
+<td style="text-align: right;"><strong>50ms</strong></td>
+<td style="text-align: right;"><strong>1.2K</strong></td>
 <td><strong>window skew</strong></td>
 </tr>
 <tr class="even">
 <td>Feature-Tier3</td>
-<td>10K</td>
-<td>20%</td>
-<td>200ms</td>
-<td>0</td>
+<td style="text-align: right;">10K</td>
+<td style="text-align: right;">20%</td>
+<td style="text-align: right;">200ms</td>
+<td style="text-align: right;">0</td>
 <td>cold start</td>
 </tr>
 <tr class="odd">
 <td>Inference</td>
-<td>50K</td>
-<td>40%</td>
-<td>10ms</td>
-<td>0</td>
+<td style="text-align: right;">50K</td>
+<td style="text-align: right;">40%</td>
+<td style="text-align: right;">10ms</td>
+<td style="text-align: right;">0</td>
 <td>batch sizing</td>
 </tr>
 <tr class="even">
 <td>Alerting</td>
-<td>1K</td>
-<td>10%</td>
-<td>100ms</td>
-<td>0</td>
+<td style="text-align: right;">1K</td>
+<td style="text-align: right;">10%</td>
+<td style="text-align: right;">100ms</td>
+<td style="text-align: right;">0</td>
 <td>dedup thrash</td>
 </tr>
 </tbody>
 </table>
+<p>The diagnostic pattern is simple: <strong>high utilization + growing queue = bottleneck</strong>. Feature-Tier2 jumps out — 95% utilization with a queue of 1.2K while other stages sit at 10–65%. During peak periods, the system is forced to either sample traffic (missing attacks), queue records (violating TTD), or drop features (hurting accuracy). The model never sees complete feature representations because feature extraction can’t keep pace.</p>
+<p>Build this table for your own system. The constraint is almost always obvious once you measure.</p>
 <blockquote class="blockquote">
-<p><strong>Capacity Conversion</strong>: For those working in different domains:</p>
-<ul>
-<li>Network traffic: 10 Gbps ≈ 100K flows/sec (assuming ~10KB median flow)</li>
-<li>E-commerce: 1M daily orders ≈ 12 orders/sec average, 50/sec peak</li>
-<li>IoT sensors: 10K devices @ 1Hz ≈ 10K records/sec</li>
-</ul>
+<p><strong>Capacity conversion</strong>: 10 Gbps network traffic ≈ 100K flows/sec.&nbsp;1M daily e-commerce orders ≈ 12/sec average, 50/sec peak. 10K IoT sensors at 1Hz ≈ 10K records/sec.</p>
 </blockquote>
-<p>The constraint is Feature-Tier2 (moderate-cost feature extraction)—it’s at 95% utilization with a growing queue. During peak periods, we’re forced to either:</p>
-<ol type="1">
-<li>Sample traffic (missing potential attacks, violating coverage SLO)</li>
-<li>Queue records (increasing detection time beyond 5 minutes, violating TTD SLO)</li>
-<li>Drop features (reducing model accuracy, violating incident recall SLO)</li>
-</ol>
-<p>This explains why our detection system fails despite having a highly accurate model. The model never sees complete feature representations during peak times because Tier-2 feature extraction can’t keep pace. We’ve been optimizing model accuracy when the real constraint is feature computation throughput.</p>
-</section>
-<section id="validating-the-constraint-through-temporary-relief" class="level3">
-<h3 class="anchored" data-anchor-id="validating-the-constraint-through-temporary-relief">Validating the Constraint Through Temporary Relief</h3>
-<p>Before investing in solving Feature-Tier2 bottleneck, we validate it’s truly the constraint. We temporarily provision 3x more compute for Feature-Tier2, enabling processing of 90K records/sec.&nbsp;The results are dramatic:</p>
+<section id="validate-before-you-invest" class="level3">
+<h3 class="anchored" data-anchor-id="validate-before-you-invest">Validate Before You Invest</h3>
+<p>Before building anything, run a 24-hour experiment: temporarily throw 3x resources at your suspected bottleneck. If system-level metrics improve dramatically, you’ve found the right constraint. If not, look elsewhere. This experiment costs a day; building the wrong solution costs months.</p>
+<p>We provisioned 3x compute for Feature-Tier2, enabling 90K records/sec.&nbsp;The results were dramatic: detection time dropped, false positives decreased (the model makes better decisions with complete feature sets), and we nearly met our SLOs. No other improvement — not model accuracy, not infrastructure, not threshold tuning — would have achieved this.</p>
 <p><a href="images/before-after-dashboard.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="images/before-after-dashboard.svg" class="img-fluid"></a></p>
-<p>The validation confirms Feature-Tier2 as the primary constraint. With this bottleneck relieved, the system nearly meets our SLOs. Interestingly, false positives decreased—the model makes better decisions when it sees complete feature sets rather than sampled fragments. This demonstrates a crucial point: no other improvement—not model accuracy, not infrastructure, not threshold tuning—would have achieved this impact.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Pitfall: Premature Model Optimization
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Teams spend months improving model accuracy while system-level metrics stagnate. The pipeline logic explains why: if the constraint isn’t in the model, then making the model infinitely better has zero impact on system throughput. We spent three months experimenting with transformer architectures for 2% accuracy improvement — while 70% of traffic was never analyzed due to feature extraction bottlenecks. The transformer detected sophisticated attacks brilliantly, on the 30% of traffic it actually saw. Always validate the constraint before optimizing.</p>
+</div>
+</div>
+<p><strong>Key takeaway:</strong> The constraint is the only thing worth optimizing right now. Everything else is rearranging deck chairs.</p>
 </section>
-<section id="constraint-types-in-ml-systems" class="level3">
-<h3 class="anchored" data-anchor-id="constraint-types-in-ml-systems">Constraint Types in ML Systems</h3>
-<p>Our detection system faces different constraint types over its lifecycle:</p>
-<p><a href="images/constraints-types-matrix.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="images/constraints-types-matrix.svg" class="img-fluid"></a></p>
-<p>Currently, we face a <strong>Technical Process Constraint</strong>—the Tier-2 feature extraction algorithm is inefficient. But understanding the constraint type helps predict solution categories. Technical process constraints often yield to algorithmic improvements or architectural changes. Our feature extraction bottleneck likely requires both.</p>
 </section>
-</section>
-<section id="stage-2-from-constraint-to-problem---understanding-root-causes" class="level2">
-<h2 class="anchored" data-anchor-id="stage-2-from-constraint-to-problem---understanding-root-causes">Stage 2: From Constraint to Problem - Understanding Root Causes</h2>
-<section id="uncovering-the-real-problem" class="level3">
-<h3 class="anchored" data-anchor-id="uncovering-the-real-problem">Uncovering the Real Problem</h3>
-<p>Our constraint is clear: Feature-Tier2 can only process 30K records/second. But why? The surface answer—“the algorithm is slow”—doesn’t help. We need to understand the specific problem causing this slowness.</p>
-<p>Initial investigation reveals Feature-Tier2 performs complex aggregations on every record, computing 47 moderate-cost features including:</p>
-<ul>
-<li>Windowed statistics (counts, rates, unique values over 1min, 5min, 15min windows)</li>
-<li>Behavioral comparisons (deviation from hourly, daily baselines)</li>
-<li>Entity aggregations (per-source, per-destination, per-service rollups)</li>
-<li>Contextual lookups (reputation scores, geo-location, service profiles)</li>
-</ul>
+<section id="step-3-understand-why-its-stuck" class="level2">
+<h2 class="anchored" data-anchor-id="step-3-understand-why-its-stuck">Step 3: Understand Why It’s Stuck</h2>
+<p>You’ve found the bottleneck. Now resist the urge to fix the surface symptom. “Feature extraction is slow” is a temperature reading, not a diagnosis. You need the underlying cause — because the cause determines the cure.</p>
+<section id="five-whys-with-evidence" class="level3">
+<h3 class="anchored" data-anchor-id="five-whys-with-evidence">Five Whys — With Evidence</h3>
+<p>The Five Whys technique is simple: ask “why” repeatedly until you reach a root cause, but <em>validate each answer with evidence</em> before proceeding to the next. Unvalidated whys lead to plausible-sounding but wrong root causes.</p>
+<p><a href="images/five-whys.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="images/five-whys.svg" class="img-fluid"></a></p>
+<p>Here’s how this played out for our Feature-Tier2 bottleneck:</p>
+<ol type="1">
+<li><strong>Why</strong> is Feature-Tier2 at 95% utilization? → It computes 47 features per record. <em>(Validated: profiling shows 89% of computation in 12% of features)</em></li>
+<li><strong>Why</strong> so many features? → Designed for offline research with unlimited compute. <em>(Validated: 31 features contribute &lt;0.1% to decisions)</em></li>
+<li><strong>Why</strong> no production constraints in the design? → Development was disconnected from deployment. <em>(Validated: git history shows features added without removal)</em></li>
+<li><strong>Why</strong> disconnected? → ML team and platform team operate in silos. <em>(Validated: team interviews confirm no shared requirements)</em></li>
+<li><strong>Why</strong> silos? → No ownership of end-to-end system performance.</li>
+</ol>
+<p>Notice where we ended up: the root cause isn’t technical — it’s organizational.</p>
 <p><a href="images/iceberg-visible-constraint.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="images/iceberg-visible-constraint.svg" class="img-fluid"></a></p>
-<p>The real problem emerges: the feature extraction was designed for offline research with unlimited computation time. When deployed to production, the same comprehensive feature set that enabled high accuracy in research became a bottleneck at scale. The team kept adding features to improve accuracy metrics without considering extraction cost or production constraints.</p>
-</section>
-<section id="applying-five-whys-to-surface-root-causes" class="level3">
-<h3 class="anchored" data-anchor-id="applying-five-whys-to-surface-root-causes">Applying Five Whys to Surface Root Causes</h3>
-<p>We systematically analyze why Feature-Tier2 became the bottleneck:</p>
-<p><a href="images/five-whys.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="images/five-whys.svg" class="img-fluid"></a></p>
-<p>Each “why” is validated with evidence: - Performance profiling shows 89% of computation time spent on 12% of features - Feature importance analysis reveals 31 features contribute &lt;0.1% to decisions - Git history shows features added incrementally without removal (247 total → 47 in Tier2) - Team interviews reveal no awareness of production throughput requirements during development</p>
-<p>The root problem isn’t technical—it’s organizational. The ML team optimized for accuracy in isolation from production constraints. The platform team handled deployment without understanding model requirements. No one owned end-to-end system performance.</p>
-</section>
-<section id="ml-specific-problem-patterns" class="level3">
-<h3 class="anchored" data-anchor-id="ml-specific-problem-patterns">ML-Specific Problem Patterns</h3>
-<p>ML systems exhibit characteristic problems that create constraints. In our anomaly detection system:</p>
-<p><strong>Feature Explosion</strong>: Every record could generate hundreds of features. Teams extract every conceivable signal because “it might help,” leading to computational bottlenecks. Our system computes duration, counts, rates, averages, variances, percentiles, unique values—most providing redundant information.</p>
-<p><strong>Time Window Confusion</strong>: Different patterns appear at different timescales. Port scans manifest in seconds, data exfiltration over hours. Our system computes features at every timescale simultaneously, multiplying computational cost. A single network flow generates features for 1-second, 10-second, 1-minute, 10-minute, and 1-hour windows.</p>
-<p><a href="images/multiscale-timeline.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-8"><img src="images/multiscale-timeline.svg" class="img-fluid"></a></p>
-<p><strong>Baseline Computation Overhead</strong>: Anomaly detection often involves comparing current behavior to historical baselines. Our system maintains 30-day rolling baselines for thousands of entities. Updating these baselines consumes 40% of Tier-2 compute, yet most baselines change negligibly day-to-day.</p>
-<p>These patterns aren’t unique to network anomaly detection. Fraud detection systems face similar explosions with transaction features. Recommendation systems struggle with user-item interaction matrices. Forecasting systems wrestle with multiple seasonality computations.</p>
-</section>
-</section>
-<section id="stage-3-reframing-problems-as-conflicts" class="level2">
-<h2 class="anchored" data-anchor-id="stage-3-reframing-problems-as-conflicts">Stage 3: Reframing Problems as Conflicts</h2>
-<section id="the-core-conflict-in-ml-systems" class="level3">
-<h3 class="anchored" data-anchor-id="the-core-conflict-in-ml-systems">The Core Conflict in ML Systems</h3>
-<p>Our Feature-Tier2 problem isn’t just “slow feature computation”—it’s a fundamental conflict between two necessary approaches, each essential for different reasons:</p>
-<p><a href="images/feature-extraction-conflict.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-9"><img src="images/feature-extraction-conflict.svg" class="img-fluid"></a></p>
-<p>We’ve been stuck in this conflict for two years. When attacks slip through, we add features (moving left). When performance degrades, we remove features (moving right). The ML team pushes for accuracy while the platform team demands efficiency. Neither side is wrong—we need both capabilities.</p>
-</section>
-<section id="understanding-why-this-conflict-persists" class="level3">
-<h3 class="anchored" data-anchor-id="understanding-why-this-conflict-persists">Understanding Why This Conflict Persists</h3>
-<p>The conflict persists because our assumptions make it seem unresolvable. Let’s examine each assumption:</p>
-<p><strong>“All records need the same analysis depth”</strong> - We treat a routine DNS query the same as an unusual connection to a never-before-seen external IP. This assumption stems from not wanting to miss attacks, but it ignores that different traffic has different risk profiles.</p>
-<p><strong>“Features must be computed synchronously”</strong> - We extract all features in real-time before making any decision. This assumption comes from traditional streaming architecture, but not all features need immediate computation. Historical comparisons could be asynchronous.</p>
-<p><strong>“One model handles all decisions”</strong> - Our single model tries to detect everything from port scans to advanced persistent threats. This assumption simplifies deployment but forces feature extraction to support diverse detection needs simultaneously.</p>
-<p>These assumptions create a zero-sum game where any improvement in one dimension degrades another. The team’s frustration stems from optimizing within these constraints rather than challenging them.</p>
-</section>
-<section id="ml-systems-characteristic-conflicts" class="level3">
-<h3 class="anchored" data-anchor-id="ml-systems-characteristic-conflicts">ML Systems’ Characteristic Conflicts</h3>
-<p>Every ML system faces similar fundamental conflicts:</p>
-<p><strong>Accuracy vs Latency</strong>: Complex models achieve better accuracy but increase inference time. Simple models respond quickly but miss subtle patterns. This manifests in fraud detection (comprehensive analysis vs instant decisions), recommendations (deep personalization vs page load time), and forecasting (complex models vs planning deadlines).</p>
-<p><strong>Precision vs Coverage</strong>: High precision reduces false positives but misses edge cases. High coverage catches more events but overwhelms human review. With millions of events, even 99.9% precision means thousands of false alerts.</p>
-<p><strong>Real-time vs Historical Context</strong>: Real-time processing enables immediate response but lacks historical perspective. Batch analysis provides rich context but delays decisions. Many patterns require both immediate indicators and long-term trends.</p>
-<p><strong>Generic vs Specific Models</strong>: Generic models handle broad patterns but miss environment-specific signals. Specific models excel at known patterns but miss novel attacks. Every environment has unique “normal” behavior.</p>
-</section>
-</section>
-<section id="stage-4-from-conflict-to-innovation---transcending-tradeoffs" class="level2">
-<h2 class="anchored" data-anchor-id="stage-4-from-conflict-to-innovation---transcending-tradeoffs">Stage 4: From Conflict to Innovation - Transcending Tradeoffs</h2>
-<section id="innovation-criteria-for-ml-systems" class="level3">
-<h3 class="anchored" data-anchor-id="innovation-criteria-for-ml-systems">Innovation Criteria for ML Systems</h3>
-<p>Our innovation must achieve both rich feature analysis AND efficient processing without the drawbacks of either approach. This isn’t about finding a middle ground—it’s about transcending the tradeoff entirely.</p>
-<p>The innovation must be implementable with existing infrastructure and team capabilities. We can’t wait for quantum computers or hire 50 PhDs. The solution must work with commodity hardware, standard ML frameworks, and our current team’s skills.</p>
-</section>
-<section id="the-progressive-analysis-innovation" class="level3">
-<h3 class="anchored" data-anchor-id="the-progressive-analysis-innovation">The Progressive Analysis Innovation</h3>
-<p>Challenging our assumptions leads to a breakthrough: <strong>Progressive Analysis Architecture</strong>. Instead of analyzing all records uniformly, we process them in progressive stages, with each stage determining if deeper analysis is warranted.</p>
-<p><a href="images/progressive-analysis-architecture.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-10"><img src="images/progressive-analysis-architecture.svg" class="img-fluid"></a></p>
-<p><strong>Tier-1: Wire-speed Triage</strong> uses just 5 cheap features computable from basic record attributes (source, destination, port, protocol, size). A lightweight model identifies obviously benign traffic (regular HTTPS to known services, DNS queries to corporate servers). This processes at line rate with minimal compute.</p>
-<p><strong>Tier-2: Fast Analysis</strong> applies to traffic passing triage. Using 25 efficiently-computed features (connection patterns, volume metrics, simple statistics), it identifies additional normal traffic and flags potential concerns. This stage handles most legitimate but unusual traffic.</p>
-<p><strong>Tier-3: Deep Analysis</strong> examines suspicious traffic with 100 features including behavioral analysis and complex aggregations. This stage detects sophisticated attacks while maintaining manageable compute requirements by processing only 4% of traffic.</p>
-<p><strong>Forensic: Full Analysis</strong> performs exhaustive analysis on high-risk traffic, extracting all available features and correlating with historical patterns. This stage processes &lt;1% of traffic but provides comprehensive detection and rich context for analyst investigation.</p>
-</section>
-<section id="key-innovation-elements" class="level3">
-<h3 class="anchored" data-anchor-id="key-innovation-elements">Key Innovation Elements</h3>
-<p>The progressive architecture includes several crucial design elements:</p>
-<p><strong>Confidence-Based Routing</strong>: Each stage outputs not just a prediction but a confidence score. High-confidence benign traffic exits immediately. Low-confidence requires deeper analysis. This ensures we never miss attacks due to premature filtering while maintaining efficiency.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Routing Logic (simplified for clarity)</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> route_record(record, stage_results):</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    risk_score <span class="op">=</span> stage_results.risk</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    confidence <span class="op">=</span> stage_results.confidence</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> confidence <span class="op">&gt;</span> <span class="fl">0.95</span> <span class="kw">and</span> risk_score <span class="op">&lt;</span> <span class="fl">0.1</span>:</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"exit_benign"</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> confidence <span class="op">&gt;</span> <span class="fl">0.90</span> <span class="kw">and</span> risk_score <span class="op">&gt;</span> <span class="fl">0.9</span>:</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"alert_and_deep_analysis"</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> confidence <span class="op">&lt;</span> <span class="fl">0.50</span>:</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"next_stage_priority"</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"next_stage_normal"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><strong>Feature Caching and Reuse</strong>: Features computed in early stages are cached and reused in later stages. We never compute the same feature twice. Fast stages compute prerequisite features for deeper stages, amortizing extraction cost.</p>
-<p><a href="images/feature-dependency.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-11"><img src="images/feature-dependency.svg" class="img-fluid"></a></p>
-<p><strong>Backpressure-Aware Adaptation</strong>: When stages experience backlog, the system adapts:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> adaptive_routing(record, stage_backlogs):</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    calibrated_risk <span class="op">=</span> assess_risk(record)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> stage <span class="kw">in</span> [tier1, tier2, tier3]:</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> stage.backlog <span class="op">&gt;</span> HIGH_WATERMARK:</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Raise confidence threshold during congestion</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>            stage.confidence_threshold <span class="op">+=</span> <span class="fl">0.05</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> calibrated_risk <span class="op">&lt;</span> stage.risk_threshold:</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> defer_to_async(record)</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        result <span class="op">=</span> stage.process(record)</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> result.confidence <span class="op">&gt;</span> stage.confidence_threshold:</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> result</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># High risk always gets full analysis</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> forensic.process(record)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><strong>Asynchronous Enrichment</strong>: Initial alerts are generated quickly with basic information, then asynchronously enhanced with deeper analysis. Analysts see alerts immediately but gain additional context as forensic analysis completes.</p>
-<pre><code>Timeline of Alert Evolution:
-T+0s: Basic alert generated (IPs, port, initial risk score)
-T+1s: Connection context added (frequency, duration, volume)
-T+5s: Historical patterns added (baseline comparison, past incidents)
-T+30s: Full enrichment complete (detailed forensics, related events)</code></pre>
-</section>
-<section id="how-this-transcends-the-original-conflict" class="level3">
-<h3 class="anchored" data-anchor-id="how-this-transcends-the-original-conflict">How This Transcends the Original Conflict</h3>
-<p>Our progressive architecture achieves comprehensive detection—the deep analysis stages examine sophisticated attacks with full feature sets when needed. It simultaneously achieves efficient processing—most traffic is handled by lightweight stages. The innovation eliminates previous drawbacks:</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Common Root Causes in ML Systems — Check Which Applies
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <ul>
-<li><strong>No missed attacks</strong>: Suspicious traffic always reaches appropriate analysis depth</li>
-<li><strong>No overwhelming compute</strong>: Only traffic needing deep analysis receives it</li>
-<li><strong>Reduced false positives</strong>: Progressive confidence building improves precision</li>
-<li><strong>No blind spots</strong>: Every record is analyzed at an appropriate depth</li>
+<li><strong>Feature Explosion</strong>: Teams extract every conceivable signal because “it might help.” Features grow monotonically — each has an advocate, none has a removal date. Most provide redundant information.</li>
+<li><strong>Multi-granularity Overhead</strong>: Computing signals at every timescale (seconds, minutes, hours, days) when most decisions only need one. Common in anomaly detection, fraud, and demand forecasting.</li>
+<li><strong>Stale Reference Data</strong>: Maintaining expensive rolling statistics (baselines, embeddings, aggregates) for thousands of entities, even though most change negligibly between updates. The recomputation cost dwarfs the information gained.</li>
 </ul>
-<p>The pattern applies broadly to ML systems. Fraud detection can cheaply filter normal transactions before expensive analysis. Recommendation systems can use simple heuristics before deep personalization. Forecasting can identify stable series before complex modeling.</p>
+</div>
+</div>
+<p>If your Five Whys keep ending at technical causes, go one more level. The technical problem often has an organizational parent — siloed teams, misaligned incentives, no end-to-end ownership. These patterns aren’t unique to our system. Fraud detection, recommendations, and forecasting all exhibit the same failure modes.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Pitfall: Feature Creep Without Cost Analysis
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Feature counts grow monotonically because each has an advocate who remembers when it caught something. Our system grew from 50 to 247 features over two years. Analysis showed 180 contributed &lt;0.1% to decisions but consumed 60% of computation. Track a <strong>feature value score</strong> — importance divided by computational cost — and require cost-benefit analysis for new features.</p>
+</div>
+</div>
+<p><strong>Key takeaway:</strong> Root causes are usually organizational, not algorithmic. If you fix the technical symptom without fixing the organizational cause, the symptom will return.</p>
 </section>
 </section>
-<section id="stage-5-from-innovation-to-experiment---validating-solutions" class="level2">
-<h2 class="anchored" data-anchor-id="stage-5-from-innovation-to-experiment---validating-solutions">Stage 5: From Innovation to Experiment - Validating Solutions</h2>
-<section id="designing-the-minimum-viable-experiment-mve" class="level3">
-<h3 class="anchored" data-anchor-id="designing-the-minimum-viable-experiment-mve">Designing the Minimum Viable Experiment (MVE)</h3>
-<p>Before implementing progressive analysis across our entire system, we design a Minimum Viable Experiment to validate core assumptions. The experiment must test whether traffic can be accurately triaged and whether progressive analysis maintains detection quality while improving throughput.</p>
-<p><a href="images/experiment-design-pyramid.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-12"><img src="images/experiment-design-pyramid.svg" class="img-fluid"></a></p>
-<p>The MVE focuses on the riskiest assumption: that Tier-1 triage can accurately identify benign traffic without missing attacks. If this fails, the entire architecture fails. We’ll test with realistic data containing known attacks to ensure we don’t create security holes.</p>
+<section id="step-4-see-the-hidden-tradeoff" class="level2">
+<h2 class="anchored" data-anchor-id="step-4-see-the-hidden-tradeoff">Step 4: See the Hidden Tradeoff</h2>
+<p>You know the root cause. So why hasn’t anyone fixed it? Almost always, it’s because the problem is an unresolved conflict — and people are stuck choosing between two approaches that both seem necessary.</p>
+<p>Barnard puts it precisely: <em>any problem can be defined as an unresolved conflict.</em> In our case, the Feature-Tier2 bottleneck persists because of a fundamental tension:</p>
+<p><a href="images/feature-extraction-conflict.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="images/feature-extraction-conflict.svg" class="img-fluid"></a></p>
+<p>We need <strong>rich feature analysis</strong> for accurate detection of sophisticated attacks. We <em>also</em> need <strong>efficient processing</strong> for real-time response and cost control. These seem to contradict each other, so the team oscillates — add features after a missed attack, remove features after a performance degradation. Two years later, they’re exactly where they started.</p>
+<section id="why-teams-get-stuck" class="level3">
+<h3 class="anchored" data-anchor-id="why-teams-get-stuck">Why Teams Get Stuck</h3>
+<p>Barnard identifies two failure modes that keep teams trapped in these oscillations:</p>
+<ul>
+<li><strong>Getting stuck / procrastinating</strong>: Exaggerated fears — fear of losing what the current approach does well, or fear of the effort and risk required to change. (“If we remove features, we’ll miss attacks.”)</li>
+<li><strong>Overreacting / jumping to conclusions</strong>: Exaggerated frustration with the current approach’s downsides, or exaggerated expectations of a new solution. (“Let’s just throw out all the expensive features and rely on the model.”)</li>
+</ul>
+<p>Most ML teams alternate between these two modes without recognizing the pattern.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Pitfall: Alert Budget Myopia
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A textbook case of oscillation: facing missed incidents, teams lower thresholds (overreacting). This floods analysts with alerts, who start ignoring them, leading to <em>more</em> missed incidents — which triggers another round of threshold lowering. Little’s Law makes the math concrete: L = λW — if analysts can investigate 50 alerts/day and each takes 45 minutes, that’s the hard capacity ceiling. No threshold change can overcome it. This is the precision/coverage conflict manifesting as a vicious cycle.</p>
+</div>
+</div>
+<p><a href="images/alert-fatigue.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-8"><img src="images/alert-fatigue.svg" class="img-fluid"></a></p>
 </section>
-<section id="implementation-and-testing" class="level3">
-<h3 class="anchored" data-anchor-id="implementation-and-testing">Implementation and Testing</h3>
-<p>We implement a prototype progressive analysis system using standard ML tools and public datasets:</p>
-<p><strong>Week 1: Feature Engineering and Model Training</strong></p>
-<p>We start with the simplest possible Tier-1 model:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tier-1: Minimal features for maximum speed</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>tier1_features <span class="op">=</span> [</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'src_reputation_score'</span>,  <span class="co"># Pre-computed reputation</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'dst_port'</span>,              <span class="co"># Destination port number</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'protocol'</span>,              <span class="co"># TCP/UDP/ICMP</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'packet_rate'</span>,           <span class="co"># Packets per second</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'byte_rate'</span>              <span class="co"># Bytes per second</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Train lightweight model (logistic regression for speed)</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>tier1_model <span class="op">=</span> LogisticRegression(C<span class="op">=</span><span class="fl">1.0</span>)</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>tier1_model.fit(X_train[tier1_features], y_train_benign)</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Validation on test set with injected attacks</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> {</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">'triage_rate'</span>: <span class="fl">0.68</span>,        <span class="co"># 68% identified as benign</span></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">'false_negative_rate'</span>: <span class="dv">0</span>,    <span class="co"># No attacks missed</span></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">'latency_p95'</span>: <span class="dv">3</span>,            <span class="co"># 3ms per record</span></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">'throughput'</span>: <span class="dv">95000</span>          <span class="co"># Records per second</span></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><strong>Week 2: Pipeline Integration</strong></p>
-<p>We build the full progressive pipeline and test on recorded traffic with synthetic attack injection:</p>
-<p><a href="images/mve-experiment-timeline.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-13"><img src="images/mve-experiment-timeline.svg" class="img-fluid"></a></p>
-<p>Testing uses a combination of public datasets (UNSW-NB15, CIC-IDS2017) with known limitations, augmented with synthetic attacks to ensure coverage of sophisticated threats:</p>
+<section id="map-your-conflict" class="level3">
+<h3 class="anchored" data-anchor-id="map-your-conflict">Map Your Conflict</h3>
+<p>The breakthrough comes from asking: <em>what assumptions make this conflict seem unresolvable?</em> To find them, map the conflict explicitly:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode md code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>We need <span class="co">[</span><span class="ot">rich feature analysis</span><span class="co">]</span> to achieve <span class="co">[</span><span class="ot">accurate detection</span><span class="co">]</span>.</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>We need <span class="co">[</span><span class="ot">efficient processing</span><span class="co">]</span> to achieve <span class="co">[</span><span class="ot">real-time response</span><span class="co">]</span>.</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>These conflict because we assume:</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ss">  1. </span>All records need the same analysis depth</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ss">  2. </span>Features must be computed synchronously</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ss">  3. </span>One model handles all decisions</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>Challenge each:</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>Is assumption 1 always true? No — routine DNS queries</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    don't need the same scrutiny as connections to unknown IPs.</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>Is assumption 2 always true? No — historical comparisons</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    could be asynchronous.</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>Is assumption 3 always true? No — different attack types</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    could use specialized models.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This template works for any ML conflict. A fraud detection team might write: “We need comprehensive transaction analysis AND sub-200ms decisions. Hidden assumption: every transaction needs the same analysis depth.” A recommendation team: “We need deep personalization AND instant page load. Hidden assumption: personalization must happen at request time.”</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Common ML Conflicts
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Accuracy vs Latency</strong>: Complex models are more accurate but slower</li>
+<li><strong>Precision vs Coverage</strong>: Tight thresholds reduce false positives but miss edge cases</li>
+<li><strong>Real-time vs Historical Context</strong>: Immediate response vs rich contextual analysis</li>
+<li><strong>Generic vs Specific Models</strong>: Broad coverage vs environment-specific accuracy</li>
+</ul>
+</div>
+</div>
+<p><strong>Key takeaway:</strong> The tradeoff that’s blocking you is almost never fundamental. It persists because of hidden assumptions. Find the assumption. Challenge it. The conflict evaporates.</p>
+</section>
+</section>
+<section id="step-5-break-the-tradeoff" class="level2">
+<h2 class="anchored" data-anchor-id="step-5-break-the-tradeoff">Step 5: Break the Tradeoff</h2>
+<p>You’ve identified the assumptions propping up the conflict. Now comes the payoff: designing a solution that captures the Pros of both the current approach and the alternative.</p>
+<p>The goal is to get as many Pros from both sides as possible. Sometimes you genuinely get all of them. More often, some tradeoffs remain — added complexity, operational overhead, calibration effort. The difference from compromise is that these residual cons are <em>deliberate and manageable</em>, not the paralyzing either/or that kept the team stuck. You’re not splitting the difference. You’re changing the game so the remaining tradeoffs feel trivial compared to where you started.</p>
+<section id="the-thinking-process" class="level3">
+<h3 class="anchored" data-anchor-id="the-thinking-process">The Thinking Process</h3>
+<p>After mapping your conflict and challenging assumptions (Step 4), work through each challenged assumption systematically:</p>
+<ol type="1">
+<li><p><strong>Sketch the system without the assumption.</strong> If you challenged “all records need the same analysis depth,” draw the pipeline where they don’t. What would variable-depth processing look like? What decides the depth?</p></li>
+<li><p><strong>Look for the four reusable patterns.</strong> Most ML system innovations are combinations of these:</p>
+<ul>
+<li><strong>Cascade filtering</strong> — cheap check first, expensive check only when needed. Applicable whenever most inputs are routine. (Fraud: score transactions with simple rules before running the full model. Recs: serve cached recommendations before running personalization.)</li>
+<li><strong>Async enrichment</strong> — decide now, enrich later. Useful whenever decision speed and decision quality have different time horizons. (Generate an alert with basic info immediately; add forensic context over the next 30 seconds.)</li>
+<li><strong>Confidence-based routing</strong> — let the model decide how much compute each input deserves. Turns a fixed-cost pipeline into an adaptive one. (High-confidence benign traffic exits at Tier-1; uncertain traffic escalates.)</li>
+<li><strong>Feature caching</strong> — never compute the same thing twice across pipeline stages. Obvious but rarely implemented. (Features from early triage stages are reused in deep analysis — we achieved 84% cache hit rates.)</li>
+</ul></li>
+<li><p><strong>Check for async opportunities</strong> — what’s being computed <em>before</em> the decision that could move to <em>after</em>?</p></li>
+<li><p><strong>Check for caching opportunities</strong> — what’s being computed repeatedly across stages, records, or time windows?</p></li>
+</ol>
+</section>
+<section id="a-worked-example-progressive-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="a-worked-example-progressive-analysis">A Worked Example: Progressive Analysis</h3>
+<p>In our case, the most load-bearing assumption was: <em>“All records need the same analysis depth.”</em> Once you challenge it, the architecture follows from the patterns above — cascade filtering with confidence-based routing between tiers:</p>
 <table class="table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 22%">
+<col style="width: 15%">
+<col style="width: 28%">
+<col style="width: 20%">
+</colgroup>
 <thead>
 <tr class="header">
-<th>Dataset</th>
-<th>Purpose</th>
-<th>Records</th>
-<th>Attacks</th>
+<th>Tier</th>
+<th>Features</th>
+<th>Model</th>
+<th>Traffic Seen</th>
+<th>Latency</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>UNSW-NB15</td>
-<td>Baseline behavior</td>
-<td>2M</td>
-<td>321K</td>
+<td><strong>Tier-1</strong>: Wire-speed Triage</td>
+<td>5 cheap features</td>
+<td>Logistic regression</td>
+<td>100% (68% exits)</td>
+<td>~3ms</td>
 </tr>
 <tr class="even">
-<td>CIC-IDS2017</td>
-<td>Modern attacks</td>
-<td>3M</td>
-<td>558K</td>
+<td><strong>Tier-2</strong>: Fast Analysis</td>
+<td>25 features</td>
+<td>Moderate</td>
+<td>~32%</td>
+<td>~15ms</td>
 </tr>
 <tr class="odd">
-<td>Synthetic</td>
-<td>Targeted scenarios</td>
-<td>500K</td>
-<td>50K</td>
+<td><strong>Tier-3</strong>: Deep Analysis</td>
+<td>100 features</td>
+<td>Complex</td>
+<td>~4%</td>
+<td>~100ms</td>
 </tr>
 <tr class="even">
-<td>Production Sample</td>
-<td>Real patterns</td>
-<td>1M</td>
-<td>Unknown</td>
+<td><strong>Forensic</strong>: Full Analysis</td>
+<td>All features</td>
+<td>Exhaustive</td>
+<td>&lt;1%</td>
+<td>~500ms</td>
+</tr>
+</tbody>
+</table>
+<p><a href="images/progressive-analysis-architecture.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-9"><img src="images/progressive-analysis-architecture.svg" class="img-fluid"></a></p>
+<p>Each stage outputs a prediction <em>and</em> a confidence score. High-confidence benign traffic exits immediately. Low confidence escalates. When stages experience backlog, confidence thresholds adjust dynamically — low-risk records defer to async processing during congestion, ensuring high-risk traffic always gets full analysis. And alerts are generated immediately with basic info, then progressively enriched over 30 seconds with connection context, historical patterns, and full forensics.</p>
+<p><a href="images/feature-dependency.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-10"><img src="images/feature-dependency.svg" class="img-fluid"></a></p>
+</section>
+<section id="fix-the-organization-too" class="level3">
+<h3 class="anchored" data-anchor-id="fix-the-organization-too">Fix the Organization Too</h3>
+<p>Remember: Step 3 told us the root cause was organizational — siloed teams, no end-to-end ownership, features added without production constraints. The progressive architecture only sticks if the organizational structure changes with it. We restructured so ML and platform teams share SLOs, and adding features now requires cross-team cost-benefit approval. Without this, the feature explosion that caused the original bottleneck would have returned within a year.</p>
+<p><strong>Key takeaway:</strong> The innovation doesn’t have to be novel to the field. It has to be novel to <em>your</em> system. Progressive analysis is a known pattern — applying it to our specific bottleneck was the breakthrough. But the technical fix and the organizational fix are a package deal.</p>
+</section>
+</section>
+<section id="step-6-prove-it-works" class="level2">
+<h2 class="anchored" data-anchor-id="step-6-prove-it-works">Step 6: Prove It Works</h2>
+<p>You’ve designed a solution on paper. Before you spend three months building it, spend two weeks proving the riskiest assumption.</p>
+<p>An important distinction: a Minimally Viable Experiment (MVE) comes <em>before</em> a Minimally Viable Product (MVP). An MVP builds the smallest usable product. An MVE is smaller — it tests whether the core assumption behind the innovation is even valid. Don’t build anything until you’ve validated the assumption.</p>
+<section id="identify-the-riskiest-assumption" class="level3">
+<h3 class="anchored" data-anchor-id="identify-the-riskiest-assumption">Identify the Riskiest Assumption</h3>
+<p>Ask: <em>what’s the single assumption that, if wrong, kills the entire approach?</em> For our progressive architecture, it was: “Can Tier-1 triage accurately identify benign traffic without missing attacks?” If lightweight features can’t reliably separate benign from suspicious, the whole cascade fails.</p>
+<p>Design the smallest test that answers this question. We trained a logistic regression on 5 cheap features and tested on realistic data with known attacks:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>tier1_features <span class="op">=</span> [</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">'src_reputation_score'</span>,  <span class="co"># Pre-computed reputation</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'dst_port'</span>,              <span class="co"># Destination port number</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'protocol'</span>,              <span class="co"># TCP/UDP/ICMP</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'packet_rate'</span>,           <span class="co"># Packets per second</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'byte_rate'</span>              <span class="co"># Bytes per second</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>tier1_model <span class="op">=</span> LogisticRegression(C<span class="op">=</span><span class="fl">1.0</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>tier1_model.fit(X_train[tier1_features], y_train_benign)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><a href="images/mve-experiment-timeline.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-11"><img src="images/mve-experiment-timeline.svg" class="img-fluid"></a></p>
+</section>
+<section id="results" class="level3">
+<h3 class="anchored" data-anchor-id="results">Results</h3>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Metric</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Triage rate</td>
+<td>68% identified as benign at Tier-1</td>
+</tr>
+<tr class="even">
+<td>False negative rate</td>
+<td>0% — no attacks missed</td>
+</tr>
+<tr class="odd">
+<td>Throughput</td>
+<td>95K records/sec</td>
+</tr>
+<tr class="even">
+<td>p95 latency</td>
+<td>3ms per record</td>
+</tr>
+<tr class="odd">
+<td>Cache hit rate</td>
+<td>84% across stages</td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="results-and-key-insights" class="level3">
-<h3 class="anchored" data-anchor-id="results-and-key-insights">Results and Key Insights</h3>
-<p>The MVE reveals both successes and necessary adjustments:</p>
-<p><strong>Key Insights:</strong></p>
+<section id="what-the-iterations-taught-us" class="level3">
+<h3 class="anchored" data-anchor-id="what-the-iterations-taught-us">What the Iterations Taught Us</h3>
+<p>The MVE revealed things we couldn’t have predicted from design alone:</p>
 <ol type="1">
-<li><p><strong>Triage Effectiveness</strong>: The 5-feature triage successfully identifies benign traffic without missing attacks. Attack patterns consistently differ enough from normal traffic to trigger deeper analysis.</p></li>
-<li><p><strong>Staged Specialization</strong>: Each tier naturally specializes. Tier-1 excels at filtering normal traffic. Tier-2 catches volume-based attacks. Tier-3 detects sophisticated, low-signal attacks. The ensemble effect improves overall detection.</p></li>
-<li><p><strong>Cache Criticality</strong>: Feature caching between stages proved essential. Without caching, redundant computation would negate throughput gains. The 84% cache hit rate suggests further optimization potential.</p></li>
-<li><p><strong>Temporal Patterns</strong>: Traffic distribution varies predictably. Business hours see 75% triage rate (regular applications). Nights drop to 45% (unusual patterns), naturally adapting analysis depth to risk.</p></li>
+<li><p><strong>Confidence calibration</strong>: Initial triage was too conservative — 32% of traffic passed to Tier-2 unnecessarily. The model lacked confidence on legitimate-but-unusual ports. Retraining with expanded examples achieved a 71% triage rate without missing attacks.</p></li>
+<li><p><strong>Dynamic resource allocation</strong>: Fixed compute allocation caused bottlenecks when traffic patterns shifted. We implemented stages borrowing compute from idle stages, smoothing throughput across load profiles.</p></li>
+<li><p><strong>Feature pruning</strong>: 15 Tier-3 features never influenced decisions in production. Removing them increased throughput 30% without affecting detection. Track a feature value score — importance / computational_cost — and prune ruthlessly.</p></li>
 </ol>
 </section>
-<section id="iteration-based-on-findings" class="level3">
-<h3 class="anchored" data-anchor-id="iteration-based-on-findings">Iteration Based on Findings</h3>
-<p>The experiment reveals necessary adjustments before production deployment:</p>
-<p><strong>Iteration 1: Confidence Calibration</strong> Initial triage was too conservative, passing 32% of traffic unnecessarily. Analysis shows the model lacks confidence on legitimate but unusual ports. We retrain with expanded examples, achieving 71% triage rate without missing attacks.</p>
-<p><strong>Iteration 2: Dynamic Resource Allocation</strong> Fixed compute allocation causes bottlenecks when traffic patterns shift. We implement dynamic allocation—stages borrow compute from idle stages:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> dynamic_allocation(stages, current_loads):</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    total_capacity <span class="op">=</span> <span class="bu">sum</span>(s.capacity <span class="cf">for</span> s <span class="kw">in</span> stages)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> stage <span class="kw">in</span> stages:</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> stage.load <span class="op">&gt;</span> <span class="fl">0.8</span>:  <span class="co"># Stage under pressure</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Find donor stage with low load</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>            donor <span class="op">=</span> <span class="bu">min</span>(stages, key<span class="op">=</span><span class="kw">lambda</span> s: s.load)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> donor.load <span class="op">&lt;</span> <span class="fl">0.3</span>:</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Transfer capacity</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>                transfer <span class="op">=</span> <span class="bu">min</span>(donor.capacity <span class="op">*</span> <span class="fl">0.3</span>, </span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>                             stage.demand <span class="op">-</span> stage.capacity)</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>                stage.capacity <span class="op">+=</span> transfer</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>                donor.capacity <span class="op">-=</span> transfer</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><strong>Iteration 3: Feature Pruning</strong> Production-weighted feature importance shows 15 Tier-3 features never influence decisions. Removing them increases throughput 30% without affecting detection:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> prune_features(features, importance_scores, cost_scores):</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Value = importance / cost</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    feature_value <span class="op">=</span> importance_scores <span class="op">/</span> cost_scores</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Keep features that contribute 95% of total importance</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    sorted_features <span class="op">=</span> <span class="bu">sorted</span>(features, </span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>                           key<span class="op">=</span><span class="kw">lambda</span> f: feature_value[f], </span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>                           reverse<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    cumulative_importance <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    selected <span class="op">=</span> []</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> feature <span class="kw">in</span> sorted_features:</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> cumulative_importance <span class="op">&lt;</span> <span class="fl">0.95</span>:</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>            selected.append(feature)</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>            cumulative_importance <span class="op">+=</span> importance_scores[feature]</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> selected  <span class="co"># Typically 20-30% of original features</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="production-rollout-strategy" class="level3">
-<h3 class="anchored" data-anchor-id="production-rollout-strategy">Production Rollout Strategy</h3>
-<p>With MVE success and iterations complete, we plan production rollout:</p>
-<p><a href="images/production-rollout-plan.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-14"><img src="images/production-rollout-plan.svg" class="img-fluid"></a></p>
-<p><strong>Phase 1: Shadow Mode Validation</strong></p>
-<p>Run progressive pipeline parallel to existing system without taking actions. Compare decisions, measure divergence, validate no regressions. Success criteria: No P1 incidents missed for one week.</p>
-<p><strong>Phase 2: Canary Deployment</strong></p>
-<p>Route 10% of traffic through progressive pipeline. A/B test alert quality with analysts—do they prefer the new alerts? Monitor all SLOs closely. Success: SLOs maintained, analyst preference ≥ baseline.</p>
-<p><strong>Phase 3: Gradual Expansion</strong></p>
-<p>Increase traffic percentage: 10% → 25% → 50% → 75%, holding each level for 48 hours. Automated rollback triggers on any SLO violation. Success: All SLOs met at each level.</p>
-<p><strong>Phase 4: Full Production</strong></p>
-<p>Complete migration with old system as instant fallback. Document runbooks, establish monitoring, train operations team. Success: One week at 100% with all SLOs met.</p>
-</section>
-</section>
-<section id="common-pitfalls-and-prevention-strategies" class="level2">
-<h2 class="anchored" data-anchor-id="common-pitfalls-and-prevention-strategies">Common Pitfalls and Prevention Strategies</h2>
-<section id="pitfall-1-premature-model-optimization" class="level3">
-<h3 class="anchored" data-anchor-id="pitfall-1-premature-model-optimization">Pitfall 1: Premature Model Optimization</h3>
-<p>Teams spend months improving model accuracy while system-level metrics stagnate. You achieve 96% AUC on test sets while production catches only 60% of incidents because feature extraction can’t keep up.</p>
-<p><a href="images/amdahl-law-optimization.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-15"><img src="images/amdahl-law-optimization.svg" class="img-fluid"></a></p>
-<p><strong>In Our Case</strong>: We spent three months experimenting with transformer architectures for 2% accuracy improvement, while missing 70% of traffic due to feature extraction bottlenecks. The transformer detected sophisticated attacks brilliantly—on the 30% of traffic it actually analyzed.</p>
-<p><strong>Prevention</strong>:</p>
+<section id="production-rollout-checklist" class="level3">
+<h3 class="anchored" data-anchor-id="production-rollout-checklist">Production Rollout Checklist</h3>
 <ul>
-<li>Always validate the constraint before optimization</li>
-<li>Measure end-to-end metrics, not just component metrics</li>
-<li>Apply Amdahl’s Law: improving non-constraint components yields minimal gain</li>
-<li>Ask: “If this component was perfect, would we meet our SLOs?”</li>
+<li><strong>Shadow mode</strong>: Run progressive pipeline parallel to existing system. Compare decisions, measure divergence. Success: no P1 incidents missed for one week.</li>
+<li><strong>Canary (10%)</strong>: Route 10% of traffic through progressive pipeline. A/B test alert quality with analysts. Success: SLOs maintained, analyst preference ≥ baseline.</li>
+<li><strong>Gradual expansion</strong>: 10% → 25% → 50% → 75%, holding each level for 48 hours. Automated rollback on any SLO violation.</li>
+<li><strong>Full production</strong>: 100% with old system as instant fallback. Document runbooks, train operations team. Success: one week at 100% with all SLOs met.</li>
 </ul>
 </section>
-<section id="pitfall-2-feature-creep-without-cost-analysis" class="level3">
-<h3 class="anchored" data-anchor-id="pitfall-2-feature-creep-without-cost-analysis">Pitfall 2: Feature Creep Without Cost Analysis</h3>
-<p>Feature counts grow monotonically. Each new feature adds marginal model improvement but substantial computational cost. Soon you have hundreds of features where most contribute negligibly.</p>
-<p><strong>In Our Case</strong>: We grew from 50 to 247 features over two years. Analysis showed 180 features contributed &lt;0.1% to decisions but consumed 60% of computation. Feature removal was politically difficult—each had an advocate who remembered when it caught something.</p>
-<p><strong>Prevention</strong>:</p>
+<section id="gono-go-criteria" class="level3">
+<h3 class="anchored" data-anchor-id="gono-go-criteria">Go/No-Go Criteria</h3>
+<p>After the MVE, the decision is straightforward: does the riskiest assumption hold? If yes — the cascade correctly separates benign from suspicious — proceed to shadow mode. If the assumption fails, you haven’t wasted months; you’ve spent two weeks learning that you need a different innovation. Go back to Step 5 and challenge a different assumption.</p>
+<p><strong>Key takeaway:</strong> A two-week MVE teaches more than two years of production experience. Test your riskiest assumption first.</p>
+</section>
+</section>
+<section id="the-cycle-continues" class="level2">
+<h2 class="anchored" data-anchor-id="the-cycle-continues">The Cycle Continues</h2>
+<p>Here’s the part that surprises people: solving one constraint doesn’t fix the system forever. It reveals the <em>next</em> constraint. And that’s a feature, not a bug — because you always know exactly what to work on.</p>
+<p>With Feature-Tier2 no longer the bottleneck, a new one emerged in our system: alert investigation. SOC analysts averaged 45 minutes per Tier-3 alert. This limited how many sophisticated attacks could be properly investigated. Applying the framework again:</p>
 <ul>
-<li>Require cost-benefit analysis for new features</li>
-<li>Regular production-weighted importance analysis</li>
-<li>Implement progressive analysis where expensive features are conditional</li>
-<li>Track feature value score: importance / computational_cost</li>
+<li><strong>Goal → Constraint</strong>: Reduce investigation time to 15 minutes while maintaining decision quality</li>
+<li><strong>Constraint → Problem</strong>: Analysts manually correlate across multiple tools and data sources</li>
+<li><strong>Problem → Conflict</strong>: Automated enrichment vs human judgment</li>
+<li><strong>Conflict → Innovation</strong>: AI-assisted investigation that augments rather than replaces analysts</li>
+<li><strong>Innovation → Experiment</strong>: Test on historical alerts with analyst feedback</li>
 </ul>
+<p>Each cycle makes the system more capable. Here’s where our NTA system ended up after one full pass through the framework:</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Metric</th>
+<th>Before</th>
+<th>After</th>
+<th>Change</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Detection time (p95)</td>
+<td>47 min</td>
+<td>3.2 min</td>
+<td>15x faster</td>
+</tr>
+<tr class="even">
+<td>Daily analyst alerts</td>
+<td>847</td>
+<td>11</td>
+<td>98.7% reduction</td>
+</tr>
+<tr class="odd">
+<td>Incidents missed/month</td>
+<td>23</td>
+<td>0</td>
+<td>Eliminated</td>
+</tr>
+<tr class="even">
+<td>Traffic coverage</td>
+<td>30%</td>
+<td>98%</td>
+<td>Full visibility</td>
+</tr>
+<tr class="odd">
+<td>Feature-Tier2 utilization</td>
+<td>95%</td>
+<td>42%</td>
+<td>Headroom restored</td>
+</tr>
+</tbody>
+</table>
+<p>The constraint moved — from feature extraction to investigation to response automation — and each move represents the next opportunity for breakthrough improvement.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    A["&lt;b&gt;Define Goal&lt;/b&gt;&lt;br/&gt;Set SLOs"] --&gt; B["&lt;b&gt;Find Constraint&lt;/b&gt;&lt;br/&gt;Build ledger"]
+    B --&gt; C["&lt;b&gt;Understand Why&lt;/b&gt;&lt;br/&gt;Root cause"]
+    C --&gt; D["&lt;b&gt;Map Conflict&lt;/b&gt;&lt;br/&gt;Challenge assumptions"]
+    D --&gt; E["&lt;b&gt;Innovate&lt;/b&gt;&lt;br/&gt;Best of both sides"]
+    E --&gt; F["&lt;b&gt;Experiment&lt;/b&gt;&lt;br/&gt;MVE → rollout"]
+    F --&gt; |"Constraint moves"| A
+
+    style A fill:#e8f5e9,stroke:#333
+    style B fill:#e3f2fd,stroke:#333
+    style C fill:#fff3e0,stroke:#333
+    style D fill:#fce4ec,stroke:#333
+    style E fill:#f3e5f5,stroke:#333
+    style F fill:#e0f7fa,stroke:#333
+</pre>
+</div>
+<p></p><figcaption> The Theory of Constraints is a cycle, not a line</figcaption> </figure><p></p>
+</div>
+</div>
+</div>
+<p>The Theory of Constraints isn’t another optimization technique. It’s an operating system for continuous improvement. The constraint keeps moving, but so do you.</p>
 </section>
-<section id="pitfall-3-alert-budget-myopia" class="level3">
-<h3 class="anchored" data-anchor-id="pitfall-3-alert-budget-myopia">Pitfall 3: Alert Budget Myopia</h3>
-<p>Facing missed incidents, teams lower thresholds to catch more attacks. This creates unsustainable alert volumes, overwhelming analysts who then ignore alerts, leading to more missed incidents.</p>
-<p><a href="images/alert-fatigue.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-16"><img src="images/alert-fatigue.svg" class="img-fluid"></a></p>
-<p><strong>In Our Case</strong>: After missing an APT, we lowered thresholds and generated 200+ daily alerts. Analysts could investigate only 50, randomly sampling and missing real threats. The “solution” made the problem worse.</p>
-<p><strong>Prevention</strong>:</p>
-<ul>
-<li>Use Little’s Law to connect throughput and latency: L = λW</li>
-<li>Maintain sustainable alert volumes based on team capacity</li>
-<li>Weight alerts by incident impact, not just count</li>
-<li>Implement progressive analysis to build confidence before alerting</li>
-</ul>
-</section>
-<section id="pitfall-4-vanity-metrics-over-business-outcomes" class="level3">
-<h3 class="anchored" data-anchor-id="pitfall-4-vanity-metrics-over-business-outcomes">Pitfall 4: Vanity Metrics Over Business Outcomes</h3>
-<p>Teams optimize metrics that sound impressive but don’t connect to business value. “99.9% precision” means nothing if you’re missing 90% of incidents. “Processing 1M events/second” is irrelevant if decisions take 30 minutes.</p>
-<p><strong>In Our Case</strong>: We celebrated achieving 99% detection rate on port scans—which the SOC ignored anyway—while missing lateral movement using legitimate credentials. Our metrics looked great but failed to prevent actual breaches.</p>
-<p><strong>Prevention</strong>:</p>
-<ul>
-<li>Define SLOs tied to business outcomes</li>
-<li>Use outcome-weighted metrics (incident-weighted recall, not raw recall)</li>
-<li>Measure decision latency, not just throughput</li>
-<li>Track realized value, not potential performance</li>
-</ul>
-</section>
-</section>
-<section id="applying-the-framework-complete-system-transformation" class="level2">
-<h2 class="anchored" data-anchor-id="applying-the-framework-complete-system-transformation">Applying the Framework: Complete System Transformation</h2>
-<section id="starting-point-a-system-in-crisis" class="level3">
-<h3 class="anchored" data-anchor-id="starting-point-a-system-in-crisis">Starting Point: A System in Crisis</h3>
-<p>Six months ago, our network anomaly detection system was failing on all fronts. The security team reported missed breaches—attackers dwelt in the network for weeks undetected. The SOC was overwhelmed, investigating 89 false positives daily while real threats slipped through. Infrastructure costs ballooned as we threw hardware at the problem without improvement.</p>
-<p><a href="images/timeline-transformation-journey.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-17"><img src="images/timeline-transformation-journey.svg" class="img-fluid"></a></p>
-<p>The team was demoralized. ML engineers added features that didn’t help. Security analysts lost trust in alerts. Management questioned the entire investment. Traditional optimization—better models, more compute, refined thresholds—had been tried and failed.</p>
-</section>
-<section id="stage-by-stage-transformation" class="level3">
-<h3 class="anchored" data-anchor-id="stage-by-stage-transformation">Stage-by-Stage Transformation</h3>
-<p><strong>Stage 1 Discovery</strong>: By clearly defining SLOs (incident-weighted recall ≥90%, ≤10 alerts/day, p95 TTD ≤5 min) and building our constraint ledger, we identified Feature-Tier2 as the bottleneck. This focus immediately stopped wasteful efforts on model accuracy and infrastructure scaling.</p>
-<p><strong>Stage 2 Understanding</strong>: The Five Whys revealed the true problem: development disconnected from production constraints. The feature set optimized for research accuracy, not production throughput. This organizational insight shifted our approach from technical fixes to systemic changes.</p>
-<p><strong>Stage 3 Reframing</strong>: Mapping the conflict between rich and minimal features showed why two years of optimization failed. We were trapped choosing between accuracy and efficiency. Identifying hidden assumptions—uniform analysis, synchronous processing, monolithic model—opened solution paths.</p>
-<p><strong>Stage 4 Innovation</strong>: Progressive analysis transcended the conflict by applying different analysis depths to different traffic. This wasn’t compromise but transformation—achieving better detection AND efficiency by challenging the assumption that all records need identical processing.</p>
-<p><strong>Stage 5 Validation</strong>: The MVE proved progressive analysis viable while revealing necessary adjustments. Iteration refined the approach based on real-world behavior. Phased rollout managed risk while building confidence.</p>
-</section>
-<section id="the-transformed-system" class="level3">
-<h3 class="anchored" data-anchor-id="the-transformed-system">The Transformed System</h3>
-<p>Today, our network anomaly detection system is a strategic asset rather than a cost center:</p>
-<p><a href="images/before-after-dashboard-transformation.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-18"><img src="images/before-after-dashboard-transformation.svg" class="img-fluid"></a></p>
-<p>The technical improvements are impressive, but the organizational transformation is profound:</p>
-<ul>
-<li>ML and platform teams now collaborate from day one</li>
-<li>Production constraints are part of development requirements</li>
-<li>Feature additions require extraction cost analysis</li>
-<li>Success is measured by business outcomes, not technical metrics</li>
-</ul>
-</section>
-<section id="beyond-the-initial-success" class="level3">
-<h3 class="anchored" data-anchor-id="beyond-the-initial-success">Beyond the Initial Success</h3>
-<p>The framework creates a continuous improvement cycle. With Feature-Tier2 no longer the constraint, a new bottleneck emerges: alert investigation. SOC analysts take 45 minutes average to investigate Tier-3 alerts. This is now our constraint, limiting how many sophisticated attacks we can properly investigate.</p>
-<p>Applying the framework again:</p>
-<ul>
-<li><strong>Goal</strong>: Reduce investigation time to 15 minutes while maintaining decision quality</li>
-<li><strong>Constraint</strong>: Manual correlation across multiple tools and data sources</li>
-<li><strong>Problem</strong>: Analysts lack unified view of alert context</li>
-<li><strong>Conflict</strong>: Automated enrichment vs human judgment</li>
-<li><strong>Innovation</strong>: AI-assisted investigation that augments rather than replaces analysts</li>
-<li><strong>Experiment</strong>: Test on historical alerts with analyst feedback</li>
-</ul>
-<p>This cycle continues, each iteration improving the system. The constraint moves—from feature extraction to investigation to response automation—but always represents the next opportunity for breakthrough improvement.</p>
-</section>
-</section>
-<section id="conclusion-theory-of-constraints-as-your-ml-operating-system" class="level2">
-<h2 class="anchored" data-anchor-id="conclusion-theory-of-constraints-as-your-ml-operating-system">Conclusion: Theory of Constraints as Your ML Operating System</h2>
-<p>The Theory of Constraints transformed our network anomaly detection from a frustrating cost center to a strategic security asset. By focusing on the single most limiting factor—rather than trying to optimize everything—we achieved breakthrough improvements thought impossible.</p>
-<p><a href="images/evolution-of-ml-systems-with-constraints.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-19"><img src="images/evolution-of-ml-systems-with-constraints.svg" class="img-fluid"></a></p>
-<p>This journey revealed crucial insights for ML practitioners:</p>
-<p><strong>Focus beats breadth</strong>: Addressing the Feature-Tier2 throughput constraint achieved more than years of model improvements, infrastructure investments, and threshold tuning combined. One constraint, properly addressed, unlocked everything.</p>
-<p><strong>Conflicts hide innovations</strong>: The tradeoff between rich features and processing efficiency seemed fundamental until we challenged underlying assumptions. Progressive analysis transcended rather than compromised.</p>
-<p><strong>Experiments accelerate learning</strong>: Our two-week MVE taught us more than two years of production experience. Controlled experiments with clear success criteria cut through opinions with data.</p>
-<p><strong>Organizational constraints matter</strong>: Technical solutions fail when organizational problems persist. Our root cause—development disconnected from production—required process changes not algorithms.</p>
-<p>For ML teams facing similar challenges—whether in fraud detection, recommendations, forecasting, or any complex domain—the framework offers a systematic path through complexity. Instead of drowning in features, models, and metrics, focus on the one thing preventing success right now. Instead of accepting that performance requires unmanageable complexity, challenge the assumptions creating that tradeoff.</p>
-<p>The progressive analysis architecture we developed isn’t universally applicable—your constraint and solution will differ. But the process—Goal → Constraint → Problem → Conflict → Innovation → Experiment—provides a repeatable approach to finding your breakthrough.</p>
-<p>As our system continues evolving, new constraints emerge. Alert investigation efficiency is our current focus. After that, perhaps automated response, threat hunting capability, or predictive defense. Each constraint addressed reveals the next opportunity. This isn’t frustrating—it’s liberating. We always know exactly what to work on next.</p>
-<p>The Theory of Constraints isn’t just another optimization technique—it’s an operating system for continuous improvement in ML systems. Each cycle makes our system more capable, our team more effective, and our organization more resilient. The constraint will keep moving, but so will our performance, always upward, always improving, always focused on what matters most.</p>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Most ML teams are stuck in optimization theater — tuning components that don’t govern system performance. The Theory of Constraints gives you a way out: find the one bottleneck that sets the ceiling, understand why it’s stuck, and design an innovation that breaks the tradeoff instead of compromising on it.</p>
+<p>The method is six steps, but the discipline is one idea: <em>at any moment, only one thing limits your system.</em> Find it. Fix it. Then find the next one.</p>
+<p>If you take one thing from this post, make it this: before your next “optimization” sprint, build the constraint ledger. Measure every stage. Find the row with high utilization and a growing queue. That’s where your effort belongs — and nowhere else.</p>
 </section>
 <section id="references" class="level2">
 <h2 class="anchored" data-anchor-id="references">References</h2>
-<p><strong>Theory of Constraints &amp; ML Systems:</strong></p>
 <ul>
 <li>Goldratt, E. M. (1984). “The Goal: A Process of Ongoing Improvement.” North River Press.</li>
 <li>Sculley, D., et al.&nbsp;(2015). “Hidden Technical Debt in Machine Learning Systems.” NIPS 2015.</li>
 <li>Paleyes, A., et al.&nbsp;(2022). “Challenges in Deploying Machine Learning: A Survey of Case Studies.” ACM Computing Surveys.</li>
-</ul>
-<p><strong>Production ML Engineering:</strong></p>
-<ul>
 <li>Kleppmann, M. (2017). “Designing Data-Intensive Applications.” O’Reilly Media.</li>
 <li>Polyzotis, N., et al.&nbsp;(2018). “Data Lifecycle Challenges in Production Machine Learning.” SIGMOD Record.</li>
-</ul>
-<p><strong>Anomaly Detection &amp; Streaming:</strong></p>
-<ul>
 <li>Chandola, V., et al.&nbsp;(2009). “Anomaly Detection: A Survey.” ACM Computing Surveys.</li>
 <li>Ahmed, M., et al.&nbsp;(2016). “A Survey of Network Anomaly Detection Techniques.” Journal of Network and Computer Applications.</li>
 <li>Sommer, R., &amp; Paxson, V. (2010). “Outside the Closed World: On Using Machine Learning for Network Intrusion Detection.” IEEE S&amp;P.</li>
-<li>Cormode, G., &amp; Muthukrishnan, S. (2005). “An Improved Data Stream Summary: The Count-Min Sketch.” Journal of Algorithms.</li>
-</ul>
-<p><strong>Public Datasets:</strong></p>
-<ul>
-<li>UNSW-NB15, CIC-IDS2017/2018, CTU-13 (Note: Known biases; augment with synthetic attacks for production use)</li>
 </ul>
 
 
@@ -1581,7 +1693,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","openEffect":"zoom","descPosition":"bottom","loop":false,"selector":".lightbox"});
+<script>var lightboxQuarto = GLightbox({"descPosition":"bottom","selector":".lightbox","closeEffect":"zoom","loop":false,"openEffect":"zoom"});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;
