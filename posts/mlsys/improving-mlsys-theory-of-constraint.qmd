@@ -8,6 +8,8 @@ date-modified: "2026-03-31"
 categories: [MLSys, MLOps, Machine Learning, Data Science, Deep Learning]
 ---
 
+![](images/network-anomaly-detection-toc.jpg)
+
 ## Introduction
 
 You burn six months "optimizing." Swap in transformers. Squeeze another +$0.5\%$ accuracy. Rewrite the feature pipeline. Add a shiny GPU cluster. And still: alert fatigue, missed incidents, and latency that kills real-time response.
@@ -23,12 +25,11 @@ This post gives you a systematic method to break out of the cycle. It's based on
 | Section | What You'll Learn / Do | Why It Matters |
 |---------|----------------------|----------------|
 | **The Theory of Constraints** | The core idea and why single-bottleneck focus works | Gives you the mental model that makes the steps principled, not arbitrary |
-| **1. Define Winning** | Set SLOs tied to business outcomes | Stops vanity-metric chasing |
-| **2. Find the Bottleneck** | Build a constraint ledger | Focuses effort on the one thing that governs throughput |
-| **3. Understand Why It's Stuck** | Root-cause analysis | Prevents solving symptoms |
-| **4. See the Hidden Tradeoff** | Map the conflict | Reveals why simple fixes haven't worked |
-| **5. Break the Tradeoff** | Challenge assumptions, then innovate | Achieves step-function improvement |
-| **6. Prove It Works** | Minimum Viable Experiment | Validates before full investment |
+| **1. Goal & Constraint** | Set SLOs, then build a constraint ledger to find the bottleneck | Defines success and focuses effort on the one thing that governs throughput |
+| **2. Understand Why It's Stuck** | Root-cause analysis | Prevents solving symptoms |
+| **3. See the Hidden Tradeoff** | Map the conflict | Reveals why simple fixes haven't worked |
+| **4. Break the Tradeoff** | Challenge assumptions, then innovate | Achieves step-function improvement |
+| **5. Prove It Works** | Minimum Viable Experiment | Validates before full investment |
 
 ## The Theory of Constraints in 5 Minutes
 
@@ -50,15 +51,19 @@ Barnard turns this into a strict chain of focused pairings. Each pairing links a
 4. **Conflict → Innovation**: HOW do I resolve it? With an Innovation that captures the Pros of *both* the current approach and the new idea. The aim is all the Pros — but some tradeoffs may remain. The key is they're deliberate and tolerable, not the paralyzing either/or you started with.
 5. **Innovation → Experiment**: HOW do I know it works? With a Minimally Viable Experiment — before building anything.
 
-The six how-to steps below translate these pairings into ML-systems language. Step 1 defines the Goal (SLOs). Step 2 finds the Constraint (bottleneck). Step 3 uncovers the Problem (root cause). Step 4 maps the Conflict (hidden tradeoff). Step 5 designs the Innovation. Step 6 runs the Experiment.
+The five how-to steps below translate these pairings into ML-systems language. Step 1 defines the Goal (SLOs) and finds the Constraint (bottleneck). Step 2 uncovers the Problem (root cause). Step 3 maps the Conflict (hidden tradeoff). Step 4 designs the Innovation. Step 5 runs the Experiment.
 
 So why does this matter for ML specifically? Because ML pipelines are textbook flow systems: ingest → features → inference → action. They have measurable stages with capacity limits. And they accumulate complexity over time — teams add features, models, and infrastructure without ever removing anything. This makes them natural candidates for constraint-based thinking. But ML teams rarely think this way, because they're trained to optimize *models*, not *systems*.
 
 ![](images/ml-pipeline-weak-constraint.svg)
 
-## Step 1: Define What Winning Looks Like
+## Step 1: Define Your Goal and Find the Bottleneck
 
-Before you can find the bottleneck, you need to define what success actually means — in numbers, not aspirations. "Detect anomalies," "reduce fraud," and "improve recommendations" aren't goals. They're wishes. Without measurable targets, every team member optimizes for a different thing, and you can't tell whether you're constrained by latency, precision, coverage, or something else entirely.
+Before you can find the bottleneck, you need to define what success actually means — in numbers, not aspirations. And before you can fix the bottleneck, you need to know which stage is actually holding the system back. This step covers both.
+
+### Set Your SLOs
+
+"Detect anomalies," "reduce fraud," and "improve recommendations" aren't goals. They're wishes. Without measurable targets, every team member optimizes for a different thing, and you can't tell whether you're constrained by latency, precision, coverage, or something else entirely.
 
 The fix is Service Level Objectives — specific, measurable thresholds tied to business outcomes:
 
@@ -89,9 +94,9 @@ When defining SLOs, involve the people who *use* the system's outputs — not ju
 Teams optimize metrics that sound impressive but don't connect to business value. "99.9% precision" means nothing if you're missing 90% of incidents. "Processing 1M events/second" is irrelevant if decisions take 30 minutes. In our case, we celebrated achieving 99% detection rate on port scans — which the SOC ignored anyway — while missing lateral movement using legitimate credentials. Define SLOs tied to outcomes, not to model scorecards.
 :::
 
-**Key takeaway:** SLOs don't just measure success — they *reveal* what's blocking it. If you can't meet your TTD target, the bottleneck is somewhere in your latency path. If you can't meet your alert budget, the bottleneck is in precision or triage capacity.
+SLOs don't just measure success — they *reveal* what's blocking it. If you can't meet your TTD target, the bottleneck is somewhere in your latency path. If you can't meet your alert budget, the bottleneck is in precision or triage capacity. Now let's find exactly where.
 
-## Step 2: Find Your Bottleneck
+### Find the Bottleneck
 
 ::: {.callout-tip}
 ## Mental Model
@@ -130,7 +135,7 @@ Teams spend months improving model accuracy while system-level metrics stagnate.
 
 **Key takeaway:** The constraint is the only thing worth optimizing right now. Everything else is rearranging deck chairs.
 
-## Step 3: Understand Why It's Stuck
+## Step 2: Understand Why It's Stuck
 
 You've found the bottleneck. Now resist the urge to fix the surface symptom. "Feature extraction is slow" is a temperature reading, not a diagnosis. You need the underlying cause — because the cause determines the cure.
 
@@ -168,7 +173,7 @@ Feature counts grow monotonically because each has an advocate who remembers whe
 
 **Key takeaway:** Root causes are usually organizational, not algorithmic. If you fix the technical symptom without fixing the organizational cause, the symptom will return.
 
-## Step 4: See the Hidden Tradeoff
+## Step 3: See the Hidden Tradeoff
 
 You know the root cause. So why hasn't anyone fixed it? Almost always, it's because the problem is an unresolved conflict — and people are stuck choosing between two approaches that both seem necessary.
 
@@ -227,7 +232,7 @@ This template works for any ML conflict. A fraud detection team might write: "We
 
 **Key takeaway:** The tradeoff that's blocking you is almost never fundamental. It persists because of hidden assumptions. Find the assumption. Challenge it. The conflict evaporates.
 
-## Step 5: Break the Tradeoff
+## Step 4: Break the Tradeoff
 
 You've identified the assumptions propping up the conflict. Now comes the payoff: designing a solution that captures the Pros of both the current approach and the alternative.
 
@@ -235,7 +240,7 @@ The goal is to get as many Pros from both sides as possible. Sometimes you genui
 
 ### The Thinking Process
 
-After mapping your conflict and challenging assumptions (Step 4), work through each challenged assumption systematically:
+After mapping your conflict and challenging assumptions (Step 3), work through each challenged assumption systematically:
 
 1. **Sketch the system without the assumption.** If you challenged "all records need the same analysis depth," draw the pipeline where they don't. What would variable-depth processing look like? What decides the depth?
 
@@ -269,11 +274,11 @@ Each stage outputs a prediction *and* a confidence score. High-confidence benign
 
 ### Fix the Organization Too
 
-Remember: Step 3 told us the root cause was organizational — siloed teams, no end-to-end ownership, features added without production constraints. The progressive architecture only sticks if the organizational structure changes with it. We restructured so ML and platform teams share SLOs, and adding features now requires cross-team cost-benefit approval. Without this, the feature explosion that caused the original bottleneck would have returned within a year.
+Remember: Step 2 told us the root cause was organizational — siloed teams, no end-to-end ownership, features added without production constraints. The progressive architecture only sticks if the organizational structure changes with it. We restructured so ML and platform teams share SLOs, and adding features now requires cross-team cost-benefit approval. Without this, the feature explosion that caused the original bottleneck would have returned within a year.
 
 **Key takeaway:** The innovation doesn't have to be novel to the field. It has to be novel to *your* system. Progressive analysis is a known pattern — applying it to our specific bottleneck was the breakthrough. But the technical fix and the organizational fix are a package deal.
 
-## Step 6: Prove It Works
+## Step 5: Prove It Works
 
 You've designed a solution on paper. Before you spend three months building it, spend two weeks proving the riskiest assumption.
 
@@ -329,7 +334,7 @@ The MVE revealed things we couldn't have predicted from design alone:
 
 ### Go/No-Go Criteria
 
-After the MVE, the decision is straightforward: does the riskiest assumption hold? If yes — the cascade correctly separates benign from suspicious — proceed to shadow mode. If the assumption fails, you haven't wasted months; you've spent two weeks learning that you need a different innovation. Go back to Step 5 and challenge a different assumption.
+After the MVE, the decision is straightforward: does the riskiest assumption hold? If yes — the cascade correctly separates benign from suspicious — proceed to shadow mode. If the assumption fails, you haven't wasted months; you've spent two weeks learning that you need a different innovation. Go back to Step 4 and challenge a different assumption.
 
 **Key takeaway:** A two-week MVE teaches more than two years of production experience. Test your riskiest assumption first.
 
@@ -360,19 +365,17 @@ The constraint moved — from feature extraction to investigation to response au
 ```{mermaid}
 %%| fig-cap: "The Theory of Constraints is a cycle, not a line"
 flowchart LR
-    A["<b>Define Goal</b><br/>Set SLOs"] --> B["<b>Find Constraint</b><br/>Build ledger"]
-    B --> C["<b>Understand Why</b><br/>Root cause"]
-    C --> D["<b>Map Conflict</b><br/>Challenge assumptions"]
-    D --> E["<b>Innovate</b><br/>Best of both sides"]
-    E --> F["<b>Experiment</b><br/>MVE → rollout"]
-    F --> |"Constraint moves"| A
+    A["<b>Goal & Constraint</b><br/>SLOs + ledger"] --> B["<b>Understand Why</b><br/>Root cause"]
+    B --> C["<b>Map Conflict</b><br/>Challenge assumptions"]
+    C --> D["<b>Innovate</b><br/>Best of both sides"]
+    D --> E["<b>Experiment</b><br/>MVE → rollout"]
+    E --> |"Constraint moves"| A
 
     style A fill:#e8f5e9,stroke:#333
     style B fill:#e3f2fd,stroke:#333
     style C fill:#fff3e0,stroke:#333
     style D fill:#fce4ec,stroke:#333
     style E fill:#f3e5f5,stroke:#333
-    style F fill:#e0f7fa,stroke:#333
 ```
 
 The Theory of Constraints isn't another optimization technique. It's an operating system for continuous improvement. The constraint keeps moving, but so do you.
@@ -381,7 +384,7 @@ The Theory of Constraints isn't another optimization technique. It's an operatin
 
 Most ML teams are stuck in optimization theater — tuning components that don't govern system performance. The Theory of Constraints gives you a way out: find the one bottleneck that sets the ceiling, understand why it's stuck, and design an innovation that breaks the tradeoff instead of compromising on it.
 
-The method is six steps, but the discipline is one idea: *at any moment, only one thing limits your system.* Find it. Fix it. Then find the next one.
+The method is five steps, but the discipline is one idea: *at any moment, only one thing limits your system.* Find it. Fix it. Then find the next one.
 
 If you take one thing from this post, make it this: before your next "optimization" sprint, build the constraint ledger. Measure every stage. Find the row with high utilization and a growing queue. That's where your effort belongs — and nowhere else.
 

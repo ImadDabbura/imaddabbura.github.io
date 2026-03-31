@@ -346,27 +346,28 @@ window.Quarto = {
   <li><a href="#roadmap" id="toc-roadmap" class="nav-link" data-scroll-target="#roadmap">Roadmap</a></li>
   </ul></li>
   <li><a href="#the-theory-of-constraints-in-5-minutes" id="toc-the-theory-of-constraints-in-5-minutes" class="nav-link" data-scroll-target="#the-theory-of-constraints-in-5-minutes">The Theory of Constraints in 5 Minutes</a></li>
-  <li><a href="#step-1-define-what-winning-looks-like" id="toc-step-1-define-what-winning-looks-like" class="nav-link" data-scroll-target="#step-1-define-what-winning-looks-like">Step 1: Define What Winning Looks Like</a></li>
-  <li><a href="#step-2-find-your-bottleneck" id="toc-step-2-find-your-bottleneck" class="nav-link" data-scroll-target="#step-2-find-your-bottleneck">Step 2: Find Your Bottleneck</a>
+  <li><a href="#step-1-define-your-goal-and-find-the-bottleneck" id="toc-step-1-define-your-goal-and-find-the-bottleneck" class="nav-link" data-scroll-target="#step-1-define-your-goal-and-find-the-bottleneck">Step 1: Define Your Goal and Find the Bottleneck</a>
   <ul class="collapse">
+  <li><a href="#set-your-slos" id="toc-set-your-slos" class="nav-link" data-scroll-target="#set-your-slos">Set Your SLOs</a></li>
+  <li><a href="#find-the-bottleneck" id="toc-find-the-bottleneck" class="nav-link" data-scroll-target="#find-the-bottleneck">Find the Bottleneck</a></li>
   <li><a href="#validate-before-you-invest" id="toc-validate-before-you-invest" class="nav-link" data-scroll-target="#validate-before-you-invest">Validate Before You Invest</a></li>
   </ul></li>
-  <li><a href="#step-3-understand-why-its-stuck" id="toc-step-3-understand-why-its-stuck" class="nav-link" data-scroll-target="#step-3-understand-why-its-stuck">Step 3: Understand Why It’s Stuck</a>
+  <li><a href="#step-2-understand-why-its-stuck" id="toc-step-2-understand-why-its-stuck" class="nav-link" data-scroll-target="#step-2-understand-why-its-stuck">Step 2: Understand Why It’s Stuck</a>
   <ul class="collapse">
   <li><a href="#five-whys-with-evidence" id="toc-five-whys-with-evidence" class="nav-link" data-scroll-target="#five-whys-with-evidence">Five Whys — With Evidence</a></li>
   </ul></li>
-  <li><a href="#step-4-see-the-hidden-tradeoff" id="toc-step-4-see-the-hidden-tradeoff" class="nav-link" data-scroll-target="#step-4-see-the-hidden-tradeoff">Step 4: See the Hidden Tradeoff</a>
+  <li><a href="#step-3-see-the-hidden-tradeoff" id="toc-step-3-see-the-hidden-tradeoff" class="nav-link" data-scroll-target="#step-3-see-the-hidden-tradeoff">Step 3: See the Hidden Tradeoff</a>
   <ul class="collapse">
   <li><a href="#why-teams-get-stuck" id="toc-why-teams-get-stuck" class="nav-link" data-scroll-target="#why-teams-get-stuck">Why Teams Get Stuck</a></li>
   <li><a href="#map-your-conflict" id="toc-map-your-conflict" class="nav-link" data-scroll-target="#map-your-conflict">Map Your Conflict</a></li>
   </ul></li>
-  <li><a href="#step-5-break-the-tradeoff" id="toc-step-5-break-the-tradeoff" class="nav-link" data-scroll-target="#step-5-break-the-tradeoff">Step 5: Break the Tradeoff</a>
+  <li><a href="#step-4-break-the-tradeoff" id="toc-step-4-break-the-tradeoff" class="nav-link" data-scroll-target="#step-4-break-the-tradeoff">Step 4: Break the Tradeoff</a>
   <ul class="collapse">
   <li><a href="#the-thinking-process" id="toc-the-thinking-process" class="nav-link" data-scroll-target="#the-thinking-process">The Thinking Process</a></li>
   <li><a href="#a-worked-example-progressive-analysis" id="toc-a-worked-example-progressive-analysis" class="nav-link" data-scroll-target="#a-worked-example-progressive-analysis">A Worked Example: Progressive Analysis</a></li>
   <li><a href="#fix-the-organization-too" id="toc-fix-the-organization-too" class="nav-link" data-scroll-target="#fix-the-organization-too">Fix the Organization Too</a></li>
   </ul></li>
-  <li><a href="#step-6-prove-it-works" id="toc-step-6-prove-it-works" class="nav-link" data-scroll-target="#step-6-prove-it-works">Step 6: Prove It Works</a>
+  <li><a href="#step-5-prove-it-works" id="toc-step-5-prove-it-works" class="nav-link" data-scroll-target="#step-5-prove-it-works">Step 5: Prove It Works</a>
   <ul class="collapse">
   <li><a href="#identify-the-riskiest-assumption" id="toc-identify-the-riskiest-assumption" class="nav-link" data-scroll-target="#identify-the-riskiest-assumption">Identify the Riskiest Assumption</a></li>
   <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">Results</a></li>
@@ -387,6 +388,7 @@ window.Quarto = {
 
 
 
+<p><a href="images/network-anomaly-detection-toc.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="images/network-anomaly-detection-toc.jpg" class="img-fluid"></a></p>
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>You burn six months “optimizing.” Swap in transformers. Squeeze another +<span class="math inline">\(0.5\%\)</span> accuracy. Rewrite the feature pipeline. Add a shiny GPU cluster. And still: alert fatigue, missed incidents, and latency that kills real-time response.</p>
@@ -415,32 +417,27 @@ window.Quarto = {
 <td>Gives you the mental model that makes the steps principled, not arbitrary</td>
 </tr>
 <tr class="even">
-<td><strong>1. Define Winning</strong></td>
-<td>Set SLOs tied to business outcomes</td>
-<td>Stops vanity-metric chasing</td>
+<td><strong>1. Goal &amp; Constraint</strong></td>
+<td>Set SLOs, then build a constraint ledger to find the bottleneck</td>
+<td>Defines success and focuses effort on the one thing that governs throughput</td>
 </tr>
 <tr class="odd">
-<td><strong>2. Find the Bottleneck</strong></td>
-<td>Build a constraint ledger</td>
-<td>Focuses effort on the one thing that governs throughput</td>
-</tr>
-<tr class="even">
-<td><strong>3. Understand Why It’s Stuck</strong></td>
+<td><strong>2. Understand Why It’s Stuck</strong></td>
 <td>Root-cause analysis</td>
 <td>Prevents solving symptoms</td>
 </tr>
-<tr class="odd">
-<td><strong>4. See the Hidden Tradeoff</strong></td>
+<tr class="even">
+<td><strong>3. See the Hidden Tradeoff</strong></td>
 <td>Map the conflict</td>
 <td>Reveals why simple fixes haven’t worked</td>
 </tr>
-<tr class="even">
-<td><strong>5. Break the Tradeoff</strong></td>
+<tr class="odd">
+<td><strong>4. Break the Tradeoff</strong></td>
 <td>Challenge assumptions, then innovate</td>
 <td>Achieves step-function improvement</td>
 </tr>
-<tr class="odd">
-<td><strong>6. Prove It Works</strong></td>
+<tr class="even">
+<td><strong>5. Prove It Works</strong></td>
 <td>Minimum Viable Experiment</td>
 <td>Validates before full investment</td>
 </tr>
@@ -454,7 +451,7 @@ window.Quarto = {
 <p>The breakthrough insight, from Eli Goldratt’s <em>The Goal</em> (1984) and made operational by Alan Barnard’s pairing method, is simple: every system has exactly one constraint at any given moment — the single resource or stage you don’t have enough of. That constraint sets the ceiling for the entire system. Improving anything else delivers diminishing-to-zero returns.</p>
 <p>A factory line can only produce as fast as its slowest machine. If the paint booth takes 10 minutes per car while everything else takes 2 minutes, buying faster welding robots changes nothing. You have to speed up the paint booth — or the line will forever produce one car every 10 minutes.</p>
 <p>In a serial pipeline — which is what most ML systems are — this is even starker than it sounds. Throughput equals the throughput of the slowest stage. If your feature extraction handles 30K records/sec and everything else handles 100K, the system does 30K. Making inference 10x faster? Still 30K. Doubling ingest capacity? Still 30K. Only improving the bottleneck stage moves the number. Every other “optimization” is buying faster welding robots while the paint booth sets the pace.</p>
-<p><a href="images/amdahl-law-optimization.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="images/amdahl-law-optimization.svg" class="img-fluid"></a></p>
+<p><a href="images/amdahl-law-optimization.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="images/amdahl-law-optimization.svg" class="img-fluid"></a></p>
 <p>Barnard turns this into a strict chain of focused pairings. Each pairing links a WHAT (what you need) to a HOW (how to get it), maintaining a one-to-one relationship that keeps focus razor-sharp:</p>
 <ol type="1">
 <li><strong>Goal → Constraint</strong>: WHAT do I want? More of the Goal. HOW? By getting more of the Constraint — the single resource I don’t have enough of.</li>
@@ -463,13 +460,16 @@ window.Quarto = {
 <li><strong>Conflict → Innovation</strong>: HOW do I resolve it? With an Innovation that captures the Pros of <em>both</em> the current approach and the new idea. The aim is all the Pros — but some tradeoffs may remain. The key is they’re deliberate and tolerable, not the paralyzing either/or you started with.</li>
 <li><strong>Innovation → Experiment</strong>: HOW do I know it works? With a Minimally Viable Experiment — before building anything.</li>
 </ol>
-<p>The six how-to steps below translate these pairings into ML-systems language. Step 1 defines the Goal (SLOs). Step 2 finds the Constraint (bottleneck). Step 3 uncovers the Problem (root cause). Step 4 maps the Conflict (hidden tradeoff). Step 5 designs the Innovation. Step 6 runs the Experiment.</p>
+<p>The five how-to steps below translate these pairings into ML-systems language. Step 1 defines the Goal (SLOs) and finds the Constraint (bottleneck). Step 2 uncovers the Problem (root cause). Step 3 maps the Conflict (hidden tradeoff). Step 4 designs the Innovation. Step 5 runs the Experiment.</p>
 <p>So why does this matter for ML specifically? Because ML pipelines are textbook flow systems: ingest → features → inference → action. They have measurable stages with capacity limits. And they accumulate complexity over time — teams add features, models, and infrastructure without ever removing anything. This makes them natural candidates for constraint-based thinking. But ML teams rarely think this way, because they’re trained to optimize <em>models</em>, not <em>systems</em>.</p>
-<p><a href="images/ml-pipeline-weak-constraint.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="images/ml-pipeline-weak-constraint.svg" class="img-fluid"></a></p>
+<p><a href="images/ml-pipeline-weak-constraint.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="images/ml-pipeline-weak-constraint.svg" class="img-fluid"></a></p>
 </section>
-<section id="step-1-define-what-winning-looks-like" class="level2">
-<h2 class="anchored" data-anchor-id="step-1-define-what-winning-looks-like">Step 1: Define What Winning Looks Like</h2>
-<p>Before you can find the bottleneck, you need to define what success actually means — in numbers, not aspirations. “Detect anomalies,” “reduce fraud,” and “improve recommendations” aren’t goals. They’re wishes. Without measurable targets, every team member optimizes for a different thing, and you can’t tell whether you’re constrained by latency, precision, coverage, or something else entirely.</p>
+<section id="step-1-define-your-goal-and-find-the-bottleneck" class="level2">
+<h2 class="anchored" data-anchor-id="step-1-define-your-goal-and-find-the-bottleneck">Step 1: Define Your Goal and Find the Bottleneck</h2>
+<p>Before you can find the bottleneck, you need to define what success actually means — in numbers, not aspirations. And before you can fix the bottleneck, you need to know which stage is actually holding the system back. This step covers both.</p>
+<section id="set-your-slos" class="level3">
+<h3 class="anchored" data-anchor-id="set-your-slos">Set Your SLOs</h3>
+<p>“Detect anomalies,” “reduce fraud,” and “improve recommendations” aren’t goals. They’re wishes. Without measurable targets, every team member optimizes for a different thing, and you can’t tell whether you’re constrained by latency, precision, coverage, or something else entirely.</p>
 <p>The fix is Service Level Objectives — specific, measurable thresholds tied to business outcomes:</p>
 <table class="table">
 <colgroup>
@@ -520,7 +520,7 @@ window.Quarto = {
 <li><strong>Incident-Weighted Recall</strong>: ≥ 90%</li>
 </ul>
 <p>The same template applies to other domains. A fraud detection team might set TTD ≤ 200ms with ≤ 50 manual reviews/day. A recommendation system might target TTD ≤ 100ms with CTR-weighted precision ≥ X%.</p>
-<p><a href="images/slo-hierarchy.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="images/slo-hierarchy.svg" class="img-fluid"></a></p>
+<p><a href="images/slo-hierarchy.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="images/slo-hierarchy.svg" class="img-fluid"></a></p>
 <p>When defining SLOs, involve the people who <em>use</em> the system’s outputs — not just the team that builds it. Security analysts, operations teams, business stakeholders. When they disagree (and they will — security wants recall, ops wants fewer alerts), the SLOs make the tradeoff explicit rather than hiding it inside model thresholds.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -535,10 +535,10 @@ Pitfall: Vanity Metrics Over Business Outcomes
 <p>Teams optimize metrics that sound impressive but don’t connect to business value. “99.9% precision” means nothing if you’re missing 90% of incidents. “Processing 1M events/second” is irrelevant if decisions take 30 minutes. In our case, we celebrated achieving 99% detection rate on port scans — which the SOC ignored anyway — while missing lateral movement using legitimate credentials. Define SLOs tied to outcomes, not to model scorecards.</p>
 </div>
 </div>
-<p><strong>Key takeaway:</strong> SLOs don’t just measure success — they <em>reveal</em> what’s blocking it. If you can’t meet your TTD target, the bottleneck is somewhere in your latency path. If you can’t meet your alert budget, the bottleneck is in precision or triage capacity.</p>
+<p>SLOs don’t just measure success — they <em>reveal</em> what’s blocking it. If you can’t meet your TTD target, the bottleneck is somewhere in your latency path. If you can’t meet your alert budget, the bottleneck is in precision or triage capacity. Now let’s find exactly where.</p>
 </section>
-<section id="step-2-find-your-bottleneck" class="level2">
-<h2 class="anchored" data-anchor-id="step-2-find-your-bottleneck">Step 2: Find Your Bottleneck</h2>
+<section id="find-the-bottleneck" class="level3">
+<h3 class="anchored" data-anchor-id="find-the-bottleneck">Find the Bottleneck</h3>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -628,11 +628,12 @@ Mental Model
 <blockquote class="blockquote">
 <p><strong>Capacity conversion</strong>: 10 Gbps network traffic ≈ 100K flows/sec.&nbsp;1M daily e-commerce orders ≈ 12/sec average, 50/sec peak. 10K IoT sensors at 1Hz ≈ 10K records/sec.</p>
 </blockquote>
+</section>
 <section id="validate-before-you-invest" class="level3">
 <h3 class="anchored" data-anchor-id="validate-before-you-invest">Validate Before You Invest</h3>
 <p>Before building anything, run a 24-hour experiment: temporarily throw 3x resources at your suspected bottleneck. If system-level metrics improve dramatically, you’ve found the right constraint. If not, look elsewhere. This experiment costs a day; building the wrong solution costs months.</p>
 <p>We provisioned 3x compute for Feature-Tier2, enabling 90K records/sec.&nbsp;The results were dramatic: detection time dropped, false positives decreased (the model makes better decisions with complete feature sets), and we nearly met our SLOs. No other improvement — not model accuracy, not infrastructure, not threshold tuning — would have achieved this.</p>
-<p><a href="images/before-after-dashboard.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="images/before-after-dashboard.svg" class="img-fluid"></a></p>
+<p><a href="images/before-after-dashboard.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="images/before-after-dashboard.svg" class="img-fluid"></a></p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -649,13 +650,13 @@ Pitfall: Premature Model Optimization
 <p><strong>Key takeaway:</strong> The constraint is the only thing worth optimizing right now. Everything else is rearranging deck chairs.</p>
 </section>
 </section>
-<section id="step-3-understand-why-its-stuck" class="level2">
-<h2 class="anchored" data-anchor-id="step-3-understand-why-its-stuck">Step 3: Understand Why It’s Stuck</h2>
+<section id="step-2-understand-why-its-stuck" class="level2">
+<h2 class="anchored" data-anchor-id="step-2-understand-why-its-stuck">Step 2: Understand Why It’s Stuck</h2>
 <p>You’ve found the bottleneck. Now resist the urge to fix the surface symptom. “Feature extraction is slow” is a temperature reading, not a diagnosis. You need the underlying cause — because the cause determines the cure.</p>
 <section id="five-whys-with-evidence" class="level3">
 <h3 class="anchored" data-anchor-id="five-whys-with-evidence">Five Whys — With Evidence</h3>
 <p>The Five Whys technique is simple: ask “why” repeatedly until you reach a root cause, but <em>validate each answer with evidence</em> before proceeding to the next. Unvalidated whys lead to plausible-sounding but wrong root causes.</p>
-<p><a href="images/five-whys.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="images/five-whys.svg" class="img-fluid"></a></p>
+<p><a href="images/five-whys.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="images/five-whys.svg" class="img-fluid"></a></p>
 <p>Here’s how this played out for our Feature-Tier2 bottleneck:</p>
 <ol type="1">
 <li><strong>Why</strong> is Feature-Tier2 at 95% utilization? → It computes 47 features per record. <em>(Validated: profiling shows 89% of computation in 12% of features)</em></li>
@@ -665,7 +666,7 @@ Pitfall: Premature Model Optimization
 <li><strong>Why</strong> silos? → No ownership of end-to-end system performance.</li>
 </ol>
 <p>Notice where we ended up: the root cause isn’t technical — it’s organizational.</p>
-<p><a href="images/iceberg-visible-constraint.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="images/iceberg-visible-constraint.svg" class="img-fluid"></a></p>
+<p><a href="images/iceberg-visible-constraint.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="images/iceberg-visible-constraint.svg" class="img-fluid"></a></p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -700,11 +701,11 @@ Pitfall: Feature Creep Without Cost Analysis
 <p><strong>Key takeaway:</strong> Root causes are usually organizational, not algorithmic. If you fix the technical symptom without fixing the organizational cause, the symptom will return.</p>
 </section>
 </section>
-<section id="step-4-see-the-hidden-tradeoff" class="level2">
-<h2 class="anchored" data-anchor-id="step-4-see-the-hidden-tradeoff">Step 4: See the Hidden Tradeoff</h2>
+<section id="step-3-see-the-hidden-tradeoff" class="level2">
+<h2 class="anchored" data-anchor-id="step-3-see-the-hidden-tradeoff">Step 3: See the Hidden Tradeoff</h2>
 <p>You know the root cause. So why hasn’t anyone fixed it? Almost always, it’s because the problem is an unresolved conflict — and people are stuck choosing between two approaches that both seem necessary.</p>
 <p>Barnard puts it precisely: <em>any problem can be defined as an unresolved conflict.</em> In our case, the Feature-Tier2 bottleneck persists because of a fundamental tension:</p>
-<p><a href="images/feature-extraction-conflict.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="images/feature-extraction-conflict.svg" class="img-fluid"></a></p>
+<p><a href="images/feature-extraction-conflict.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-8"><img src="images/feature-extraction-conflict.svg" class="img-fluid"></a></p>
 <p>We need <strong>rich feature analysis</strong> for accurate detection of sophisticated attacks. We <em>also</em> need <strong>efficient processing</strong> for real-time response and cost control. These seem to contradict each other, so the team oscillates — add features after a missed attack, remove features after a performance degradation. Two years later, they’re exactly where they started.</p>
 <section id="why-teams-get-stuck" class="level3">
 <h3 class="anchored" data-anchor-id="why-teams-get-stuck">Why Teams Get Stuck</h3>
@@ -727,7 +728,7 @@ Pitfall: Alert Budget Myopia
 <p>A textbook case of oscillation: facing missed incidents, teams lower thresholds (overreacting). This floods analysts with alerts, who start ignoring them, leading to <em>more</em> missed incidents — which triggers another round of threshold lowering. Little’s Law makes the math concrete: L = λW — if analysts can investigate 50 alerts/day and each takes 45 minutes, that’s the hard capacity ceiling. No threshold change can overcome it. This is the precision/coverage conflict manifesting as a vicious cycle.</p>
 </div>
 </div>
-<p><a href="images/alert-fatigue.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-8"><img src="images/alert-fatigue.svg" class="img-fluid"></a></p>
+<p><a href="images/alert-fatigue.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-9"><img src="images/alert-fatigue.svg" class="img-fluid"></a></p>
 </section>
 <section id="map-your-conflict" class="level3">
 <h3 class="anchored" data-anchor-id="map-your-conflict">Map Your Conflict</h3>
@@ -768,13 +769,13 @@ Common ML Conflicts
 <p><strong>Key takeaway:</strong> The tradeoff that’s blocking you is almost never fundamental. It persists because of hidden assumptions. Find the assumption. Challenge it. The conflict evaporates.</p>
 </section>
 </section>
-<section id="step-5-break-the-tradeoff" class="level2">
-<h2 class="anchored" data-anchor-id="step-5-break-the-tradeoff">Step 5: Break the Tradeoff</h2>
+<section id="step-4-break-the-tradeoff" class="level2">
+<h2 class="anchored" data-anchor-id="step-4-break-the-tradeoff">Step 4: Break the Tradeoff</h2>
 <p>You’ve identified the assumptions propping up the conflict. Now comes the payoff: designing a solution that captures the Pros of both the current approach and the alternative.</p>
 <p>The goal is to get as many Pros from both sides as possible. Sometimes you genuinely get all of them. More often, some tradeoffs remain — added complexity, operational overhead, calibration effort. The difference from compromise is that these residual cons are <em>deliberate and manageable</em>, not the paralyzing either/or that kept the team stuck. You’re not splitting the difference. You’re changing the game so the remaining tradeoffs feel trivial compared to where you started.</p>
 <section id="the-thinking-process" class="level3">
 <h3 class="anchored" data-anchor-id="the-thinking-process">The Thinking Process</h3>
-<p>After mapping your conflict and challenging assumptions (Step 4), work through each challenged assumption systematically:</p>
+<p>After mapping your conflict and challenging assumptions (Step 3), work through each challenged assumption systematically:</p>
 <ol type="1">
 <li><p><strong>Sketch the system without the assumption.</strong> If you challenged “all records need the same analysis depth,” draw the pipeline where they don’t. What would variable-depth processing look like? What decides the depth?</p></li>
 <li><p><strong>Look for the four reusable patterns.</strong> Most ML system innovations are combinations of these:</p>
@@ -839,18 +840,18 @@ Common ML Conflicts
 </tr>
 </tbody>
 </table>
-<p><a href="images/progressive-analysis-architecture.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-9"><img src="images/progressive-analysis-architecture.svg" class="img-fluid"></a></p>
+<p><a href="images/progressive-analysis-architecture.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-10"><img src="images/progressive-analysis-architecture.svg" class="img-fluid"></a></p>
 <p>Each stage outputs a prediction <em>and</em> a confidence score. High-confidence benign traffic exits immediately. Low confidence escalates. When stages experience backlog, confidence thresholds adjust dynamically — low-risk records defer to async processing during congestion, ensuring high-risk traffic always gets full analysis. And alerts are generated immediately with basic info, then progressively enriched over 30 seconds with connection context, historical patterns, and full forensics.</p>
-<p><a href="images/feature-dependency.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-10"><img src="images/feature-dependency.svg" class="img-fluid"></a></p>
+<p><a href="images/feature-dependency.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-11"><img src="images/feature-dependency.svg" class="img-fluid"></a></p>
 </section>
 <section id="fix-the-organization-too" class="level3">
 <h3 class="anchored" data-anchor-id="fix-the-organization-too">Fix the Organization Too</h3>
-<p>Remember: Step 3 told us the root cause was organizational — siloed teams, no end-to-end ownership, features added without production constraints. The progressive architecture only sticks if the organizational structure changes with it. We restructured so ML and platform teams share SLOs, and adding features now requires cross-team cost-benefit approval. Without this, the feature explosion that caused the original bottleneck would have returned within a year.</p>
+<p>Remember: Step 2 told us the root cause was organizational — siloed teams, no end-to-end ownership, features added without production constraints. The progressive architecture only sticks if the organizational structure changes with it. We restructured so ML and platform teams share SLOs, and adding features now requires cross-team cost-benefit approval. Without this, the feature explosion that caused the original bottleneck would have returned within a year.</p>
 <p><strong>Key takeaway:</strong> The innovation doesn’t have to be novel to the field. It has to be novel to <em>your</em> system. Progressive analysis is a known pattern — applying it to our specific bottleneck was the breakthrough. But the technical fix and the organizational fix are a package deal.</p>
 </section>
 </section>
-<section id="step-6-prove-it-works" class="level2">
-<h2 class="anchored" data-anchor-id="step-6-prove-it-works">Step 6: Prove It Works</h2>
+<section id="step-5-prove-it-works" class="level2">
+<h2 class="anchored" data-anchor-id="step-5-prove-it-works">Step 5: Prove It Works</h2>
 <p>You’ve designed a solution on paper. Before you spend three months building it, spend two weeks proving the riskiest assumption.</p>
 <p>An important distinction: a Minimally Viable Experiment (MVE) comes <em>before</em> a Minimally Viable Product (MVP). An MVP builds the smallest usable product. An MVE is smaller — it tests whether the core assumption behind the innovation is even valid. Don’t build anything until you’ve validated the assumption.</p>
 <section id="identify-the-riskiest-assumption" class="level3">
@@ -867,7 +868,7 @@ Common ML Conflicts
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>tier1_model <span class="op">=</span> LogisticRegression(C<span class="op">=</span><span class="fl">1.0</span>)</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>tier1_model.fit(X_train[tier1_features], y_train_benign)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><a href="images/mve-experiment-timeline.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-11"><img src="images/mve-experiment-timeline.svg" class="img-fluid"></a></p>
+<p><a href="images/mve-experiment-timeline.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-12"><img src="images/mve-experiment-timeline.svg" class="img-fluid"></a></p>
 </section>
 <section id="results" class="level3">
 <h3 class="anchored" data-anchor-id="results">Results</h3>
@@ -922,7 +923,7 @@ Common ML Conflicts
 </section>
 <section id="gono-go-criteria" class="level3">
 <h3 class="anchored" data-anchor-id="gono-go-criteria">Go/No-Go Criteria</h3>
-<p>After the MVE, the decision is straightforward: does the riskiest assumption hold? If yes — the cascade correctly separates benign from suspicious — proceed to shadow mode. If the assumption fails, you haven’t wasted months; you’ve spent two weeks learning that you need a different innovation. Go back to Step 5 and challenge a different assumption.</p>
+<p>After the MVE, the decision is straightforward: does the riskiest assumption hold? If yes — the cascade correctly separates benign from suspicious — proceed to shadow mode. If the assumption fails, you haven’t wasted months; you’ve spent two weeks learning that you need a different innovation. Go back to Step 4 and challenge a different assumption.</p>
 <p><strong>Key takeaway:</strong> A two-week MVE teaches more than two years of production experience. Test your riskiest assumption first.</p>
 </section>
 </section>
@@ -987,19 +988,17 @@ Common ML Conflicts
 <p></p><figure class="figure"><p></p>
 <div>
 <pre class="mermaid mermaid-js">flowchart LR
-    A["&lt;b&gt;Define Goal&lt;/b&gt;&lt;br/&gt;Set SLOs"] --&gt; B["&lt;b&gt;Find Constraint&lt;/b&gt;&lt;br/&gt;Build ledger"]
-    B --&gt; C["&lt;b&gt;Understand Why&lt;/b&gt;&lt;br/&gt;Root cause"]
-    C --&gt; D["&lt;b&gt;Map Conflict&lt;/b&gt;&lt;br/&gt;Challenge assumptions"]
-    D --&gt; E["&lt;b&gt;Innovate&lt;/b&gt;&lt;br/&gt;Best of both sides"]
-    E --&gt; F["&lt;b&gt;Experiment&lt;/b&gt;&lt;br/&gt;MVE → rollout"]
-    F --&gt; |"Constraint moves"| A
+    A["&lt;b&gt;Goal &amp; Constraint&lt;/b&gt;&lt;br/&gt;SLOs + ledger"] --&gt; B["&lt;b&gt;Understand Why&lt;/b&gt;&lt;br/&gt;Root cause"]
+    B --&gt; C["&lt;b&gt;Map Conflict&lt;/b&gt;&lt;br/&gt;Challenge assumptions"]
+    C --&gt; D["&lt;b&gt;Innovate&lt;/b&gt;&lt;br/&gt;Best of both sides"]
+    D --&gt; E["&lt;b&gt;Experiment&lt;/b&gt;&lt;br/&gt;MVE → rollout"]
+    E --&gt; |"Constraint moves"| A
 
     style A fill:#e8f5e9,stroke:#333
     style B fill:#e3f2fd,stroke:#333
     style C fill:#fff3e0,stroke:#333
     style D fill:#fce4ec,stroke:#333
     style E fill:#f3e5f5,stroke:#333
-    style F fill:#e0f7fa,stroke:#333
 </pre>
 </div>
 <p></p><figcaption> The Theory of Constraints is a cycle, not a line</figcaption> </figure><p></p>
@@ -1693,7 +1692,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"loop":false,"descPosition":"bottom","selector":".lightbox","openEffect":"zoom","closeEffect":"zoom"});
+<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","selector":".lightbox","loop":false,"descPosition":"bottom","closeEffect":"zoom"});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;
