@@ -136,13 +136,14 @@ window.Quarto = {
 };
 </script>
 
-<link rel="stylesheet" href="assets/listing.css">
 <meta property="og:title" content="Imad Dabbura - Deep Learning Tips &amp; Tricks">
+<meta property="og:description" content="">
 <meta property="og:image" content="https://imaddabbura.github.io/images/dl-tips-and-tricks-image.png">
 <meta property="og:site_name" content="Imad Dabbura">
 <meta property="og:image:height" content="229">
 <meta property="og:image:width" content="220">
 <meta name="twitter:title" content="Imad Dabbura - Deep Learning Tips &amp; Tricks">
+<meta name="twitter:description" content="">
 <meta name="twitter:image" content="https://imaddabbura.github.io/images/dl-tips-and-tricks-image.png">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
@@ -243,12 +244,28 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#general" id="toc-general" class="nav-link active" data-scroll-target="#general">General</a>
+  <ul class="collapse">
+  <li><a href="#training" id="toc-training" class="nav-link" data-scroll-target="#training">Training</a></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a></li>
+  <li><a href="#monitoring-debugging" id="toc-monitoring-debugging" class="nav-link" data-scroll-target="#monitoring-debugging">Monitoring &amp; Debugging</a></li>
+  <li><a href="#efficiency" id="toc-efficiency" class="nav-link" data-scroll-target="#efficiency">Efficiency</a></li>
+  </ul></li>
+  <li><a href="#nlp" id="toc-nlp" class="nav-link" data-scroll-target="#nlp">NLP</a></li>
+  <li><a href="#tabular" id="toc-tabular" class="nav-link" data-scroll-target="#tabular">Tabular</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
 <!-- main -->
-<main class="content column-page" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -257,7 +274,7 @@ window.Quarto = {
 
 
 
-<div class="quarto-title-meta column-page">
+<div class="quarto-title-meta">
 
     
   
@@ -269,48 +286,71 @@ window.Quarto = {
 </header>
 
 
+<p>Practical heuristics for training deep learning models — gathered from research papers, experiments, and debugging sessions. A living collection, organized by theme so you can find what you need mid-experiment.</p>
 <section id="general" class="level2">
 <h2 class="anchored" data-anchor-id="general">General</h2>
+<section id="training" class="level3">
+<h3 class="anchored" data-anchor-id="training">Training</h3>
 <ul>
-<li><p>Good learning rate for <code>Adam/AdamW</code> with reasonable model size is 3e-4. As the model’s complexity decreases (smaller models) -&gt; we can get away with higher learning rates</p></li>
-<li><p>Check if your model can overfit <code>1</code> example then few examples. The model should easily be able to overfit few examples. If not, there would be something wrong with the optimization or other parts of the training code.</p></li>
-<li><p>Check the worst mistakes that the model make. In the case of binary classification, check the positive examples that were mispredicted with probabilities close to <code>0</code> or negative example that were mispredicted with probabilities close to <code>1</code>. Also the check the examples that model is least confident about such as examples with probabilities close to <code>0.5</code>. This would highlight issues with data preprocessing and labeling mistakes.</p></li>
-<li><p>Look at the output of all transformations before you plug them into the pipeline because you may loose a lot of the characteristics of the input in some transformations.</p></li>
-<li><p><code>32x32</code> Images have very different characteristics than large images. Once you get below <code>96x96</code> they behave differently. This means what works well; for example on CIFAR 10, most likely will not work well on Imagenet. 128 x 128 pixel images do generalize well to bigger images, and conclusions made on such images hold well to large images and much faster to train.</p></li>
-<li><p>A big part of a getting good at using deep learning in your domain is knowing how to create small, workable, useful datasets… Try to come up with a toy problem or two that will give you insight into your full problem.</p></li>
-<li><p>Augmentation can be done on all kind of data as long as the label would almost not change after the augmentations. Therefore, we need to make sure that the output of augmented data first makes sense and second doesn’t change the label.</p></li>
-<li><p>Monitor histogram of activations and gradients at each layer. This would shed some light on whether some activations are saturated and their gradients may be close to <code>0</code> and not learning anything.</p></li>
-<li><p>Monitor the magnitude of the parameter updates relative to the parameters. Ideally, we want the ratio to be close to 1%, not <span class="math inline">\(0.001%\)</span> (no learning) or <span class="math inline">\(50%\)</span> (changes super fast and may overshoot).</p></li>
-<li><p>Gradient accumulation: to avoid out-of-memory errors (OOM) while training on GPUs, break larger batches into smaller batches and accumulate gradients by back-propagating after every batch to gather gradients before running optimization step. It should give identical results as if we train with larger batches unless we have layers that kind of depending on the batch size in the forward pass such as <code>BatchNorm</code>.</p>
-<ul>
-<li>For example, in pytorch, instead of calling <code>optimizer.step()</code> for every batch, we call it every few batches.</li>
-</ul></li>
-<li><p>When using mixed precision, it is better to increase batch size to utilize the GPU since every batch will occupy much smaller memory. As a result, there will be less updates for each epoch because the model will see less number of batches in every epoch. This means that 1) we need to increase the number of epochs and 2) increase the learning rate.</p></li>
-<li><p>Mixup: linear combination of 2 random examples from training dataset using lambda parameter that is drawn from <code>Beta</code> distribution (<code>α</code>, <code>α</code>). The output vector will also be linear combination of two examples labels. This will force model to be more robust and learn linear combination of examples instead of memorizing them. As a result, model becomes less sensitive to corrupted labels and noise in the training data. This method can also be applied to tabular data. However, because it is harder for the model to learn to differentiate between the two examples and the weight of each, we need to train for much longer to get good results.</p></li>
-<li><p>Check the distribution of the activations and the gradients as well as the percentage of the neurons that are saturated</p></li>
-<li><p>Check grad/data ratio to see the size of the step when updating parameters</p></li>
-<li><p>Check update size to see if we need to change learning rate. This typically shows us if our steps are small/good/large</p></li>
+<li><strong>Learning rate:</strong> A good default for <code>Adam</code>/<code>AdamW</code> with reasonable model size is 3e-4. As the model’s complexity decreases (smaller models), you can get away with higher learning rates.</li>
 </ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Overfit a tiny dataset first
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Check if your model can overfit <code>1</code> example, then a few examples. The model should easily be able to overfit few examples. If not, there is something wrong with the optimization or other parts of the training code. Always validate this before scaling to the full dataset.</p>
+</div>
+</div>
+<ul>
+<li><p><strong>Mixup:</strong> Linear combination of 2 random training examples using a lambda drawn from a <code>Beta(α, α)</code> distribution. The output vector is also a linear combination of the two examples’ labels. This forces the model to be more robust and learn linear combinations of examples instead of memorizing them, making it less sensitive to corrupted labels and noise. Can also be applied to tabular data, though you need to train for much longer since the model must learn to differentiate between examples and their relative weights.</p></li>
+<li><p><strong>Mixed precision:</strong> When using mixed precision training, increase batch size to utilize the GPU since each batch occupies much smaller memory. Fewer batches per epoch means: (1) increase the number of epochs and (2) increase the learning rate.</p></li>
+</ul>
+</section>
+<section id="data" class="level3">
+<h3 class="anchored" data-anchor-id="data">Data</h3>
+<ul>
+<li><p><strong>Inspect worst predictions:</strong> Check the positive examples mispredicted with probabilities close to <code>0</code> and negative examples mispredicted with probabilities close to <code>1</code>. Also check examples the model is least confident about (probabilities close to <code>0.5</code>). This highlights issues with data preprocessing and labeling mistakes.</p></li>
+<li><p><strong>Verify transformations:</strong> Look at the output of all transformations before plugging them into the pipeline — you may lose important characteristics of the input in some transformations.</p></li>
+<li><p><strong>Image resolution matters:</strong> <code>32x32</code> images have very different characteristics than larger images. Below <code>96x96</code>, behavior changes significantly — what works on CIFAR-10 will most likely not work on ImageNet. 128x128 pixel images generalize well to bigger images, and conclusions made on them hold well for larger images while being much faster to train.</p></li>
+<li><p><strong>Create toy problems:</strong> A big part of getting good at applied deep learning is knowing how to create small, workable, useful datasets. Try to come up with a toy problem or two that gives you insight into your full problem.</p></li>
+<li><p><strong>Augmentation:</strong> Can be done on all kinds of data as long as the label would almost not change after the augmentation. Make sure the augmented output first makes sense and second doesn’t change the label.</p></li>
+</ul>
+</section>
+<section id="monitoring-debugging" class="level3">
+<h3 class="anchored" data-anchor-id="monitoring-debugging">Monitoring &amp; Debugging</h3>
+<ul>
+<li><p><strong>Activation and gradient distributions:</strong> Monitor histograms of activations and gradients at each layer, including the percentage of saturated neurons. This reveals whether activations are saturated and gradients are close to <code>0</code> — meaning those layers aren’t learning.</p></li>
+<li><p><strong>Update-to-parameter ratio:</strong> Monitor the magnitude of parameter updates relative to the parameters themselves (the grad/data ratio). Ideally, the ratio should be close to 1% — not <span class="math inline">\(0.001\%\)</span> (no learning) or <span class="math inline">\(50\%\)</span> (changes too fast, may overshoot). Use this to determine whether the learning rate needs adjustment.</p></li>
+</ul>
+</section>
+<section id="efficiency" class="level3">
+<h3 class="anchored" data-anchor-id="efficiency">Efficiency</h3>
+<ul>
+<li><strong>Gradient accumulation:</strong> To avoid out-of-memory errors while training on GPUs, break larger batches into smaller ones and accumulate gradients by back-propagating after every batch before running the optimization step. This gives identical results to training with larger batches, unless you have layers that depend on batch size in the forward pass such as <code>BatchNorm</code>. In PyTorch, instead of calling <code>optimizer.step()</code> for every batch, call it every few batches.</li>
+</ul>
+</section>
 </section>
 <section id="nlp" class="level2">
 <h2 class="anchored" data-anchor-id="nlp">NLP</h2>
 <ul>
-<li><p>With LLM, generally the more compute the better the results. We can define compute, roughly, as the number of parameters x number of tokens. Therefore, we can make the model bigger and keep the number of tokens fixed OR keep the model size the same and increase the number of tokens which means that we have to train for longer. There is a trade-off that depends on the task.</p></li>
-<li><p>Improving logloss for LLMs is correlated with improved performance on downstream tasks</p></li>
-<li><p>Even though loss scales smoothly with compute, individual downstream tasks may scale in an emergent fashion. This means some tasks’ loss may be flat, others maybe inversely scaled, etc.</p></li>
-<li><p>Initialization: It is very important to try to initialize the weights to good values because weights don’t change much from their initial values. We want the initial loss to be the loss that we would expect. This can be determined depending on the task. For example, in LM, we want in the first iteration for the probability of each token, which is <span class="math inline">\(1/vocab\_{sz}\)</span>, to be almost equal because there is no reason to assign higher prob for some tokens. Therefore, the loss on each token would be the same (<span class="math inline">\(\approx -log(1/vocab\_sz)\)</span>) because the probability distribution would be diffused.</p></li>
-<li><p>Weight sharing between token embedding and the final linear layer (also called classifier or LM head) key because we want the tokens that are semantically similar to have similar probability when predicting next token.</p>
-<ul>
-<li>This also has a huge advantage on computational efficiency as those matrices have a lot of parameters. For GPT2, each one has <span class="math inline">\(50257 * 768 \approx 38.5M\)</span> which is <span class="math inline">\(1/3\)</span> of the GPT2 model.</li>
-<li>As a result of weight sharing, gradient update will be addition from the two branches: classifier and token embedding</li>
-</ul></li>
-<li><p>For tokens that don’t appear in the training data, we want their probabilities to be very close to zero</p></li>
+<li><p><strong>Compute scaling:</strong> With LLMs, generally the more compute the better. Compute ≈ parameters × tokens, so you can make the model bigger and keep the number of tokens fixed, or keep the model size the same and increase the number of tokens (training for longer). The optimal trade-off depends on the task.</p></li>
+<li><p><strong>Logloss predicts downstream performance:</strong> Improving logloss for LLMs is correlated with improved performance on downstream tasks.</p></li>
+<li><p><strong>Emergent task scaling:</strong> Even though loss scales smoothly with compute, individual downstream tasks may scale in unpredictable ways — some plateau, others may scale inversely, etc.</p></li>
+<li><p><strong>Initialization matters deeply:</strong> Weights don’t change much from their initial values, so proper initialization is critical. The initial loss should match what you’d expect from the task. For language modeling, the first-iteration probability of each token should be roughly uniform (<span class="math inline">\(1/vocab\_{sz}\)</span>) since there is no reason to assign higher probability to some tokens. The loss on each token would then be <span class="math inline">\(\approx -\log(1/vocab\_sz)\)</span> because the probability distribution is diffused.</p></li>
+<li><p><strong>Weight sharing:</strong> Tie the token embedding and the final linear layer (classifier / LM head) — semantically similar tokens should have similar probability when predicting the next token. This also provides huge efficiency gains: in GPT-2, each matrix has <span class="math inline">\(50257 \times 768 \approx 38.5M\)</span> parameters, roughly <span class="math inline">\(1/3\)</span> of the model. Gradient updates receive contributions from both the classifier and embedding branches.</p></li>
+<li><p><strong>OOV token handling:</strong> For tokens that don’t appear in the training data, their predicted probabilities should be very close to zero.</p></li>
 </ul>
 </section>
 <section id="tabular" class="level2">
 <h2 class="anchored" data-anchor-id="tabular">Tabular</h2>
 <ul>
-<li>Rule of thumb to pick embedding size for categorical feature (fastai): <span class="math display">\[min(600, round(1.6 * {number\_categories}^{0.56}))\]</span></li>
+<li><strong>Embedding size for categoricals</strong> (fastai rule of thumb): <span class="math display">\[\min(600,\; \text{round}(1.6 \times \text{n\_categories}^{0.56}))\]</span></li>
 </ul>
 
 
@@ -942,7 +982,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
     <li class="nav-item compact">
