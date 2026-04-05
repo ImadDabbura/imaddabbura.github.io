@@ -103,9 +103,9 @@ i.async=1,i.src=n,c.parentNode.insertBefore(i,c)
     }
 
     const options = {
-      valueNames: ['listing-date','listing-title','listing-author',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-title-sort'] }],
+      valueNames: ['listing-date','listing-title','listing-description','listing-categories','listing-reading-time',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
       
-      searchColumns: ["listing-date","listing-title","listing-author"],
+      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description"],
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
@@ -177,7 +177,7 @@ window.Quarto = {
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -270,14 +270,12 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(7)</span></div><div class="category" data-category="Personal Growth">Personal Growth <span class="quarto-category-count">(6)</span></div><div class="category" data-category="Programming">Programming <span class="quarto-category-count">(1)</span></div></div></div>
+    
 <!-- main -->
-<main class="content column-page-left" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -286,7 +284,7 @@ window.Quarto = {
 
 
 
-<div class="quarto-title-meta column-page-left">
+<div class="quarto-title-meta">
 
     
   
@@ -298,131 +296,210 @@ window.Quarto = {
 </header>
 
 
-<p>Collection of notes about personal growth, programming, and other stuff that I find useful.</p>
+<p>Notes on systems thinking, career principles, and personal effectiveness — ideas I return to regularly.</p>
 
 
 
 
-<div class="quarto-listing quarto-listing-container-table" id="listing-listing">
-<div class="listing-actions-group">
-   <div class="input-group input-group-sm quarto-listing-sort">
-     <span class="input-group-text"><i class="bi bi-sort-down"></i></span>
-     <select id="listing-listing-sort" class="form-select" aria-label="Order By" onchange="window['quarto-listings']['listing-listing'].sort(this.options[this.selectedIndex].value, { order: this.options[this.selectedIndex].getAttribute('data-direction')})">
-       <option value="" disabled="" selected="" hidden="">Order By</option>
-       <option value="index" data-direction="asc">Default</option>
-         <option value="listing-date-sort" data-direction="asc">
-          Date - Oldest
-        </option>
-         <option value="listing-date-sort" data-direction="desc">
-          Date - Newest
-        </option>
-         <option value="listing-title-sort" data-direction="asc">
-          Title
-        </option>
-         <option value="listing-author" data-direction="asc">
-          Author
-        </option>
-     </select>
-  </div>
-    <div class="input-group input-group-sm quarto-listing-filter">
-      <span class="input-group-text"><i class="bi bi-search"></i></span>
-      <input type="text" class="search form-control" placeholder="Filter">
-    </div>
+<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
+<div class="list quarto-listing-default">
+<div class="quarto-post image-right" data-index="0" data-categories="Systems Thinking" data-listing-date-sort="1758949200000" data-listing-file-modified-sort="1775420256297" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12" data-listing-word-count-sort="2315">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./misc-notes/theory-of-constraints.html" class="no-external">Theory of Constraints</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./misc-notes/theory-of-constraints.html" class="no-external"></a>
 </div>
-<table class="quarto-listing-table table">
-<thead>
-<tr>
-<th>
-<a class="sort" data-sort="listing-date-sort" onclick="if (this.classList.contains('sort-asc')) { this.classList.add('sort-desc'); this.classList.remove('sort-asc') } else { this.classList.add('sort-asc'); this.classList.remove('sort-desc')} return false;">Date</a>
-</th>
-<th>
-<a class="sort" data-sort="listing-title-sort" onclick="if (this.classList.contains('sort-asc')) { this.classList.add('sort-desc'); this.classList.remove('sort-asc') } else { this.classList.add('sort-asc'); this.classList.remove('sort-desc')} return false;">Title</a>
-</th>
-<th>
-<a class="sort" data-sort="listing-author" onclick="if (this.classList.contains('sort-asc')) { this.classList.add('sort-desc'); this.classList.remove('sort-asc') } else { this.classList.add('sort-asc'); this.classList.remove('sort-desc')} return false;">Author</a>
-</th>
-</tr>
-</thead>
-<tbody class="list">
-<tr data-index="0" data-categories="Personal Growth" data-listing-date-sort="1758949200000" data-listing-file-modified-sort="1760973719985" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12" data-listing-word-count-sort="2315" data-listing-title-sort="Theory of Constraints" data-listing-filename-sort="theory-of-constraints.qmd">
-<td>
-<span class="listing-date">Sep 27, 2025</span>
-</td>
-<td>
-<a href="./misc-notes/theory-of-constraints.html" class="title listing-title">Theory of Constraints</a>
-</td>
-<td>
-<span class="listing-author">Imad Dabbura</span>
-</td>
-</tr>
-<tr data-index="1" data-categories="Personal Growth" data-listing-date-sort="1757048400000" data-listing-file-modified-sort="1760972970649" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="142" data-listing-title-sort="100x Impact" data-listing-filename-sort="100x-impact.qmd">
-<td>
-<span class="listing-date">Sep 5, 2025</span>
-</td>
-<td>
-<a href="./misc-notes/100x-impact.html" class="title listing-title">100x Impact</a>
-</td>
-<td>
-<span class="listing-author">Imad Dabbura</span>
-</td>
-</tr>
-<tr data-index="2" data-categories="Personal Growth" data-listing-date-sort="1755234000000" data-listing-file-modified-sort="1756218193617" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1019" data-listing-title-sort="How to Do Great Work: 10 Principles from a Legendary Scientist" data-listing-filename-sort="richard-hamming-principles.qmd">
-<td>
-<span class="listing-date">Aug 15, 2025</span>
-</td>
-<td>
-<a href="./misc-notes/richard-hamming-principles.html" class="title listing-title">How to Do Great Work: 10 Principles from a Legendary Scientist</a>
-</td>
-<td>
-<span class="listing-author">Imad Dabbura</span>
-</td>
-</tr>
-<tr data-index="3" data-categories="Personal Growth" data-listing-date-sort="1717995600000" data-listing-file-modified-sort="1751293549277" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="51" data-listing-title-sort="Favorite Essays" data-listing-filename-sort="favorite-essays.qmd">
-<td>
-<span class="listing-date">Jun 10, 2024</span>
-</td>
-<td>
-<a href="./misc-notes/favorite-essays.html" class="title listing-title">Favorite Essays</a>
-</td>
-<td>
-<span class="listing-author">Imad Dabbura</span>
-</td>
-</tr>
-<tr data-index="4" data-categories="Personal Growth" data-listing-date-sort="1671948000000" data-listing-file-modified-sort="1740066617433" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1908" data-listing-title-sort="Notes From Random Readings in Personal Growth" data-listing-filename-sort="useful-notes.qmd">
-<td>
-<span class="listing-date">Dec 25, 2022</span>
-</td>
-<td>
-<a href="./misc-notes/useful-notes.html" class="title listing-title">Notes From Random Readings in Personal Growth</a>
-</td>
-<td>
-<span class="listing-author">Imad Dabbura</span>
-</td>
-</tr>
-<tr data-index="5" data-categories="Programming" data-listing-date-sort="1663218000000" data-listing-file-modified-sort="1725542219386" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="418" data-listing-title-sort="How to be a Better Programmer" data-listing-filename-sort="how-to-be-better-programmer.qmd">
-<td>
-<span class="listing-date">Sep 15, 2022</span>
-</td>
-<td>
-<a href="./misc-notes/how-to-be-better-programmer.html" class="title listing-title">How to be a Better Programmer</a>
-</td>
-<td>
-<span class="listing-author">Imad Dabbura</span>
-</td>
-</tr>
-<tr data-index="6" data-categories="Personal Growth" data-listing-date-sort="1643176800000" data-listing-file-modified-sort="1725542196011" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="13" data-listing-word-count-sort="2418" data-listing-title-sort="The Science of Setting and Achieving Goals" data-listing-filename-sort="setting-and-achieving-goals.qmd">
-<td>
-<span class="listing-date">Jan 26, 2022</span>
-</td>
-<td>
-<a href="./misc-notes/setting-and-achieving-goals.html" class="title listing-title">The Science of Setting and Achieving Goals</a>
-</td>
-<td>
-<span class="listing-author">Imad Dabbura</span>
-</td>
-</tr>
-</tbody>
-</table>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Systems Thinking'); return false;">
+Systems Thinking
+</div>
+</div>
+<div class="listing-description">
+<a href="./misc-notes/theory-of-constraints.html" class="no-external">Focus on the single weakest link — improving each part of a system individually doesn’t improve the whole system.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./misc-notes/theory-of-constraints.html" class="no-external">
+<div class="listing-date">
+Sep 27, 2025
+</div>
+<div class="listing-reading-time">
+12 min
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="1" data-categories="Systems Thinking" data-listing-date-sort="1757048400000" data-listing-file-modified-sort="1775420258416" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="142">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./misc-notes/100x-impact.html" class="no-external">100x Impact</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./misc-notes/100x-impact.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Systems Thinking'); return false;">
+Systems Thinking
+</div>
+</div>
+<div class="listing-description">
+<a href="./misc-notes/100x-impact.html" class="no-external">How utilization levels create nonlinear delays — at 100% utilization, a 1-day task takes 100 days.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./misc-notes/100x-impact.html" class="no-external">
+<div class="listing-date">
+Sep 5, 2025
+</div>
+<div class="listing-reading-time">
+1 min
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="2" data-categories="Career &amp; Craft" data-listing-date-sort="1755234000000" data-listing-file-modified-sort="1775420260709" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1019">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./misc-notes/richard-hamming-principles.html" class="no-external">How to Do Great Work: 10 Principles from a Legendary Scientist</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./misc-notes/richard-hamming-principles.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Career &amp; Craft'); return false;">
+Career &amp; Craft
+</div>
+</div>
+<div class="listing-description">
+<a href="./misc-notes/richard-hamming-principles.html" class="no-external">Actionable principles from Hamming’s ‘You and Your Research’ — how to solve important problems, not just problems.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./misc-notes/richard-hamming-principles.html" class="no-external">
+<div class="listing-date">
+Aug 15, 2025
+</div>
+<div class="listing-reading-time">
+6 min
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="3" data-categories="Career &amp; Craft" data-listing-date-sort="1717995600000" data-listing-file-modified-sort="1775420262035" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="51">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./misc-notes/favorite-essays.html" class="no-external">Favorite Essays</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./misc-notes/favorite-essays.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Career &amp; Craft'); return false;">
+Career &amp; Craft
+</div>
+</div>
+<div class="listing-description">
+<a href="./misc-notes/favorite-essays.html" class="no-external">Curated collection of essays on life, ambition, and work that I re-read regularly.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./misc-notes/favorite-essays.html" class="no-external">
+<div class="listing-date">
+Jun 10, 2024
+</div>
+<div class="listing-reading-time">
+1 min
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="4" data-categories="Personal Effectiveness" data-listing-date-sort="1671948000000" data-listing-file-modified-sort="1775420263034" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1908">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./misc-notes/useful-notes.html" class="no-external">Notes From Random Readings in Personal Growth</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./misc-notes/useful-notes.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Personal Effectiveness'); return false;">
+Personal Effectiveness
+</div>
+</div>
+<div class="listing-description">
+<a href="./misc-notes/useful-notes.html" class="no-external">Collected wisdom on career visibility, time blocking, and living intentionally.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./misc-notes/useful-notes.html" class="no-external">
+<div class="listing-date">
+Dec 25, 2022
+</div>
+<div class="listing-reading-time">
+10 min
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="5" data-categories="Career &amp; Craft" data-listing-date-sort="1663218000000" data-listing-file-modified-sort="1775420264346" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="418">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./misc-notes/how-to-be-better-programmer.html" class="no-external">How to be a Better Programmer</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./misc-notes/how-to-be-better-programmer.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Career &amp; Craft'); return false;">
+Career &amp; Craft
+</div>
+</div>
+<div class="listing-description">
+<a href="./misc-notes/how-to-be-better-programmer.html" class="no-external">Practice drills and timeless skills for software development — the things that last 100 years.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./misc-notes/how-to-be-better-programmer.html" class="no-external">
+<div class="listing-date">
+Sep 15, 2022
+</div>
+<div class="listing-reading-time">
+3 min
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="6" data-categories="Personal Effectiveness" data-listing-date-sort="1643176800000" data-listing-file-modified-sort="1775420265897" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="13" data-listing-word-count-sort="2418">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./misc-notes/setting-and-achieving-goals.html" class="no-external">The Science of Setting and Achieving Goals</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./misc-notes/setting-and-achieving-goals.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Personal Effectiveness'); return false;">
+Personal Effectiveness
+</div>
+</div>
+<div class="listing-description">
+<a href="./misc-notes/setting-and-achieving-goals.html" class="no-external">The neuroscience of goal-setting — how the brain orients toward and executes goals across different time horizons.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./misc-notes/setting-and-achieving-goals.html" class="no-external">
+<div class="listing-date">
+Jan 26, 2022
+</div>
+<div class="listing-reading-time">
+13 min
+</div>
+</a>
+</div>
+</div>
+</div>
 <div class="listing-no-matching d-none">
 No matching items
 </div>
