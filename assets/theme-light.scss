@@ -26,7 +26,7 @@ $font-family-sans-serif: "Red Hat Text", "Source Sans Pro", -apple-system, Blink
 $headings-font-family: "Petrona", Georgia, serif;
 $font-size-base: 1rem;
 $line-height-base: 1.6;
-$headings-font-weight: 400;
+$headings-font-weight: 500;
 
 /*-- Links --*/
 $link-decoration: underline;
@@ -38,7 +38,7 @@ $code-bg: $spc-accent-light;
 /*-- scss:rules --*/
 
 /*-- Import Google Fonts --*/
-@import url('https://fonts.googleapis.com/css2?family=Petrona:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Red+Hat+Text:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+/* Fonts loaded via <link> in _quarto.yml include-in-header */
 
 /*-- CSS Custom Properties --*/
 :root {
@@ -214,8 +214,8 @@ main, #quarto-content, .page-columns {
   background-color: transparent !important;
 
   &:hover {
-    background-color: $spc-secondary;
-    color: white !important;
+    background-color: rgba($spc-secondary, 0.1) !important;
+    color: $spc-secondary !important;
   }
 }
 
@@ -229,8 +229,8 @@ main, #quarto-content, .page-columns {
   text-decoration: none;
 
   &:hover {
-    background-color: $spc-secondary;
-    color: white;
+    background-color: rgba($spc-secondary, 0.1);
+    color: $spc-secondary;
     text-decoration: none;
   }
 }
@@ -379,6 +379,34 @@ table {
 
 .table-group-separator-color {
   color: lighten($spc-primary, 25%);
+}
+
+/*-- Status Badges --*/
+.status-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.1rem 0.5rem;
+  border-radius: 3px;
+  text-transform: capitalize;
+}
+
+.status-badge.evergreen {
+  color: $spc-accent-dark;
+  border: 1px solid $spc-accent-dark;
+  background-color: rgba($spc-accent, 0.15);
+}
+
+.status-badge.growing {
+  color: $spc-secondary;
+  border: 1px solid $spc-secondary;
+  background-color: rgba($spc-secondary, 0.1);
+}
+
+.status-badge.seedling {
+  color: $spc-primary-light;
+  border: 1px solid $spc-primary-light;
+  background-color: rgba($spc-primary-light, 0.1);
 }
 
 /*-- Callouts --*/
