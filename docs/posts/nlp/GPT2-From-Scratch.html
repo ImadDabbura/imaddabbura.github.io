@@ -87,9 +87,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "type": "overlay",
   "limit": 50,
   "algolia": {
-    "application-id": "PVDXB8B7OS",
-    "search-only-api-key": "eb3007c200831c30465f8a5172690cf0",
-    "index-name": "Initial-Website-Search-Index",
+    "application-id": "JZ1UWSSI1E",
+    "search-only-api-key": "c0b453df5f408deb4e62b620d94a91c6",
+    "index-name": "my-website",
     "analytics-events": true,
     "show-logo": true,
     "libDir": "site_libs"
@@ -301,7 +301,6 @@ background-size: cover;
    
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#gpts" id="toc-gpts" class="nav-link" data-scroll-target="#gpts">GPTs</a></li>
   <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation">Implementation</a></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources">Resources</a></li>
@@ -309,22 +308,26 @@ background-size: cover;
 <div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
 
 
 
 
 
 <div class="status-badge-container" style="margin-bottom: 1rem;"><span class="status-badge evergreen">evergreen</span></div>
-<section id="introduction" class="level2">
+<section id="introduction" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>There’s an old saying in engineering: “You don’t really understand something until you can build it.” This has never been more true than in the era of LLMs. While we’ve previously explored the foundational concepts in my post on the Transformer architecture <a href="https://imaddabbura.github.io/posts/nlp/Transformer-Architecture-Explained.html">explained here</a>, true understanding comes from implementation. That’s why today, we’re building a GPT-style model (the 124M variant) from scratch in PyTorch.</p>
-<p>This project has a different focus than my last “from scratch” endeavor, where I built an <a href="https://github.com/ImadDabbura/tiny-pytorch">entire deep learning framework</a> to grasp the low-level mechanics of autograd and tensor ops. Here, we’ll leverage PyTorch’s battle-tested primitives to focus on what makes GPT special: multi-head attention, positional encodings, and the specific architectural decisions that enable language understanding.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>This post pairs well with my <a href="https://imaddabbura.github.io/posts/nlp/Transformer-Architecture-Explained.html">Transformer Architecture deep dive</a> — read that first if attention mechanisms are new to you.</p>
+</div></div><p>This project has a different focus than my last “from scratch” endeavor, where I built an <a href="https://github.com/ImadDabbura/tiny-pytorch">entire deep learning framework</a> to grasp the low-level mechanics of autograd and tensor ops. Here, we’ll leverage PyTorch’s battle-tested primitives to focus on what makes GPT special: multi-head attention, positional encodings, and the specific architectural decisions that enable language understanding.</p>
 <p>This hands-on process reveals challenges you can’t appreciate from diagrams alone. You’ll watch your GPU memory overflow, see training grind to a halt from inefficient data loading, and learn firsthand why techniques like mixed-precision training, gradient accumulation, and activation checkpointing are necessities, not just optimizations. It’s in facing these hurdles that you truly appreciate the engineering craft required to build and scale transformers efficiently.</p>
-</section>
-<section id="gpts" class="level2">
-<h2 class="anchored" data-anchor-id="gpts">GPTs</h2>
-<p>GPT (Generative Pre-trained Transformer) models, developed by OpenAI, represent a breakthrough in natural language processing. GPT-2, released in 2019, demonstrated that a transformer-based model trained on vast amounts of text could generate remarkably coherent and contextually relevant content. GPT-3, its successor, scaled this approach to 175 billion parameters, showcasing emergent capabilities like few-shot learning and complex reasoning. Both models share the same fundamental architecture: stacked transformer decoder blocks that predict the next token in a sequence, trained on the simple objective of minimizing prediction error across massive text corpora. The 124M parameter version we’ll be building captures the essential architecture while remaining computationally tractable for individual developers—though even at this “small” scale, you’ll quickly discover why the ML community spends so much time optimizing both training efficiency and model performance.</p>
+<p>GPT (Generative Pre-trained Transformer) models, developed by OpenAI, represent a breakthrough in natural language processing. GPT-2, released in 2019, demonstrated that a transformer-based model trained on vast amounts of text could generate remarkably coherent and contextually relevant content. GPT-3, its successor, scaled this approach to 175 billion parameters, showcasing emergent capabilities like few-shot learning and complex reasoning. Both models share the same fundamental architecture: stacked transformer decoder blocks that predict the next token in a sequence, trained on the simple objective of minimizing prediction error across massive text corpora.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>The 124M variant has 12 layers, 12 heads, and 768-dim embeddings. GPT-3 scaled to 96 layers, 96 heads, and 12288-dim — same architecture, 1000x parameters.</p>
+</div></div><p>The 124M parameter version we’ll be building captures the essential architecture while remaining computationally tractable for individual developers—though even at this “small” scale, you’ll quickly discover why the ML community spends so much time optimizing both training efficiency and model performance.</p>
 <p>By the end of this journey, you won’t just know how transformers work—you’ll have built the critical components with your own hands, optimized the training loop, and watched your model evolve from random noise to coherent text generation. Let’s begin.</p>
 </section>
 <section id="implementation" class="level2">
@@ -886,9 +889,13 @@ background-size: cover;
 <span id="cb10-176"><a href="#cb10-176" aria-hidden="true" tabindex="-1"></a>    destroy_process_group()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="conclusion" class="level2">
+<section id="conclusion" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<p>We’ve come a long way in this journey—from implementing the core transformer architecture with multi-head attention and positional encodings, to building an efficient training pipeline complete with modern optimizations like flash attention, mixed precision training, and distributed parallelism. We’ve debugged exploding gradients, optimized memory usage, and watched our model evolve from producing random gibberish to generating coherent text. Along the way, we’ve gained deep insights into why each component exists and how they work together to create these remarkable language models.</p>
+<p>We’ve come a long way in this journey—from implementing the core transformer architecture with multi-head attention and positional encodings, to building an efficient training pipeline complete with modern optimizations like flash attention, mixed precision training, and distributed parallelism. We’ve debugged exploding gradients, optimized memory usage, and watched our model evolve from producing random gibberish to generating coherent text.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>If you want to go deeper on the optimization side, see my <a href="https://imaddabbura.github.io/dl-tips-tricks.html">DL Tips &amp; Tricks</a> reference — it covers many of the heuristics used here.</p>
+</div></div><p>Along the way, we’ve gained deep insights into why each component exists and how they work together to create these remarkable language models.</p>
 <p>I hope this deep dive has been as illuminating for you as it has been for me. Writing this implementation forced me to confront gaps in my own understanding and solidified concepts that previously felt abstract. There’s something uniquely satisfying about seeing your hand-built transformer successfully predict its first coherent sentence—a moment where theory truly becomes understanding.</p>
 <p>If you’ve made it this far, thank you for joining me on this journey. I’d love to hear about your experiences implementing transformers, any bugs you’ve encountered, optimizations you’ve discovered, or questions this post might have raised. Feel free to reach out with feedback, corrections, or insights—the best part of sharing these implementations is learning from the community’s collective wisdom. Happy building!</p>
 </section>
@@ -964,6 +971,14 @@ document.addEventListener("DOMContentLoaded", function() {
             mainContent.insertAdjacentHTML('beforeend', citationHTML);
         }
     }
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  document.querySelectorAll(".listing-status").forEach(function(el) {
+    var status = el.textContent.trim().toLowerCase();
+    if (status) el.classList.add(status);
+  });
 });
 </script>
 <script id="quarto-html-after-body" type="application/javascript">
@@ -1527,7 +1542,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>Blog made with Quarto, by Imad Dabbura</p>
+<p>© 2017–2026 Imad Dabbura ∙ Made with <a href="https://quarto.org">Quarto</a></p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;

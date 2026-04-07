@@ -270,6 +270,8 @@ main, #quarto-content, .page-columns {
 pre {
   background-color: darken($spc-bg-1, 5%);
   border: 1px solid lighten($spc-bg-1, 10%);
+  border-left: 3px solid $spc-accent;
+  border-radius: 0 3px 3px 0;
 }
 
 code {
@@ -393,7 +395,8 @@ table {
 }
 
 /*-- Status Badges --*/
-.status-badge {
+.status-badge,
+.listing-status {
   display: inline-block;
   font-size: 0.75rem;
   font-weight: 500;
@@ -402,19 +405,22 @@ table {
   text-transform: capitalize;
 }
 
-.status-badge.evergreen {
+.status-badge.evergreen,
+.listing-status.evergreen {
   color: $spc-accent-dark;
   border: 1px solid $spc-accent-dark;
   background-color: rgba($spc-accent, 0.15);
 }
 
-.status-badge.growing {
+.status-badge.growing,
+.listing-status.growing {
   color: $spc-secondary-light;
   border: 1px solid $spc-secondary-light;
   background-color: rgba($spc-secondary-light, 0.1);
 }
 
-.status-badge.seedling {
+.status-badge.seedling,
+.listing-status.seedling {
   color: $spc-primary-light;
   border: 1px solid $spc-primary-light;
   background-color: rgba($spc-primary-light, 0.1);

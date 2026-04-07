@@ -54,9 +54,9 @@ ul.task-list li input[type="checkbox"] {
   "type": "overlay",
   "limit": 50,
   "algolia": {
-    "application-id": "PVDXB8B7OS",
-    "search-only-api-key": "eb3007c200831c30465f8a5172690cf0",
-    "index-name": "Initial-Website-Search-Index",
+    "application-id": "JZ1UWSSI1E",
+    "search-only-api-key": "c0b453df5f408deb4e62b620d94a91c6",
+    "index-name": "my-website",
     "analytics-events": true,
     "show-logo": true,
     "libDir": "site_libs"
@@ -249,7 +249,10 @@ window.Quarto = {
           Low-rank decomposition matrices for transformer attention weights — minimal trainable parameters, no inference latency overhead, efficient task switching.
         </div>
       </div>
-                </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">Efficient Adaptation</div>
+              </div>
+                  </div>
   </div>
     
   
@@ -284,7 +287,6 @@ window.Quarto = {
 
 
 
-<div class="status-badge-container" style="margin-bottom: 1rem;"><span class="status-badge evergreen - Efficient Adaptation">evergreen - Efficient Adaptation</span></div>
 <p><a href="https://arxiv.org/abs/2106.09685">LoRA: Low-Rank Adaptation of Large Language Models</a></p>
 <ul>
 <li><p><strong>Thesis</strong>: To reduce the hardware requirement for a full-fine-tuning (storage and memory), low rank decomposition matrices will be trained for every transformer layer (only attention weights). It is based on the fact that <span class="math inline">\(\Delta{W}\)</span> matrices have low intrinsic dimension, which means they can be represented using much lower-ranked matrices. In other words, they have redundant information and a lot columns/rows can be obtained by linear combination of other columns/rows in the matrix (weight matrices are <strong>rank-deficient</strong> i.e.&nbsp;they have much lower rank than their actual dimensions). The proposed solution doesn’t add inference latency overhead as other adaptation methods do, can be combined with other adaptation methods because LoRA is orthogonal to other adaptation methods, and allows to have one shared instance of LLM between different downstream tasks. Switching between different tasks is very efficient as we just need to swap out the low rank matrices for attention weights which are much smaller than LLM pre-trained weights.</p></li>
@@ -383,6 +385,14 @@ document.addEventListener("DOMContentLoaded", function() {
             mainContent.insertAdjacentHTML('beforeend', citationHTML);
         }
     }
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  document.querySelectorAll(".listing-status").forEach(function(el) {
+    var status = el.textContent.trim().toLowerCase();
+    if (status) el.classList.add(status);
+  });
 });
 </script>
 <script id="quarto-html-after-body" type="application/javascript">
@@ -946,7 +956,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>Blog made with Quarto, by Imad Dabbura</p>
+<p>© 2017–2026 Imad Dabbura ∙ Made with <a href="https://quarto.org">Quarto</a></p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;

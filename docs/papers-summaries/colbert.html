@@ -54,9 +54,9 @@ ul.task-list li input[type="checkbox"] {
   "type": "overlay",
   "limit": 50,
   "algolia": {
-    "application-id": "PVDXB8B7OS",
-    "search-only-api-key": "eb3007c200831c30465f8a5172690cf0",
-    "index-name": "Initial-Website-Search-Index",
+    "application-id": "JZ1UWSSI1E",
+    "search-only-api-key": "c0b453df5f408deb4e62b620d94a91c6",
+    "index-name": "my-website",
     "analytics-events": true,
     "show-logo": true,
     "libDir": "site_libs"
@@ -249,7 +249,10 @@ window.Quarto = {
           Late interaction retrieval balancing expressiveness and efficiency — contextualized token-level matching with delayed query-document interaction.
         </div>
       </div>
-                </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">Retrieval &amp; RAG</div>
+              </div>
+                  </div>
   </div>
     
   
@@ -284,7 +287,6 @@ window.Quarto = {
 
 
 
-<div class="status-badge-container" style="margin-bottom: 1rem;"><span class="status-badge evergreen - Retrieval &amp; RAG">evergreen - Retrieval &amp; RAG</span></div>
 <p><a href="https://arxiv.org/abs/2004.12832">ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT</a></p>
 <ul>
 <li><strong>Thesis</strong>: ColBERT is a middle ground approach that tries to combine the expressiveness of query-document interaction at less computational cost. It does this through its delayed interactions between query and document. Instead of doing interaction across all documents, we retrieve top-k documents and then do interaction using maximum cosine similarity.</li>
@@ -394,6 +396,14 @@ document.addEventListener("DOMContentLoaded", function() {
             mainContent.insertAdjacentHTML('beforeend', citationHTML);
         }
     }
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  document.querySelectorAll(".listing-status").forEach(function(el) {
+    var status = el.textContent.trim().toLowerCase();
+    if (status) el.classList.add(status);
+  });
 });
 </script>
 <script id="quarto-html-after-body" type="application/javascript">
@@ -957,7 +967,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>Blog made with Quarto, by Imad Dabbura</p>
+<p>© 2017–2026 Imad Dabbura ∙ Made with <a href="https://quarto.org">Quarto</a></p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;
