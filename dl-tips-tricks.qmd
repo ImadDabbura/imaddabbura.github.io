@@ -45,6 +45,36 @@ dataset.
   memory. Fewer batches per epoch means: (1) increase the number of
   epochs and (2) increase the learning rate.
 
+- **Overfit, then regularize:** First verify your model has enough
+  capacity to overfit the full training data, then add regularization
+  (dropout, weight decay, data augmentation, early stopping) to close
+  the generalization gap. If the model can't even overfit, the
+  architecture or optimization is the problem — no amount of
+  regularization will help.
+
+- **Batch size and learning rate:** When changing batch size, scale
+  the learning rate proportionally. Double the batch size → double the
+  LR (linear scaling) or use $\sqrt{}$ scaling for more stability.
+  Smaller batches have noisier gradients and need a lower LR; larger
+  batches are more stable and tolerate higher LR.
+
+- **LR schedule — CosineAnnealing1Cycle:** Train with a high LR for
+  a long time (explore the loss landscape), then a low LR for a long
+  time at the end (converge into a good minimum). Start with a quick
+  warmup from a small LR. Pair with cyclical momentum: high LR + low
+  momentum (explore without overshooting), low LR + high momentum
+  (converge steadily within a basin).
+
+- **Initialization matters deeply:** Weights don't change much from
+  their initial values, so proper initialization is critical. The
+  initial loss should match what you'd expect from the task. For
+  language modeling, the first-iteration probability of each token
+  should be roughly uniform ($1/vocab\_{sz}$) since there is no
+  reason to assign higher probability to some tokens. The loss on
+  each token would then be $\approx -\log(1/vocab\_sz)$ because the
+  probability distribution is diffused.
+
+
 ### Data
 
 - **Inspect worst predictions:** Check the positive examples
@@ -76,6 +106,24 @@ dataset.
   augmented output first makes sense and second doesn't change the
   label.
 
+- **Augmentation encodes invariances, not information:** Data
+  augmentation doesn't add new information — it shows different
+  aspects of the same distribution to make known invariances explicit
+  (e.g., a horizontally flipped cat is still a cat), making it easier
+  for the model to learn them rather than having to discover them from
+  data alone.
+
+- **Compose augmentation transforms:** Successive image transforms
+  (rotate, resize, crop) compound interpolation errors since each
+  operation resamples the image. Fix: resize the image larger first,
+  compose all geometric transforms into a single operation including
+  the final resize — all on GPU.
+
+- **Distribution mismatch rule:** It's fine for the training
+  distribution to differ from validation/test — what matters is that
+  validation and test distributions match, since the validation set is
+  your proxy for estimating test performance.
+
 ### Monitoring & Debugging
 
 - **Activation and gradient distributions:** Monitor histograms of
@@ -89,6 +137,18 @@ dataset.
   ratio). Ideally, the ratio should be close to 1% — not $0.001\%$
   (no learning) or $50\%$ (changes too fast, may overshoot). Use this
   to determine whether the learning rate needs adjustment.
+
+- **Three error gaps:** Training error alone reveals high bias
+  (underfitting). The gap between training and validation error
+  reveals high variance (overfitting). The gap between validation and
+  test error reveals overfitting to the validation set — often caused
+  by excessive hyperparameter tuning.
+
+- **Metrics diverge during training:** Early in training, most
+  metrics improve together. As training progresses, they typically
+  diverge — optimizing RMSE may worsen MAPE, improving precision may
+  hurt recall. Pick the metric that matches your actual objective and
+  monitor others as guardrails.
 
 ### Efficiency
 
@@ -116,15 +176,6 @@ dataset.
   compute, individual downstream tasks may scale in unpredictable
   ways — some plateau, others may scale inversely, etc.
 
-- **Initialization matters deeply:** Weights don't change much from
-  their initial values, so proper initialization is critical. The
-  initial loss should match what you'd expect from the task. For
-  language modeling, the first-iteration probability of each token
-  should be roughly uniform ($1/vocab\_{sz}$) since there is no
-  reason to assign higher probability to some tokens. The loss on
-  each token would then be $\approx -\log(1/vocab\_sz)$ because the
-  probability distribution is diffused.
-
 - **Weight sharing:** Tie the token embedding and the final linear
   layer (classifier / LM head) — semantically similar tokens should
   have similar probability when predicting the next token. This also
@@ -140,3 +191,10 @@ dataset.
 
 - **Embedding size for categoricals** (fastai rule of thumb):
   $$\min(600,\; \text{round}(1.6 \times \text{n\_categories}^{0.56}))$$
+
+- **Encode nominal categoricals:** Always encode nominal categorical
+  features — handles typos and abbreviations that inflate cardinality,
+  groups morphologically or semantically related categories, reduces
+  cardinality, and avoids unknown categories at inference. Word
+  embeddings often don't help because category names lack sufficient
+  context.

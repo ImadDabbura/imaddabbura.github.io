@@ -329,6 +329,10 @@ Overfit a tiny dataset first
 <ul>
 <li><p><strong>Mixup:</strong> Linear combination of 2 random training examples using a lambda drawn from a <code>Beta(α, α)</code> distribution. The output vector is also a linear combination of the two examples’ labels. This forces the model to be more robust and learn linear combinations of examples instead of memorizing them, making it less sensitive to corrupted labels and noise. Can also be applied to tabular data, though you need to train for much longer since the model must learn to differentiate between examples and their relative weights.</p></li>
 <li><p><strong>Mixed precision:</strong> When using mixed precision training, increase batch size to utilize the GPU since each batch occupies much smaller memory. Fewer batches per epoch means: (1) increase the number of epochs and (2) increase the learning rate.</p></li>
+<li><p><strong>Overfit, then regularize:</strong> First verify your model has enough capacity to overfit the full training data, then add regularization (dropout, weight decay, data augmentation, early stopping) to close the generalization gap. If the model can’t even overfit, the architecture or optimization is the problem — no amount of regularization will help.</p></li>
+<li><p><strong>Batch size and learning rate:</strong> When changing batch size, scale the learning rate proportionally. Double the batch size → double the LR (linear scaling) or use <span class="math inline">\(\sqrt{}\)</span> scaling for more stability. Smaller batches have noisier gradients and need a lower LR; larger batches are more stable and tolerate higher LR.</p></li>
+<li><p><strong>LR schedule — CosineAnnealing1Cycle:</strong> Train with a high LR for a long time (explore the loss landscape), then a low LR for a long time at the end (converge into a good minimum). Start with a quick warmup from a small LR. Pair with cyclical momentum: high LR + low momentum (explore without overshooting), low LR + high momentum (converge steadily within a basin).</p></li>
+<li><p><strong>Initialization matters deeply:</strong> Weights don’t change much from their initial values, so proper initialization is critical. The initial loss should match what you’d expect from the task. For language modeling, the first-iteration probability of each token should be roughly uniform (<span class="math inline">\(1/vocab\_{sz}\)</span>) since there is no reason to assign higher probability to some tokens. The loss on each token would then be <span class="math inline">\(\approx -\log(1/vocab\_sz)\)</span> because the probability distribution is diffused.</p></li>
 </ul>
 </section>
 <section id="data" class="level3">
@@ -339,6 +343,9 @@ Overfit a tiny dataset first
 <li><p><strong>Image resolution matters:</strong> <code>32x32</code> images have very different characteristics than larger images. Below <code>96x96</code>, behavior changes significantly — what works on CIFAR-10 will most likely not work on ImageNet. 128x128 pixel images generalize well to bigger images, and conclusions made on them hold well for larger images while being much faster to train.</p></li>
 <li><p><strong>Create toy problems:</strong> A big part of getting good at applied deep learning is knowing how to create small, workable, useful datasets. Try to come up with a toy problem or two that gives you insight into your full problem.</p></li>
 <li><p><strong>Augmentation:</strong> Can be done on all kinds of data as long as the label would almost not change after the augmentation. Make sure the augmented output first makes sense and second doesn’t change the label.</p></li>
+<li><p><strong>Augmentation encodes invariances, not information:</strong> Data augmentation doesn’t add new information — it shows different aspects of the same distribution to make known invariances explicit (e.g., a horizontally flipped cat is still a cat), making it easier for the model to learn them rather than having to discover them from data alone.</p></li>
+<li><p><strong>Compose augmentation transforms:</strong> Successive image transforms (rotate, resize, crop) compound interpolation errors since each operation resamples the image. Fix: resize the image larger first, compose all geometric transforms into a single operation including the final resize — all on GPU.</p></li>
+<li><p><strong>Distribution mismatch rule:</strong> It’s fine for the training distribution to differ from validation/test — what matters is that validation and test distributions match, since the validation set is your proxy for estimating test performance.</p></li>
 </ul>
 </section>
 <section id="monitoring-debugging" class="level3">
@@ -346,6 +353,8 @@ Overfit a tiny dataset first
 <ul>
 <li><p><strong>Activation and gradient distributions:</strong> Monitor histograms of activations and gradients at each layer, including the percentage of saturated neurons. This reveals whether activations are saturated and gradients are close to <code>0</code> — meaning those layers aren’t learning.</p></li>
 <li><p><strong>Update-to-parameter ratio:</strong> Monitor the magnitude of parameter updates relative to the parameters themselves (the grad/data ratio). Ideally, the ratio should be close to 1% — not <span class="math inline">\(0.001\%\)</span> (no learning) or <span class="math inline">\(50\%\)</span> (changes too fast, may overshoot). Use this to determine whether the learning rate needs adjustment.</p></li>
+<li><p><strong>Three error gaps:</strong> Training error alone reveals high bias (underfitting). The gap between training and validation error reveals high variance (overfitting). The gap between validation and test error reveals overfitting to the validation set — often caused by excessive hyperparameter tuning.</p></li>
+<li><p><strong>Metrics diverge during training:</strong> Early in training, most metrics improve together. As training progresses, they typically diverge — optimizing RMSE may worsen MAPE, improving precision may hurt recall. Pick the metric that matches your actual objective and monitor others as guardrails.</p></li>
 </ul>
 </section>
 <section id="efficiency" class="level3">
@@ -361,7 +370,6 @@ Overfit a tiny dataset first
 <li><p><strong>Compute scaling:</strong> With LLMs, generally the more compute the better. Compute ≈ parameters × tokens, so you can make the model bigger and keep the number of tokens fixed, or keep the model size the same and increase the number of tokens (training for longer). The optimal trade-off depends on the task.</p></li>
 <li><p><strong>Logloss predicts downstream performance:</strong> Improving logloss for LLMs is correlated with improved performance on downstream tasks.</p></li>
 <li><p><strong>Emergent task scaling:</strong> Even though loss scales smoothly with compute, individual downstream tasks may scale in unpredictable ways — some plateau, others may scale inversely, etc.</p></li>
-<li><p><strong>Initialization matters deeply:</strong> Weights don’t change much from their initial values, so proper initialization is critical. The initial loss should match what you’d expect from the task. For language modeling, the first-iteration probability of each token should be roughly uniform (<span class="math inline">\(1/vocab\_{sz}\)</span>) since there is no reason to assign higher probability to some tokens. The loss on each token would then be <span class="math inline">\(\approx -\log(1/vocab\_sz)\)</span> because the probability distribution is diffused.</p></li>
 <li><p><strong>Weight sharing:</strong> Tie the token embedding and the final linear layer (classifier / LM head) — semantically similar tokens should have similar probability when predicting the next token. This also provides huge efficiency gains: in GPT-2, each matrix has <span class="math inline">\(50257 \times 768 \approx 38.5M\)</span> parameters, roughly <span class="math inline">\(1/3\)</span> of the model. Gradient updates receive contributions from both the classifier and embedding branches.</p></li>
 <li><p><strong>OOV token handling:</strong> For tokens that don’t appear in the training data, their predicted probabilities should be very close to zero.</p></li>
 </ul>
@@ -369,7 +377,8 @@ Overfit a tiny dataset first
 <section id="tabular" class="level2">
 <h2 class="anchored" data-anchor-id="tabular">Tabular</h2>
 <ul>
-<li><strong>Embedding size for categoricals</strong> (fastai rule of thumb): <span class="math display">\[\min(600,\; \text{round}(1.6 \times \text{n\_categories}^{0.56}))\]</span></li>
+<li><p><strong>Embedding size for categoricals</strong> (fastai rule of thumb): <span class="math display">\[\min(600,\; \text{round}(1.6 \times \text{n\_categories}^{0.56}))\]</span></p></li>
+<li><p><strong>Encode nominal categoricals:</strong> Always encode nominal categorical features — handles typos and abbreviations that inflate cardinality, groups morphologically or semantically related categories, reduces cardinality, and avoids unknown categories at inference. Word embeddings often don’t help because category names lack sufficient context.</p></li>
 </ul>
 
 
