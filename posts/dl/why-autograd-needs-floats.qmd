@@ -4,20 +4,19 @@ subtitle: "Calculus is continuous — and integer tensors quietly kill the gradi
 date: "2026-04-21"
 image: "images/autograd-floats-img.png"
 title-block-banner: "images/autograd-floats-img.png"
-categories: [Deep Learning]
-draft: true
+categories: [Deep Learning, Machine Learning]
 status: evergreen
 ---
 
 ## Introduction
 
-Set `requires_grad=True` on an integer tensor in PyTorch and you get a runtime error: only floating point and complex tensors can require gradients. The fix is one keyword argument. The reason behind the rule is more interesting than the fix — it reflects a structural fact about gradient descent rather than an arbitrary framework choice, and it explains a few related failures that aren't loud enough to throw an error of their own.
+Set `requires_grad=True` on an integer tensor in PyTorch and you get a runtime error: only floating point and complex tensors can require gradients. The fix is one keyword argument. The rule itself isn't a framework choice — it's a structural constraint on gradient descent, and the same constraint explains a handful of related failures that aren't loud enough to throw errors of their own.
 
-Two things have to hold for gradient descent to work: the loss has to change continuously with the parameter, and the resulting change has to have a usable sign and magnitude. Integer parameters fail both, in two independent ways. The chain-rule mechanics this post relies on are covered in [Automatic Differentiation Demystified](../mlsys/automatic-differentiation.qmd).
+Gradient descent works by reading how the loss responds to a tiny change in a parameter and stepping in the direction that lowers it. Two conditions have to hold for the nudge to carry information: the parameter has to be able to move by arbitrarily small amounts, and the loss has to respond smoothly to that move. Integers break both — once in the calculus that produces the gradient, once in the arithmetic that applies it. The rest of this post works through both failures, the cases where integer tensors remain safe, and why quantized training is a workaround rather than a counterexample. (Chain-rule mechanics this post relies on are covered in [Automatic Differentiation Demystified](../mlsys/automatic-differentiation.qmd).)
 
-## What the Derivative Sees on Floats and Integers
+## The Derivative on Floats and Integers
 
-Plotting the same function over floats and over integers makes the contrast immediate. Below is $f(x) = x^2/10$ as a continuous curve, and the same function under integer rounding, $\lfloor x^2/10 \rfloor$. The slider sets $x$; the toggle switches between the two regimes.
+Plotting the same function over floats and over integers makes the contrast immediate. Below is $f(x) = x^2$ as a continuous curve, and the same function under integer rounding, $\lfloor x^2 \rfloor$. The slider sets $x$; the toggle switches between the two regimes.
 
 ```{python}
 #| echo: false
@@ -36,14 +35,14 @@ from bokeh.resources import CDN
 from IPython.display import HTML
 
 x0 = 5.0
-f = lambda x: x**2 / 10
-fp = lambda x: x / 5
+f = lambda x: x**2
+fp = lambda x: 2 * x
 
-xs = np.linspace(-5, 5, 500)
+xs = np.linspace(-5, 5, 800)
 curve_src = ColumnDataSource(dict(x=xs, y=f(xs)))
 point_src = ColumnDataSource(dict(x=[x0], y=[f(x0)]))
 
-L = 1.3
+L = 0.5
 tangent_src = ColumnDataSource(dict(
     x=[x0 - L, x0 + L],
     y=[f(x0) - fp(x0) * L, f(x0) + fp(x0) * L],
@@ -51,7 +50,7 @@ tangent_src = ColumnDataSource(dict(
 
 p = figure(
     height=320, width=680,
-    x_range=(-5.5, 5.5), y_range=(-0.4, 3.0),
+    x_range=(-6, 6), y_range=(-3, 30),
     toolbar_location=None,
     outline_line_color="#e5e7eb",
     background_fill_color="#fafafa",
@@ -65,7 +64,7 @@ p.scatter("x", "y", source=point_src, size=8,
           fill_color="#1a7f37", line_color="#1a7f37")
 
 point_label = Label(
-    x=x0, y=f(x0) - 0.5, text=f"POINT (X={x0:.1f})",
+    x=x0, y=f(x0) - 3.0, text=f"POINT (X={x0:.1f})",
     text_font_size="10pt", text_font_style="bold", text_align="center",
     border_line_color="#d0d7de", border_line_width=1,
     background_fill_color="white", background_fill_alpha=0.95,
@@ -110,28 +109,28 @@ cb = CustomJS(
     code="""
     const x = slider.value;
     const cont = mode.active;
-    const N = 500;
+    const N = 800;
     const xs = new Array(N);
     const ys = new Array(N);
     for (let i = 0; i < N; i++) {
         const v = -5 + (10 * i) / (N - 1);
         xs[i] = v;
-        ys[i] = cont ? (v*v/10) : Math.floor(v*v/10);
+        ys[i] = cont ? (v*v) : Math.floor(v*v);
     }
     curve.data = { x: xs, y: ys };
 
-    const y_at_x = cont ? (x*x/10) : Math.floor(x*x/10);
+    const y_at_x = cont ? (x*x) : Math.floor(x*x);
     point.data = { x: [x], y: [y_at_x] };
 
-    const slope = cont ? (x/5) : 0;
-    const L = 1.3;
+    const slope = cont ? (2*x) : 0;
+    const L = 0.5;
     tangent.data = {
         x: [x - L, x + L],
         y: [y_at_x - slope*L, y_at_x + slope*L],
     };
 
     point_label.x = x;
-    point_label.y = y_at_x - 0.5;
+    point_label.y = y_at_x - 3.0;
     point_label.text = `POINT (X=${x.toFixed(1)})`;
 
     const stat = (lbl, val, color) =>
@@ -177,7 +176,7 @@ script, div = components(layout)
 HTML(f"{CDN.render()}{div}{script}")
 ```
 
-On the float curve the tangent tilts smoothly with slope $x/5$. On the staircase, the slope is zero on every tread and undefined at every riser; those are the only two values the derivative can take. This is a property of the function itself, not the visualization. The derivative at a point is the limit of the slope as the neighborhood around it shrinks, and on an integer-valued function every neighborhood resolves to either a flat tread or a vertical jump. There is no third case to converge to, and a gradient computed at either of these points carries no information about which direction lowers the loss.
+On the float curve the tangent tilts smoothly with slope $2x$. On the staircase, the slope is zero on every tread and undefined at every riser; those are the only two values the derivative can take. The derivative at a point is the limit of the slope as the neighborhood around it shrinks, and on an integer-valued function every neighborhood resolves to either a flat tread or a vertical jump. There is no third case to converge to, and a gradient computed at either of these points carries no information about which direction lowers the loss.
 
 ## Integer Casts and the Chain Rule
 
@@ -205,7 +204,7 @@ The second reason is independent of calculus. The SGD update is $w \leftarrow w 
 
 This is why low-precision training (bfloat16, fp8) still uses *floating* point. The issue isn't the bit count, it's continuity: a float grid is dense enough that the rounding error stays below the update magnitude. An integer grid isn't.
 
-## When Integer Tensors Are Safe
+## Safe Uses of Integer Tensors
 
 The rule is about the gradient path, not about integer tensors as such. Integer tensors appear in every real model and they're fine, as long as nothing on the gradient path passes through them:
 
