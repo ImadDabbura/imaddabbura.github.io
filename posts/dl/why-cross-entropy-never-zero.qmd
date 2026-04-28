@@ -1,0 +1,216 @@
+---
+title: "Why Cross-Entropy Loss Can Never Reach Zero"
+subtitle: "Why softmax can't reach the corners of the simplex, and what that does to the predictor"
+date: "2026-04-27"
+image: "images/ce-never-zero-img.png"
+title-block-banner: "images/ce-never-zero-img.png"
+categories: [Machine Learning, Deep Learning, Optimization]
+status: growing
+---
+
+## Introduction
+
+Cross-entropy looks like a loss for being wrong. On separable data, it becomes something more extreme: a loss for not being infinitely certain.
+
+A sigmoid can get arbitrarily close to 0 or 1, but with finite weights it never reaches either endpoint. One-hot labels demand those endpoints exactly. The target lives on the boundary; the model’s predictions live inside it.
+
+Three steps from cause to symptom:
+
+**1. The loss has no finite minimum.** Cross-entropy is bounded below by zero, but the bound is unattainable.
+
+**2. The optimizer never settles.** The gradient $(p - 1)x$ is non-zero for any $p < 1$, so on separable data the weights keep growing.
+
+**3. The predictor turns into a wall.** As grows, the smooth sigmoid sharpens into a near-step function, and the model becomes confidently wrong on any point that strays across the boundary.
+
+The bug is not in the optimizer. It is in asking a continuous model to imitate a delta function.
+
+## The Loss Has No Finite Minimum
+
+The sigmoid $\sigma(z) = 1/(1 + e^{-z})$ maps $\mathbb{R}$ to the *open* interval $(0, 1)$. The endpoints $0$ and $1$ are limits, never attained:
+
+$$\lim_{z \to +\infty} \sigma(z) = 1, \qquad \lim_{z \to -\infty} \sigma(z) = 0$$
+
+Equivalently, the logit blows up at the endpoints:
+
+$$\text{logit}(p) = \log\frac{p}{1-p} \to \pm \infty \quad \text{as } p \to 1, 0$$
+
+This generalizes to softmax: outputs live strictly in the *open* probability simplex — every coordinate is positive, none equal to $1$.
+
+A one-hot label, by contrast, is a **Dirac measure**: probability $1$ on the true class, $0$ everywhere else. It sits on a *vertex* of the simplex. The vertices are exactly the points the softmax can never produce.
+
+For a one-hot target $p^*$, $\text{CE}(p^*, q) = \text{KL}(p^* \,\|\, q)$, which vanishes only at $q = p^*$ — a Dirac the softmax cannot produce. **The infimum is approached, never attained.**
+
+## Why Gradient Descent Never Settles
+
+Why doesn't the optimizer just stop somewhere reasonable? Because the gradient of cross-entropy doesn't have a stationary point at any finite weight.
+
+For binary CE with logit $z = \theta^\top x$ and sigmoid output $p = \sigma(z)$:
+
+$$L = -y \log p - (1-y) \log(1-p)$$
+
+The gradient w.r.t. the logit collapses to a beautifully clean expression:
+
+$$\frac{\partial L}{\partial z} = p - y \quad \Rightarrow \quad \frac{\partial L}{\partial \theta} = (p - y)\, x$$
+
+For a correctly classified positive example ($y=1$, $p$ close to $1$), the gradient is $(p - 1)\,x$ — *non-zero for any $p < 1$*. The gradient *shrinks* as $p \to 1$, but it never *vanishes*. The optimizer keeps inflating $\theta$ in the direction of $x$.
+
+On linearly separable data, this means $\|\theta\| \to \infty$. Soudry et al. (2018) showed that $\|\theta_t\|$ grows logarithmically while the direction converges to the max-margin hyperplane. The same effect applies to any strictly decreasing margin-based loss.
+
+We can verify the growth empirically in twenty lines:
+
+```python
+import numpy as np
+
+rng = np.random.default_rng(0)
+N = 200
+X = rng.normal(size=(N, 2))
+y = (X[:, 0] + 0.5 * X[:, 1] > 0).astype(float)  # linearly separable
+
+theta = np.zeros(2)
+lr = 0.1
+for t in range(1, 100_001):
+    p = 1.0 / (1.0 + np.exp(-X @ theta))
+    grad = X.T @ (p - y) / N
+    theta -= lr * grad
+```
+
+Sampling $\|\theta\|$ at $t = 1, 10, 10^2, 10^3, 10^4, 10^5$ gives $0.07, 0.55, 2.1, 4.5, 6.9, 9.3$ — logarithmic growth, exactly the rate Soudry et al. predict. The loss is shrinking the entire time; the weights are growing the entire time; neither ever stops.
+
+## How Diverging Weights Break the Predictor
+
+This is the part of the story that matters most in practice. The diverging weights aren't an abstract concern about the loss landscape — they have a direct, visible effect on the predictor's geometry. Walk this chain one link at a time:
+
+```{mermaid}
+%%| fig-cap: "The causal chain from the non-vanishing gradient to the confidently-wrong predictor. Each link is a derivation, a number, or a chart in the rest of this section."
+flowchart LR
+    A["∂L/∂θ = (p−y)x<br/>never zero"] --> B["‖θ‖ grows<br/>like log t"]
+    B --> C["σ(θᵀx) → step<br/>function"]
+    C --> D["small Δx ⟶<br/>large Δp"]
+    D --> E["confidently wrong<br/>on borderline points"]
+```
+
+### From smooth curve to wall
+
+The sensitivity of the sigmoid to its input has a clean closed form:
+
+$$\frac{\partial p}{\partial x} = p(1-p)\,\theta, \qquad \max_x \left\| \frac{\partial p}{\partial x} \right\| = \frac{\|\theta\|}{4}$$
+
+The maximum is achieved at $p = 0.5$, where $p(1-p) = 1/4$. So the Lipschitz constant of the predictor scales *linearly* with $\|\theta\|$. The "active region" — the band of $x$ where the sigmoid isn't saturated near $0$ or $1$ — has width $O(1/\|\theta\|)$.
+
+The point of this section is that **this isn't a thought experiment.** It's what actually happens to the sigmoid as you keep training. Below is the same logistic-regression run from earlier, with the predicted probability surface plotted at four checkpoints in training time. As iterations accumulate and $\|\theta\|$ grows logarithmically, the smooth $S$-curve sharpens into a near-vertical wall:
+
+```{python}
+#| echo: false
+#| label: fig-sigmoid-evolution
+#| fig-cap: 'The same model, four points in training, projected onto the unit vector of the *terminal* $\theta$ (direction stabilizes early; the curves here are dominated by magnitude growth). At $t=1$ the sigmoid is barely tilted — the predictor is essentially uniform. By $t=100{,}000$ the curve has collapsed to a near-step function around the decision boundary, and any $x$ outside a tiny band is assigned probability indistinguishable from $0$ or $1$. This is the wiggly-sigmoid regime: same model, same data, different norm of $\theta$.'
+
+import numpy as np
+from bokeh.plotting import figure
+from bokeh.embed import components
+from bokeh.resources import CDN
+from bokeh.palettes import Viridis256
+from IPython.display import HTML
+
+rng = np.random.default_rng(0)
+N = 200
+X = rng.normal(size=(N, 2))
+y_lab = (X[:, 0] + 0.5 * X[:, 1] > 0).astype(float)
+
+theta = np.zeros(2)
+lr = 0.1
+checkpoints = [1, 100, 10_000, 100_000]
+snapshots = {}
+
+for t in range(1, max(checkpoints) + 1):
+    p = 1.0 / (1.0 + np.exp(-X @ theta))
+    grad = X.T @ (p - y_lab) / N
+    theta -= lr * grad
+    if t in checkpoints:
+        snapshots[t] = theta.copy()
+
+xs = np.linspace(-2.0, 2.0, 600)
+
+p = figure(
+    height=380, width=720,
+    x_range=(-2.0, 2.0), y_range=(-0.03, 1.03),
+    toolbar_location=None,
+    title="Sigmoid sharpens as the weight norm grows during training",
+    x_axis_label="input coordinate along the unit vector of theta",
+    y_axis_label="p(y=1 | x)",
+    outline_line_color="#e5e7eb",
+    background_fill_color="#fafafa",
+)
+p.grid.grid_line_alpha = 0.3
+p.title.text_font_size = "13pt"
+
+# horizontal p=0.5 reference and vertical boundary
+p.line([-2.0, 2.0], [0.5, 0.5], line_color="#bbbbbb",
+       line_dash="dotted", line_width=1)
+p.line([0.0, 0.0], [-0.03, 1.03], line_color="#888888",
+       line_dash="dashed", line_width=1)
+
+# evenly spaced viridis colors across the four checkpoints
+palette_idx = np.linspace(40, 215, len(snapshots)).astype(int)
+colors = [Viridis256[i] for i in palette_idx]
+
+for (t, th), c in zip(sorted(snapshots.items()), colors):
+    nrm = float(np.linalg.norm(th))
+    p_slice = 1.0 / (1.0 + np.exp(-nrm * xs))
+    label = f"t = {t:>7,}    ||theta|| = {nrm:5.2f}"
+    p.line(xs, p_slice, color=c, line_width=2.6, legend_label=label)
+
+p.legend.location = "bottom_right"
+p.legend.label_text_font_size = "10pt"
+p.legend.background_fill_alpha = 0.85
+p.legend.border_line_alpha = 0.0
+
+script, div = components(p)
+HTML(CDN.render() + script + div)
+```
+
+The curve at $t=1$ is gently sloped — it answers borderline points with a hedge. The curve at $t=100{,}000$ has collapsed to a step, and any input that strays even slightly across the boundary is met with near-total confidence. **The model didn't get more right; it got more emphatic.**
+
+| $w$ | slope at $p=0.5$ | active region width | $\Delta p$ for $\Delta x = 0.01$ |
+|-----|------------------|---------------------|----------------------------------|
+| $1$ | $0.25$ | $\sim 4$ | $\sim 0.0025$ |
+| $4$ | $1.0$ | $\sim 1$ | $\sim 0.01$ |
+| $1000$ | $250$ | $\sim 0.004$ | saturates to $\sim 1$ |
+
+The same $\Delta x$ that produces a $0.25\%$ probability shift at $w = 1$ produces *full saturation* at $w = 1000$. The sigmoid has stopped behaving like a smooth probability and started behaving like a wall — an indicator function with a step at the decision boundary.
+
+### Confidently wrong: a worked case
+
+Take a noisy positive example whose features land at $x = -0.01$ — just past the boundary on the wrong side. The true label is $y = 1$, but a small measurement error has placed it where $\theta^\top x$ is slightly negative.
+
+- **With $w = 4$:** $\theta^\top x = -0.04$, so $p = \sigma(-0.04) \approx 0.49$. The model *hedges* — it says roughly $50/50$, which is well-calibrated for a borderline point.
+- **With $w = 1000$:** $\theta^\top x = -10$, so $p = \sigma(-10) \approx 5 \times 10^{-5}$. The model is *catastrophically wrong* — it says "definitely class $0$" with $99.995\%$ confidence on a point whose true label is class $1$.
+
+**This is the cost of unbounded weights.** High $\|\theta\|$ does not make correct answers more correct — it makes wrong answers more *confidently wrong*. The well-calibrated "hedge" disappears, replaced by a knife-edge that punishes any deviation from the training distribution.
+
+For reference: $\sigma(30) \approx 1 - 10^{-13}$, the edge of float64 precision. Trained classifiers routinely produce logits at this scale, which is exactly where the wiggly regime lives.
+
+## What to Do About It
+
+If the gradient never vanishes on its own, the cure is to remove the thing that's pushing the weights to infinity. Three practical options:
+
+**Weight decay.** Add $\lambda \|\theta\|^2$ to the loss. The gradient on a correctly classified example becomes $(p - 1)\,x + 2\lambda\,\theta$. The data term shrinks exponentially in margin; the penalty grows linearly in $\|\theta\|$. Linear growth meets exponential decay at exactly one finite point — and that's where training stops.
+
+**Label smoothing.** Replace the one-hot target with $\tilde y$ that places mass $1 - \varepsilon$ on the true class and $\varepsilon/(K-1)$ on each other. The target now lives *inside* the simplex, not on a vertex, so the softmax can actually reach it. The optimum has a closed form: the logit gap between the true class and the rest equals $\log\frac{1-\varepsilon}{\varepsilon/(K-1)}$ — finite. Fix the target the model is allowed to reach, and the weights stop chasing infinity.
+
+**Early stopping.** Halt while $\|\theta\|$ is still bounded. Logarithmic growth is slow, but it is monotone — every extra epoch buys you a sharper sigmoid and worse calibration on borderline points. There's no setting of the learning rate that fixes this; only stopping does.
+
+The three attack the problem from different sides — penalize the weights, soften the target, or cut the trajectory short — but they're all preventing the same divergence. Pick whichever is easiest to tune in your setup.
+
+## Key Takeaways
+
+1. **Cross-entropy's infimum is at infinity, not zero.** Softmax/sigmoid outputs live in the open simplex; one-hot targets live on its vertices. The attainable set never reaches the target set.
+
+2. **The optimizer never stops because the gradient never vanishes.** $\partial L/\partial \theta = (p - y)\,x$ is non-zero for any $p < 1$, so on separable data $\|\theta\|$ grows logarithmically without bound.
+
+3. **Diverging weights produce a wiggly, knife-edge sigmoid.** A small input change flips the prediction from near $0$ to near $1$, so the model becomes confidently wrong on borderline points.
+
+The bug isn't in the optimizer — it's in expecting a continuous distribution to equal a delta function.
+
+## Resources
+
+1. [**The Implicit Bias of Gradient Descent on Separable Data**](https://arxiv.org/abs/1710.10345) — Soudry, Hoffer, Nacson, Gunasekar, Srebro (2018). The foundational result on $\|\theta_t\| = O(\log t)$ and convergence in direction to max-margin.
