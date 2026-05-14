@@ -296,7 +296,7 @@ window.Quarto = {
 <li>Compute budget = <span class="math inline">\(6NBS\)</span> where <span class="math inline">\(N\)</span> is number of parameters excluding embedding parameters, <span class="math inline">\(B\)</span> is batch size, <span class="math inline">\(S\)</span> is number of steps (optimization update), and <span class="math inline">\(6\)</span> to account for forward and backward passes</li>
 </ul></li>
 <li><strong>Contribution</strong>: Simple equations and power-law relationships that we can use as a reference when allocating our compute budget.</li>
-<li><strong>Takeaways</strong>: The main factors that affect LLMs performance are 1) model size, 2) dataset size, 3) compute budget. Other factors such as architectural hyper-parameters such at best weak effect on the model’s performance. The test loss would continue to decrease as we increase compute in a log-linear fashion.</li>
+<li><strong>Takeaways</strong>: The main factors that affect LLMs performance are 1) model size, 2) dataset size, 3) compute budget. Other factors such as architectural hyper-parameters at best weak effect on the model’s performance. The test loss would continue to decrease as we increase compute in a log-linear fashion.</li>
 <li><strong>Notes</strong>:
 <ul>
 <li>There is negative relationship between model size, dataset size, and compute time with cross entropy loss. As we increase one of them -&gt; loss improves. This relationship can be described by power-laws equations.</li>
@@ -304,7 +304,7 @@ window.Quarto = {
 <li>For a fixed compute budget, large models can stop long before convergence and still performs better than small models</li>
 <li>If we have more compute budget, allocating most of it to larger models yield the most improvement (we may need to increase dataset size to avoid iterating over the same data multiple times). Followed by larger batches to utilize parallelism. Finally, increase training steps (epochs).</li>
 <li>When including embeddings parameters, performance is strongly dependent on number of layers and the number of parameters. However, w/o including embedding parameters, any combination of layer/paramaters_size converge to the same trend</li>
-<li>Transformer outperforms LSTM. LSTM plateaus after &lt; 100 tokens while transformer improves through whole context. For the early tokens, LSTM performs similar to Transformer, but for tokens that are later in the context LSTM suffers. As Transformer model size increases -&gt; improves its ability to recognize patters and have lower loss for later tokens</li>
+<li>Transformer outperforms LSTM. LSTM plateaus after &lt; 100 tokens while transformer improves through whole context. For the early tokens, LSTM performs similar to Transformer, but for tokens that are later in the context LSTM suffers. As Transformer model size increases -&gt; improves its ability to recognize patterns and have lower loss for later tokens</li>
 <li>Performance improves with model size regardless of what test data is used; however, for a given model size, there is narrow gap between losses for different test data. WebText2 has the lowest loss
 <ul>
 <li>There is a constant penalty between test loss and validation loss regardless of training and test data. In other words, when testing the model on a different distribution, the test loss is a constant factor more than the validation loss. So we can predictably predict test loss from validation loss</li>
@@ -320,7 +320,7 @@ window.Quarto = {
 <li>Compute budget</li>
 <li>When not bottlenecked by other two factors, model’s performance follows power-law relationship with these factors. For example, Increasing model size would improve performance in a power-law relationship assuming we’re not bottlenecked by dataset size or compute budget</li>
 </ul></li>
-<li>Model size and dataset size must be changed together to avoid overfitting. If we hold one of them context we hit diminishing returns and enter overfitting. For each <span class="math inline">\(8x\)</span> increase in model size, we need to increase the dataset size by <span class="math inline">\(5x\)</span></li>
+<li>Model size and dataset size must be changed together to avoid overfitting. If we hold one of them fixed, we hit diminishing returns and enter overfitting. For each <span class="math inline">\(8x\)</span> increase in model size, we need to increase the dataset size by <span class="math inline">\(5x\)</span></li>
 </ul></li>
 </ul>
 <p>#nlp #llm</p>
