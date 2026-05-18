@@ -184,11 +184,11 @@ window.Quarto = {
 
 <link rel="stylesheet" href="../../assets/posts.css">
 <meta property="og:title" content="Imad Dabbura - Inside LSTMs: Implementing and Optimizing Sequential Models from First Principles">
-<meta property="og:description" content="A deep dive into LSTM internals—covering the math, gates, performance considerations, and a full PyTorch-aligned implementation from scratch.">
+<meta property="og:description" content="A deep dive into LSTM internals-covering the math, gates, performance considerations, and a full PyTorch-aligned implementation from scratch.">
 <meta property="og:image" content="https://imaddabbura.github.io/posts/nlp/images/lstm-cell.jpeg">
 <meta property="og:site_name" content="Imad Dabbura">
 <meta name="twitter:title" content="Imad Dabbura - Inside LSTMs: Implementing and Optimizing Sequential Models from First Principles">
-<meta name="twitter:description" content="A deep dive into LSTM internals—covering the math, gates, performance considerations, and a full PyTorch-aligned implementation from scratch.">
+<meta name="twitter:description" content="A deep dive into LSTM internals-covering the math, gates, performance considerations, and a full PyTorch-aligned implementation from scratch.">
 <meta name="twitter:image" content="https://imaddabbura.github.io/posts/nlp/images/lstm-cell.jpeg">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
@@ -287,7 +287,7 @@ window.Quarto = {
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">Inside LSTMs: Implementing and Optimizing Sequential Models from First Principles</h1>
-            <p class="subtitle lead">A deep dive into LSTM internals—covering the math, gates, performance considerations, and a full PyTorch-aligned implementation from scratch.</p>
+            <p class="subtitle lead">A deep dive into LSTM internals-covering the math, gates, performance considerations, and a full PyTorch-aligned implementation from scratch.</p>
                                 <div class="quarto-categories">
                 <div class="quarto-category">NLP</div>
               </div>
@@ -365,14 +365,14 @@ window.Quarto = {
 <section id="why-implement-an-lstm-from-scratch" class="level2">
 <h2 class="anchored" data-anchor-id="why-implement-an-lstm-from-scratch">Why Implement an LSTM from Scratch?</h2>
 <p>If you’ve used <code>nn.LSTM</code> in PyTorch, you’ve seen it work. But <em>how</em> does it decide what to remember and what to forget? Why does it need four gates instead of one? And why is it so much better than a vanilla RNN at handling long sequences?</p>
-<p>The best way to answer these questions is to build one yourself. In this post, we’ll start with the problem that motivated LSTMs (vanishing gradients), build up the intuition for how they solve it, then implement both <code>LSTMCell</code> and a multi-layer <code>LSTM</code> from scratch in PyTorch — verifying each against the official implementation down to floating-point precision.</p>
+<p>The best way to answer these questions is to build one yourself. In this post, we’ll start with the problem that motivated LSTMs (vanishing gradients), build up the intuition for how they solve it, then implement both <code>LSTMCell</code> and a multi-layer <code>LSTM</code> from scratch in PyTorch - verifying each against the official implementation down to floating-point precision.</p>
 </section>
 <section id="the-vanishing-gradient-problem" class="level2">
 <h2 class="anchored" data-anchor-id="the-vanishing-gradient-problem">The Vanishing Gradient Problem</h2>
-<p><strong>Long Short-Term Memory (LSTM)</strong> is a recurrent neural network architecture introduced by <a href="https://www.bioinf.jku.at/publications/older/2604.pdf">Hochreiter and Schmidhuber (1997)</a> to solve the <strong>vanishing gradient problem</strong> — the central failure mode of vanilla RNNs on long sequences.</p>
+<p><strong>Long Short-Term Memory (LSTM)</strong> is a recurrent neural network architecture introduced by <a href="https://www.bioinf.jku.at/publications/older/2604.pdf">Hochreiter and Schmidhuber (1997)</a> to solve the <strong>vanishing gradient problem</strong> - the central failure mode of vanilla RNNs on long sequences.</p>
 <p>To understand why LSTMs exist, we first need to understand what goes wrong. In a vanilla RNN, the hidden state is <em>completely overwritten</em> at every time step:</p>
 <p><span class="math display">\[h_t = \tanh(W_{hh} \cdot h_{t-1} + W_{xh} \cdot x_t + b)\]</span></p>
-<p>During backpropagation, the gradient of the loss with respect to an early hidden state <span class="math inline">\(h_1\)</span> must pass through the <span class="math inline">\(\tanh\)</span> nonlinearity and the weight matrix <span class="math inline">\(W_{hh}\)</span> at <em>every single time step</em> between <span class="math inline">\(h_T\)</span> and <span class="math inline">\(h_1\)</span>. If the sequence has 100 tokens, the gradient is multiplied by <span class="math inline">\(W_{hh}\)</span> roughly 100 times. If the dominant eigenvalue of <span class="math inline">\(W_{hh}\)</span> is even slightly less than 1 — say 0.9 — the gradient shrinks by a factor of <span class="math inline">\(0.9^{100} \approx 0.00003\)</span>. The signal from early tokens effectively disappears.</p>
+<p>During backpropagation, the gradient of the loss with respect to an early hidden state <span class="math inline">\(h_1\)</span> must pass through the <span class="math inline">\(\tanh\)</span> nonlinearity and the weight matrix <span class="math inline">\(W_{hh}\)</span> at <em>every single time step</em> between <span class="math inline">\(h_T\)</span> and <span class="math inline">\(h_1\)</span>. If the sequence has 100 tokens, the gradient is multiplied by <span class="math inline">\(W_{hh}\)</span> roughly 100 times. If the dominant eigenvalue of <span class="math inline">\(W_{hh}\)</span> is even slightly less than 1 - say 0.9 - the gradient shrinks by a factor of <span class="math inline">\(0.9^{100} \approx 0.00003\)</span>. The signal from early tokens effectively disappears.</p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -383,13 +383,13 @@ The Fundamental Issue
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The problem isn’t just mathematical — it has a concrete consequence: <strong>vanilla RNNs can’t learn long-range dependencies</strong>. If the answer to a question depends on a word 50 tokens earlier in the sentence, the gradient signal connecting them is essentially zero. The model can’t learn that relationship, no matter how long you train.</p>
+<p>The problem isn’t just mathematical - it has a concrete consequence: <strong>vanilla RNNs can’t learn long-range dependencies</strong>. If the answer to a question depends on a word 50 tokens earlier in the sentence, the gradient signal connecting them is essentially zero. The model can’t learn that relationship, no matter how long you train.</p>
 </div>
 </div>
 </section>
 <section id="how-lstms-fix-it" class="level2">
 <h2 class="anchored" data-anchor-id="how-lstms-fix-it">How LSTMs Fix It</h2>
-<p>The LSTM introduces a <strong>cell state</strong> <span class="math inline">\(c_t\)</span> — a separate memory channel that runs parallel to the hidden state. The critical difference is in <em>how</em> it gets updated:</p>
+<p>The LSTM introduces a <strong>cell state</strong> <span class="math inline">\(c_t\)</span> - a separate memory channel that runs parallel to the hidden state. The critical difference is in <em>how</em> it gets updated:</p>
 <table class="table">
 <colgroup>
 <col style="width: 33%">
@@ -426,23 +426,23 @@ The Fundamental Issue
 </tr>
 </tbody>
 </table>
-<p>The cell state update is <strong>additive</strong>: when the forget gate <span class="math inline">\(f_t\)</span> is close to 1 and the input gate <span class="math inline">\(i_t\)</span> is close to 0, the cell state passes through <em>unchanged</em>: <span class="math inline">\(c_t \approx c_{t-1}\)</span>. Gradients flow backward through time with minimal decay — no weight matrix or nonlinearity in the way.</p>
-<p>If this looks familiar, it should — it’s the same principle behind <strong>residual connections</strong> in ResNets. In a ResNet, each layer computes <span class="math inline">\(y = F(x) + x\)</span>: the input passes through unchanged, and the layer only learns the <em>residual</em>. The LSTM cell state works the same way, but across <strong>time instead of depth</strong>: the previous cell state passes through (scaled by <span class="math inline">\(f_t\)</span>), and the network adds a residual update (<span class="math inline">\(i_t \odot g_t\)</span>). Both create a gradient highway. ResNets made it possible to train 100+ layer networks; the LSTM cell state makes it possible to learn dependencies across 100+ time steps. Same insight, different axis.</p>
+<p>The cell state update is <strong>additive</strong>: when the forget gate <span class="math inline">\(f_t\)</span> is close to 1 and the input gate <span class="math inline">\(i_t\)</span> is close to 0, the cell state passes through <em>unchanged</em>: <span class="math inline">\(c_t \approx c_{t-1}\)</span>. Gradients flow backward through time with minimal decay - no weight matrix or nonlinearity in the way.</p>
+<p>If this looks familiar, it should - it’s the same principle behind <strong>residual connections</strong> in ResNets. In a ResNet, each layer computes <span class="math inline">\(y = F(x) + x\)</span>: the input passes through unchanged, and the layer only learns the <em>residual</em>. The LSTM cell state works the same way, but across <strong>time instead of depth</strong>: the previous cell state passes through (scaled by <span class="math inline">\(f_t\)</span>), and the network adds a residual update (<span class="math inline">\(i_t \odot g_t\)</span>). Both create a gradient highway. ResNets made it possible to train 100+ layer networks; the LSTM cell state makes it possible to learn dependencies across 100+ time steps. Same insight, different axis.</p>
 <p align="center">
 <img src="images/lstm-cell.jpeg" style="width: 500px;"><br>
 
 </p><center>
-<u><b><font color="00b7e4">Figure 1:</font></b></u> The LSTM cell. The horizontal line at the top is the cell state — the “highway” through time. The four yellow boxes (<span class="math inline">\(\sigma, \sigma, \tanh, \sigma\)</span>) are the forget, input, cell, and output gates respectively. The cell state is updated additively (the ⊕ node), while the gates use element-wise multiplication (⊗) to control information flow.
+<u><b><font color="00b7e4">Figure 1:</font></b></u> The LSTM cell. The horizontal line at the top is the cell state - the “highway” through time. The four yellow boxes (<span class="math inline">\(\sigma, \sigma, \tanh, \sigma\)</span>) are the forget, input, cell, and output gates respectively. The cell state is updated additively (the ⊕ node), while the gates use element-wise multiplication (⊗) to control information flow.
 </center>
 
 <p></p>
 <section id="why-two-states" class="level3">
 <h3 class="anchored" data-anchor-id="why-two-states">Why Two States?</h3>
-<p>A vanilla RNN has a single hidden state that must do <em>everything</em>: store long-term memory, carry short-term context, and produce the output that downstream layers consume. That’s too many jobs for one vector — optimizing the hidden state for the current prediction destroys the long-term information stored in it.</p>
+<p>A vanilla RNN has a single hidden state that must do <em>everything</em>: store long-term memory, carry short-term context, and produce the output that downstream layers consume. That’s too many jobs for one vector - optimizing the hidden state for the current prediction destroys the long-term information stored in it.</p>
 <p>LSTMs split this into two specialized roles:</p>
-<p><strong>Cell state (<span class="math inline">\(c_t\)</span>): the long-term internal memory.</strong> The cell state is the LSTM’s private memory — never directly exposed to the rest of the network. Its job is to <em>retain information across long distances</em> without interference. Because it’s updated additively, gradients can flow through it across hundreds of time steps. Think of it as a notebook that the LSTM writes to and reads from, but never shows to anyone directly.</p>
-<p><strong>Hidden state (<span class="math inline">\(h_t\)</span>): the short-term working output.</strong> The hidden state is what the LSTM <em>exposes</em> to the outside world — the input to the next layer, the softmax, or whatever comes next. It’s computed by selectively reading from the cell state via the output gate: <span class="math inline">\(h_t = o_t \odot \tanh(c_t)\)</span>. The output gate decides: <em>“Given everything I know and the current context, what’s relevant right now?”</em></p>
-<p>This separation is crucial. The cell state can hold information like “the subject is plural” or “we’re inside a quotation” for as long as needed, without being distorted by the demands of predicting intermediate tokens. When it <em>is</em> needed — the output gate reads it out at exactly the right moment.</p>
+<p><strong>Cell state (<span class="math inline">\(c_t\)</span>): the long-term internal memory.</strong> The cell state is the LSTM’s private memory - never directly exposed to the rest of the network. Its job is to <em>retain information across long distances</em> without interference. Because it’s updated additively, gradients can flow through it across hundreds of time steps. Think of it as a notebook that the LSTM writes to and reads from, but never shows to anyone directly.</p>
+<p><strong>Hidden state (<span class="math inline">\(h_t\)</span>): the short-term working output.</strong> The hidden state is what the LSTM <em>exposes</em> to the outside world - the input to the next layer, the softmax, or whatever comes next. It’s computed by selectively reading from the cell state via the output gate: <span class="math inline">\(h_t = o_t \odot \tanh(c_t)\)</span>. The output gate decides: <em>“Given everything I know and the current context, what’s relevant right now?”</em></p>
+<p>This separation is crucial. The cell state can hold information like “the subject is plural” or “we’re inside a quotation” for as long as needed, without being distorted by the demands of predicting intermediate tokens. When it <em>is</em> needed - the output gate reads it out at exactly the right moment.</p>
 <table class="table">
 <colgroup>
 <col style="width: 33%">
@@ -474,8 +474,8 @@ The Fundamental Issue
 </tr>
 <tr class="even">
 <td><strong>Gradient flow</strong></td>
-<td>Additive — gradients pass through cleanly</td>
-<td>Through tanh and output gate — more lossy</td>
+<td>Additive - gradients pass through cleanly</td>
+<td>Through tanh and output gate - more lossy</td>
 </tr>
 <tr class="odd">
 <td><strong>Analogy</strong></td>
@@ -487,8 +487,8 @@ The Fundamental Issue
 </section>
 <section id="a-concrete-example" class="level3">
 <h3 class="anchored" data-anchor-id="a-concrete-example">A Concrete Example</h3>
-<p>Consider: <em>“The cat, which sat on the mat in the living room near the window overlooking the garden, <strong>was</strong> sleeping.”</em> The verb “was” must agree with “cat” (singular), not “garden” or “window” — a dependency spanning ~15 tokens. A vanilla RNN’s gradient signal from “was” back to “cat” would be multiplied by <span class="math inline">\(W_{hh}\)</span> fifteen times — likely vanishing. An LSTM can keep “cat = singular noun” in its cell state with the forget gate near 1, preserving the information until it’s needed at “was.”</p>
-<p>One important constraint: RNNs and LSTMs are <strong>sequential models</strong> — the output at time <span class="math inline">\(t\)</span> depends on the hidden state from <span class="math inline">\(t-1\)</span>. We cannot parallelize across time steps; we must iterate one token at a time. This is the limitation that the Transformer (<a href="https://arxiv.org/abs/1706.03762">Vaswani et al., 2017</a>) later addressed with self-attention.</p>
+<p>Consider: <em>“The cat, which sat on the mat in the living room near the window overlooking the garden, <strong>was</strong> sleeping.”</em> The verb “was” must agree with “cat” (singular), not “garden” or “window” - a dependency spanning ~15 tokens. A vanilla RNN’s gradient signal from “was” back to “cat” would be multiplied by <span class="math inline">\(W_{hh}\)</span> fifteen times - likely vanishing. An LSTM can keep “cat = singular noun” in its cell state with the forget gate near 1, preserving the information until it’s needed at “was.”</p>
+<p>One important constraint: RNNs and LSTMs are <strong>sequential models</strong> - the output at time <span class="math inline">\(t\)</span> depends on the hidden state from <span class="math inline">\(t-1\)</span>. We cannot parallelize across time steps; we must iterate one token at a time. This is the limitation that the Transformer (<a href="https://arxiv.org/abs/1706.03762">Vaswani et al., 2017</a>) later addressed with self-attention.</p>
 </section>
 </section>
 <section id="inside-the-lstm-cell" class="level2">
@@ -544,11 +544,11 @@ h_t = o_t \odot \tanh(c_t) \\
 </tr>
 </tbody>
 </table>
-<p>Notice the activation functions: three gates use <strong>sigmoid</strong>, but the cell gate uses <strong>tanh</strong>. This isn’t arbitrary — it reflects their different roles. The sigmoid gates (<span class="math inline">\(i_t, f_t, o_t\)</span>) answer <em>“how much?”</em> questions: how much to write, how much to keep, how much to expose. Sigmoid squashes values to (0, 1), making each gate a dimmer switch that scales its input between “fully off” and “fully on.” The cell gate <span class="math inline">\(g_t\)</span> answers a different question: <em>“what values?”</em> It proposes candidate content to write into the cell state. Tanh maps to (-1, 1), which is critical — it allows the cell state to both <strong>increase and decrease</strong>. If <span class="math inline">\(g_t\)</span> used sigmoid (0, 1), the additive update <span class="math inline">\(i_t \odot g_t\)</span> could only ever push the cell state upward, and it would grow without bound. Tanh lets the network write negative corrections, keeping the cell state centered and bounded.</p>
+<p>Notice the activation functions: three gates use <strong>sigmoid</strong>, but the cell gate uses <strong>tanh</strong>. This isn’t arbitrary - it reflects their different roles. The sigmoid gates (<span class="math inline">\(i_t, f_t, o_t\)</span>) answer <em>“how much?”</em> questions: how much to write, how much to keep, how much to expose. Sigmoid squashes values to (0, 1), making each gate a dimmer switch that scales its input between “fully off” and “fully on.” The cell gate <span class="math inline">\(g_t\)</span> answers a different question: <em>“what values?”</em> It proposes candidate content to write into the cell state. Tanh maps to (-1, 1), which is critical - it allows the cell state to both <strong>increase and decrease</strong>. If <span class="math inline">\(g_t\)</span> used sigmoid (0, 1), the additive update <span class="math inline">\(i_t \odot g_t\)</span> could only ever push the cell state upward, and it would grow without bound. Tanh lets the network write negative corrections, keeping the cell state centered and bounded.</p>
 <section id="independent-gates-four-operating-modes" class="level3">
 <h3 class="anchored" data-anchor-id="independent-gates-four-operating-modes">Independent Gates: Four Operating Modes</h3>
-<p>A critical design choice is that the input gate and forget gate are <strong>completely independent</strong> — computed from separate weight matrices and biases, with nothing constraining them to sum to 1. The network is free to set both high, both low, or any combination.</p>
-<p>Contrast this with the GRU (Gated Recurrent Unit), where the equivalent gates <em>are</em> complementary: a single update gate <span class="math inline">\(z_t\)</span> weights new content by <span class="math inline">\(z_t\)</span> and old content by <span class="math inline">\((1 - z_t)\)</span>, forcing a trade-off. The GRU is more parameter-efficient, but less expressive — it can only interpolate between “keep old” and “write new.”</p>
+<p>A critical design choice is that the input gate and forget gate are <strong>completely independent</strong> - computed from separate weight matrices and biases, with nothing constraining them to sum to 1. The network is free to set both high, both low, or any combination.</p>
+<p>Contrast this with the GRU (Gated Recurrent Unit), where the equivalent gates <em>are</em> complementary: a single update gate <span class="math inline">\(z_t\)</span> weights new content by <span class="math inline">\(z_t\)</span> and old content by <span class="math inline">\((1 - z_t)\)</span>, forcing a trade-off. The GRU is more parameter-efficient, but less expressive - it can only interpolate between “keep old” and “write new.”</p>
 <p>The LSTM’s independence gives it four distinct operating modes:</p>
 <table class="table">
 <colgroup>
@@ -580,7 +580,7 @@ h_t = o_t \odot \tanh(c_t) \\
 <td><span class="math inline">\(\approx 1\)</span></td>
 <td><strong>Replace</strong></td>
 <td>Flush old state, write new info</td>
-<td>Topic change, sentence boundary — start fresh with new content</td>
+<td>Topic change, sentence boundary - start fresh with new content</td>
 </tr>
 <tr class="odd">
 <td><span class="math inline">\(\approx 1\)</span></td>
@@ -602,14 +602,14 @@ h_t = o_t \odot \tanh(c_t) \\
 </section>
 <section id="gates-as-learned-pattern-detectors" class="level3">
 <h3 class="anchored" data-anchor-id="gates-as-learned-pattern-detectors">Gates as Learned Pattern Detectors</h3>
-<p>It’s tempting to think of gates as simple switches, but each gate is a <strong>learned pattern detector</strong> — analogous to how a CNN filter activates on specific visual patterns, a gate’s weight matrix learns to activate on specific <em>contextual patterns</em> in the input and hidden state. A CNN filter produces a high activation when the input patch matches its learned pattern; a gate weight matrix produces a high activation (close to 1 after sigmoid) when the combination of <span class="math inline">\(x_t\)</span> and <span class="math inline">\(h_{t-1}\)</span> matches <em>its</em> learned pattern. CNN filters detect <em>spatial</em> patterns in pixel neighborhoods; gate weights detect <em>contextual</em> patterns across the current token and sequence history.</p>
+<p>It’s tempting to think of gates as simple switches, but each gate is a <strong>learned pattern detector</strong> - analogous to how a CNN filter activates on specific visual patterns, a gate’s weight matrix learns to activate on specific <em>contextual patterns</em> in the input and hidden state. A CNN filter produces a high activation when the input patch matches its learned pattern; a gate weight matrix produces a high activation (close to 1 after sigmoid) when the combination of <span class="math inline">\(x_t\)</span> and <span class="math inline">\(h_{t-1}\)</span> matches <em>its</em> learned pattern. CNN filters detect <em>spatial</em> patterns in pixel neighborhoods; gate weights detect <em>contextual</em> patterns across the current token and sequence history.</p>
 <p>Consider the forget gate: <span class="math inline">\(f_t = \sigma(W_{if} \cdot x_t + W_{hf} \cdot h_{t-1} + b_f)\)</span>. After training, specific rows of these weight matrices become specialized detectors:</p>
 <ul>
-<li>Some rows might detect <strong>“end of clause”</strong> patterns (a period, “but”) — signaling that old context should be flushed</li>
-<li>Other rows might detect <strong>“continuation”</strong> patterns (a comma, “which”) — signaling that existing context should be preserved</li>
-<li>Rows in the input gate might detect <strong>“salient new information”</strong> patterns (a named entity, a negation word) — signaling that this input should be written into memory</li>
+<li>Some rows might detect <strong>“end of clause”</strong> patterns (a period, “but”) - signaling that old context should be flushed</li>
+<li>Other rows might detect <strong>“continuation”</strong> patterns (a comma, “which”) - signaling that existing context should be preserved</li>
+<li>Rows in the input gate might detect <strong>“salient new information”</strong> patterns (a named entity, a negation word) - signaling that this input should be written into memory</li>
 </ul>
-<p>This happens <strong>per dimension</strong> of the hidden state. The gate output is a vector, not a scalar — dimension 42 of the forget gate might be close to 0 (forget) while dimension 73 is close to 1 (keep), because each dimension stores different information and each gate dimension detects different patterns.</p>
+<p>This happens <strong>per dimension</strong> of the hidden state. The gate output is a vector, not a scalar - dimension 42 of the forget gate might be close to 0 (forget) while dimension 73 is close to 1 (keep), because each dimension stores different information and each gate dimension detects different patterns.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -620,17 +620,17 @@ The Single-Matrix Trick
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Even though we describe four separate gates, in practice we compute them all in <strong>one matrix multiplication</strong> by concatenating the four weight matrices into a single <code>4 * hidden_size</code> matrix. We then split the result into four chunks. This is much faster because it replaces four small matmuls with one large one — better utilizing GPU parallelism and memory bandwidth.</p>
+<p>Even though we describe four separate gates, in practice we compute them all in <strong>one matrix multiplication</strong> by concatenating the four weight matrices into a single <code>4 * hidden_size</code> matrix. We then split the result into four chunks. This is much faster because it replaces four small matmuls with one large one - better utilizing GPU parallelism and memory bandwidth.</p>
 </div>
 </div>
 </section>
 </section>
 <section id="implementation" class="level2">
 <h2 class="anchored" data-anchor-id="implementation">Implementation</h2>
-<p>With the conceptual foundation in place, let’s turn these equations into code. We’ll build two modules — <code>LSTMCell</code> (one time step) and <code>LSTM</code> (full sequences with multiple layers) — verifying each against PyTorch’s official implementation.</p>
+<p>With the conceptual foundation in place, let’s turn these equations into code. We’ll build two modules - <code>LSTMCell</code> (one time step) and <code>LSTM</code> (full sequences with multiple layers) - verifying each against PyTorch’s official implementation.</p>
 <section id="lstmcell" class="level3">
 <h3 class="anchored" data-anchor-id="lstmcell"><code>LSTMCell</code></h3>
-<p>We implement two versions: a verbose one that makes every operation explicit (separate weight matrices for each gate), and a compact one using <code>nn.Linear</code> with the single-matrix trick. Both produce identical results — the compact version is what you’d use in practice.</p>
+<p>We implement two versions: a verbose one that makes every operation explicit (separate weight matrices for each gate), and a compact one using <code>nn.Linear</code> with the single-matrix trick. Both produce identical results - the compact version is what you’d use in practice.</p>
 <div id="4f325555-fdab-47c3-94a6-38a4a2e6dd11" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
@@ -747,15 +747,15 @@ The Contiguity Trap
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>If you pass batch-first tensors (<code>B × T × D</code>) to an LSTM that expects sequence-first, it will still “work” — but each time step access triggers an implicit copy because the memory isn’t contiguous along the time dimension. This can silently slow down training. PyTorch’s <code>nn.LSTM</code> has a <code>batch_first</code> flag that handles the transpose for you, but internally it still processes sequence-first.</p>
+<p>If you pass batch-first tensors (<code>B × T × D</code>) to an LSTM that expects sequence-first, it will still “work” - but each time step access triggers an implicit copy because the memory isn’t contiguous along the time dimension. This can silently slow down training. PyTorch’s <code>nn.LSTM</code> has a <code>batch_first</code> flag that handles the transpose for you, but internally it still processes sequence-first.</p>
 </div>
 </div>
 <p><strong>Truncated Backpropagation Through Time (TBPTT).</strong> Since weights are shared across all time steps within a layer, backpropagating through very long sequences causes severe vanishing/exploding gradients <em>and</em> extreme memory usage (all intermediate activations must be stored). The standard solution: <strong>detach</strong> the hidden and cell states from the computation graph after each batch. Gradients can flow within a batch’s time steps but not across batch boundaries.</p>
-<p><strong>Multi-layer stacking.</strong> We can stack LSTMs by feeding the hidden state output of layer <span class="math inline">\(l\)</span> as the input to layer <span class="math inline">\(l+1\)</span>. Each layer has its own <code>LSTMCell</code> with independent weights. The first layer’s cell takes input of size <code>input_sz</code>; all subsequent layers take input of size <code>hidden_sz</code>. This increases model capacity — deeper layers can learn more abstract representations.</p>
+<p><strong>Multi-layer stacking.</strong> We can stack LSTMs by feeding the hidden state output of layer <span class="math inline">\(l\)</span> as the input to layer <span class="math inline">\(l+1\)</span>. Each layer has its own <code>LSTMCell</code> with independent weights. The first layer’s cell takes input of size <code>input_sz</code>; all subsequent layers take input of size <code>hidden_sz</code>. This increases model capacity - deeper layers can learn more abstract representations.</p>
 <p><strong>Layer iteration order.</strong> With multiple layers, there are two valid iteration orders: (1) iterate all time steps for layer 0, then all time steps for layer 1, etc., or (2) at each time step, iterate through all layers before moving to the next time step. Our implementation uses option (1), which is simpler and matches PyTorch’s behavior.</p>
 <p><strong>Handling variable-length sequences.</strong> Not all sequences have the same length. Two approaches:</p>
 <ol type="1">
-<li><strong>Padding</strong>: pad shorter sequences to the longest length with zeros (pre- or post-padding). Simple but wasteful — the model does unnecessary computation on padding tokens.</li>
+<li><strong>Padding</strong>: pad shorter sequences to the longest length with zeros (pre- or post-padding). Simple but wasteful - the model does unnecessary computation on padding tokens.</li>
 <li><strong>Packed sequences</strong>: combine all sequences together with index metadata marking boundaries. More efficient but more complex to implement. PyTorch provides <code>pack_padded_sequence</code> and <code>pad_packed_sequence</code> utilities for this.</li>
 </ol>
 <div id="d7691b4e-235e-434c-b22f-a5130c6ad864" class="cell" data-execution_count="11">
@@ -820,12 +820,12 @@ The Contiguity Trap
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<p>LSTMs were the dominant architecture for sequence modeling in NLP for years — powering machine translation, text classification, language modeling, and speech recognition before Transformers took over. In this post, we implemented both <code>LSTMCell</code> and a multi-layer <code>LSTM</code> from scratch, verified them against PyTorch’s official implementation, and discussed the performance decisions that go into a production implementation.</p>
+<p>LSTMs were the dominant architecture for sequence modeling in NLP for years - powering machine translation, text classification, language modeling, and speech recognition before Transformers took over. In this post, we implemented both <code>LSTMCell</code> and a multi-layer <code>LSTM</code> from scratch, verified them against PyTorch’s official implementation, and discussed the performance decisions that go into a production implementation.</p>
 <section id="key-takeaways" class="level3">
 <h3 class="anchored" data-anchor-id="key-takeaways">Key Takeaways</h3>
 <ol type="1">
 <li><p><strong>LSTMs solve vanishing gradients through additive cell state updates.</strong> The forget gate can stay close to 1, allowing gradients to flow through many time steps without exponential decay. This is fundamentally different from vanilla RNNs, where the hidden state is completely overwritten at each step.</p></li>
-<li><p><strong>Four gates, one matrix multiplication.</strong> The input, forget, cell, and output gates are computed together in a single fused operation, then split — a practical optimization that significantly improves throughput by better utilizing hardware parallelism.</p></li>
+<li><p><strong>Four gates, one matrix multiplication.</strong> The input, forget, cell, and output gates are computed together in a single fused operation, then split - a practical optimization that significantly improves throughput by better utilizing hardware parallelism.</p></li>
 <li><p><strong>Sequential processing is the fundamental bottleneck.</strong> The output at time <span class="math inline">\(t\)</span> depends on the hidden state from <span class="math inline">\(t-1\)</span>, making parallelization across time steps impossible. This is the limitation that motivated the Transformer’s self-attention mechanism.</p></li>
 <li><p><strong>Truncated BPTT is essential for long sequences.</strong> Detaching hidden states between batches prevents gradient computation from spanning the entire sequence, reducing both memory usage and gradient instability.</p></li>
 <li><p><strong>Memory layout matters.</strong> Using sequence-first tensors (<code>T × B × D</code>) ensures contiguous memory access at each time step, avoiding hidden performance penalties from implicit copies.</p></li>
@@ -840,7 +840,7 @@ LSTMs in the Transformer Era
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>While Transformers have largely replaced LSTMs for most NLP tasks, understanding LSTMs remains valuable. They’re still used in streaming/online settings where you process one token at a time, in resource-constrained environments where the <span class="math inline">\(O(n^2)\)</span> attention cost is prohibitive, and as components in hybrid architectures. More importantly, the concepts — gating, cell states, truncated BPTT — appear in many modern architectures in different forms.</p>
+<p>While Transformers have largely replaced LSTMs for most NLP tasks, understanding LSTMs remains valuable. They’re still used in streaming/online settings where you process one token at a time, in resource-constrained environments where the <span class="math inline">\(O(n^2)\)</span> attention cost is prohibitive, and as components in hybrid architectures. More importantly, the concepts - gating, cell states, truncated BPTT - appear in many modern architectures in different forms.</p>
 </div>
 </div>
 </section>
@@ -849,10 +849,10 @@ LSTMs in the Transformer Era
 <h2 class="anchored" data-anchor-id="references-resources">References &amp; Resources</h2>
 <ul>
 <li><strong>Hochreiter, S. &amp; Schmidhuber, J.</strong> (1997). <a href="https://www.bioinf.jku.at/publications/older/2604.pdf">Long Short-Term Memory</a>. <em>Neural Computation</em>, 9(8), 1735–1780. The original LSTM paper.</li>
-<li><strong>Olah, C.</strong> (2015). <a href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/">Understanding LSTM Networks</a>. The classic visual explainer — the single best resource for building intuition about LSTM gates.</li>
-<li><strong>Greff, K. et al.</strong> (2017). <a href="https://arxiv.org/abs/1503.04069">LSTM: A Search Space Odyssey</a>. <em>IEEE TNNLS</em>. Comprehensive study of LSTM variants — concludes that the forget gate and output activation are the most critical components.</li>
+<li><strong>Olah, C.</strong> (2015). <a href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/">Understanding LSTM Networks</a>. The classic visual explainer - the single best resource for building intuition about LSTM gates.</li>
+<li><strong>Greff, K. et al.</strong> (2017). <a href="https://arxiv.org/abs/1503.04069">LSTM: A Search Space Odyssey</a>. <em>IEEE TNNLS</em>. Comprehensive study of LSTM variants - concludes that the forget gate and output activation are the most critical components.</li>
 <li><strong>Vaswani, A. et al.</strong> (2017). <a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need</a>. <em>NeurIPS 2017</em>. The Transformer architecture that largely replaced LSTMs for NLP tasks.</li>
-<li><strong>Merity, S. et al.</strong> (2018). <a href="https://arxiv.org/abs/1708.02182">Regularizing and Optimizing LSTM Language Models</a>. <em>ICLR 2018</em>. AWD-LSTM — pushed LSTM language models to their limits with careful regularization.</li>
+<li><strong>Merity, S. et al.</strong> (2018). <a href="https://arxiv.org/abs/1708.02182">Regularizing and Optimizing LSTM Language Models</a>. <em>ICLR 2018</em>. AWD-LSTM - pushed LSTM language models to their limits with careful regularization.</li>
 <li><strong>PyTorch Documentation</strong>. <a href="https://pytorch.org/docs/stable/generated/torch.nn.LSTM.html">nn.LSTM</a> and <a href="https://pytorch.org/docs/stable/generated/torch.nn.LSTMCell.html">nn.LSTMCell</a>. Official reference for the implementation we verified against.</li>
 </ul>
 

@@ -387,16 +387,16 @@ background-size: cover;
 <section id="before-we-begin-where-we-are-in-pólyas-framework" class="level2">
 <h2 class="anchored" data-anchor-id="before-we-begin-where-we-are-in-pólyas-framework">Before We Begin: Where We Are in Pólya’s Framework</h2>
 <p>Let me start with something crucial. If you’ve been following this series, you’ve already completed Step 1: Understanding the Problem. You’ve identified your unknown (what you’re trying to predict), examined your data (what you have to work with), and mapped your conditions (constraints like latency, interpretability, data size). You know what success looks like.</p>
-<p>If you haven’t done that work yet—if you’re unclear about your exact objective or haven’t truly examined your data—stop now. Go back to the first article in this series. Understanding must come first. Pólya is emphatic about this: you cannot devise a good plan without first understanding what you’re trying to solve.</p>
+<p>If you haven’t done that work yet-if you’re unclear about your exact objective or haven’t truly examined your data-stop now. Go back to the first article in this series. Understanding must come first. Pólya is emphatic about this: you cannot devise a good plan without first understanding what you’re trying to solve.</p>
 <p>But if you have done that work, then welcome. You’re ready for Step 2: Devising a Plan.</p>
 </section>
 <section id="introduction-standing-at-the-threshold" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-standing-at-the-threshold"><strong>Introduction: Standing at the Threshold</strong></h2>
-<p>Picture yourself in this moment. You’re sitting at your desk, perhaps with a cup of coffee growing cold beside your keyboard. You’ve spent the last few days—maybe weeks—immersed in your data. You’ve run <code>df.describe()</code> more times than you can count. You’ve created distribution plots, correlation matrices, and t-SNE visualizations. You’ve identified the outliers, understood the class imbalance, and discovered that one column that’s leaking future information. You’ve documented your findings, noting that 15% of your labels might be noisy, that your features have wildly different scales, and that production latency can’t exceed 50 milliseconds.</p>
+<p>Picture yourself in this moment. You’re sitting at your desk, perhaps with a cup of coffee growing cold beside your keyboard. You’ve spent the last few days-maybe weeks-immersed in your data. You’ve run <code>df.describe()</code> more times than you can count. You’ve created distribution plots, correlation matrices, and t-SNE visualizations. You’ve identified the outliers, understood the class imbalance, and discovered that one column that’s leaking future information. You’ve documented your findings, noting that 15% of your labels might be noisy, that your features have wildly different scales, and that production latency can’t exceed 50 milliseconds.</p>
 <p>You understand the problem. You really do.</p>
 <p>But now comes something different. Now comes the moment where all that careful analysis must transform into action. Where understanding gives way to creation. Where you move from observer to architect.</p>
 <p><strong>This is the moment of devising a plan.</strong></p>
-<p>George Pólya, the mathematician who crystallized the art of problem-solving into teachable principles, understood that this stage represents the most profoundly human aspect of our work. It’s where <strong>intuition dances with logic</strong>, where your past projects—the successes and the failures—suddenly illuminate possibilities for this new challenge. It’s where you become an artist, sketching pathways through the vast, often intimidating landscape of model architectures, training strategies, and deployment constraints.</p>
+<p>George Pólya, the mathematician who crystallized the art of problem-solving into teachable principles, understood that this stage represents the most profoundly human aspect of our work. It’s where <strong>intuition dances with logic</strong>, where your past projects-the successes and the failures-suddenly illuminate possibilities for this new challenge. It’s where you become an artist, sketching pathways through the vast, often intimidating landscape of model architectures, training strategies, and deployment constraints.</p>
 <p>Let me walk with you through this process. Not as a distant lecturer, but as a colleague who’s been in your shoes, who’s felt that mix of excitement and uncertainty that comes with starting a new ML project.</p>
 </section>
 <section id="the-six-essential-questions-your-planning-toolkit" class="level2">
@@ -414,23 +414,23 @@ background-size: cover;
 </section>
 <section id="the-architecture-of-strategic-thinking-building-your-bridge" class="level2">
 <h2 class="anchored" data-anchor-id="the-architecture-of-strategic-thinking-building-your-bridge"><strong>The Architecture of Strategic Thinking: Building Your Bridge</strong></h2>
-<p>Close your eyes for a moment and imagine this: You’re standing at the edge of a canyon. On this side—your side—you have everything you’ve gathered. Your training dataset of 50,000 samples, your baseline logistic regression that achieves 72% accuracy, your production constraints (50ms latency, 10MB model size), your stakeholder requirements (must be interpretable for regulatory compliance).</p>
+<p>Close your eyes for a moment and imagine this: You’re standing at the edge of a canyon. On this side-your side-you have everything you’ve gathered. Your training dataset of 50,000 samples, your baseline logistic regression that achieves 72% accuracy, your production constraints (50ms latency, 10MB model size), your stakeholder requirements (must be interpretable for regulatory compliance).</p>
 <p>On the other side of that canyon lies your destination. The production model that achieves 90% accuracy, that makes predictions in 30 milliseconds, that your compliance team can audit, that scales to handle peak traffic. That’s where you need to be.</p>
 <p>The plan you’re about to devise? It’s your bridge across this canyon.</p>
 <p><a href="images/building-bridges-ml.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="images/building-bridges-ml.svg" class="img-fluid"></a></p>
-<p>Now, here’s what makes this fascinating—and what Pólya understood intuitively: there’s no single “right” bridge design. Sometimes the most direct path works beautifully. You recognize the problem as straightforward image classification, you grab a pre-trained ResNet, fine-tune it on your data, and you’re done. Direct. Efficient. Perfect.</p>
-<p>But other times—and these are often the most interesting projects—the direct path won’t work. Maybe your data is too different from ImageNet. Maybe you need to solve multiple related tasks simultaneously. Maybe you need to invent something new. In those cases, your bridge might take a creative detour, arcing high through an auxiliary task that helps you learn better representations. Or perhaps you’ll build it incrementally, starting with a simple baseline and iteratively adding complexity as you understand what works.</p>
-<p>Here’s what’s crucial to understand: <strong>Pólya doesn’t prescribe which bridge to build</strong>. Instead, he offers you a series of questions—probing, insightful questions that awaken your problem-solving instincts. These aren’t checklist items to tick off mechanically. Think of them as a conversation with a wise mentor who knows exactly what to ask to unlock your thinking.</p>
+<p>Now, here’s what makes this fascinating-and what Pólya understood intuitively: there’s no single “right” bridge design. Sometimes the most direct path works beautifully. You recognize the problem as straightforward image classification, you grab a pre-trained ResNet, fine-tune it on your data, and you’re done. Direct. Efficient. Perfect.</p>
+<p>But other times-and these are often the most interesting projects-the direct path won’t work. Maybe your data is too different from ImageNet. Maybe you need to solve multiple related tasks simultaneously. Maybe you need to invent something new. In those cases, your bridge might take a creative detour, arcing high through an auxiliary task that helps you learn better representations. Or perhaps you’ll build it incrementally, starting with a simple baseline and iteratively adding complexity as you understand what works.</p>
+<p>Here’s what’s crucial to understand: <strong>Pólya doesn’t prescribe which bridge to build</strong>. Instead, he offers you a series of questions-probing, insightful questions that awaken your problem-solving instincts. These aren’t checklist items to tick off mechanically. Think of them as a conversation with a wise mentor who knows exactly what to ask to unlock your thinking.</p>
 <p>Let’s dive into these questions together, and I’ll show you how they apply to the messy, real world of machine learning.</p>
 </section>
 <section id="the-first-question-have-you-seen-this-before" class="level2">
 <h2 class="anchored" data-anchor-id="the-first-question-have-you-seen-this-before"><strong>The First Question: “Have You Seen This Before?”</strong></h2>
 <p>Let me tell you a story. A few years ago, I was working on a project to detect fraudulent insurance claims. New problem, new domain, new dataset. I could have started from scratch, treating it as entirely novel. But then Pólya’s first question echoed in my mind:</p>
 <p><strong>“Have you seen it before?”</strong></p>
-<p>And suddenly, my brain started making connections. Wait—fraud detection isn’t new to me. I’ve built spam filters. I’ve worked on credit card fraud. I once helped detect fake product reviews. These problems share DNA. They’re all about finding needles in haystacks, about detecting patterns that adversarial actors try to hide, about dealing with extreme class imbalance where fraudulent cases are maybe 1-2% of your data.</p>
-<p>This is <strong>pattern recognition</strong>, and it’s one of the most powerful tools in your arsenal as an ML practitioner. Your brain—after years of projects, papers, and late-night debugging sessions—has built an incredible library of experiences. Every model you’ve trained, every architecture you’ve studied, every failure you’ve debugged has been cataloged somewhere in your neural networks.</p>
+<p>And suddenly, my brain started making connections. Wait-fraud detection isn’t new to me. I’ve built spam filters. I’ve worked on credit card fraud. I once helped detect fake product reviews. These problems share DNA. They’re all about finding needles in haystacks, about detecting patterns that adversarial actors try to hide, about dealing with extreme class imbalance where fraudulent cases are maybe 1-2% of your data.</p>
+<p>This is <strong>pattern recognition</strong>, and it’s one of the most powerful tools in your arsenal as an ML practitioner. Your brain-after years of projects, papers, and late-night debugging sessions-has built an incredible library of experiences. Every model you’ve trained, every architecture you’ve studied, every failure you’ve debugged has been cataloged somewhere in your neural networks.</p>
 <p>But here’s the nuance that separates good practitioners from great ones: <strong>you’re not looking for exact matches</strong>. You’re looking for family resemblances, for structural similarities hidden beneath surface differences.</p>
-<p>Let me show you what I mean. Imagine you’re working on a new time-series forecasting problem—predicting server load for autoscaling. You might think: “I’ve never done this before.” But wait. Have you worked with sequential data? Language models process sequences. Video understanding processes temporal information. Even if you’ve never predicted server load, if you’ve fine-tuned a BERT model, you understand the fundamental architecture of processing sequential information with attention mechanisms. That’s a pattern match.</p>
+<p>Let me show you what I mean. Imagine you’re working on a new time-series forecasting problem-predicting server load for autoscaling. You might think: “I’ve never done this before.” But wait. Have you worked with sequential data? Language models process sequences. Video understanding processes temporal information. Even if you’ve never predicted server load, if you’ve fine-tuned a BERT model, you understand the fundamental architecture of processing sequential information with attention mechanisms. That’s a pattern match.</p>
 <p>Or consider this: You’re building a medical image segmentation model to identify tumors in CT scans. “I’ve never worked in medical imaging,” you might think. But have you done semantic segmentation in autonomous driving? Have you worked on document layout analysis? These problems share the same core structure: dense, pixel-level prediction where spatial relationships matter. The domain knowledge differs, but the architectural intuition transfers.</p>
 <p>Let me walk you through how to search your experience systematically:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># PSEUDOCODE: How to Search Your ML Experience</span></span>
@@ -441,7 +441,7 @@ background-size: cover;
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># FIRST PASS: Surface-level similarities</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Don't overthink this—just quick pattern matching</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Don't overthink this-just quick pattern matching</span></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"What type of data am I working with?"</span>)</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    data_type <span class="op">=</span> new_problem.identify_data_type()</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># -&gt; "text", "images", "tabular", "time-series", "graph"</span></span>
@@ -521,7 +521,7 @@ background-size: cover;
 <li><strong>From graph networks</strong>: Spatial relationships between amino acids form a graph</li>
 </ul>
 <p>By recognizing these patterns, they could build on years of ML progress rather than starting from scratch. Their plan emerged from pattern recognition across multiple domains.</p>
-<p>Now, let me be honest with you about something: <strong>This pattern recognition isn’t instantaneous</strong>. When you’re early in your ML career, your library of patterns is still being built. That’s okay. That’s expected. Every project you complete, every paper you deeply understand, every architecture you implement from scratch—these are all deposits in your pattern bank.</p>
+<p>Now, let me be honest with you about something: <strong>This pattern recognition isn’t instantaneous</strong>. When you’re early in your ML career, your library of patterns is still being built. That’s okay. That’s expected. Every project you complete, every paper you deeply understand, every architecture you implement from scratch-these are all deposits in your pattern bank.</p>
 <p>But here’s the secret that accelerates this process: <strong>Deliberately reflect on your projects</strong>. After you finish a model, don’t just move on. Ask yourself:</p>
 <ul>
 <li>What was the essential structure of this problem?</li>
@@ -530,18 +530,18 @@ background-size: cover;
 <li>What would I do differently next time?</li>
 <li>What other problems share this structure?</li>
 </ul>
-<p>Write this down. Seriously. Keep a personal wiki, a notion page, a markdown file—whatever works for you. Future you will thank present you when you can search “problems with extreme class imbalance” and find three previous approaches that worked.</p>
+<p>Write this down. Seriously. Keep a personal wiki, a notion page, a markdown file-whatever works for you. Future you will thank present you when you can search “problems with extreme class imbalance” and find three previous approaches that worked.</p>
 </section>
 <section id="the-second-question-do-you-know-a-related-problem" class="level2">
 <h2 class="anchored" data-anchor-id="the-second-question-do-you-know-a-related-problem"><strong>The Second Question: “Do You Know a Related Problem?”</strong></h2>
 <p>Alright, so you’ve searched your memory and maybe you didn’t find an exact match. The pattern recognition didn’t give you a ready-made solution. This is where Pólya’s second question becomes your guide:</p>
 <p><strong>“Do you know a related problem?”</strong></p>
-<p>This question is subtly different from the first. We’re not looking for “have you seen this before” anymore. We’re casting a wider net. We’re looking for problems that might differ in specifics but share something essential—maybe the same technique works, maybe they seek the same type of output, maybe they operate in similar domains.</p>
+<p>This question is subtly different from the first. We’re not looking for “have you seen this before” anymore. We’re casting a wider net. We’re looking for problems that might differ in specifics but share something essential-maybe the same technique works, maybe they seek the same type of output, maybe they operate in similar domains.</p>
 <p>Let me walk you through how to think about this systematically. Imagine you’re working on that fraud detection problem I mentioned earlier. Let’s build a network of related problems together:</p>
 <p><a href="images/ml-related-problems-network.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="images/ml-related-problems-network.svg" class="img-fluid"></a></p>
 <p>Looking at this network, each connection type teaches us something different:</p>
-<p><strong>Same Architecture Connection</strong>: Over here, we have spam detection. Why is this related? Because both fraud detection and spam detection can use similar binary classification architectures. If you’ve built a successful spam filter using gradient boosted trees with carefully engineered features about email metadata, text statistics, and sender behavior—well, that same architectural approach might work beautifully for fraud detection with features about transaction metadata, amount statistics, and account behavior.</p>
-<p><strong>Same Challenge Connection</strong>: Look at medical diagnosis systems. These might use completely different architectures (maybe CNNs for medical imaging vs.&nbsp;your tabular methods for fraud), but they share a crucial challenge: <strong>extreme class imbalance</strong>. Most patients don’t have rare diseases, just as most transactions aren’t fraudulent. The techniques you learn from medical diagnosis—careful loss function design, focal loss, cost-sensitive learning, synthetic minority oversampling—all of these transfer directly to your fraud detection problem.</p>
+<p><strong>Same Architecture Connection</strong>: Over here, we have spam detection. Why is this related? Because both fraud detection and spam detection can use similar binary classification architectures. If you’ve built a successful spam filter using gradient boosted trees with carefully engineered features about email metadata, text statistics, and sender behavior-well, that same architectural approach might work beautifully for fraud detection with features about transaction metadata, amount statistics, and account behavior.</p>
+<p><strong>Same Challenge Connection</strong>: Look at medical diagnosis systems. These might use completely different architectures (maybe CNNs for medical imaging vs.&nbsp;your tabular methods for fraud), but they share a crucial challenge: <strong>extreme class imbalance</strong>. Most patients don’t have rare diseases, just as most transactions aren’t fraudulent. The techniques you learn from medical diagnosis-careful loss function design, focal loss, cost-sensitive learning, synthetic minority oversampling-all of these transfer directly to your fraud detection problem.</p>
 <p><strong>Same Domain Connection</strong>: Anti-money laundering (AML) detection sits in the same fintech domain. Even if the specific patterns differ (money laundering involves complex transaction chains while payment fraud might be simpler), the domain knowledge is transferable. The regulatory requirements are similar, the data pipelines are similar, the production constraints are similar. If you study AML systems, you’ll understand the operational context of your fraud detector.</p>
 <p>Now here’s where it gets really interesting. Pólya doesn’t just want you to identify related problems. He wants you to ask the follow-up question:</p>
 <p><strong>“Could you use it?”</strong></p>
@@ -555,14 +555,14 @@ background-size: cover;
 <section id="using-the-method" class="level3">
 <h3 class="anchored" data-anchor-id="using-the-method"><strong>Using the Method</strong></h3>
 <p>Other times, the exact model doesn’t transfer, but the method does.</p>
-<p><strong>Example</strong>: You’re working on predicting customer churn. You recall a related problem: predicting employee attrition in HR analytics. The domains differ (customers vs.&nbsp;employees), the features differ (purchase history vs.&nbsp;performance reviews), but the <strong>method</strong> is the same: survival analysis. You can’t use the HR model directly, but you can use survival analysis techniques—Cox proportional hazards, Kaplan-Meier estimators, time-varying covariates. The method transfers even though the model doesn’t.</p>
+<p><strong>Example</strong>: You’re working on predicting customer churn. You recall a related problem: predicting employee attrition in HR analytics. The domains differ (customers vs.&nbsp;employees), the features differ (purchase history vs.&nbsp;performance reviews), but the <strong>method</strong> is the same: survival analysis. You can’t use the HR model directly, but you can use survival analysis techniques-Cox proportional hazards, Kaplan-Meier estimators, time-varying covariates. The method transfers even though the model doesn’t.</p>
 </section>
 <section id="using-the-insight" class="level3">
 <h3 class="anchored" data-anchor-id="using-the-insight"><strong>Using the Insight</strong></h3>
 <p>Sometimes, what transfers is more abstract: an insight, a principle, a way of thinking about the problem.</p>
 <p><strong>Example</strong>: You’re building a recommender system. You study how Spotify’s Discover Weekly works. You can’t use their model (you don’t have their data or compute), but you learn a crucial insight: <strong>implicit feedback (what people actually listen to) is more valuable than explicit feedback (star ratings)</strong>. This insight shapes your entire approach. You decide to focus on modeling user behavior patterns rather than asking for ratings.</p>
 <p>Let me tell you about a real situation where understanding related problems saved a project. A team was building a model to predict equipment failure in a manufacturing plant. They struggled for weeks with direct time-series forecasting approaches. Then someone on the team had worked on a related problem: network intrusion detection.</p>
-<p>The insight? Both problems are fundamentally about <strong>anomaly detection</strong>. Normal equipment has normal patterns; equipment about to fail shows anomalies. Instead of trying to predict “time until failure,” they reframed it as “detect when behavior becomes anomalous.” This shift—learned from a related problem in a completely different domain—changed everything. They achieved much better results and the model was easier to explain to plant managers.</p>
+<p>The insight? Both problems are fundamentally about <strong>anomaly detection</strong>. Normal equipment has normal patterns; equipment about to fail shows anomalies. Instead of trying to predict “time until failure,” they reframed it as “detect when behavior becomes anomalous.” This shift-learned from a related problem in a completely different domain-changed everything. They achieved much better results and the model was easier to explain to plant managers.</p>
 <p>Here’s a practical exercise I want you to do: <strong>Build your own related problems network.</strong></p>
 <p>Take a problem you’re currently working on or one you worked on recently. On a piece of paper (or Excalidraw, or whatever tool you like), put that problem in the center. Now draw connections to related problems. For each connection, label it:</p>
 <ul>
@@ -579,9 +579,9 @@ background-size: cover;
 </section>
 <section id="the-creative-leap-introducing-auxiliary-elements" class="level2">
 <h2 class="anchored" data-anchor-id="the-creative-leap-introducing-auxiliary-elements"><strong>The Creative Leap: Introducing Auxiliary Elements</strong></h2>
-<p>We’ve been building on what exists—pattern recognition, related problems, transferred methods. But now we come to something different. Something that requires genuine creativity. Pólya calls these <strong>auxiliary elements</strong>, and they represent some of the most exciting moments in machine learning.</p>
-<p>Let me explain what I mean with a story. Imagine you’re working on image classification, and you’ve hit a wall. Your model plateaus at 85% accuracy. You’ve tried deeper networks, more data augmentation, better optimizers—nothing budges the needle. The gap between your current state and your goal seems unbridgeable with conventional approaches.</p>
-<p>This is when you might introduce an auxiliary element—something not present in the original problem formulation, something creative that acts as a catalyst, enabling reactions that wouldn’t occur naturally.</p>
+<p>We’ve been building on what exists-pattern recognition, related problems, transferred methods. But now we come to something different. Something that requires genuine creativity. Pólya calls these <strong>auxiliary elements</strong>, and they represent some of the most exciting moments in machine learning.</p>
+<p>Let me explain what I mean with a story. Imagine you’re working on image classification, and you’ve hit a wall. Your model plateaus at 85% accuracy. You’ve tried deeper networks, more data augmentation, better optimizers-nothing budges the needle. The gap between your current state and your goal seems unbridgeable with conventional approaches.</p>
+<p>This is when you might introduce an auxiliary element-something not present in the original problem formulation, something creative that acts as a catalyst, enabling reactions that wouldn’t occur naturally.</p>
 <p>In the case of that image classification problem, someone had a creative insight: <strong>What if we don’t just train the model to classify, but also to predict the rotation angle of randomly rotated images?</strong> This auxiliary task (rotation prediction) isn’t part of your original goal (you don’t care about rotation angles), but it forces the network to learn better representations. It works as a catalyst. Your main task performance jumps to 89%.</p>
 <p>This is an auxiliary element in action.</p>
 <p>Let me walk you through different types of auxiliary elements you might introduce:</p>
@@ -605,13 +605,13 @@ background-size: cover;
 <section id="auxiliary-losses-regularization-through-learning" class="level3">
 <h3 class="anchored" data-anchor-id="auxiliary-losses-regularization-through-learning"><strong>Auxiliary Losses (Regularization Through Learning)</strong></h3>
 <p>Sometimes your auxiliary element is a loss function that guides learning in useful directions.</p>
-<p><strong>Real scenario</strong>: You’re training a generative model, but the generated outputs look unrealistic. You add an auxiliary loss: a discriminator network that tries to distinguish real from generated examples. This is exactly what GANs do—the discriminator is an auxiliary element that provides a training signal (the adversarial loss) that helps the generator learn.</p>
+<p><strong>Real scenario</strong>: You’re training a generative model, but the generated outputs look unrealistic. You add an auxiliary loss: a discriminator network that tries to distinguish real from generated examples. This is exactly what GANs do-the discriminator is an auxiliary element that provides a training signal (the adversarial loss) that helps the generator learn.</p>
 <p>Or imagine you’re training an embedding model for product recommendations. Your main loss is based on click-through data. But you add an auxiliary loss: embeddings of similar products should be close together. This auxiliary loss acts as a regularizer, shaping your embedding space in useful ways.</p>
 </section>
 <section id="auxiliary-representations-intermediate-structures" class="level3">
 <h3 class="anchored" data-anchor-id="auxiliary-representations-intermediate-structures"><strong>Auxiliary Representations (Intermediate Structures)</strong></h3>
 <p>Sometimes you introduce an intermediate representation that bridges the gap between input and output.</p>
-<p><strong>Real scenario</strong>: You’re building a text-to-speech system. Going directly from text to audio waveforms is incredibly difficult. But you introduce an auxiliary element: mel-spectrograms. Your system now has two stages—text to mel-spectrogram, then mel-spectrogram to audio. The mel-spectrogram is an auxiliary representation. It’s not your goal (users don’t want spectrograms), but it makes the problem tractable.</p>
+<p><strong>Real scenario</strong>: You’re building a text-to-speech system. Going directly from text to audio waveforms is incredibly difficult. But you introduce an auxiliary element: mel-spectrograms. Your system now has two stages-text to mel-spectrogram, then mel-spectrogram to audio. The mel-spectrogram is an auxiliary representation. It’s not your goal (users don’t want spectrograms), but it makes the problem tractable.</p>
 <p>This is exactly what successful TTS systems like Tacotron do. The auxiliary element (spectrogram representation) transforms an impossible problem into two manageable ones.</p>
 <p>Let me share the thought process for introducing auxiliary elements:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># PSEUDOCODE: Strategic Thinking for Auxiliary Elements</span></span>
@@ -684,8 +684,8 @@ background-size: cover;
 </section>
 <section id="the-transformation-question-could-you-restate-the-problem" class="level2">
 <h2 class="anchored" data-anchor-id="the-transformation-question-could-you-restate-the-problem"><strong>The Transformation Question: “Could You Restate the Problem?”</strong></h2>
-<p>Let’s talk about one of the most powerful moves in your ML toolkit—one that can transform an impossible problem into a tractable one: <strong>problem reformulation</strong>.</p>
-<p>I want you to imagine holding a Rubik’s cube. If you only know how to turn the front face, you’re severely limited. But once you realize you can rotate the entire cube to bring any face to the front, suddenly you have many more moves available. Problem reformulation is like that—it’s rotating the problem to expose different faces, each of which might be easier to solve.</p>
+<p>Let’s talk about one of the most powerful moves in your ML toolkit-one that can transform an impossible problem into a tractable one: <strong>problem reformulation</strong>.</p>
+<p>I want you to imagine holding a Rubik’s cube. If you only know how to turn the front face, you’re severely limited. But once you realize you can rotate the entire cube to bring any face to the front, suddenly you have many more moves available. Problem reformulation is like that-it’s rotating the problem to expose different faces, each of which might be easier to solve.</p>
 <p>Let me show you what I mean with a problem you might actually face. You’re tasked with predicting customer lifetime value (CLV) for a subscription business. The request seems straightforward: “Build a model that predicts how much revenue each customer will generate.”</p>
 <p>But here’s the thing: <strong>This single business goal can be framed as completely different ML problems</strong>, each enabling different techniques and revealing different insights.</p>
 <p><a href="images/ml-problem-reformulation-strategies.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="images/ml-problem-reformulation-strategies.svg" class="img-fluid"></a></p>
@@ -693,8 +693,8 @@ background-size: cover;
 <section id="formulation-1-classification" class="level3">
 <h3 class="anchored" data-anchor-id="formulation-1-classification"><strong>Formulation 1: Classification</strong></h3>
 <p>Your first instinct might be: “Let’s bucket customers. Low value (under $100), medium ($100-$1000), high (over $1000). We’ll build a classifier.”</p>
-<p><strong>Pros</strong>: This is simple. It’s interpretable. You can use standard classification techniques. Your stakeholders understand it—“This customer is likely to be high value.”</p>
-<p><strong>Cons</strong>: But think about it—you’ve just thrown away information. Is a $99 customer really that different from a $101 customer? Your buckets are arbitrary. And you’ve lost the ability to estimate actual dollar amounts. When finance asks “What’s the expected revenue from this cohort?” you can’t give a precise answer.</p>
+<p><strong>Pros</strong>: This is simple. It’s interpretable. You can use standard classification techniques. Your stakeholders understand it-“This customer is likely to be high value.”</p>
+<p><strong>Cons</strong>: But think about it-you’ve just thrown away information. Is a $99 customer really that different from a $101 customer? Your buckets are arbitrary. And you’ve lost the ability to estimate actual dollar amounts. When finance asks “What’s the expected revenue from this cohort?” you can’t give a precise answer.</p>
 <p>Would I start here? Maybe, if I’m exploring. But I’d know it’s limited.</p>
 </section>
 <section id="formulation-2-regression" class="level3">
@@ -731,7 +731,7 @@ background-size: cover;
 <li><strong>Goal</strong>: Learn policy π that maximizes expected cumulative reward</li>
 </ul>
 <p><strong>Pros</strong>: This is action-oriented. You’re not just predicting, you’re optimizing. It directly aligns with the business goal (maximize revenue). It can discover non-obvious intervention strategies. It learns from online feedback.</p>
-<p><strong>Cons</strong>: It requires an experimentation infrastructure—you need to try actions and observe results. It’s sample inefficient—you need lots of data. It’s complex to implement and debug. You need to be careful about exploration vs.&nbsp;exploitation. There are ethical considerations around treating customers as experimental subjects.</p>
+<p><strong>Cons</strong>: It requires an experimentation infrastructure-you need to try actions and observe results. It’s sample inefficient-you need lots of data. It’s complex to implement and debug. You need to be careful about exploration vs.&nbsp;exploitation. There are ethical considerations around treating customers as experimental subjects.</p>
 <p>Would I jump straight to RL? Probably not. But for a mature business with existing A/B testing infrastructure and lots of data, this framing might unlock significant value.</p>
 <hr>
 <p>Now, here’s the crucial lesson: <strong>These are all the same business problem, but completely different ML problems.</strong> Each formulation:</p>
@@ -742,7 +742,7 @@ background-size: cover;
 <li>Reveals different insights</li>
 <li>Has different pros and cons</li>
 </ul>
-<p>The formulation you choose shapes everything that follows. It’s not just a technical decision—it’s a strategic one.</p>
+<p>The formulation you choose shapes everything that follows. It’s not just a technical decision-it’s a strategic one.</p>
 <p>Let me share how to think about this systematically:</p>
 <p><strong>When to consider reformulation:</strong></p>
 <ol type="1">
@@ -753,11 +753,11 @@ background-size: cover;
 </ol>
 <p>Here are some common transformations to have in your toolkit:</p>
 <p><strong>Classification ↔︎ Regression</strong>: Sometimes predicting probabilities and thresholding works better than direct classification. Sometimes discretizing regression outputs makes the problem more stable.</p>
-<p><strong>Supervised → Self-Supervised</strong>: Can’t get enough labels? Maybe your problem can be reframed with automatic labels. Rotation prediction, colorization, masked language modeling—these are all self-supervised framings of problems that originally seemed to require labeled data.</p>
+<p><strong>Supervised → Self-Supervised</strong>: Can’t get enough labels? Maybe your problem can be reframed with automatic labels. Rotation prediction, colorization, masked language modeling-these are all self-supervised framings of problems that originally seemed to require labeled data.</p>
 <p><strong>Instance-Level → Set-Level</strong>: Struggling with individual predictions? Maybe Multiple Instance Learning is better. Example: Instead of classifying individual frames in a video, classify the entire video and let the model figure out which frames matter.</p>
 <p><strong>Time-Domain → Frequency-Domain</strong>: Stuck on time-series patterns? Apply FFT and work in frequency space. Sometimes patterns invisible in time domain are obvious in frequency domain.</p>
 <p><strong>Generative → Discriminative</strong>: Can’t directly model P(y|x)? Sometimes modeling P(x|y) and using Bayes rule works better. This is how Naive Bayes classifiers work.</p>
-<p>Here’s a practical exercise: <strong>Take a problem you’re working on right now. Write down three completely different ways to frame it as an ML problem.</strong> Don’t just think it—actually write them down. For each framing, note:</p>
+<p>Here’s a practical exercise: <strong>Take a problem you’re working on right now. Write down three completely different ways to frame it as an ML problem.</strong> Don’t just think it-actually write them down. For each framing, note:</p>
 <ul>
 <li>What techniques does this enable?</li>
 <li>What assumptions does it make?</li>
@@ -770,11 +770,11 @@ background-size: cover;
 </section>
 <section id="returning-home-the-power-of-first-principles" class="level2">
 <h2 class="anchored" data-anchor-id="returning-home-the-power-of-first-principles"><strong>Returning Home: The Power of First Principles</strong></h2>
-<p>Let me tell you about a time I watched a team waste three months. They were building a recommendation system—sophisticated, beautiful, using the latest transformer architectures. They were so deep in implementation details: attention heads, positional encodings, learning rate schedules. The model was getting more and more complex.</p>
+<p>Let me tell you about a time I watched a team waste three months. They were building a recommendation system-sophisticated, beautiful, using the latest transformer architectures. They were so deep in implementation details: attention heads, positional encodings, learning rate schedules. The model was getting more and more complex.</p>
 <p>And then someone new joined the team. In the first meeting, they asked a simple question: <strong>“What are we actually trying to optimize here?”</strong></p>
 <p>Silence. Then various answers: “User engagement.” “Click-through rate.” “Revenue.” “Time on platform.”</p>
 <p>These are all different objectives. And they’d been optimizing for CTR while stakeholders wanted revenue.</p>
-<p>This is what Pólya means by “<strong>go back to definitions.</strong>” When you’re lost in a maze of technical details, when complexity has accumulated to the point where you can’t see clearly anymore, when your model has 50 hyperparameters and you’ve lost track of what each one does—that’s when you need to return home. Return to first principles.</p>
+<p>This is what Pólya means by “<strong>go back to definitions.</strong>” When you’re lost in a maze of technical details, when complexity has accumulated to the point where you can’t see clearly anymore, when your model has 50 hyperparameters and you’ve lost track of what each one does-that’s when you need to return home. Return to first principles.</p>
 <p>Let me walk you through what this means in practice:</p>
 <section id="define-what-youre-actually-solving" class="level3">
 <h3 class="anchored" data-anchor-id="define-what-youre-actually-solving"><strong>Define What You’re Actually Solving</strong></h3>
@@ -793,7 +793,7 @@ background-size: cover;
 <section id="question-your-metrics" class="level3">
 <h3 class="anchored" data-anchor-id="question-your-metrics"><strong>Question Your Metrics</strong></h3>
 <p>Here’s an uncomfortable truth: <strong>the metric you’re optimizing is often wrong for the actual problem.</strong></p>
-<p>You’re using accuracy because it’s standard. But look at your confusion matrix—false positives and false negatives have wildly different costs in your application. Accuracy treats them equally. Should you be using a cost-sensitive metric instead?</p>
+<p>You’re using accuracy because it’s standard. But look at your confusion matrix-false positives and false negatives have wildly different costs in your application. Accuracy treats them equally. Should you be using a cost-sensitive metric instead?</p>
 <p>You’re using BLEU score for your text generation model. But BLEU was designed for machine translation. Does it actually measure what matters for your use case? Maybe human evaluators rate outputs very differently than BLEU does.</p>
 <p>You’re using AUC-ROC because your classes are imbalanced. But in production, you need to make decisions at a specific threshold. Shouldn’t you be optimizing for precision at that threshold instead?</p>
 <p>Going back to definitions means asking: <strong>“What does good performance actually mean?”</strong> Define it from first principles, not from convention.</p>
@@ -809,7 +809,7 @@ background-size: cover;
 <ul>
 <li>Could be solved by a human with a checklist</li>
 <li>Examples: Filtering spam emails based on keywords, flagging duplicate records</li>
-<li>Don’t need deep learning—often decision trees or even rule-based systems work better</li>
+<li>Don’t need deep learning-often decision trees or even rule-based systems work better</li>
 </ul>
 <p><strong>Medium complexity</strong> (pattern recognition, but not too deep):</p>
 <ul>
@@ -851,7 +851,7 @@ background-size: cover;
 <p>What if user preferences drift over time? What about cold-start users?</p>
 <p>Going back to definitions means questioning: <strong>“What am I taking for granted?”</strong></p>
 <p>Let me share a real example. A team was building a fraud detection model using historical transaction data. They were getting good cross-validation scores but terrible production performance. When they went back to first principles, they realized their implicit assumption: “fraudulent patterns don’t change over time.”</p>
-<p>But of course they do! Fraudsters adapt. The patterns in last year’s data weren’t predictive of this year’s fraud. They needed to completely rethink their approach—shorter training windows, online learning, anomaly detection instead of supervised classification.</p>
+<p>But of course they do! Fraudsters adapt. The patterns in last year’s data weren’t predictive of this year’s fraud. They needed to completely rethink their approach-shorter training windows, online learning, anomaly detection instead of supervised classification.</p>
 <p>The problem wasn’t their modeling skill. It was a violation of a fundamental assumption they hadn’t made explicit.</p>
 <hr>
 <p>Here’s a practice I recommend: <strong>When you’re stuck, have a “first principles” meeting.</strong></p>
@@ -871,10 +871,10 @@ background-size: cover;
 <section id="working-backwards-starting-from-the-end" class="level2">
 <h2 class="anchored" data-anchor-id="working-backwards-starting-from-the-end"><strong>Working Backwards: Starting From The End</strong></h2>
 <p>Let me paint you a scenario. You’re in a meeting with the product team. They’re excited: “We need a real-time recommendation system for the homepage. It needs to serve personalized recommendations to 10,000 requests per second, with 99th percentile latency under 50 milliseconds. Oh, and it needs to be explainable because we might need to show users why we recommended something.”</p>
-<p>You nod, taking notes. Then you go back to your desk and think: “Okay, let’s start exploring architectures. Maybe a deep neural network with user and item embeddings, then a—”</p>
+<p>You nod, taking notes. Then you go back to your desk and think: “Okay, let’s start exploring architectures. Maybe a deep neural network with user and item embeddings, then a-”</p>
 <p><strong>Stop.</strong></p>
 <p>That’s forward thinking. You’re starting from what you <em>have</em> (data, techniques you know) and trying to reach what you <em>need</em> (the production system). Sometimes that works. But often, there’s a better way: <strong>working backwards</strong>.</p>
-<p>Working backwards means starting from the goal—that production system serving 10K QPS at 50ms latency with explainability—and reasoning backward to determine what you need at each step.</p>
+<p>Working backwards means starting from the goal-that production system serving 10K QPS at 50ms latency with explainability-and reasoning backward to determine what you need at each step.</p>
 <p>Let me show you how this plays out:</p>
 <section id="the-backwards-planning-process" class="level3">
 <h3 class="anchored" data-anchor-id="the-backwards-planning-process"><strong>The Backwards Planning Process</strong></h3>
@@ -1248,7 +1248,7 @@ background-size: cover;
 <p>This error analysis often reveals the issue:</p>
 <ul>
 <li>“Oh, the model confuses class A and B because we don’t have a feature that distinguishes them”</li>
-<li>“The model fails on rare edge cases—we need more data for those”</li>
+<li>“The model fails on rare edge cases-we need more data for those”</li>
 <li>“The model is learning a spurious pattern in the background, not the actual object”</li>
 </ul>
 <p><strong>Based on error analysis, you might</strong>:</p>
@@ -1262,7 +1262,7 @@ background-size: cover;
 </section>
 <section id="type-4-my-architectureapproach-fundamentally-cant-work" class="level3">
 <h3 class="anchored" data-anchor-id="type-4-my-architectureapproach-fundamentally-cant-work"><strong>Type 4: “My Architecture/Approach Fundamentally Can’t Work”</strong></h3>
-<p>This is the hardest kind of stuck, because the problem isn’t in the details—it’s in the approach.</p>
+<p>This is the hardest kind of stuck, because the problem isn’t in the details-it’s in the approach.</p>
 <p>Signs you’re in this situation:</p>
 <ul>
 <li>Simple baselines work better than your complex model</li>
@@ -1290,7 +1290,7 @@ background-size: cover;
 <li>Get SOMETHING working, even if limited</li>
 </ul></li>
 </ol>
-<p>Let me give you an example. A team was trying to predict equipment failures in a factory. They framed it as time-series forecasting: predict the exact time until failure. Stuck for months—predictions were no better than random.</p>
+<p>Let me give you an example. A team was trying to predict equipment failures in a factory. They framed it as time-series forecasting: predict the exact time until failure. Stuck for months-predictions were no better than random.</p>
 <p>Then they simplified: “Forget predicting time. Can we just detect WHEN the equipment starts behaving abnormally?”</p>
 <p>Reframed as anomaly detection, they had a working system in two weeks. It wasn’t what they originally planned, but it solved the actual business problem.</p>
 </section>
@@ -1310,7 +1310,7 @@ background-size: cover;
 <section id="the-recursive-nature-of-ml-planning-plans-within-plans" class="level2">
 <h2 class="anchored" data-anchor-id="the-recursive-nature-of-ml-planning-plans-within-plans"><strong>The Recursive Nature of ML Planning: Plans Within Plans</strong></h2>
 <p>Let me share something that might feel overwhelming at first but is actually liberating once you understand it: <strong>Every ML plan contains smaller planning problems.</strong></p>
-<p>When you devise a plan like “Build a production recommendation system,” you’re not creating one plan—you’re creating a hierarchy of plans, each requiring its own problem-solving process.</p>
+<p>When you devise a plan like “Build a production recommendation system,” you’re not creating one plan-you’re creating a hierarchy of plans, each requiring its own problem-solving process.</p>
 <p>It’s like planning a road trip. Your high-level plan is “Drive from San Francisco to New York.” But that breaks into smaller plans: “Drive from San Francisco to Reno” (first day), which breaks into even smaller plans: “Stop for gas in Sacramento,” which breaks into micro-plans: “Which gas station? Which route?” Each level requires its own decisions.</p>
 <p>ML planning works the same way, but we need to be more systematic about it.</p>
 <section id="the-hierarchy-of-planning" class="level3">
@@ -1366,7 +1366,7 @@ background-size: cover;
 <li>Synthetic example generation using GPT-2</li>
 <li>Hard negative mining (examples model gets wrong)</li>
 </ul>
-<p>You see how this works? Each level of planning creates sub-problems that need their own plans. And this isn’t a sign of poor planning—this is <strong>necessary decomposition</strong>.</p>
+<p>You see how this works? Each level of planning creates sub-problems that need their own plans. And this isn’t a sign of poor planning-this is <strong>necessary decomposition</strong>.</p>
 </section>
 <section id="managing-the-recursion-practical-strategies" class="level3">
 <h3 class="anchored" data-anchor-id="managing-the-recursion-practical-strategies"><strong>Managing the Recursion: Practical Strategies</strong></h3>
@@ -1383,7 +1383,7 @@ background-size: cover;
 <p><strong>2. Plan until you hit actionable tasks</strong></p>
 <p>Keep recursing until you reach tasks where you know the next concrete action:</p>
 <ul>
-<li>❌ “Improve model performance” (not actionable—how?)</li>
+<li>❌ “Improve model performance” (not actionable-how?)</li>
 <li>✓ “Run hyperparameter sweep over learning rates [1e-5, 1e-4, 1e-3]” (actionable!)</li>
 </ul>
 <p><strong>3. Plan top-down, execute bottom-up</strong></p>
@@ -1478,25 +1478,25 @@ background-size: cover;
 </section>
 <section id="the-aesthetics-of-ml-solutions-recognizing-beauty-in-plans" class="level2">
 <h2 class="anchored" data-anchor-id="the-aesthetics-of-ml-solutions-recognizing-beauty-in-plans"><strong>The Aesthetics of ML Solutions: Recognizing Beauty in Plans</strong></h2>
-<p>Let me tell you about two moments from my career. Both were successful projects—they achieved their metrics, they deployed to production, they delivered business value. But they felt completely different.</p>
+<p>Let me tell you about two moments from my career. Both were successful projects-they achieved their metrics, they deployed to production, they delivered business value. But they felt completely different.</p>
 <p><strong>Project A</strong>: The model was an ensemble of seven different architectures. Training required carefully orchestrated steps in a specific order. The feature pipeline had 47 different transformations. In production, we needed three different models for different latency tiers. The documentation was 50 pages. When something broke, debugging took hours because the system was so complex.</p>
-<p><strong>Project B</strong>: The model was a single neural network with skip connections. Training was straightforward—one script, one config file. Features were carefully chosen but minimal—just 20 of them. Production deployment was simple. The core logic fit on one page. When issues arose, we could diagnose them quickly because the system was transparent.</p>
+<p><strong>Project B</strong>: The model was a single neural network with skip connections. Training was straightforward-one script, one config file. Features were carefully chosen but minimal-just 20 of them. Production deployment was simple. The core logic fit on one page. When issues arose, we could diagnose them quickly because the system was transparent.</p>
 <p>Both worked. But only Project B felt <strong>beautiful</strong>.</p>
 <p>This is what Pólya means when he talks about the aesthetics of solutions. Not all plans are created equal. Beyond mere correctness (does it meet the metrics?), plans possess qualities that experienced practitioners learn to recognize and value.</p>
 <p>Let me help you develop this sense of aesthetic judgment.</p>
 <section id="elegance-achieving-more-with-less" class="level3">
 <h3 class="anchored" data-anchor-id="elegance-achieving-more-with-less"><strong>Elegance: Achieving More With Less</strong></h3>
-<p>Elegance isn’t about simplicity for its own sake. It’s about <strong>appropriate complexity</strong>—using exactly what’s needed and nothing more.</p>
+<p>Elegance isn’t about simplicity for its own sake. It’s about <strong>appropriate complexity</strong>-using exactly what’s needed and nothing more.</p>
 <p><strong>Inelegant solution</strong>: - Five-model ensemble - 200 engineered features (most weakly predictive) - Complex stacking with meta-learning - Different approaches for different edge cases - Works, but barely, and fragile</p>
 <p><strong>Elegant solution</strong>: - Single well-designed model - 20 carefully chosen features (each strongly predictive) - Clean architecture that handles edge cases naturally - Works robustly across scenarios</p>
 <p>Let me give you a real example: <strong>ResNet vs.&nbsp;earlier deep network approaches</strong>.</p>
 <p><a href="images/ml-solution-aesthetics.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="images/ml-solution-aesthetics.svg" class="img-fluid"></a></p>
 <p>Before ResNet, people struggled to train very deep networks. The approaches were inelegant: - Try very careful initialization schemes - Add batch normalization everywhere - Try different activation functions - Carefully tune learning rates for each layer - Still couldn’t reliably train 50+ layer networks</p>
 <p>ResNet came along with one elegant idea: <strong>skip connections</strong>. Let the network learn residuals (differences) instead of full mappings. Suddenly: - 152-layer networks train easily - Performance scales with depth - Works across tasks without special tuning - The insight is simple and beautiful</p>
-<p>The elegant solution isn’t just more effective—it reveals something fundamental about the problem. It makes you think: “Of course! That’s how it should be done.”</p>
+<p>The elegant solution isn’t just more effective-it reveals something fundamental about the problem. It makes you think: “Of course! That’s how it should be done.”</p>
 <p><strong>How to recognize elegance in your own work:</strong></p>
 <p>Ask yourself: - Could I explain this approach to someone in five minutes? - If I removed any component, would it break? - Does each part have a clear purpose? - Would I be proud to show this in a paper?</p>
-<p>If you’re saying “well, we tried X but it didn’t quite work, so we added Y as a workaround, and then we needed Z to handle edge cases…”—that’s a sign of inelegance. Elegant solutions feel inevitable, not cobbled together.</p>
+<p>If you’re saying “well, we tried X but it didn’t quite work, so we added Y as a workaround, and then we needed Z to handle edge cases…”-that’s a sign of inelegance. Elegant solutions feel inevitable, not cobbled together.</p>
 </section>
 <section id="robustness-continuing-to-work-when-things-change" class="level3">
 <h3 class="anchored" data-anchor-id="robustness-continuing-to-work-when-things-change"><strong>Robustness: Continuing to Work When Things Change</strong></h3>
@@ -1507,7 +1507,7 @@ background-size: cover;
 <p><strong>Example: Fraud Detection Model</strong></p>
 <p><strong>Fragile approach</strong>: Train on last year’s fraud patterns. High accuracy on test set. Deploy to production. Performance drops by 20% within two months because fraudsters adapted. Model needs complete retraining.</p>
 <p><strong>Robust approach</strong>: - Use anomaly detection component (catches novel fraud patterns) - Online learning updates (adapts to drift) - Ensemble with rule-based component (stable baseline) - Active learning flags uncertain cases for human review - Model degrades gracefully rather than catastrophically</p>
-<p>The robust solution isn’t just better—it requires less maintenance, fails more predictably, and scales better over time.</p>
+<p>The robust solution isn’t just better-it requires less maintenance, fails more predictably, and scales better over time.</p>
 <p><strong>How to build robustness into your plans:</strong></p>
 <ol type="1">
 <li><strong>Plan for data drift</strong>: Your training data is a snapshot. Production data will differ.
@@ -1562,9 +1562,9 @@ background-size: cover;
 <li><p><strong>Attention mechanisms for sequence-to-sequence</strong>: Of course! The model should be able to look at different parts of the input for each output. How else would you handle variable-length alignment?</p></li>
 <li><p><strong>Batch normalization</strong>: Of course! Normalize activations at each layer to keep gradients stable. So obvious in hindsight.</p></li>
 <li><p><strong>Skip connections in ResNet</strong>: Of course! Let the model learn the difference rather than the full transformation. That’s naturally easier.</p></li>
-<li><p><strong>Self-supervised learning</strong>: Of course! The data contains its own supervision signals. Predict masked words, predict rotation, predict next frames—the labels are free.</p></li>
+<li><p><strong>Self-supervised learning</strong>: Of course! The data contains its own supervision signals. Predict masked words, predict rotation, predict next frames-the labels are free.</p></li>
 </ul>
-<p>These solutions feel inevitable because they align with the fundamental structure of the problem. They’re not fighting against the problem—they’re working with it.</p>
+<p>These solutions feel inevitable because they align with the fundamental structure of the problem. They’re not fighting against the problem-they’re working with it.</p>
 <p><strong>How do you know if your solution has this quality?</strong></p>
 <ul>
 <li>When you explain it to colleagues, do they nod and say “that makes sense” or do they look confused?</li>
@@ -1575,13 +1575,13 @@ background-size: cover;
 </section>
 <section id="developing-your-aesthetic-sense" class="level3">
 <h3 class="anchored" data-anchor-id="developing-your-aesthetic-sense"><strong>Developing Your Aesthetic Sense</strong></h3>
-<p>This aesthetic judgment—recognizing elegance, robustness, clarity, inevitability—develops over time. Here’s how to cultivate it:</p>
+<p>This aesthetic judgment-recognizing elegance, robustness, clarity, inevitability-develops over time. Here’s how to cultivate it:</p>
 <p><strong>1. Study great work</strong>: Read papers for elegant solutions. How did they think about the problem? What makes their approach beautiful?</p>
 <p><strong>2. Refactor your own work</strong>: After you get something working, ask: “Could this be simpler? Clearer? More robust?”</p>
 <p><strong>3. Compare approaches</strong>: When multiple solutions work, analyze why. What are the qualitative differences? Which one feels better?</p>
 <p><strong>4. Seek feedback</strong>: Show your work to experienced practitioners. Ask not just “does it work?” but “is this a good solution?”</p>
 <p><strong>5. Reflect on failures</strong>: Often, failed approaches were inelegant. What was wrong with them? What does that teach you?</p>
-<p>Over time, you’ll develop an intuition. When you’re planning, you’ll start to <em>feel</em> whether your approach is elegant or cobbled together. That feeling—that aesthetic sense—is valuable. Trust it. If your plan feels messy and fragile, it probably is. Keep searching for the elegant approach.</p>
+<p>Over time, you’ll develop an intuition. When you’re planning, you’ll start to <em>feel</em> whether your approach is elegant or cobbled together. That feeling-that aesthetic sense-is valuable. Trust it. If your plan feels messy and fragile, it probably is. Keep searching for the elegant approach.</p>
 </section>
 </section>
 <section id="conclusion-the-living-plan-and-your-journey-forward" class="level2">
@@ -1593,8 +1593,8 @@ background-size: cover;
 <p>They’re confident enough in their strategic thinking to commit to a direction, but humble enough to adapt when reality reveals complexities not anticipated during planning. They know the difference between “this approach needs more iteration” and “this approach is fundamentally wrong, time to pivot.”</p>
 <p>Let me leave you with a mental model that’s served me well:</p>
 <p><strong>Think of planning like navigation.</strong></p>
-<p>You’re sailing from San Francisco to Hawaii. You plot a course—that’s your plan. But you don’t just set your heading and ignore everything else for the next week. You constantly monitor: - Are we on course? (Metrics tracking) - Is the wind changing? (Data distribution shift) - Are there storms ahead? (Anticipated challenges) - Did we discover a better route? (New insights)</p>
-<p>You make constant small adjustments to your course. That’s execution with adaptation. But you don’t change your destination—Hawaii is still the goal. Unless you discover compelling reasons to change the goal itself (stakeholder requirements change).</p>
+<p>You’re sailing from San Francisco to Hawaii. You plot a course-that’s your plan. But you don’t just set your heading and ignore everything else for the next week. You constantly monitor: - Are we on course? (Metrics tracking) - Is the wind changing? (Data distribution shift) - Are there storms ahead? (Anticipated challenges) - Did we discover a better route? (New insights)</p>
+<p>You make constant small adjustments to your course. That’s execution with adaptation. But you don’t change your destination-Hawaii is still the goal. Unless you discover compelling reasons to change the goal itself (stakeholder requirements change).</p>
 <p><strong>Your ML plan is the same</strong>: Strategic direction that guides you, but adapts based on what you learn.</p>
 <section id="your-planning-toolkit-a-summary" class="level3">
 <h3 class="anchored" data-anchor-id="your-planning-toolkit-a-summary"><strong>Your Planning Toolkit: A Summary</strong></h3>
@@ -1670,13 +1670,13 @@ background-size: cover;
 <li><strong>Your next action</strong>: What’s the concrete next step?</li>
 </ol>
 <p>Then ask yourself: - Have I considered the patterns I know? - Have I looked at related problems? - Could I reframe this differently? - Am I working backwards from constraints? - Is my plan elegant, robust, and clear?</p>
-<p>This reflection—this conscious application of Pólya’s questions to your actual work—is how these heuristics become second nature.</p>
+<p>This reflection-this conscious application of Pólya’s questions to your actual work-is how these heuristics become second nature.</p>
 </section>
 <section id="the-journey-continues" class="level3">
 <h3 class="anchored" data-anchor-id="the-journey-continues"><strong>The Journey Continues</strong></h3>
-<p>Remember: <strong>The plan is the bridge between data and deployment.</strong> Pólya’s questions are the architectural principles that ensure your bridge is not just functional but optimal—not just sufficient but elegant.</p>
-<p>We’ve focused on devising the plan, but there’s more to the journey. In the next article, we’ll explore how to <strong>carry out your plan</strong>—how to execute with discipline, how to debug when things go wrong, how to iterate efficiently, and how to know when your beautiful plan needs revision in the face of empirical reality.</p>
-<p>But for now, you have the tools to devise strong plans. You understand that planning is creative problem-solving—recognizing patterns, finding connections, transforming representations, working backwards, and building with aesthetic judgment.</p>
+<p>Remember: <strong>The plan is the bridge between data and deployment.</strong> Pólya’s questions are the architectural principles that ensure your bridge is not just functional but optimal-not just sufficient but elegant.</p>
+<p>We’ve focused on devising the plan, but there’s more to the journey. In the next article, we’ll explore how to <strong>carry out your plan</strong>-how to execute with discipline, how to debug when things go wrong, how to iterate efficiently, and how to know when your beautiful plan needs revision in the face of empirical reality.</p>
+<p>But for now, you have the tools to devise strong plans. You understand that planning is creative problem-solving-recognizing patterns, finding connections, transforming representations, working backwards, and building with aesthetic judgment.</p>
 <p><strong>The planning phase is your opportunity to think deeply before acting</strong>. It’s your chance to leverage your experience, to avoid known pitfalls, to choose elegant approaches over brute-force ones. Take your time with it. A day spent devising a good plan can save weeks of wasted effort.</p>
 <p>Go forth and plan well. And remember: every senior ML practitioner was once where you are, learning to devise plans, getting stuck, breaking through, developing judgment. This is the path. You’re on it. Keep walking.</p>
 <p>The next time you face a new ML problem, don’t immediately jump to “let me try some models.” Pause. Ask Pólya’s questions. Sketch your bridge. Think about patterns and related problems. Consider transformations and auxiliary elements. Work backwards from constraints. Judge your plan aesthetically.</p>

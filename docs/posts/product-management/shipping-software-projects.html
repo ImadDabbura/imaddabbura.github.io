@@ -296,8 +296,8 @@ background-size: cover;
 <div class="status-badge-container" style="margin-bottom: 1rem;"><span class="status-badge growing">growing</span></div>
 <section id="why-ml-projects-fail-to-ship" class="level2">
 <h2 class="anchored" data-anchor-id="why-ml-projects-fail-to-ship">Why ML Projects Fail to Ship</h2>
-<p>Some ML projects I’ve worked on shipped six months late. Others shipped and quietly died in production. A few never shipped at all — and those are the ones I keep coming back to. I’ve been through this as an individual contributor and as the person leading the team. For a long time I blamed the usual suspects: unclear requirements, technical debt, underestimating complexity. The real cause, I eventually realized, was more structural — and it looked the same from both seats.</p>
-<p>A web feature has a clear definition of done: the button appears, the form submits, the data is saved. An ML feature doesn’t. “Improve recommendation accuracy” could mean another week of training runs, another architecture experiment, another round of feature engineering — indefinitely. Unlike traditional software, where the solution space is bounded by the spec, ML projects have an effectively unbounded search space. Every model can be made larger, every feature set more complete, every training run longer.</p>
+<p>Some ML projects I’ve worked on shipped six months late. Others shipped and quietly died in production. A few never shipped at all - and those are the ones I keep coming back to. I’ve been through this as an individual contributor and as the person leading the team. For a long time I blamed the usual suspects: unclear requirements, technical debt, underestimating complexity. The real cause, I eventually realized, was more structural - and it looked the same from both seats.</p>
+<p>A web feature has a clear definition of done: the button appears, the form submits, the data is saved. An ML feature doesn’t. “Improve recommendation accuracy” could mean another week of training runs, another architecture experiment, another round of feature engineering - indefinitely. Unlike traditional software, where the solution space is bounded by the spec, ML projects have an effectively unbounded search space. Every model can be made larger, every feature set more complete, every training run longer.</p>
 <div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div>
@@ -317,29 +317,29 @@ background-size: cover;
     end
 </pre>
 </div>
-<p></p><figcaption> Traditional software has a bounded end state. ML projects without defined constraints loop indefinitely — each experiment looks like progress.</figcaption> </figure><p></p>
+<p></p><figcaption> Traditional software has a bounded end state. ML projects without defined constraints loop indefinitely - each experiment looks like progress.</figcaption> </figure><p></p>
 </div>
 </div>
 </div>
-<p>This produces a predictable failure mode: a project that <em>looks</em> like it’s making progress — models training, experiments running, metrics moving — but never ships.</p>
-<p>The root cause, I’ve come to believe, is a category error. ML projects sit uncomfortably between research and engineering. Research is unbounded by design — you keep going until you understand something. Engineering is bounded by design — you keep going until it ships. The teams that deliver consistently have made a deliberate choice about which one they’re doing. The ones that don’t, haven’t — and so they run a research process inside an engineering context, indefinitely.</p>
-<p>What follows is what I’ve learned — sometimes from my own failures, sometimes from watching teams I was leading repeat patterns I’d already lived through — about how to actually make that choice.</p>
+<p>This produces a predictable failure mode: a project that <em>looks</em> like it’s making progress - models training, experiments running, metrics moving - but never ships.</p>
+<p>The root cause, I’ve come to believe, is a category error. ML projects sit uncomfortably between research and engineering. Research is unbounded by design - you keep going until you understand something. Engineering is bounded by design - you keep going until it ships. The teams that deliver consistently have made a deliberate choice about which one they’re doing. The ones that don’t, haven’t - and so they run a research process inside an engineering context, indefinitely.</p>
+<p>What follows is what I’ve learned - sometimes from my own failures, sometimes from watching teams I was leading repeat patterns I’d already lived through - about how to actually make that choice.</p>
 </section>
 <section id="define-the-target-before-writing-a-line-of-code" class="level2">
 <h2 class="anchored" data-anchor-id="define-the-target-before-writing-a-line-of-code">Define the Target Before Writing a Line of Code</h2>
-<p>The most consistent mistake I’ve made — and watched others make — is starting before the goal is properly defined. It doesn’t feel like a mistake at the time. There’s energy, there’s a general direction, there’s a team ready to move. But you can’t constrain an undefined goal. The first structural requirement for shipping is a precise definition of version one — not the roadmap, not the vision, but version one.</p>
-<p>Write it as a falsifiable criterion: <em>“A model that identifies churn risk 14 days in advance with precision ≥ 70% on the holdout set, deployable via the existing prediction service.”</em> That’s a definition. “Improve churn prediction” is not — it’s a direction, and directions don’t ship.</p>
+<p>The most consistent mistake I’ve made - and watched others make - is starting before the goal is properly defined. It doesn’t feel like a mistake at the time. There’s energy, there’s a general direction, there’s a team ready to move. But you can’t constrain an undefined goal. The first structural requirement for shipping is a precise definition of version one - not the roadmap, not the vision, but version one.</p>
+<p>Write it as a falsifiable criterion: <em>“A model that identifies churn risk 14 days in advance with precision ≥ 70% on the holdout set, deployable via the existing prediction service.”</em> That’s a definition. “Improve churn prediction” is not - it’s a direction, and directions don’t ship.</p>
 <p>Before writing code, three questions force the definition:</p>
 <p><strong>Who is this for, specifically?</strong> A customer-facing recommendation system for mobile users has different input distributions, latency constraints, and acceptable error modes than an internal analyst tool. “Users in general” means nobody in particular, and a system designed for nobody in particular gets spec’d indefinitely.</p>
-<p><strong>What does version one accomplish — and what does it explicitly not do?</strong> The second half matters as much as the first. Scope creep in ML is insidious because experiments feel like progress: an additional feature, a new architecture variant, a cleaned edge case — each looks like forward motion. The out-of-scope list is what makes the in-scope list real.</p>
-<p><strong>What are the success criteria, written down and falsifiable?</strong> Precision ≥ 0.70. Latency ≤ 100ms at p99. Deployable on the existing serving infrastructure. Criteria that can be verified make it possible to call the project done. Criteria that can’t — “good enough,” “production-ready,” “performs well” — guarantee the project never ends.</p>
-<p>Working backwards from these answers also produces the project structure. Once you know what version one must accomplish, you can enumerate prerequisite questions: <em>What training data do we need? What does the evaluation harness look like? How does it plug into production?</em> Each answer either gets scheduled or gets cut. Vague goals don’t allow this decomposition — they keep the surface area perpetually open.</p>
+<p><strong>What does version one accomplish - and what does it explicitly not do?</strong> The second half matters as much as the first. Scope creep in ML is insidious because experiments feel like progress: an additional feature, a new architecture variant, a cleaned edge case - each looks like forward motion. The out-of-scope list is what makes the in-scope list real.</p>
+<p><strong>What are the success criteria, written down and falsifiable?</strong> Precision ≥ 0.70. Latency ≤ 100ms at p99. Deployable on the existing serving infrastructure. Criteria that can be verified make it possible to call the project done. Criteria that can’t - “good enough,” “production-ready,” “performs well” - guarantee the project never ends.</p>
+<p>Working backwards from these answers also produces the project structure. Once you know what version one must accomplish, you can enumerate prerequisite questions: <em>What training data do we need? What does the evaluation harness look like? How does it plug into production?</em> Each answer either gets scheduled or gets cut. Vague goals don’t allow this decomposition - they keep the surface area perpetually open.</p>
 </section>
 <section id="make-time-the-constraint-not-scope" class="level2">
 <h2 class="anchored" data-anchor-id="make-time-the-constraint-not-scope">Make Time the Constraint, Not Scope</h2>
 <p>The natural instinct is to treat scope as fixed and deadline as flexible. This is exactly backwards.</p>
-<p>Scope in an ML project is not fixed — it’s infinitely expandable. There’s always a better architecture to try, a cleaner way to handle edge cases, a feature that might help. Teams treat scope as the constraint because it feels <em>owned</em>: the team wrote the requirements, agreed on them, and changing them feels like abandoning a commitment. Deadlines, by contrast, feel externally imposed and therefore more negotiable — something to push when the work “isn’t ready yet.”</p>
-<p>I’ve been in this meeting many times — sometimes as the engineer watching the deadline move, more often as the person responsible for it. The deadline slips, then slips again, then becomes a standing item on the weekly status call.</p>
+<p>Scope in an ML project is not fixed - it’s infinitely expandable. There’s always a better architecture to try, a cleaner way to handle edge cases, a feature that might help. Teams treat scope as the constraint because it feels <em>owned</em>: the team wrote the requirements, agreed on them, and changing them feels like abandoning a commitment. Deadlines, by contrast, feel externally imposed and therefore more negotiable - something to push when the work “isn’t ready yet.”</p>
+<p>I’ve been in this meeting many times - sometimes as the engineer watching the deadline move, more often as the person responsible for it. The deadline slips, then slips again, then becomes a standing item on the weekly status call.</p>
 <p>Flip the constraint. Treat the deadline as fixed and scope as the variable. This changes the question from <em>“when will we be done with everything we planned?”</em> to <em>“what’s the most important thing we can ship by this date?”</em> The second question forces real prioritization. The model that trains in four hours ships; the one that takes 24 hours doesn’t. The feature built on existing infrastructure stays; the one that requires a new data pipeline gets cut.</p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -351,7 +351,7 @@ Deadlines as a Design Tool
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>A deadline doesn’t dictate quality — it dictates scope. The discipline is specifically about protecting the deadline from <em>scope expansion</em>, not accelerating the work. When a new requirement surfaces mid-project, the question isn’t <em>“can we fit it in?”</em> — it’s <em>“what does it displace?”</em></p>
+<p>A deadline doesn’t dictate quality - it dictates scope. The discipline is specifically about protecting the deadline from <em>scope expansion</em>, not accelerating the work. When a new requirement surfaces mid-project, the question isn’t <em>“can we fit it in?”</em> - it’s <em>“what does it displace?”</em></p>
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">
@@ -364,14 +364,14 @@ Version One Is Supposed to Be Small
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Version one of most production models is smaller, faster, and more constrained than anything the team initially imagined. Good. The goal of version one isn’t to build the best possible system — it’s to establish the deployment path, validate production integration, and generate real usage data. The best possible system comes later, built on what version one teaches you.</p>
+<p>Version one of most production models is smaller, faster, and more constrained than anything the team initially imagined. Good. The goal of version one isn’t to build the best possible system - it’s to establish the deployment path, validate production integration, and generate real usage data. The best possible system comes later, built on what version one teaches you.</p>
 </div>
 </div>
 </section>
 <section id="decompose-until-done-is-unambiguous" class="level2">
 <h2 class="anchored" data-anchor-id="decompose-until-done-is-unambiguous">Decompose Until Done Is Unambiguous</h2>
-<p>Once you have a target and a deadline, break the project into tasks — not work items, not epics, tasks. The distinction matters: a task has an unambiguous definition of done. A project doesn’t.</p>
-<p>“Train a production NLP model” is a project. Tasks are: - <em>“Label 500 training examples from the January logs”</em> — done or not done. - <em>“Achieve F1 ≥ 0.82 on the validation split”</em> — done or not done. - <em>“Write the endpoint that accepts raw text and returns a classification”</em> — done or not done.</p>
+<p>Once you have a target and a deadline, break the project into tasks - not work items, not epics, tasks. The distinction matters: a task has an unambiguous definition of done. A project doesn’t.</p>
+<p>“Train a production NLP model” is a project. Tasks are: - <em>“Label 500 training examples from the January logs”</em> - done or not done. - <em>“Achieve F1 ≥ 0.82 on the validation split”</em> - done or not done. - <em>“Write the endpoint that accepts raw text and returns a classification”</em> - done or not done.</p>
 <p>If you can’t tell whether a piece of work is finished without discussion, break it down further.</p>
 <p>With tasks in hand, ruthlessly prioritize against the version one criteria. Not everything is equally important, and pretending otherwise is how projects stall:</p>
 <table class="table">
@@ -414,8 +414,8 @@ Version One Is Supposed to Be Small
 </section>
 <section id="validate-the-core-assumption-before-building-the-system" class="level2">
 <h2 class="anchored" data-anchor-id="validate-the-core-assumption-before-building-the-system">Validate the Core Assumption Before Building the System</h2>
-<p>Every ML project rests on a single load-bearing assumption: <em>“Does a model trained on this data actually produce useful predictions for this problem?”</em> Everything else — the serving infrastructure, the feature pipeline, the retraining loop, the monitoring dashboard — only matters if the answer is yes.</p>
-<p>I’ve fallen into this trap early in my career, and led teams into it later. The pattern is always the same: stand up a feature store, design a training pipeline, architect a serving layer — then train the model and discover the data doesn’t support the prediction task, or the signal is too weak, or the problem is better solved without ML at all. Months of infrastructure work, none of it applicable to the revised approach. The infrastructure trap is just as easy to fall into when you’re the one setting the direction as when you’re the one doing the building.</p>
+<p>Every ML project rests on a single load-bearing assumption: <em>“Does a model trained on this data actually produce useful predictions for this problem?”</em> Everything else - the serving infrastructure, the feature pipeline, the retraining loop, the monitoring dashboard - only matters if the answer is yes.</p>
+<p>I’ve fallen into this trap early in my career, and led teams into it later. The pattern is always the same: stand up a feature store, design a training pipeline, architect a serving layer - then train the model and discover the data doesn’t support the prediction task, or the signal is too weak, or the problem is better solved without ML at all. Months of infrastructure work, none of it applicable to the revised approach. The infrastructure trap is just as easy to fall into when you’re the one setting the direction as when you’re the one doing the building.</p>
 <div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div>
@@ -436,13 +436,13 @@ Version One Is Supposed to Be Small
 </div>
 </div>
 </div>
-<p>The minimum viable experiment: train a simple baseline on a slice of the data, evaluate it against a manually-labeled holdout, and show the results to at least one person who’d actually use the output. Logistic regression, a small neural net, a fine-tuned pretrained model — whatever takes days, not months. If the results are promising, the infrastructure investment is justified. If not, you’ve learned the most important thing about the project for the cost of two weeks.</p>
-<p>This also determines tool choice during validation. <code>scikit-learn</code>, <code>PyTorch</code>, pre-trained transformers from HuggingFace — these represent thousands of engineering hours and are battle-tested at scale. Custom architectures and bespoke training loops are justified when profiling data shows standard tools can’t meet your requirements. That data doesn’t exist before validation. Building custom infrastructure before validating the approach is the fastest way to spend six months on something nobody uses.</p>
+<p>The minimum viable experiment: train a simple baseline on a slice of the data, evaluate it against a manually-labeled holdout, and show the results to at least one person who’d actually use the output. Logistic regression, a small neural net, a fine-tuned pretrained model - whatever takes days, not months. If the results are promising, the infrastructure investment is justified. If not, you’ve learned the most important thing about the project for the cost of two weeks.</p>
+<p>This also determines tool choice during validation. <code>scikit-learn</code>, <code>PyTorch</code>, pre-trained transformers from HuggingFace - these represent thousands of engineering hours and are battle-tested at scale. Custom architectures and bespoke training loops are justified when profiling data shows standard tools can’t meet your requirements. That data doesn’t exist before validation. Building custom infrastructure before validating the approach is the fastest way to spend six months on something nobody uses.</p>
 </section>
 <section id="ship-then-compound" class="level2">
 <h2 class="anchored" data-anchor-id="ship-then-compound">Ship, Then Compound</h2>
-<p>Once version one meets the criteria, ship it — even if it’s not perfect.</p>
-<p>Every model I’ve shipped has surprised me in production. Not because the evaluation was wrong, but because it was measuring the wrong things. Your holdout set measures what you measured. Real users do things you didn’t anticipate — edge cases you didn’t label, inputs from distributions you didn’t sample, and above all, they surface which errors actually matter. A model that’s 92% accurate on the evaluation set might be systematically wrong on the 8% of inputs that are disproportionately important to users. You won’t know that until the model is deployed.</p>
+<p>Once version one meets the criteria, ship it - even if it’s not perfect.</p>
+<p>Every model I’ve shipped has surprised me in production. Not because the evaluation was wrong, but because it was measuring the wrong things. Your holdout set measures what you measured. Real users do things you didn’t anticipate - edge cases you didn’t label, inputs from distributions you didn’t sample, and above all, they surface which errors actually matter. A model that’s 92% accurate on the evaluation set might be systematically wrong on the 8% of inputs that are disproportionately important to users. You won’t know that until the model is deployed.</p>
 <div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div>
@@ -460,7 +460,7 @@ Version One Is Supposed to Be Small
 </div>
 </div>
 </div>
-<p>Ship versions that meet the bar, not versions that approach some imagined ceiling. Version one will be wrong in ways you didn’t anticipate — I’ve never shipped one that wasn’t, and I’ve never led a team that did. One of the harder things about leading engineers through this is convincing them that shipping something imperfect isn’t a compromise — it’s the whole point. The failures you discover in production are the ones that matter. Find them early, when fixing them is fast, not late, when the system is load-bearing and everything is entangled.</p>
+<p>Ship versions that meet the bar, not versions that approach some imagined ceiling. Version one will be wrong in ways you didn’t anticipate - I’ve never shipped one that wasn’t, and I’ve never led a team that did. One of the harder things about leading engineers through this is convincing them that shipping something imperfect isn’t a compromise - it’s the whole point. The failures you discover in production are the ones that matter. Find them early, when fixing them is fast, not late, when the system is load-bearing and everything is entangled.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -471,17 +471,17 @@ Each Version Enables the Next
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Real usage reveals the failures that matter — not the ones you hypothesized in the design doc, but the ones users actually encounter. Their feedback tells you which improvements are worth making. Infrastructure built for version one scales to version two. The teams that ship consistently aren’t the ones with better planning processes — they’re the ones who’ve completed more cycles of this loop.</p>
+<p>Real usage reveals the failures that matter - not the ones you hypothesized in the design doc, but the ones users actually encounter. Their feedback tells you which improvements are worth making. Infrastructure built for version one scales to version two. The teams that ship consistently aren’t the ones with better planning processes - they’re the ones who’ve completed more cycles of this loop.</p>
 </div>
 </div>
 </section>
 <section id="key-takeaways" class="level2">
 <h2 class="anchored" data-anchor-id="key-takeaways">Key Takeaways</h2>
 <ol type="1">
-<li><p><strong>Decide whether you’re doing research or engineering before you start.</strong> ML projects that don’t make this distinction run research processes in engineering contexts — indefinitely.</p></li>
+<li><p><strong>Decide whether you’re doing research or engineering before you start.</strong> ML projects that don’t make this distinction run research processes in engineering contexts - indefinitely.</p></li>
 <li><p><strong>Define version one as a falsifiable criterion.</strong> Precision ≥ X. Latency ≤ Y. Deployable on Z. Criteria that can’t be verified guarantee the project never ends.</p></li>
 <li><p><strong>Treat deadline as fixed, scope as variable.</strong> The question is always: <em>“What’s the most important thing we can ship by this date?”</em></p></li>
-<li><p><strong>Decompose until done is unambiguous.</strong> If you can’t tell whether a task is finished without discussion, it’s not a task — it’s a project.</p></li>
+<li><p><strong>Decompose until done is unambiguous.</strong> If you can’t tell whether a task is finished without discussion, it’s not a task - it’s a project.</p></li>
 <li><p><strong>Validate the core assumption before building infrastructure.</strong> Does the model work on this data? Answer that first, with the simplest possible tools. Everything else comes after.</p></li>
 <li><p><strong>Ship the imperfect version.</strong> Offline evaluation measures what you measured. Real usage reveals what you missed. Each shipped version enables the next.</p></li>
 </ol>

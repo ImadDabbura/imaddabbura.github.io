@@ -22,14 +22,14 @@ Even if the extra wave contains only a few blocks, the cost of a wave is dominat
 **3. Tile count grows linearly with N, but waves grow discretely**
 The tile count plot is just a line.
 But every time it crosses a multiple of SM_count, the scheduler must add another wave.
-That mismatch — *linear tiles vs. discrete waves* — is the root cause of the performance oscillations.
+That mismatch - *linear tiles vs. discrete waves* - is the root cause of the performance oscillations.
 
 **Minimal synthesis**
 
 * **Performance spikes upward** as waves become fuller.
 * **Performance drops** when you start a new wave that is mostly empty.
 * **Runtime increases abruptly** at those same points because a new, under-filled wave must run to completion.
-* These artifacts have **nothing to do with memory throughput or compute intensity** — they are purely a tiling × SM-count divisibility effect.
+* These artifacts have **nothing to do with memory throughput or compute intensity** - they are purely a tiling × SM-count divisibility effect.
 
 In conclusion, **wave quantization produces predictable cliffs in GEMM performance:**
 

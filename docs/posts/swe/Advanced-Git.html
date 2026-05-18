@@ -434,17 +434,17 @@ window.Quarto = {
 <div class="status-badge-container" style="margin-bottom: 1rem;"><span class="status-badge evergreen">evergreen</span></div>
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>Git’s entire data model fits in one sentence: an append-only, content-addressable object store of blobs, trees, and commits, with mutable pointers (branches, tags, HEAD) layered on top. That is it. Every command — <code>commit</code>, <code>merge</code>, <code>rebase</code>, <code>reset</code> — is either creating objects, moving pointers, or both.</p>
+<p>Git’s entire data model fits in one sentence: an append-only, content-addressable object store of blobs, trees, and commits, with mutable pointers (branches, tags, HEAD) layered on top. That is it. Every command - <code>commit</code>, <code>merge</code>, <code>rebase</code>, <code>reset</code> - is either creating objects, moving pointers, or both.</p>
 <p>Most Git tutorials skip this and teach a bag of CLI recipes. The result: developers memorize commands without understanding what they do, and panic when something goes wrong. This post takes the opposite approach. It starts from the internal data model (the <em>plumbing</em>) and builds up to the daily commands (the <em>porcelain</em>). Once you see that a branch is a 41-byte file containing a commit hash, operations like merge and rebase become intuitive pointer manipulations rather than incantations.</p>
 <p>By the end of this post, you will be able to:</p>
 <ol type="1">
 <li>Explain the three object types (blob, tree, commit) and how they form a content-addressable filesystem</li>
 <li>Trace what <code>git add</code> and <code>git commit</code> do at the object level, step by step</li>
 <li>Understand branching, merging, and rebasing as pointer operations on a DAG</li>
-<li>Use <code>reset</code>, <code>rebase -i</code>, <code>bisect</code>, and <code>cherry-pick</code> with confidence — knowing exactly what each one moves</li>
+<li>Use <code>reset</code>, <code>rebase -i</code>, <code>bisect</code>, and <code>cherry-pick</code> with confidence - knowing exactly what each one moves</li>
 <li>Follow a professional feature-branch workflow from creation to fast-forward merge</li>
 </ol>
-<p>We start with the object model, then build up through references, branches, remotes, history inspection, history rewriting, and the professional workflow that ties it all together. The diagram below is the complete mental model — every section that follows is an operation on this structure.</p>
+<p>We start with the object model, then build up through references, branches, remotes, history inspection, history rewriting, and the professional workflow that ties it all together. The diagram below is the complete mental model - every section that follows is an operation on this structure.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div>
@@ -477,11 +477,11 @@ window.Quarto = {
 </section>
 <section id="the-object-model-how-git-actually-stores-data" class="level2">
 <h2 class="anchored" data-anchor-id="the-object-model-how-git-actually-stores-data">1. The Object Model: How Git Actually Stores Data</h2>
-<p>Every version control system must answer a fundamental question: <em>how do you store the state of a project at a point in time?</em> Some systems store deltas — the difference between consecutive versions. Git takes a radically different approach: it stores <strong>snapshots</strong>. Every commit captures the complete state of every file in the project. Files that have not changed are not duplicated; Git simply reuses the existing object. This snapshot model is what makes branching and merging fast: a branch is just a pointer to an existing snapshot (no need to replay deltas to reconstruct state), and a three-way merge can directly compare three complete trees rather than reconstructing them from a chain of differences.</p>
+<p>Every version control system must answer a fundamental question: <em>how do you store the state of a project at a point in time?</em> Some systems store deltas - the difference between consecutive versions. Git takes a radically different approach: it stores <strong>snapshots</strong>. Every commit captures the complete state of every file in the project. Files that have not changed are not duplicated; Git simply reuses the existing object. This snapshot model is what makes branching and merging fast: a branch is just a pointer to an existing snapshot (no need to replay deltas to reconstruct state), and a three-way merge can directly compare three complete trees rather than reconstructing them from a chain of differences.</p>
 <p>Everything Git stores lives inside the <code>.git</code> directory at the root of your project. Delete that directory, and the entire history is gone. Keep it, and you have a complete, self-contained database of every version of every file ever committed.</p>
 <section id="content-addressable-storage" class="level3">
 <h3 class="anchored" data-anchor-id="content-addressable-storage">1.1 Content-Addressable Storage</h3>
-<p>The key design decision that makes Git work is <strong>content-addressable storage</strong>. Every object Git stores — every file, every directory listing, every commit — is identified by the SHA-1 hash of its contents. The hash is a 40-character hexadecimal string (160 bits), and it serves as both the object’s name and its address in the database.</p>
+<p>The key design decision that makes Git work is <strong>content-addressable storage</strong>. Every object Git stores - every file, every directory listing, every commit - is identified by the SHA-1 hash of its contents. The hash is a 40-character hexadecimal string (160 bits), and it serves as both the object’s name and its address in the database.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pseudocode for Git's storage model</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> store(obj):</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">id</span> <span class="op">=</span> sha1(obj)</span>
@@ -494,7 +494,7 @@ window.Quarto = {
 <p>This design gives Git three properties for free:</p>
 <ul>
 <li><strong>Deduplication.</strong> Two files with identical contents produce the same hash, so Git stores only one copy. Rename a file? The blob stays the same; only the parent tree changes.</li>
-<li><strong>Integrity.</strong> Any corruption — even a single flipped bit — changes the hash, so Git detects it immediately.</li>
+<li><strong>Integrity.</strong> Any corruption - even a single flipped bit - changes the hash, so Git detects it immediately.</li>
 <li><strong>Immutability.</strong> Objects are addressed by their content. You cannot change an object without changing its address. This append-only property is why committed data is almost always recoverable.</li>
 </ul>
 <div class="callout callout-style-default callout-important callout-titled">
@@ -507,19 +507,19 @@ Git Is a Content-Addressable Filesystem
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>At its core, Git is not a “version control system” — it is a content-addressable filesystem with a version control UI built on top. Understanding this is the single most important mental shift for mastering Git. Every command you run — <code>commit</code>, <code>merge</code>, <code>rebase</code>, <code>reset</code> — is ultimately an operation on this object store.</p>
+<p>At its core, Git is not a “version control system” - it is a content-addressable filesystem with a version control UI built on top. Understanding this is the single most important mental shift for mastering Git. Every command you run - <code>commit</code>, <code>merge</code>, <code>rebase</code>, <code>reset</code> - is ultimately an operation on this object store.</p>
 </div>
 </div>
 </section>
 <section id="blobs-file-contents-without-names" class="level3">
 <h3 class="anchored" data-anchor-id="blobs-file-contents-without-names">1.2 Blobs: File Contents Without Names</h3>
-<p>A <strong>blob</strong> (binary large object) stores the raw contents of a single file — nothing more. No filename, no permissions, no metadata. Just bytes.</p>
+<p>A <strong>blob</strong> (binary large object) stores the raw contents of a single file - nothing more. No filename, no permissions, no metadata. Just bytes.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>type blob <span class="op">=</span> array<span class="op">&lt;</span>byte<span class="op">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>When Git computes the hash of a blob, it prepends a header: the string <code>"blob"</code>, a space, the content length in bytes, and a null byte. The SHA-1 of this combined string becomes the blob’s address:</p>
 <pre><code>SHA-1("blob 60\0" + file_contents) → ee5941ab3c...</code></pre>
-<p>Because blobs store only contents and not names, two files with identical contents — even in different directories, even with different names — map to the <strong>same blob</strong>. Git stores it exactly once.</p>
+<p>Because blobs store only contents and not names, two files with identical contents - even in different directories, even with different names - map to the <strong>same blob</strong>. Git stores it exactly once.</p>
 <div id="1c534b66-7804-4eed-a8fd-ef6124cc6d4e" class="cell" data-execution_count="33">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect a blob — git cat-file -p shows the raw content</span></span>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect a blob - git cat-file -p shows the raw content</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># First, find a blob hash from the current tree</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>git cat<span class="op">-</span><span class="bu">file</span> <span class="op">-</span>p HEAD<span class="op">^</span>{tree} <span class="op">|</span> tail <span class="op">-</span><span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -545,10 +545,10 @@ title: Today Imad Learned</code></pre>
 040000 tree e5f6a7b8...  src/</code></pre>
 <p>Trees have several important properties:</p>
 <ul>
-<li><strong>Trees do not store their own name.</strong> A tree’s name is assigned by its <em>parent</em> tree. The root tree — the top-level directory of the project — has no name at all, which is why renaming your repository’s local directory has zero effect on Git.</li>
+<li><strong>Trees do not store their own name.</strong> A tree’s name is assigned by its <em>parent</em> tree. The root tree - the top-level directory of the project - has no name at all, which is why renaming your repository’s local directory has zero effect on Git.</li>
 <li><strong>Empty directories are invisible.</strong> A tree must contain at least one entry. Git cannot track an empty directory. The common workaround is placing a <code>.gitkeep</code> file inside it.</li>
-<li><strong>Renaming is cheap.</strong> If you rename a subdirectory, only the parent tree changes. The subtree object and everything below it remain untouched — they have the same hashes and the same addresses.</li>
-<li><strong>Trees are themselves hashed.</strong> The hash of a tree is computed over its list of entries. Change any entry (add a file, rename something, update a blob hash), and the tree gets a new hash — which propagates up to every parent tree, all the way to the root.</li>
+<li><strong>Renaming is cheap.</strong> If you rename a subdirectory, only the parent tree changes. The subtree object and everything below it remain untouched - they have the same hashes and the same addresses.</li>
+<li><strong>Trees are themselves hashed.</strong> The hash of a tree is computed over its list of entries. Change any entry (add a file, rename something, update a blob hash), and the tree gets a new hash - which propagates up to every parent tree, all the way to the root.</li>
 </ul>
 <div id="00283c46" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect the root tree of the latest commit</span></span>
@@ -571,9 +571,9 @@ title: Today Imad Learned</code></pre>
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    message<span class="op">:</span> string         <span class="co">// why the change was made (commit message)</span></span>
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>A commit does <strong>not</strong> store diffs. When you run <code>git diff</code> between two commits, Git compares their root trees on the fly and computes the difference on demand. This is a key design choice: storing snapshots makes branching and merging fast at the cost of slightly more storage (mitigated by deduplication and packfiles).</p>
-<p>Because unchanged files keep the same blob hash, and unchanged directories keep the same tree hash, most of a commit’s tree structure is <em>shared</em> with its parent. A commit that changes one file out of a thousand creates exactly one new blob, one new tree for its parent directory, and new trees up to the root — everything else is reused via identical hashes.</p>
+<p>Because unchanged files keep the same blob hash, and unchanged directories keep the same tree hash, most of a commit’s tree structure is <em>shared</em> with its parent. A commit that changes one file out of a thousand creates exactly one new blob, one new tree for its parent directory, and new trees up to the root - everything else is reused via identical hashes.</p>
 <div id="5f2bdd33-c82c-4437-9872-733229bf48ff" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect a commit object — shows tree, parent, author, message</span></span>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect a commit object - shows tree, parent, author, message</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>git cat<span class="op">-</span><span class="bu">file</span> <span class="op">-</span>p HEAD</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>tree 94ab6b930e1b2be4b0e68d6eb14f81671498f14d
@@ -634,17 +634,17 @@ feat: Add few more tips/tricks</code></pre>
 <section id="putting-it-all-together-a-worked-example" class="level3">
 <h3 class="anchored" data-anchor-id="putting-it-all-together-a-worked-example">1.6 Putting It All Together: A Worked Example</h3>
 <p>Let’s trace exactly what happens when you create a file and commit it.</p>
-<p><strong>Step 1 — Create a file:</strong></p>
+<p><strong>Step 1 - Create a file:</strong></p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Hello, Git"</span> <span class="op">&gt;</span> greeting.txt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The file exists only in your working directory. Git status shows it as <em>untracked</em>.</p>
-<p><strong>Step 2 — Stage the file (<code>git add greeting.txt</code>):</strong></p>
+<p><strong>Step 2 - Stage the file (<code>git add greeting.txt</code>):</strong></p>
 <p>Git does three things:</p>
 <ol type="1">
 <li>Computes the SHA-1: <code>SHA-1("blob 11\0Hello, Git\n")</code> → <code>ab3f...</code></li>
 <li>Compresses the content and stores it at <code>.git/objects/ab/3f...</code></li>
 <li>Adds an entry to <code>.git/index</code>: <code>100644 blob ab3f... greeting.txt</code></li>
 </ol>
-<p><strong>Step 3 — Commit (<code>git commit -m "Add greeting"</code>):</strong></p>
+<p><strong>Step 3 - Commit (<code>git commit -m "Add greeting"</code>):</strong></p>
 <p>Git does four things:</p>
 <ol type="1">
 <li>Reads the index and creates a tree object listing <code>greeting.txt → ab3f...</code> → tree hash <code>d8e7...</code></li>
@@ -681,18 +681,18 @@ feat: Add few more tips/tricks</code></pre>
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Objects, Refs, HEAD — That’s All There Is
+Objects, Refs, HEAD - That’s All There Is
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The entire Git data model consists of three object types (blobs, trees, commits), mutable references (branches, tags, remote-tracking branches), and a single HEAD pointer. Every Git command — no matter how complex — is ultimately a combination of creating objects and moving references. Once this clicks, Git stops being mysterious.</p>
+<p>The entire Git data model consists of three object types (blobs, trees, commits), mutable references (branches, tags, remote-tracking branches), and a single HEAD pointer. Every Git command - no matter how complex - is ultimately a combination of creating objects and moving references. Once this clicks, Git stops being mysterious.</p>
 </div>
 </div>
 </section>
 </section>
 <section id="references-human-readable-pointers" class="level2">
 <h2 class="anchored" data-anchor-id="references-human-readable-pointers">2. References: Human-Readable Pointers</h2>
-<p>Raw SHA-1 hashes are precise but unwieldy — nobody wants to type <code>f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0</code> every time they refer to a commit. <strong>References</strong> (refs) solve this by providing human-readable names that map to commit hashes. They are stored as plain-text files under <code>.git/refs/</code>.</p>
+<p>Raw SHA-1 hashes are precise but unwieldy - nobody wants to type <code>f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0</code> every time they refer to a commit. <strong>References</strong> (refs) solve this by providing human-readable names that map to commit hashes. They are stored as plain-text files under <code>.git/refs/</code>.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># References are simply a map from names to commit hashes</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>references <span class="op">=</span> <span class="bu">map</span><span class="op">&lt;</span>string, <span class="bu">hash</span><span class="op">&gt;</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -704,19 +704,19 @@ Objects, Refs, HEAD — That’s All There Is
 <p>There are three kinds of references, each serving a distinct role.</p>
 <section id="branches-heads" class="level3">
 <h3 class="anchored" data-anchor-id="branches-heads">2.1 Branches (Heads)</h3>
-<p>A <strong>branch</strong> is a file in <code>.git/refs/heads/</code> that contains the SHA-1 hash of a single commit — the tip of that branch. When you create a branch, Git creates a 41-byte file (40 hex chars + newline). When you make a commit on that branch, Git updates the file to point to the new commit. That is the <em>entire</em> implementation of branching.</p>
+<p>A <strong>branch</strong> is a file in <code>.git/refs/heads/</code> that contains the SHA-1 hash of a single commit - the tip of that branch. When you create a branch, Git creates a 41-byte file (40 hex chars + newline). When you make a commit on that branch, Git updates the file to point to the new commit. That is the <em>entire</em> implementation of branching.</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating a branch is literally creating a file</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat .git/refs/heads/main</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="ex">f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>This is why branches in Git are so cheap: they are not copies of your codebase, not snapshots, not deltas — they are 41-byte text files. Creating a thousand branches costs roughly 41 KB of disk space.</p>
+<p>This is why branches in Git are so cheap: they are not copies of your codebase, not snapshots, not deltas - they are 41-byte text files. Creating a thousand branches costs roughly 41 KB of disk space.</p>
 </section>
 <section id="head-the-singleton-pointer" class="level3">
 <h3 class="anchored" data-anchor-id="head-the-singleton-pointer">2.2 HEAD: The Singleton Pointer</h3>
-<p><strong>HEAD</strong> is a special reference that identifies where you currently are. Unlike branches, there is only ever one HEAD — it is a singleton. It lives at <code>.git/HEAD</code> and typically contains a <em>symbolic reference</em> to a branch:</p>
+<p><strong>HEAD</strong> is a special reference that identifies where you currently are. Unlike branches, there is only ever one HEAD - it is a singleton. It lives at <code>.git/HEAD</code> and typically contains a <em>symbolic reference</em> to a branch:</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat .git/HEAD</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ref:</span> refs/heads/main</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>This tells Git: “the current branch is <code>main</code>.” When you commit, Git follows the chain: HEAD → <code>refs/heads/main</code> → update that file with the new commit hash.</p>
-<p>When you check out a specific commit (not a branch), HEAD points directly at that commit hash instead of a branch name. This is a <strong>detached HEAD</strong> state — you are no longer on any branch, and new commits will not be reachable from any branch unless you explicitly create one.</p>
+<p>When you check out a specific commit (not a branch), HEAD points directly at that commit hash instead of a branch name. This is a <strong>detached HEAD</strong> state - you are no longer on any branch, and new commits will not be reachable from any branch unless you explicitly create one.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -727,16 +727,16 @@ Detached HEAD
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>In detached HEAD state, any commits you make will become unreachable (and eventually garbage-collected) once you switch to a branch — unless you create a branch pointing to them first. If you find yourself in detached HEAD, Git tells you: simply run <code>git switch -c new-branch-name</code> to save your work.</p>
+<p>In detached HEAD state, any commits you make will become unreachable (and eventually garbage-collected) once you switch to a branch - unless you create a branch pointing to them first. If you find yourself in detached HEAD, Git tells you: simply run <code>git switch -c new-branch-name</code> to save your work.</p>
 </div>
 </div>
 </section>
 <section id="tags-immutable-bookmarks" class="level3">
 <h3 class="anchored" data-anchor-id="tags-immutable-bookmarks">2.3 Tags: Immutable Bookmarks</h3>
-<p><strong>Tags</strong> are references stored in <code>.git/refs/tags/</code>. Like branches, they point to commits — but unlike branches, they are meant to be <strong>immutable</strong>. A tag marks a fixed point in history (typically a release: <code>v1.0</code>, <code>v2.3.1</code>).</p>
+<p><strong>Tags</strong> are references stored in <code>.git/refs/tags/</code>. Like branches, they point to commits - but unlike branches, they are meant to be <strong>immutable</strong>. A tag marks a fixed point in history (typically a release: <code>v1.0</code>, <code>v2.3.1</code>).</p>
 <p>Git supports two kinds of tags:</p>
 <ul>
-<li><strong>Lightweight tags</strong> are simple files containing a commit hash — identical in structure to a branch, just never updated.</li>
+<li><strong>Lightweight tags</strong> are simple files containing a commit hash - identical in structure to a branch, just never updated.</li>
 <li><strong>Annotated tags</strong> are full Git objects stored in <code>.git/objects/</code>. They contain the tagger’s name and email, a timestamp, a message, and optionally a GPG signature. The tag file in <code>refs/tags/</code> then points to this tag object, which in turn points to the commit. Annotated tags are recommended because they preserve who tagged, when, and why.</li>
 </ul>
 <div class="sourceCode" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lightweight: just a pointer</span></span>
@@ -757,7 +757,7 @@ Tags Are Not Pushed by Default
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Running <code>git push</code> does not transfer tags to the remote. You must explicitly push them: <code>git push origin v1.0</code> (one tag) or <code>git push origin --tags</code> (all tags). This is a deliberate safety measure — tags are meant to be curated, not automatically propagated.</p>
+<p>Running <code>git push</code> does not transfer tags to the remote. You must explicitly push them: <code>git push origin v1.0</code> (one tag) or <code>git push origin --tags</code> (all tags). This is a deliberate safety measure - tags are meant to be curated, not automatically propagated.</p>
 </div>
 </div>
 </section>
@@ -797,28 +797,28 @@ Tags Are Not Pushed by Default
 <tr class="odd">
 <td><strong>Branch</strong></td>
 <td><code>refs/heads/</code></td>
-<td>Yes — updated on every commit</td>
+<td>Yes - updated on every commit</td>
 <td>Latest commit on the branch</td>
 <td>Track the moving tip of a line of development</td>
 </tr>
 <tr class="even">
 <td><strong>Tag</strong></td>
 <td><code>refs/tags/</code></td>
-<td>No — fixed once created</td>
+<td>No - fixed once created</td>
 <td>A specific commit (or tag object)</td>
 <td>Mark releases and milestones</td>
 </tr>
 <tr class="odd">
 <td><strong>HEAD</strong></td>
 <td><code>.git/HEAD</code></td>
-<td>Yes — changes on checkout</td>
+<td>Yes - changes on checkout</td>
 <td>A branch (symbolic) or commit (detached)</td>
 <td>Identify where you are right now</td>
 </tr>
 <tr class="even">
 <td><strong>Remote branch</strong></td>
 <td><code>refs/remotes/</code></td>
-<td>Yes — updated on fetch/pull</td>
+<td>Yes - updated on fetch/pull</td>
 <td>Last known commit on the remote</td>
 <td>Bookmark the remote’s state</td>
 </tr>
@@ -829,7 +829,7 @@ Tags Are Not Pushed by Default
 </section>
 <section id="branching-and-merging" class="level2">
 <h2 class="anchored" data-anchor-id="branching-and-merging">3. Branching and Merging</h2>
-<p>Branching is where Git’s lightweight object model pays off. Because a branch is just a 41-byte file, creating one is instantaneous. Because commits share unchanged objects, branches consume almost no additional storage. This makes it practical to create a branch for every feature, every bug fix, every experiment — and to merge or discard them freely.</p>
+<p>Branching is where Git’s lightweight object model pays off. Because a branch is just a 41-byte file, creating one is instantaneous. Because commits share unchanged objects, branches consume almost no additional storage. This makes it practical to create a branch for every feature, every bug fix, every experiment - and to merge or discard them freely.</p>
 <section id="creating-and-switching-branches" class="level3">
 <h3 class="anchored" data-anchor-id="creating-and-switching-branches">3.1 Creating and Switching Branches</h3>
 <p>Creating a branch copies the current commit hash into a new file:</p>
@@ -852,13 +852,13 @@ Tags Are Not Pushed by Default
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The <code>switch</code> and <code>restore</code> commands were introduced in Git 2.23 (2019) to replace the overloaded <code>checkout</code> command, which handled both branch switching and file restoration. The modern equivalents: <code>git switch</code> for branches, <code>git restore</code> for files. Both <code>checkout</code> forms still work, but <code>switch</code>/<code>restore</code> are clearer and safer — <code>switch</code> refuses to overwrite uncommitted changes by default.</p>
+<p>The <code>switch</code> and <code>restore</code> commands were introduced in Git 2.23 (2019) to replace the overloaded <code>checkout</code> command, which handled both branch switching and file restoration. The modern equivalents: <code>git switch</code> for branches, <code>git restore</code> for files. Both <code>checkout</code> forms still work, but <code>switch</code>/<code>restore</code> are clearer and safer - <code>switch</code> refuses to overwrite uncommitted changes by default.</p>
 </div>
 </div>
 </section>
 <section id="fast-forward-merges" class="level3">
 <h3 class="anchored" data-anchor-id="fast-forward-merges">3.2 Fast-Forward Merges</h3>
-<p>The simplest merge scenario: you created a branch, made commits, and <em>nobody else committed to the base branch</em> in the meantime. The base branch’s tip is a direct ancestor of your branch’s tip — the history is linear.</p>
+<p>The simplest merge scenario: you created a branch, made commits, and <em>nobody else committed to the base branch</em> in the meantime. The base branch’s tip is a direct ancestor of your branch’s tip - the history is linear.</p>
 <p>In this case, Git does a <strong>fast-forward merge</strong>: it simply moves the base branch pointer forward to your branch’s tip. No new commit is created, no objects are created, no merge logic runs. It is literally updating a 41-byte file.</p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git switch main</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git merge feature-login <span class="at">--ff-only</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -885,13 +885,13 @@ Tags Are Not Pushed by Default
 </section>
 <section id="three-way-merges" class="level3">
 <h3 class="anchored" data-anchor-id="three-way-merges">3.3 Three-Way Merges</h3>
-<p>When both branches have diverged — the base branch has commits that your feature branch does not, and vice versa — Git cannot fast-forward. Instead, it performs a <strong>three-way merge</strong> using three reference points:</p>
+<p>When both branches have diverged - the base branch has commits that your feature branch does not, and vice versa - Git cannot fast-forward. Instead, it performs a <strong>three-way merge</strong> using three reference points:</p>
 <ol type="1">
-<li>The <strong>common ancestor</strong> — the most recent commit reachable from both branches</li>
+<li>The <strong>common ancestor</strong> - the most recent commit reachable from both branches</li>
 <li>The <strong>tip of the base branch</strong> (e.g., <code>main</code>)</li>
 <li>The <strong>tip of the feature branch</strong></li>
 </ol>
-<p>Git compares each branch’s tip against the common ancestor to determine what changed on each side. If changes do not overlap (different files, or different regions of the same file), Git combines them automatically and creates a <strong>merge commit</strong> — a commit with <em>two parents</em> — that ties the histories together.</p>
+<p>Git compares each branch’s tip against the common ancestor to determine what changed on each side. If changes do not overlap (different files, or different regions of the same file), Git combines them automatically and creates a <strong>merge commit</strong> - a commit with <em>two parents</em> - that ties the histories together.</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git switch main</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git merge feature-login</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell" data-layout-align="center">
@@ -938,24 +938,24 @@ Merge Strategies
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Git supports several merge strategies beyond the default <code>ort</code> (formerly <code>recursive</code>). The most useful alternatives: <code>ours</code> (keep our version entirely, discarding their changes — useful for marking a branch as “merged” without taking its content) and <code>octopus</code> (for merging more than two branches at once). To resolve conflicts in favor of the other side, use the strategy <em>option</em> <code>-X theirs</code> (note: this is an option to the default <code>ort</code> strategy, not a standalone strategy). For example: <code>git merge -X theirs feature-branch</code>.</p>
+<p>Git supports several merge strategies beyond the default <code>ort</code> (formerly <code>recursive</code>). The most useful alternatives: <code>ours</code> (keep our version entirely, discarding their changes - useful for marking a branch as “merged” without taking its content) and <code>octopus</code> (for merging more than two branches at once). To resolve conflicts in favor of the other side, use the strategy <em>option</em> <code>-X theirs</code> (note: this is an option to the default <code>ort</code> strategy, not a standalone strategy). For example: <code>git merge -X theirs feature-branch</code>.</p>
 </div>
 </div>
-<p>Branching and merging work locally. The next section extends these ideas to collaboration across repositories — remotes, tracking branches, and the fetch/push protocol.</p>
+<p>Branching and merging work locally. The next section extends these ideas to collaboration across repositories - remotes, tracking branches, and the fetch/push protocol.</p>
 </section>
 </section>
 <section id="remote-branches-and-collaboration" class="level2">
 <h2 class="anchored" data-anchor-id="remote-branches-and-collaboration">4. Remote Branches and Collaboration</h2>
-<p>Git is <em>distributed</em> — every clone is a complete, independent repository with its own history, branches, and object store. Collaboration happens by synchronizing objects and references between repositories. The machinery for this is remotes, remote-tracking branches, and the fetch/push protocol.</p>
+<p>Git is <em>distributed</em> - every clone is a complete, independent repository with its own history, branches, and object store. Collaboration happens by synchronizing objects and references between repositories. The machinery for this is remotes, remote-tracking branches, and the fetch/push protocol.</p>
 <section id="the-remote-model" class="level3">
 <h3 class="anchored" data-anchor-id="the-remote-model">4.1 The Remote Model</h3>
-<p>A <strong>remote</strong> is a named URL pointing to another Git repository. When you clone a repo, Git automatically creates a remote called <code>origin</code> pointing to the source URL. You can have multiple remotes — for example, <code>origin</code> for your fork and <code>upstream</code> for the original project.</p>
+<p>A <strong>remote</strong> is a named URL pointing to another Git repository. When you clone a repo, Git automatically creates a remote called <code>origin</code> pointing to the source URL. You can have multiple remotes - for example, <code>origin</code> for your fork and <code>upstream</code> for the original project.</p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># List remotes</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git remote <span class="at">-v</span></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a second remote</span></span>
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git remote add upstream https://github.com/original/repo.git</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><strong>Remote-tracking branches</strong> live under <code>.git/refs/remotes/&lt;remote&gt;/</code> and act as read-only bookmarks of where each branch was on the remote the last time you communicated with it. You never update them directly with <code>git commit</code> — Git manages them automatically during <code>fetch</code> and <code>push</code>.</p>
+<p><strong>Remote-tracking branches</strong> live under <code>.git/refs/remotes/&lt;remote&gt;/</code> and act as read-only bookmarks of where each branch was on the remote the last time you communicated with it. You never update them directly with <code>git commit</code> - Git manages them automatically during <code>fetch</code> and <code>push</code>.</p>
 </section>
 <section id="tracking-branches" class="level3">
 <h3 class="anchored" data-anchor-id="tracking-branches">4.2 Tracking Branches</h3>
@@ -981,7 +981,7 @@ Merge Strategies
 <p>When you run <code>git clone https://github.com/user/repo.git</code>, Git performs four steps:</p>
 <ol type="1">
 <li>Creates a directory named <code>repo/</code> with a <code>.git/</code> subdirectory</li>
-<li>Downloads the <em>entire</em> object store — every blob, tree, and commit in the history</li>
+<li>Downloads the <em>entire</em> object store - every blob, tree, and commit in the history</li>
 <li>Creates remote-tracking branches under <code>refs/remotes/origin/</code> for every branch on the remote</li>
 <li>Creates a local <code>main</code> branch tracking <code>origin/main</code> and checks it out</li>
 </ol>
@@ -1039,9 +1039,9 @@ Shallow Clones and CI
 </tr>
 </tbody>
 </table>
-<p><strong>Fetch</strong> is always safe — it only downloads data and updates bookmarks. It never touches your working directory or local branches.</p>
+<p><strong>Fetch</strong> is always safe - it only downloads data and updates bookmarks. It never touches your working directory or local branches.</p>
 <p><strong>Pull</strong> is <code>fetch</code> + <code>merge</code> (or <code>fetch</code> + <code>rebase</code> if configured). Because it merges, it can create merge commits or conflicts.</p>
-<p><strong>Push</strong> uploads your commits and asks the remote to update its branch pointer. If the remote has commits you do not have (someone else pushed first), the push is rejected — you must pull and integrate their changes first.</p>
+<p><strong>Push</strong> uploads your commits and asks the remote to update its branch pointer. If the remote has commits you do not have (someone else pushed first), the push is rejected - you must pull and integrate their changes first.</p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fetch all branches from origin</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git fetch origin</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1074,7 +1074,7 @@ Configure fetch.prune
 </section>
 <section id="inspecting-and-searching-history" class="level2">
 <h2 class="anchored" data-anchor-id="inspecting-and-searching-history">5. Inspecting and Searching History</h2>
-<p>Git’s immutable, content-addressable history is not just a safety net — it is a powerful investigative tool. Every commit, every line change, every contributor is recorded and searchable. This section covers the tools for navigating that history.</p>
+<p>Git’s immutable, content-addressable history is not just a safety net - it is a powerful investigative tool. Every commit, every line change, every contributor is recorded and searchable. This section covers the tools for navigating that history.</p>
 <section id="git-log-viewing-history" class="level3">
 <h3 class="anchored" data-anchor-id="git-log-viewing-history">5.1 git log: Viewing History</h3>
 <p><code>git log</code> is the primary tool for browsing commit history. Its power comes from filtering and formatting options:</p>
@@ -1097,7 +1097,7 @@ Configure fetch.prune
 <li><strong><code>git log -S "term"</code></strong> (the “pickaxe”): finds commits that <em>changed</em> the number of occurrences of a literal string. If a function was added or removed, this finds the commit.</li>
 <li><strong><code>git log -G "regex"</code></strong>: like <code>-S</code> but matches a regex pattern against the diff, finding commits where the patch itself matches.</li>
 </ul>
-<p><code>git show</code> displays a single commit’s metadata and diff in one view — the quickest way to understand what a commit did:</p>
+<p><code>git show</code> displays a single commit’s metadata and diff in one view - the quickest way to understand what a commit did:</p>
 <div class="sourceCode" id="cb29"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the latest commit's diff</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git show</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1115,11 +1115,11 @@ Configure fetch.prune
 <span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Detect code moved or copied from other files</span></span>
 <span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git blame <span class="at">-C</span> path/to/file.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The <code>-C</code> flag is particularly powerful: if a block of code was copied from another file in the same commit, <code>blame -C</code> traces through the copy and attributes the lines to their true origin — not the commit that moved them.</p>
+<p>The <code>-C</code> flag is particularly powerful: if a block of code was copied from another file in the same commit, <code>blame -C</code> traces through the copy and attributes the lines to their true origin - not the commit that moved them.</p>
 </section>
 <section id="git-grep-searching-across-time" class="level3">
 <h3 class="anchored" data-anchor-id="git-grep-searching-across-time">5.3 git grep: Searching Across Time</h3>
-<p><code>git grep</code> searches file contents within Git’s tracked universe. Unlike standalone tools like <code>grep</code> or <code>ripgrep</code>, it can search any committed tree — not just the current working directory. This makes it invaluable for answering questions like “when did we last use this deprecated API?” or “does this pattern exist in the v1.0 release?”</p>
+<p><code>git grep</code> searches file contents within Git’s tracked universe. Unlike standalone tools like <code>grep</code> or <code>ripgrep</code>, it can search any committed tree - not just the current working directory. This makes it invaluable for answering questions like “when did we last use this deprecated API?” or “does this pattern exist in the v1.0 release?”</p>
 <div class="sourceCode" id="cb31"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Search current working directory with context</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git grep <span class="at">-n</span> <span class="at">-p</span> <span class="at">--break</span> <span class="at">--heading</span> <span class="st">"pattern"</span></span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1128,15 +1128,15 @@ Configure fetch.prune
 <span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Search across all branches</span></span>
 <span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git grep <span class="st">"TODO"</span> <span class="va">$(</span><span class="fu">git</span> branch <span class="at">-r</span><span class="va">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The <code>-p</code> flag shows the function/method name containing each match — far more useful than bare line numbers when scanning results. Combined with <code>--break</code> and <code>--heading</code>, the output is grouped by file with clear visual separation.</p>
+<p>The <code>-p</code> flag shows the function/method name containing each match - far more useful than bare line numbers when scanning results. Combined with <code>--break</code> and <code>--heading</code>, the output is grouped by file with clear visual separation.</p>
 </section>
 <section id="commit-ranges-..-and" class="level3">
 <h3 class="anchored" data-anchor-id="commit-ranges-..-and">5.4 Commit Ranges: .., …, and ^</h3>
-<p>When inspecting history, you often need to specify <em>ranges</em> of commits — for example, “what is on my branch that is not on main?” Git provides several notations for this:</p>
+<p>When inspecting history, you often need to specify <em>ranges</em> of commits - for example, “what is on my branch that is not on main?” Git provides several notations for this:</p>
 <p><strong>Parent references:</strong></p>
 <ul>
-<li><code>HEAD^</code> — the parent of HEAD. For merge commits with multiple parents, <code>HEAD^1</code> is the first parent (the branch you merged <em>into</em>), <code>HEAD^2</code> is the second parent (the branch you merged <em>from</em>).</li>
-<li><code>HEAD~N</code> — the Nth ancestor following first-parent links. <code>HEAD~3</code> means “go back 3 commits along the first-parent chain.” Equivalent to <code>HEAD^^^</code>.</li>
+<li><code>HEAD^</code> - the parent of HEAD. For merge commits with multiple parents, <code>HEAD^1</code> is the first parent (the branch you merged <em>into</em>), <code>HEAD^2</code> is the second parent (the branch you merged <em>from</em>).</li>
+<li><code>HEAD~N</code> - the Nth ancestor following first-parent links. <code>HEAD~3</code> means “go back 3 commits along the first-parent chain.” Equivalent to <code>HEAD^^^</code>.</li>
 </ul>
 <p><strong>Range operators:</strong></p>
 <table class="table">
@@ -1164,19 +1164,19 @@ Configure fetch.prune
 <tr class="even">
 <td><code>A...B</code></td>
 <td>Commits reachable from A <em>or</em> B but not <em>both</em></td>
-<td>—</td>
+<td>-</td>
 <td>“What’s unique to each branch?” (symmetric difference)</td>
 </tr>
 <tr class="odd">
 <td><code>A B ^C</code></td>
 <td>Reachable from A or B but not C</td>
-<td>—</td>
+<td>-</td>
 <td>Multi-point exclusion</td>
 </tr>
 </tbody>
 </table>
-<p>The most common use: <code>git log main..feature</code> shows the commits on your feature branch that are not yet on main — exactly what a pull request would contain.</p>
-<p>These operators work with <code>git diff</code> too — not just <code>git log</code>:</p>
+<p>The most common use: <code>git log main..feature</code> shows the commits on your feature branch that are not yet on main - exactly what a pull request would contain.</p>
+<p>These operators work with <code>git diff</code> too - not just <code>git log</code>:</p>
 <div class="sourceCode" id="cb32"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Diff between two commits</span></span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git diff HEAD~3..HEAD</span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1198,7 +1198,7 @@ Configure fetch.prune
 <span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git bisect good                 <span class="co"># or 'git bisect bad'</span></span>
 <span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Repeat until Git identifies the first bad commit</span></span>
 <span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git bisect reset                <span class="co"># return to where you started</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><strong>Automated workflow</strong> — the real power of bisect:</p>
+<p><strong>Automated workflow</strong> - the real power of bisect:</p>
 <div class="sourceCode" id="cb34"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># git bisect start &lt;bad-commit&gt; &lt;good-commit&gt;</span></span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git bisect start HEAD v1.0</span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git bisect run pytest tests/test_login.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1213,15 +1213,15 @@ Bisect Is Logarithmic
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Binary search through N commits takes at most <span class="math inline">\(\lceil \log_2 N \rceil\)</span> steps. For 1024 commits, that is 10 steps. Combined with an automated test script, <code>git bisect run</code> can pinpoint a regression in seconds — even across months of history. It is one of Git’s most underused yet powerful features.</p>
+<p>Binary search through N commits takes at most <span class="math inline">\(\lceil \log_2 N \rceil\)</span> steps. For 1024 commits, that is 10 steps. Combined with an automated test script, <code>git bisect run</code> can pinpoint a regression in seconds - even across months of history. It is one of Git’s most underused yet powerful features.</p>
 </div>
 </div>
-<p>Inspecting history is read-only — it does not change anything. The next section covers the tools that <em>do</em> change history: amending, rebasing, reverting, and resetting.</p>
+<p>Inspecting history is read-only - it does not change anything. The next section covers the tools that <em>do</em> change history: amending, rebasing, reverting, and resetting.</p>
 </section>
 </section>
 <section id="rewriting-history" class="level2">
 <h2 class="anchored" data-anchor-id="rewriting-history">6. Rewriting History</h2>
-<p>Git’s immutable object model means that “rewriting history” is slightly misleading — you never change existing commits. Instead, you create <em>new</em> commits with different content or parentage, and move branch pointers to the new chain. The old commits still exist in the object store (and are visible via <code>reflog</code>) until garbage collection removes them.</p>
+<p>Git’s immutable object model means that “rewriting history” is slightly misleading - you never change existing commits. Instead, you create <em>new</em> commits with different content or parentage, and move branch pointers to the new chain. The old commits still exist in the object store (and are visible via <code>reflog</code>) until garbage collection removes them.</p>
 <p>This distinction matters: it means history rewriting is always recoverable, at least until <code>git gc</code> runs. The <code>reflog</code> is your safety net.</p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -1233,7 +1233,7 @@ Commits Are Immutable
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Everything committed in Git can almost always be recovered. Even commits on deleted branches or overwritten with <code>--amend</code> are still in the object store and visible via <code>git reflog</code>. The only data that is truly unrecoverable is <em>uncommitted</em> work — changes in your working directory or staging area that were never committed. This is why frequent, small commits are the safest workflow.</p>
+<p>Everything committed in Git can almost always be recovered. Even commits on deleted branches or overwritten with <code>--amend</code> are still in the object store and visible via <code>git reflog</code>. The only data that is truly unrecoverable is <em>uncommitted</em> work - changes in your working directory or staging area that were never committed. This is why frequent, small commits are the safest workflow.</p>
 </div>
 </div>
 <section id="amending-commits" class="level3">
@@ -1262,7 +1262,7 @@ Aborting a Commit
 </section>
 <section id="rebase" class="level3">
 <h3 class="anchored" data-anchor-id="rebase">6.2 Rebase</h3>
-<p>Where merging <em>joins</em> two histories with a merge commit, <strong>rebasing</strong> <em>replays</em> one history on top of another — producing a linear sequence with no merge commit. This is the mechanism that makes fast-forward merges possible after histories have diverged.</p>
+<p>Where merging <em>joins</em> two histories with a merge commit, <strong>rebasing</strong> <em>replays</em> one history on top of another - producing a linear sequence with no merge commit. This is the mechanism that makes fast-forward merges possible after histories have diverged.</p>
 <div class="sourceCode" id="cb36"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git switch feature-branch</span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git rebase main</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Here is what Git does under the hood:</p>
@@ -1360,7 +1360,7 @@ Never Rewrite Published History
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Interactive rebase creates new commits with new hashes. If the original commits have been pushed to a shared branch (especially <code>main</code>), rewriting them forces everyone else to reconcile their divergent history — a painful and error-prone process. Only rebase commits that exist on your local feature branch and have not been shared. Once you merge to <code>main</code>, the history is permanent.</p>
+<p>Interactive rebase creates new commits with new hashes. If the original commits have been pushed to a shared branch (especially <code>main</code>), rewriting them forces everyone else to reconcile their divergent history - a painful and error-prone process. Only rebase commits that exist on your local feature branch and have not been shared. Once you merge to <code>main</code>, the history is permanent.</p>
 </div>
 </div>
 </section>
@@ -1384,8 +1384,8 @@ Never Rewrite Published History
 </section>
 <section id="reverting-published-commits" class="level3">
 <h3 class="anchored" data-anchor-id="reverting-published-commits">6.6 Reverting Published Commits</h3>
-<p>All the history-rewriting tools above — amend, rebase, reset — create new commits and move branch pointers. This is fine on local feature branches, but what if a bad commit is already on <code>main</code> and shared with the team? You cannot rewrite published history without forcing everyone to reconcile.</p>
-<p><strong><code>git revert</code></strong> solves this by creating a <em>new</em> commit that exactly undoes the changes from a previous commit. The original commit stays in the history — nothing is rewritten — but its effects are cancelled.</p>
+<p>All the history-rewriting tools above - amend, rebase, reset - create new commits and move branch pointers. This is fine on local feature branches, but what if a bad commit is already on <code>main</code> and shared with the team? You cannot rewrite published history without forcing everyone to reconcile.</p>
+<p><strong><code>git revert</code></strong> solves this by creating a <em>new</em> commit that exactly undoes the changes from a previous commit. The original commit stays in the history - nothing is rewritten - but its effects are cancelled.</p>
 <div class="sourceCode" id="cb41"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Revert the most recent commit</span></span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git revert HEAD</span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1394,7 +1394,7 @@ Never Rewrite Published History
 <span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Revert without auto-committing (stage the inverse, let me inspect first)</span></span>
 <span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git revert <span class="at">--no-commit</span> a1b2c3d</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Under the hood, <code>revert</code> computes the inverse diff of the target commit and applies it as a new commit. If the inverse conflicts with subsequent changes, Git pauses for conflict resolution — just like a merge.</p>
+<p>Under the hood, <code>revert</code> computes the inverse diff of the target commit and applies it as a new commit. If the inverse conflicts with subsequent changes, Git pauses for conflict resolution - just like a merge.</p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1405,7 +1405,7 @@ Revert vs Reset
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><code>git reset</code> moves a branch pointer backward — it removes commits from the branch’s history. This is destructive to shared history. <code>git revert</code> moves <em>forward</em> — it adds a new commit that undoes an old one. Use <code>reset</code> on local/unpublished branches; use <code>revert</code> on shared/published branches. This is the safe complement to the “never rewrite published history” rule.</p>
+<p><code>git reset</code> moves a branch pointer backward - it removes commits from the branch’s history. This is destructive to shared history. <code>git revert</code> moves <em>forward</em> - it adds a new commit that undoes an old one. Use <code>reset</code> on local/unpublished branches; use <code>revert</code> on shared/published branches. This is the safe complement to the “never rewrite published history” rule.</p>
 </div>
 </div>
 </section>
@@ -1452,7 +1452,7 @@ Revert vs Reset
 <ol type="1">
 <li><strong><code>--soft</code></strong>: move the branch pointer to the target commit. The index and working directory still reflect the old commit. All “removed” commits’ changes appear as staged. <em>Use case: squash commits.</em></li>
 <li><strong><code>--mixed</code></strong> (default): move the branch pointer <em>and</em> reset the index to match. Changes appear as unstaged modifications. <em>Use case: unstage files.</em></li>
-<li><strong><code>--hard</code></strong>: move everything — branch pointer, index, and working directory — to match the target commit. Uncommitted changes are <strong>permanently lost</strong>. <em>Use case: discard everything and start clean.</em></li>
+<li><strong><code>--hard</code></strong>: move everything - branch pointer, index, and working directory - to match the target commit. Uncommitted changes are <strong>permanently lost</strong>. <em>Use case: discard everything and start clean.</em></li>
 </ol>
 <p><strong>Path-specific reset:</strong></p>
 <div class="sourceCode" id="cb42"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Unstage a file (shorthand for git reset --mixed HEAD file)</span></span>
@@ -1469,11 +1469,11 @@ reset –hard Destroys Uncommitted Work
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><code>git reset --hard</code> is the only common Git command that can cause permanent data loss. It overwrites your working directory and staging area. If you had uncommitted changes, they are gone — <code>reflog</code> cannot help because those changes were never committed. Use with extreme care, and commit or stash your work first.</p>
+<p><code>git reset --hard</code> is the only common Git command that can cause permanent data loss. It overwrites your working directory and staging area. If you had uncommitted changes, they are gone - <code>reflog</code> cannot help because those changes were never committed. Use with extreme care, and commit or stash your work first.</p>
 </div>
 </div>
 <p><strong>checkout vs reset:</strong></p>
-<p>These two commands appear similar but differ in a critical way: <code>git reset</code> moves what the branch <em>points to</em> (the branch itself advances or retreats). <code>git checkout</code> (or <code>git switch</code>) moves <em>HEAD</em> — it changes which branch you are on without moving any branch pointer. Additionally, <code>checkout</code> is working-directory-safe (it does a trivial merge and refuses to overwrite uncommitted changes), whereas <code>reset --hard</code> overwrites everything.</p>
+<p>These two commands appear similar but differ in a critical way: <code>git reset</code> moves what the branch <em>points to</em> (the branch itself advances or retreats). <code>git checkout</code> (or <code>git switch</code>) moves <em>HEAD</em> - it changes which branch you are on without moving any branch pointer. Additionally, <code>checkout</code> is working-directory-safe (it does a trivial merge and refuses to overwrite uncommitted changes), whereas <code>reset --hard</code> overwrites everything.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div>
@@ -1506,14 +1506,14 @@ reset –hard Destroys Uncommitted Work
     style H3 fill:#d9534f,stroke:#333,color:#fff
 </pre>
 </div>
-<p></p><figcaption> <strong>Figure 6:</strong> The three levels of <code>git reset</code>. <code>--soft</code> moves only the branch pointer. <code>--mixed</code> also resets the index. <code>--hard</code> resets everything — including the working directory, permanently discarding uncommitted changes.</figcaption> </figure><p></p>
+<p></p><figcaption> <strong>Figure 6:</strong> The three levels of <code>git reset</code>. <code>--soft</code> moves only the branch pointer. <code>--mixed</code> also resets the index. <code>--hard</code> resets everything - including the working directory, permanently discarding uncommitted changes.</figcaption> </figure><p></p>
 </div>
 </div>
 </div>
 </section>
 <section id="the-reflog-your-safety-net" class="level3">
 <h3 class="anchored" data-anchor-id="the-reflog-your-safety-net">6.8 The Reflog: Your Safety Net</h3>
-<p>The <strong>reflog</strong> (reference log) records every time a reference (HEAD, branch, etc.) is updated. It is a chronological diary of everything you have done in the repository — commits, checkouts, rebases, resets, merges — including intermediate states.</p>
+<p>The <strong>reflog</strong> (reference log) records every time a reference (HEAD, branch, etc.) is updated. It is a chronological diary of everything you have done in the repository - commits, checkouts, rebases, resets, merges - including intermediate states.</p>
 <div class="sourceCode" id="cb43"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the reflog for HEAD</span></span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git reflog</span>
 <span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1524,7 +1524,7 @@ reset –hard Destroys Uncommitted Work
 <span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git reflog</span>
 <span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Find the hash of the commit you want to recover</span></span>
 <span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git reset <span class="at">--hard</span> abc123</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The reflog is <strong>local-only</strong> — it is not shared with remotes. It starts empty after a fresh clone. Entries expire after 90 days (reachable commits) or 30 days (unreachable) by default, after which <code>git gc</code> may remove the associated objects.</p>
+<p>The reflog is <strong>local-only</strong> - it is not shared with remotes. It starts empty after a fresh clone. Entries expire after 90 days (reachable commits) or 30 days (unreachable) by default, after which <code>git gc</code> may remove the associated objects.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1535,15 +1535,15 @@ When in Doubt, Check the Reflog
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>If you think you have lost work — a bad rebase, an accidental <code>reset --hard</code>, a deleted branch — check <code>git reflog</code> before panicking. As long as the work was committed at some point, the reflog almost certainly has a reference to it.</p>
+<p>If you think you have lost work - a bad rebase, an accidental <code>reset --hard</code>, a deleted branch - check <code>git reflog</code> before panicking. As long as the work was committed at some point, the reflog almost certainly has a reference to it.</p>
 </div>
 </div>
-<p>History rewriting operates on commits that already exist. The next section zooms in on the step <em>before</em> committing — the staging area — and the tools for partial, selective operations.</p>
+<p>History rewriting operates on commits that already exist. The next section zooms in on the step <em>before</em> committing - the staging area - and the tools for partial, selective operations.</p>
 </section>
 </section>
 <section id="the-staging-area-and-partial-operations" class="level2">
 <h2 class="anchored" data-anchor-id="the-staging-area-and-partial-operations">7. The Staging Area and Partial Operations</h2>
-<p>The staging area (index) is one of Git’s most distinctive features — and one of its most misunderstood. Other version control systems commit directly from the working directory. Git inserts an intermediate step: the staging area, where you assemble the exact snapshot you want before committing it.</p>
+<p>The staging area (index) is one of Git’s most distinctive features - and one of its most misunderstood. Other version control systems commit directly from the working directory. Git inserts an intermediate step: the staging area, where you assemble the exact snapshot you want before committing it.</p>
 <section id="the-index-file" class="level3">
 <h3 class="anchored" data-anchor-id="the-index-file">7.1 The Index File</h3>
 <p>The index is a binary file at <code>.git/index</code> that holds a sorted list of file paths, each with its blob hash, permissions, and timestamps. It represents the <em>proposed next commit</em>. When you run <code>git add</code>, you update the index; when you run <code>git commit</code>, Git builds trees from the index.</p>
@@ -1563,7 +1563,7 @@ When in Doubt, Check the Reflog
 </section>
 <section id="interactive-staging-git-add-patch" class="level3">
 <h3 class="anchored" data-anchor-id="interactive-staging-git-add-patch">7.2 Interactive Staging (git add –patch)</h3>
-<p>When you have made multiple unrelated changes to the same file and want to split them into separate commits, <code>git add --patch</code> (or <code>-p</code>) lets you stage individual <em>hunks</em> — contiguous blocks of changes — interactively.</p>
+<p>When you have made multiple unrelated changes to the same file and want to split them into separate commits, <code>git add --patch</code> (or <code>-p</code>) lets you stage individual <em>hunks</em> - contiguous blocks of changes - interactively.</p>
 <div class="sourceCode" id="cb45"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git add <span class="at">--patch</span> file.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Git presents each hunk and asks what to do:</p>
 <table class="table">
@@ -1596,7 +1596,7 @@ When in Doubt, Check the Reflog
 </tr>
 </tbody>
 </table>
-<p>The same <code>--patch</code> flag works with other commands: <code>git checkout -p</code>, <code>git restore -p</code>, <code>git stash -p</code> — letting you selectively discard, restore, or stash parts of files.</p>
+<p>The same <code>--patch</code> flag works with other commands: <code>git checkout -p</code>, <code>git restore -p</code>, <code>git stash -p</code> - letting you selectively discard, restore, or stash parts of files.</p>
 <p>This workflow is essential for maintaining clean, focused commits when you have been doing exploratory work across many areas of the codebase.</p>
 </section>
 <section id="stashing" class="level3">
@@ -1622,7 +1622,7 @@ When in Doubt, Check the Reflog
 <span id="cb46-18"><a href="#cb46-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-19"><a href="#cb46-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop a specific stash</span></span>
 <span id="cb46-20"><a href="#cb46-20" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git stash drop stash@{0}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Stashes are portable across branches — you can stash on one branch and apply on another. If applying a stash would cause conflicts, Git reports them and you resolve them as you would a merge conflict.</p>
+<p>Stashes are portable across branches - you can stash on one branch and apply on another. If applying a stash would cause conflicts, Git reports them and you resolve them as you would a merge conflict.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1648,8 +1648,8 @@ git stash branch: Conflict-Free Recovery
 <span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename a file and stage the rename</span></span>
 <span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git mv old-name.py new-name.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><code>git rm --cached</code> is particularly useful when you accidentally tracked a file that should be in <code>.gitignore</code> — it stops tracking it without deleting it from your disk. After running it, add the file’s pattern to <code>.gitignore</code> and commit both changes.</p>
-<p>Note that Git does not explicitly track renames. Internally, a rename is a delete + add. Git <em>detects</em> renames after the fact by comparing blob hashes between the old and new trees — if the content is identical (or nearly so), it infers a rename. This is why <code>git log --follow file.py</code> can track a file across renames.</p>
+<p><code>git rm --cached</code> is particularly useful when you accidentally tracked a file that should be in <code>.gitignore</code> - it stops tracking it without deleting it from your disk. After running it, add the file’s pattern to <code>.gitignore</code> and commit both changes.</p>
+<p>Note that Git does not explicitly track renames. Internally, a rename is a delete + add. Git <em>detects</em> renames after the fact by comparing blob hashes between the old and new trees - if the content is identical (or nearly so), it infers a rename. This is why <code>git log --follow file.py</code> can track a file across renames.</p>
 </section>
 </section>
 <section id="hooks-automating-git-events" class="level2">
@@ -1758,7 +1758,7 @@ Client-Side Hooks Are Not Shared
 </section>
 <section id="submodules-and-advanced-features" class="level2">
 <h2 class="anchored" data-anchor-id="submodules-and-advanced-features">9. Submodules and Advanced Features</h2>
-<p>As projects grow in scale and complexity, Git’s core model — objects, references, branches — remains the foundation, but additional tools become necessary. Submodules manage cross-repository dependencies. Worktrees let you work on multiple branches simultaneously without stashing. Sparse checkout and Git LFS address the performance challenges of large monorepos and binary files. And packfiles are the compression layer that keeps Git’s snapshot-based storage surprisingly compact.</p>
+<p>As projects grow in scale and complexity, Git’s core model - objects, references, branches - remains the foundation, but additional tools become necessary. Submodules manage cross-repository dependencies. Worktrees let you work on multiple branches simultaneously without stashing. Sparse checkout and Git LFS address the performance challenges of large monorepos and binary files. And packfiles are the compression layer that keeps Git’s snapshot-based storage surprisingly compact.</p>
 <section id="submodules" class="level3">
 <h3 class="anchored" data-anchor-id="submodules">9.1 Submodules</h3>
 <p><strong>Submodules</strong> let you embed one Git repository inside another while keeping their histories completely separate. Each submodule is a full Git repository in its own directory, with its own <code>.git</code>, tracked at a specific commit by the parent project.</p>
@@ -1774,7 +1774,7 @@ Client-Side Hooks Are Not Shared
 <span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Update a submodule to its latest remote commit</span></span>
 <span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git submodule update <span class="at">--remote</span> libs/dependency</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Adding a submodule creates two things: a directory containing the cloned repo, and a <code>.gitmodules</code> file mapping submodule paths to URLs. Both must be committed to track the submodule.</p>
-<p>The parent repository tracks each submodule at a <em>specific commit hash</em> — not a branch. To update the submodule, you explicitly pull new commits and then commit the updated reference in the parent.</p>
+<p>The parent repository tracks each submodule at a <em>specific commit hash</em> - not a branch. To update the submodule, you explicitly pull new commits and then commit the updated reference in the parent.</p>
 </section>
 <section id="worktrees" class="level3">
 <h3 class="anchored" data-anchor-id="worktrees">9.2 Worktrees</h3>
@@ -1793,7 +1793,7 @@ Client-Side Hooks Are Not Shared
 <li><strong>Long-running builds</strong>: keep building one branch while developing on another</li>
 <li><strong>Bisecting</strong>: run <code>git bisect</code> in a separate worktree without disrupting your current work</li>
 </ul>
-<p>Unlike cloning the repo again, worktrees share the object store — no additional disk space for the history, and objects created in one worktree are immediately visible to others.</p>
+<p>Unlike cloning the repo again, worktrees share the object store - no additional disk space for the history, and objects created in one worktree are immediately visible to others.</p>
 </section>
 <section id="sparse-checkout" class="level3">
 <h3 class="anchored" data-anchor-id="sparse-checkout">9.3 Sparse Checkout</h3>
@@ -1821,10 +1821,10 @@ Client-Side Hooks Are Not Shared
 <span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git lfs track <span class="st">"*.pth"</span></span>
 <span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git lfs track <span class="st">"data/*.parquet"</span></span>
 <span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a><span class="co"># This creates/updates .gitattributes — commit it</span></span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a><span class="co"># This creates/updates .gitattributes - commit it</span></span>
 <span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git add .gitattributes</span>
 <span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git commit <span class="at">-m</span> <span class="st">"Track model weights and datasets with LFS"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>After setup, <code>git add</code>, <code>commit</code>, <code>push</code>, and <code>pull</code> work transparently — LFS intercepts operations on tracked files and handles the upload/download to the LFS server. The repository itself only stores small pointer files, keeping clones fast.</p>
+<p>After setup, <code>git add</code>, <code>commit</code>, <code>push</code>, and <code>pull</code> work transparently - LFS intercepts operations on tracked files and handles the upload/download to the LFS server. The repository itself only stores small pointer files, keeping clones fast.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1841,7 +1841,7 @@ When to Use LFS
 </section>
 <section id="packfiles" class="level3">
 <h3 class="anchored" data-anchor-id="packfiles">9.5 Packfiles</h3>
-<p>As a repository accumulates thousands of loose objects, Git periodically combines them into <strong>packfiles</strong> — single compressed files that store multiple objects with delta compression. A pack index file provides fast lookups by hash.</p>
+<p>As a repository accumulates thousands of loose objects, Git periodically combines them into <strong>packfiles</strong> - single compressed files that store multiple objects with delta compression. A pack index file provides fast lookups by hash.</p>
 <p>Packing happens automatically when there are too many loose objects, when you run <code>git gc</code> (garbage collection), or when pushing to a remote. You rarely need to think about packfiles, but understanding them explains why Git repositories are surprisingly compact despite storing full snapshots: packfiles use delta compression <em>between</em> similar objects, similar to how video codecs store keyframes and deltas.</p>
 <div class="sourceCode" id="cb52"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Manually trigger garbage collection and packing</span></span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git gc</span>
@@ -1852,10 +1852,10 @@ When to Use LFS
 </section>
 <section id="the-professional-workflow" class="level2">
 <h2 class="anchored" data-anchor-id="the-professional-workflow">10. The Professional Workflow</h2>
-<p>Understanding Git’s internals is necessary but not sufficient. A team of developers who all understand the object model but have no shared workflow will still produce a tangled history. This section describes a feature-branch workflow that produces clean, linear, reviewable history — the same workflow used by most teams.</p>
+<p>Understanding Git’s internals is necessary but not sufficient. A team of developers who all understand the object model but have no shared workflow will still produce a tangled history. This section describes a feature-branch workflow that produces clean, linear, reviewable history - the same workflow used by most teams.</p>
 <section id="the-feature-branch-model" class="level3">
 <h3 class="anchored" data-anchor-id="the-feature-branch-model">10.1 The Feature Branch Model</h3>
-<p>The core rule: <strong>never commit directly to the main branch</strong>. Every change — no matter how small — starts on a feature branch.</p>
+<p>The core rule: <strong>never commit directly to the main branch</strong>. Every change - no matter how small - starts on a feature branch.</p>
 <div class="sourceCode" id="cb53"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Start a new feature</span></span>
 <span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git switch <span class="at">-c</span> feature/add-search</span>
 <span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1865,11 +1865,11 @@ When to Use LFS
 <span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Push the branch and set up tracking</span></span>
 <span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git push <span class="at">-u</span> origin feature/add-search</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>This ensures that <code>main</code> always contains reviewed, tested, production-ready code. Feature branches are disposable workspaces where experimentation, refactoring, and work-in-progress commits are welcome — they will be cleaned up before merging.</p>
+<p>This ensures that <code>main</code> always contains reviewed, tested, production-ready code. Feature branches are disposable workspaces where experimentation, refactoring, and work-in-progress commits are welcome - they will be cleaned up before merging.</p>
 </section>
 <section id="pull-requests-context-is-everything" class="level3">
 <h3 class="anchored" data-anchor-id="pull-requests-context-is-everything">10.2 Pull Requests: Context Is Everything</h3>
-<p>Once your feature branch is pushed, open a pull request. The PR is not just a merge request — it is a <strong>communication artifact</strong>. A well-crafted PR description answers:</p>
+<p>Once your feature branch is pushed, open a pull request. The PR is not just a merge request - it is a <strong>communication artifact</strong>. A well-crafted PR description answers:</p>
 <ul>
 <li><strong>Why</strong> is this change needed? What problem does it solve?</li>
 <li><strong>What</strong> approach did you take? Were alternatives considered?</li>
@@ -1877,27 +1877,27 @@ When to Use LFS
 <li><strong>How</strong> should reviewers test or verify the change?</li>
 </ul>
 <p>For large features that cannot be broken into small PRs, use GitHub’s task lists to show progress so reviewers know not to do in-depth reviews until the feature is complete.</p>
-<p>After receiving code review feedback, push additional commits to the feature branch — they are automatically included in the PR. Do not squash during review, as that makes it harder for reviewers to see what changed between rounds. Save the cleanup for the final step.</p>
+<p>After receiving code review feedback, push additional commits to the feature branch - they are automatically included in the PR. Do not squash during review, as that makes it harder for reviewers to see what changed between rounds. Save the cleanup for the final step.</p>
 </section>
 <section id="the-merge-sequence-rebase-squash-fast-forward" class="level3">
 <h3 class="anchored" data-anchor-id="the-merge-sequence-rebase-squash-fast-forward">10.3 The Merge Sequence: Rebase, Squash, Fast-Forward</h3>
 <p>Before merging, prepare a clean history using this sequence:</p>
-<p><strong>Step 1 — Update main and rebase:</strong></p>
+<p><strong>Step 1 - Update main and rebase:</strong></p>
 <div class="sourceCode" id="cb54"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fetch latest main and rebase your branch on top</span></span>
 <span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git switch main <span class="kw">&amp;&amp;</span> <span class="fu">git</span> pull <span class="kw">&amp;&amp;</span> <span class="fu">git</span> switch <span class="at">-</span></span>
 <span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git rebase main</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>This ensures your feature branch’s commits sit <em>ahead</em> of main, making a fast-forward merge possible. If rebase produces conflicts, resolve them commit-by-commit as Git replays each one.</p>
-<p><strong>Step 2 — Interactive rebase to clean up:</strong></p>
+<p><strong>Step 2 - Interactive rebase to clean up:</strong></p>
 <div class="sourceCode" id="cb55"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git rebase <span class="at">-i</span> main</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Squash WIP and fixup commits, reword messages to be descriptive, and ensure each remaining commit is a logical, self-contained unit. This is the time to craft commit messages that capture the “why” — they will be permanent history.</p>
-<p><strong>Step 3 — Force push the cleaned-up branch:</strong></p>
+<p>Squash WIP and fixup commits, reword messages to be descriptive, and ensure each remaining commit is a logical, self-contained unit. This is the time to craft commit messages that capture the “why” - they will be permanent history.</p>
+<p><strong>Step 3 - Force push the cleaned-up branch:</strong></p>
 <div class="sourceCode" id="cb56"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git push <span class="at">--force-with-lease</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Use <code>--force-with-lease</code> instead of <code>--force</code> — it refuses to push if the remote has commits you have not seen, protecting against accidentally overwriting a colleague’s work.</p>
-<p><strong>Step 4 — Fast-forward merge:</strong></p>
+<p>Use <code>--force-with-lease</code> instead of <code>--force</code> - it refuses to push if the remote has commits you have not seen, protecting against accidentally overwriting a colleague’s work.</p>
+<p><strong>Step 4 - Fast-forward merge:</strong></p>
 <div class="sourceCode" id="cb57"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git switch main</span>
 <span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git merge feature/add-search <span class="at">--ff-only</span></span>
 <span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git push</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><strong>Step 5 — Clean up:</strong></p>
+<p><strong>Step 5 - Clean up:</strong></p>
 <div class="sourceCode" id="cb58"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git branch <span class="at">-d</span> feature/add-search           <span class="co"># delete local branch</span></span>
 <span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git push origin <span class="at">--delete</span> feature/add-search  <span class="co"># delete remote branch</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>GitHub auto-closes the PR when it detects that main contains the branch’s commits.</p>
@@ -1917,7 +1917,7 @@ When to Use LFS
     style E fill:#90c695,stroke:#333,color:#000
 </pre>
 </div>
-<p></p><figcaption> <strong>Figure 4:</strong> The professional merge sequence. Feature commits are rebased onto main, cleaned up with interactive rebase, and fast-forward merged — producing a linear history with no merge commits.</figcaption> </figure><p></p>
+<p></p><figcaption> <strong>Figure 4:</strong> The professional merge sequence. Feature commits are rebased onto main, cleaned up with interactive rebase, and fast-forward merged - producing a linear history with no merge commits.</figcaption> </figure><p></p>
 </div>
 </div>
 </div>
@@ -1951,7 +1951,7 @@ Refs: #123</code></pre>
 <li><strong>Separate subject from body with a blank line.</strong> Many tools (GitHub, <code>git log --oneline</code>, email patches) use only the first line.</li>
 <li><strong>Limit the subject to 50 characters.</strong> Forces concision.</li>
 <li><strong>Capitalize the subject, no trailing period.</strong></li>
-<li><strong>Use imperative mood</strong> in the subject: “Add search feature” not “Added search feature” — it reads like a command, matching <code>git merge</code> and <code>git revert</code> output.</li>
+<li><strong>Use imperative mood</strong> in the subject: “Add search feature” not “Added search feature” - it reads like a command, matching <code>git merge</code> and <code>git revert</code> output.</li>
 <li><strong>Wrap the body at 72 characters.</strong> Terminals, <code>git log</code>, and email all look better with wrapped text.</li>
 <li><strong>Explain why, not what.</strong> The diff shows what changed; the message should explain the decision.</li>
 </ol>
@@ -1976,7 +1976,7 @@ Sign Your Commits
 </section>
 <section id="configuration" class="level2">
 <h2 class="anchored" data-anchor-id="configuration">11. Configuration</h2>
-<p>Git’s configuration is read automatically before every command — no reloading needed. Configuration files are read in order, with later files overriding earlier ones:</p>
+<p>Git’s configuration is read automatically before every command - no reloading needed. Configuration files are read in order, with later files overriding earlier ones:</p>
 <table class="table">
 <colgroup>
 <col style="width: 26%">
@@ -2093,7 +2093,7 @@ Sign Your Commits
 <tr class="even">
 <td><code>#</code></td>
 <td>Comment line</td>
-<td>—</td>
+<td>-</td>
 </tr>
 </tbody>
 </table>
@@ -2115,17 +2115,17 @@ Global Gitignore
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">12. Conclusion</h2>
-<p>In this post, we built Git from the inside out — starting from the content-addressable object model, building through references and branches, exploring history inspection and rewriting tools, and arriving at the professional workflow that ties everything together.</p>
-<p>Git’s power comes from a coherent set of design choices — each solving a specific problem with a specific mechanism.</p>
+<p>In this post, we built Git from the inside out - starting from the content-addressable object model, building through references and branches, exploring history inspection and rewriting tools, and arriving at the professional workflow that ties everything together.</p>
+<p>Git’s power comes from a coherent set of design choices - each solving a specific problem with a specific mechanism.</p>
 <section id="key-takeaways" class="level3">
 <h3 class="anchored" data-anchor-id="key-takeaways">Key Takeaways</h3>
 <ol type="1">
 <li><p><strong>Git is a content-addressable filesystem, not a diff tracker.</strong> Every commit stores a complete snapshot. Unchanged files are deduplicated by hash. Diffs are computed on demand, not stored. This design makes branching and merging cheap pointer operations rather than expensive file copies.</p></li>
-<li><p><strong>Three objects and three areas — that’s the whole model.</strong> Blobs (file contents), trees (directories), and commits (snapshots with context) are the only object types. The working directory, staging area (index), and object store are the only three areas. Every Git command is an operation on these six things.</p></li>
+<li><p><strong>Three objects and three areas - that’s the whole model.</strong> Blobs (file contents), trees (directories), and commits (snapshots with context) are the only object types. The working directory, staging area (index), and object store are the only three areas. Every Git command is an operation on these six things.</p></li>
 <li><p><strong>Branches are 41-byte files, not copies.</strong> A branch is a mutable pointer to a commit. Creating a branch creates a file. Merging moves or creates pointers. Understanding this is what makes branching feel lightweight rather than scary.</p></li>
-<li><p><strong><code>reset</code>, <code>checkout</code>, and <code>rebase</code> are pointer operations.</strong> <code>reset</code> moves a branch pointer (and optionally resets the index and working directory). <code>checkout</code> moves HEAD. <code>rebase</code> replays commits with new parents. None of them destroy the original commits — the reflog keeps them recoverable.</p></li>
+<li><p><strong><code>reset</code>, <code>checkout</code>, and <code>rebase</code> are pointer operations.</strong> <code>reset</code> moves a branch pointer (and optionally resets the index and working directory). <code>checkout</code> moves HEAD. <code>rebase</code> replays commits with new parents. None of them destroy the original commits - the reflog keeps them recoverable.</p></li>
 <li><p><strong>Clean history is a professional obligation.</strong> The rebase-then-fast-forward workflow produces linear, reviewable, bisectable history. Interactive rebase before merging turns messy development into clean permanent records. Commit messages should explain <em>why</em>, not <em>what</em>.</p></li>
-<li><p><strong>Committed data is almost always recoverable; uncommitted data is not.</strong> The reflog tracks every reference update for 90 days. But changes that were never committed — unsaved edits, unstaged modifications — are gone when overwritten. Commit early, commit often.</p></li>
+<li><p><strong>Committed data is almost always recoverable; uncommitted data is not.</strong> The reflog tracks every reference update for 90 days. But changes that were never committed - unsaved edits, unstaged modifications - are gone when overwritten. Commit early, commit often.</p></li>
 </ol>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -2137,7 +2137,7 @@ Git’s Design Is Elegant
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Strip away the 150+ commands and Git is remarkably simple: a content-addressable object store (blobs, trees, commits), mutable pointers (branches, tags), and a single HEAD. Every feature — branching, merging, rebasing, bisecting, stashing — is built on this foundation. Understanding the foundation makes the entire surface area intuitive.</p>
+<p>Strip away the 150+ commands and Git is remarkably simple: a content-addressable object store (blobs, trees, commits), mutable pointers (branches, tags), and a single HEAD. Every feature - branching, merging, rebasing, bisecting, stashing - is built on this foundation. Understanding the foundation makes the entire surface area intuitive.</p>
 </div>
 </div>
 </section>
@@ -2145,19 +2145,19 @@ Git’s Design Is Elegant
 <section id="references-resources" class="level2">
 <h2 class="anchored" data-anchor-id="references-resources">References &amp; Resources</h2>
 <ul>
-<li><a href="https://git-scm.com/book/en/v2">Pro Git</a> by Scott Chacon and Ben Straub — the definitive, freely available Git book. Chapters 10 (Git Internals) and 7 (Git Tools) are particularly relevant to this post.</li>
-<li><a href="http://gitready.com/">Git Ready</a> — practical how-to pages organized by difficulty: “learn a little, learn a lot.”</li>
-<li><a href="https://github.com/pluralsight/git-internals-pdf">Git Internals PDF</a> — a deep dive into the object model with more detail than we could cover here.</li>
-<li><a href="https://github.com/thoughtbot/guides/tree/main/">Thoughtbot Git Guides</a> — opinionated workflow guides from a well-respected consultancy.</li>
-<li><a href="https://cli.github.com/">GitHub CLI (<code>gh</code>)</a> — interact with GitHub entirely from the command line: PRs, issues, actions, releases.</li>
-<li><a href="https://robots.thoughtbot.com/5-useful-tips-for-a-better-commit-message">5 Rules for a Good Git Commit Message</a> — the widely-cited guide to commit message style.</li>
-<li><a href="http://rakeroutes.com/blog/deliberate-git">Deliberate Git</a> by Stephen Ball — a talk on crafting intentional, meaningful commit history.</li>
-<li><a href="http://confreaks.tv/videos/railsconf2015-implementing-a-strong-code-review-culture">Code Review Culture</a> by Derek Prior — implementing code review as a team practice.</li>
-<li><a href="https://github.com/tpope/vim-fugitive">Fugitive</a> — the premier Vim plugin for Git integration.
+<li><a href="https://git-scm.com/book/en/v2">Pro Git</a> by Scott Chacon and Ben Straub - the definitive, freely available Git book. Chapters 10 (Git Internals) and 7 (Git Tools) are particularly relevant to this post.</li>
+<li><a href="http://gitready.com/">Git Ready</a> - practical how-to pages organized by difficulty: “learn a little, learn a lot.”</li>
+<li><a href="https://github.com/pluralsight/git-internals-pdf">Git Internals PDF</a> - a deep dive into the object model with more detail than we could cover here.</li>
+<li><a href="https://github.com/thoughtbot/guides/tree/main/">Thoughtbot Git Guides</a> - opinionated workflow guides from a well-respected consultancy.</li>
+<li><a href="https://cli.github.com/">GitHub CLI (<code>gh</code>)</a> - interact with GitHub entirely from the command line: PRs, issues, actions, releases.</li>
+<li><a href="https://robots.thoughtbot.com/5-useful-tips-for-a-better-commit-message">5 Rules for a Good Git Commit Message</a> - the widely-cited guide to commit message style.</li>
+<li><a href="http://rakeroutes.com/blog/deliberate-git">Deliberate Git</a> by Stephen Ball - a talk on crafting intentional, meaningful commit history.</li>
+<li><a href="http://confreaks.tv/videos/railsconf2015-implementing-a-strong-code-review-culture">Code Review Culture</a> by Derek Prior - implementing code review as a team practice.</li>
+<li><a href="https://github.com/tpope/vim-fugitive">Fugitive</a> - the premier Vim plugin for Git integration.
 <ul>
-<li><a href="http://vimcasts.org/blog/2011/05/the-fugitive-series/">Fugitive Vimcasts Series</a> — five-part screencast series.</li>
+<li><a href="http://vimcasts.org/blog/2011/05/the-fugitive-series/">Fugitive Vimcasts Series</a> - five-part screencast series.</li>
 </ul></li>
-<li><a href="https://github.com/christoomey/vim-conflicted">vim-conflicted</a> — optimized merge conflict resolution in Vim.</li>
+<li><a href="https://github.com/christoomey/vim-conflicted">vim-conflicted</a> - optimized merge conflict resolution in Vim.</li>
 <li>Pro tip: add <code>autocmd Filetype gitcommit setlocal spell textwidth=72</code> to your Vim config for automatic spell-checking and line wrapping in commit messages.</li>
 </ul>
 

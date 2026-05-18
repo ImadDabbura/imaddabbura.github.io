@@ -259,13 +259,13 @@ ga('send', {
 <p><a href="images/wave-quantization.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="images/wave-quantization.png" class="img-fluid"></a></p>
 <p><strong>1. Performance (TFLOPs) oscillates in a saw-tooth pattern</strong> As N increases, TFLOPs rise smoothly, then suddenly drop at specific N values. Those drops happen exactly when the tile count crosses a multiple of SM count → a <strong>new wave begins</strong>, but the first wave of that new region is <strong>nearly empty</strong>.</p>
 <p><strong>2. Kernel duration steps upward instead of growing smoothly</strong> Duration vs.&nbsp;N is not linear. It increases in <strong>plateaus</strong>, then jumps sharply. Each jump corresponds to requiring <strong>one extra wave</strong>. Even if the extra wave contains only a few blocks, the cost of a wave is dominated by <strong>its slowest (or only) block</strong>.</p>
-<p><strong>3. Tile count grows linearly with N, but waves grow discretely</strong> The tile count plot is just a line. But every time it crosses a multiple of SM_count, the scheduler must add another wave. That mismatch — <em>linear tiles vs.&nbsp;discrete waves</em> — is the root cause of the performance oscillations.</p>
+<p><strong>3. Tile count grows linearly with N, but waves grow discretely</strong> The tile count plot is just a line. But every time it crosses a multiple of SM_count, the scheduler must add another wave. That mismatch - <em>linear tiles vs.&nbsp;discrete waves</em> - is the root cause of the performance oscillations.</p>
 <p><strong>Minimal synthesis</strong></p>
 <ul>
 <li><strong>Performance spikes upward</strong> as waves become fuller.</li>
 <li><strong>Performance drops</strong> when you start a new wave that is mostly empty.</li>
 <li><strong>Runtime increases abruptly</strong> at those same points because a new, under-filled wave must run to completion.</li>
-<li>These artifacts have <strong>nothing to do with memory throughput or compute intensity</strong> — they are purely a tiling × SM-count divisibility effect.</li>
+<li>These artifacts have <strong>nothing to do with memory throughput or compute intensity</strong> - they are purely a tiling × SM-count divisibility effect.</li>
 </ul>
 <p>In conclusion, <strong>wave quantization produces predictable cliffs in GEMM performance:</strong></p>
 <ul>
@@ -946,7 +946,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"selector":".lightbox","closeEffect":"zoom","loop":false,"descPosition":"bottom","openEffect":"zoom"});
+<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","descPosition":"bottom","loop":false,"closeEffect":"zoom","selector":".lightbox"});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;
