@@ -547,7 +547,7 @@ window.Quarto = {
 <section id="why-build-a-deep-learning-framework-from-scratch" class="level2">
 <h2 class="anchored" data-anchor-id="why-build-a-deep-learning-framework-from-scratch">Why Build a Deep Learning Framework from Scratch?</h2>
 <p>Every deep learning practitioner eventually runs <code>loss.backward()</code> and watches gradients flow. But what <em>actually</em> happens inside that call? Where do the intermediate tensors live? Why does your GPU run out of memory on a model that “should” fit? And why does reshaping a tensor sometimes silently copy gigabytes of data?</p>
-<p>I built <a href="https://github.com/ImadDabbura/tiny-pytorch"><code>tiny_pytorch</code></a> to answer these questions for myself. Along the way, I encountered nearly every foundational design decision that real frameworks like PyTorch, TensorFlow, and Caffe had to make - and learned <em>why</em> they made them.</p>
+<p>I built <a href="https://github.com/ImadDabbura/tiny-pytorch"><code>tiny_pytorch</code></a> to answer these questions for myself. Along the way, I encountered nearly every foundational design decision that real frameworks like PyTorch, TensorFlow, and Caffe had to make and learned <em>why</em> they made them.</p>
 <p>This post distills everything I learned into a coherent narrative. We’ll start from the framework-level design philosophy, work our way down to how bytes are laid out in memory, and then zoom back out to distributed training across multiple GPUs. The goal is <strong>intuition</strong>: mental models you can carry with you when debugging real systems.</p>
 <section id="roadmap" class="level3">
 <h3 class="anchored" data-anchor-id="roadmap">Roadmap</h3>
@@ -608,15 +608,14 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
-<hr>
 </section>
 </section>
 <section id="the-evolution-of-dl-frameworks" class="level2">
 <h2 class="anchored" data-anchor-id="the-evolution-of-dl-frameworks">The Evolution of DL Frameworks</h2>
-<p>Before writing a single line of code, it helps to understand the three philosophies that shaped modern deep learning frameworks. Each solved a real problem - and introduced new ones.</p>
+<p>Before writing a single line of code, it helps to understand the three philosophies that shaped modern deep learning frameworks. Each solved a real problem and introduced new ones.</p>
 <section id="caffe-layers-all-the-way-down" class="level3">
 <h3 class="anchored" data-anchor-id="caffe-layers-all-the-way-down">Caffe: Layers All the Way Down</h3>
-<p>Caffe (C++ only) was beautifully simple. You defined your computation as a stack of <strong>layers</strong>, each implementing a <code>forward()</code> and <code>backward()</code> method. The backward pass was a direct implementation of the backpropagation algorithm from Hinton’s seminal work - each layer knew how to compute its own gradients, and updates happened in-place.</p>
+<p>Caffe (C++ only) was beautifully simple. You defined your computation as a stack of <strong>layers</strong>, each implementing a <code>forward()</code> and <code>backward()</code> method. The backward pass was a direct implementation of the backpropagation algorithm from Hinton’s seminal work where each layer knew how to compute its own gradients, and updates happened in-place.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -633,7 +632,7 @@ window.Quarto = {
 </section>
 <section id="tensorflow-1.x-the-static-graph" class="level3">
 <h3 class="anchored" data-anchor-id="tensorflow-1.x-the-static-graph">TensorFlow 1.x: The Static Graph</h3>
-<p>TensorFlow introduced a powerful idea: <strong>construct a static computation graph first</strong>, then execute it. This separation of <em>definition</em> and <em>execution</em> unlocked serious optimizations - the compiler could fuse operations, reuse memory, and skip unnecessary computations at run-time.</p>
+<p>TensorFlow introduced a powerful idea: <strong>construct a static computation graph first</strong>, then execute it. This separation of <em>definition</em> and <em>execution</em> unlocked serious optimizations; the compiler could fuse operations, reuse memory, and skip unnecessary computations at run-time.</p>
 <p>The cost? Debugging was painful. You couldn’t just print a tensor mid-computation. The graph had its own “programming language” that felt alien to Python developers. Experimentation slowed down because every change required rebuilding the graph.</p>
 </section>
 <section id="pytorch-define-by-run" class="level3">
@@ -674,7 +673,6 @@ window.Quarto = {
 </div>
 </div>
 <p><strong>Key takeaway:</strong> Framework design is fundamentally about <em>when</em> the computation graph is known. Know it early (static) and you can optimize aggressively. Know it late (dynamic) and you can iterate fast. Modern systems try to give you both.</p>
-<hr>
 </section>
 </section>
 <section id="automatic-differentiation-the-engine-room" class="level2">
@@ -766,12 +764,11 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The gradient at each node tells you: <em>“In which direction would changing this value increase the loss most steeply?”</em> It points toward steepest <strong>ascent</strong> - the direction of maximum loss increase. To decrease the loss, we move in the <strong>negative</strong> gradient direction. This is why gradient descent subtracts the gradient from the parameters: <span class="math inline">\(\theta \leftarrow \theta - \alpha \nabla_\theta L\)</span>.</p>
+<p>The gradient at each node tells you: <em>“In which direction would changing this value increase the loss most steeply?”</em> It points toward steepest <strong>ascent</strong>, which is the direction of maximum loss increase. To decrease the loss, we move in the <strong>negative</strong> gradient direction. This is why gradient descent subtracts the gradient from the parameters: <span class="math inline">\(\theta \leftarrow \theta - \alpha \nabla_\theta L\)</span>.</p>
 </div>
 </div>
-<p>One powerful consequence: the backward pass itself builds a computation graph for the gradients. This means you can compute <strong>gradients of gradients</strong> simply by adding more operations - which is exactly what second-order methods and some meta-learning approaches do.</p>
+<p>One powerful consequence: the backward pass itself builds a computation graph for the gradients. This means you can compute <strong>gradients of gradients</strong> simply by adding more operations, which is exactly what second-order methods and some meta-learning approaches do.</p>
 <p><strong>Key takeaway:</strong> Reverse mode AD gives us all gradients in one pass, but the price is memory - every intermediate tensor from the forward pass must be kept alive until it’s consumed by the backward pass.</p>
-<hr>
 </section>
 </section>
 <section id="memory-layout-shapes-strides-and-the-viewcopy-divide" class="level2">
@@ -855,7 +852,7 @@ window.Quarto = {
 </section>
 <section id="the-contiguity-problem" class="level3">
 <h3 class="anchored" data-anchor-id="the-contiguity-problem">The Contiguity Problem</h3>
-<p>After operations like slicing or transposing, the logical tensor and the physical memory layout can diverge. The tensor is no longer <em>compact</em> - meaning the offset isn’t 0 or the strides don’t correspond to row-major order.</p>
+<p>After operations like slicing or transposing, the logical tensor and the physical memory layout can diverge. The tensor is no longer <em>compact</em>, which means the offset isn’t 0 or the strides don’t correspond to row-major order.</p>
 <p>This matters because many operations (especially matrix multiplication) require contiguous data for efficient memory access. The framework typically handles this by checking compactness before an operation and creating a contiguous copy if needed. But this implicit copy is a hidden performance cost.</p>
 <div class="cell" data-layout-align="default">
 <div class="cell-output-display">
@@ -893,7 +890,6 @@ window.Quarto = {
 </div>
 </div>
 <p><strong>Key takeaway:</strong> Tensors are flat arrays dressed up with metadata. Operations that only change metadata (slice, transpose, broadcast) are free. Operations that need physically contiguous data may silently copy. Know which is which.</p>
-<hr>
 </section>
 </section>
 <section id="broadcasting-and-its-gradient-implications" class="level2">
@@ -905,7 +901,7 @@ window.Quarto = {
 </section>
 <section id="the-backward-pass-sum-reduce" class="level3">
 <h3 class="anchored" data-anchor-id="the-backward-pass-sum-reduce">The Backward Pass: Sum-Reduce</h3>
-<p>Here’s the subtle part. During the backward pass, if a value was broadcast (repeated) across a dimension, the gradients must be <strong>summed along that dimension</strong>. Why? Because the same parameter contributed to multiple outputs - its total influence is the sum of all its partial effects.</p>
+<p>Here’s the subtle part. During the backward pass, if a value was broadcast (repeated) across a dimension, the gradients must be <strong>summed along that dimension</strong>. Why? Because the same parameter contributed to multiple outputs -&gt; its total influence is the sum of all its partial effects.</p>
 <div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div>
@@ -949,11 +945,10 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>For any operation in autograd: <strong>the gradient of a broadcast is a reduction, and the gradient of a reduction is a broadcast.</strong> This duality shows up everywhere - in loss functions, in normalization layers, and in attention mechanisms.</p>
+<p>For any operation in autograd: <strong>the gradient of a broadcast is a reduction, and the gradient of a reduction is a broadcast.</strong> This duality shows up everywhere: in loss functions, in normalization layers, and in attention mechanisms.</p>
 </div>
 </div>
 <p><strong>Key takeaway:</strong> Broadcasting doesn’t copy data (strides handle it), but gradients must sum-reduce along every dimension that was broadcast. Forgetting this is a common source of shape mismatch bugs in custom autograd functions.</p>
-<hr>
 </section>
 </section>
 <section id="hardware-acceleration-from-strides-to-silicon" class="level2">
@@ -961,7 +956,7 @@ window.Quarto = {
 <p>Understanding the hardware layer helps you write code that runs fast <em>by default</em> instead of fighting the machine.</p>
 <section id="memory-alignment" class="level3">
 <h3 class="anchored" data-anchor-id="memory-alignment">Memory Alignment</h3>
-<p>Hardware loads data into caches in fixed-size chunks called <strong>cache lines</strong> (typically 64 bytes). If your data is aligned to cache line boundaries, a single load brings in exactly what you need. If it’s misaligned, you need <em>two</em> loads for data that spans a boundary - doubling the memory traffic for that access.</p>
+<p>Hardware loads data into caches in fixed-size chunks called <strong>cache lines</strong> (typically 64 bytes). If your data is aligned to cache line boundaries, a single load brings in exactly what you need. If it’s misaligned, you need <em>two</em> loads for data that spans a boundary -&gt; doubling the memory traffic for that access.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1008,18 +1003,17 @@ window.Quarto = {
 </div>
 </div>
 <p><strong>Key takeaway:</strong> The gap between “logical operations on tensors” and “what the hardware actually does” is large. Frameworks bridge it with tricks like im2col, cache-aware memory layout, and loop parallelization. When performance matters, understanding this layer is essential.</p>
-<hr>
 </section>
 </section>
 <section id="weight-initialization-the-effects-that-persist" class="level2">
 <h2 class="anchored" data-anchor-id="weight-initialization-the-effects-that-persist">Weight Initialization: The Effects That Persist</h2>
-<p>Weight initialization might seem like a minor detail - just pick some random numbers and start training. But the evidence tells a more nuanced story.</p>
+<p>Weight initialization might seem like a minor detail: just pick some random numbers and start training. But the evidence tells a more nuanced story.</p>
 <section id="why-initialization-matters-more-than-you-think" class="level3">
 <h3 class="anchored" data-anchor-id="why-initialization-matters-more-than-you-think">Why Initialization Matters More Than You Think</h3>
 <p>Two observations that changed how I think about initialization:</p>
 <ol type="1">
-<li><p><strong>The effect of initialization persists throughout training.</strong> Bad initialization affects the relative norms of activations and gradients <em>at every step</em>. If you don’t initialize appropriately (e.g., using a standard deviation of <span class="math inline">\(\sqrt{\frac{2}{n}}\)</span> for ReLU networks, known as He initialization), the L2-norm of activations or gradients will drift - leading to vanishing signals or exploding values.</p></li>
-<li><p><strong>Weights don’t move far from their initial values.</strong> This is surprising. If you plot the variance of weights before and after training for each layer, you’ll see remarkably similar values. The weights shift in certain directions, but relative to their initial magnitude, the change is small - especially for deep networks.</p></li>
+<li><p><strong>The effect of initialization persists throughout training.</strong> Bad initialization affects the relative norms of activations and gradients <em>at every step</em>. If you don’t initialize appropriately (e.g., using a standard deviation of <span class="math inline">\(\sqrt{\frac{2}{n}}\)</span> for ReLU networks, known as He initialization), the L2-norm of activations or gradients will drift -&gt; vanishing signals or exploding values.</p></li>
+<li><p><strong>Weights don’t move far from their initial values.</strong> This is surprising. If you plot the variance of weights before and after training for each layer, you’ll see remarkably similar values. The weights shift in certain directions, but relative to their initial magnitude, the change is small especially for deep networks.</p></li>
 </ol>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -1031,7 +1025,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Together, these observations mean initialization isn’t just “where you start” - it effectively defines the <em>neighborhood</em> of weight space you’ll explore during training. Proper initialization puts you in a good neighborhood. Bad initialization puts you somewhere the optimizer can’t easily escape.</p>
+<p>Together, these observations mean initialization isn’t just “where you start”, it effectively defines the <em>neighborhood</em> of weight space you’ll explore during training. Proper initialization puts you in a good neighborhood. Bad initialization puts you somewhere the optimizer can’t easily escape.</p>
 </div>
 </div>
 </section>
@@ -1043,8 +1037,7 @@ window.Quarto = {
 <li><strong>Norm of gradients</strong> per layer</li>
 </ul>
 <p>If the weight norms explode or collapse across layers, or if gradient norms vary by orders of magnitude between early and late layers, your initialization is likely wrong. Proper initialization keeps these norms roughly stable across layers.</p>
-<p><strong>Key takeaway:</strong> Proper weight initialization speeds up training and leads to lower final error rates. It defines the effective search region for your optimizer, and its influence doesn’t fade - it persists throughout training.</p>
-<hr>
+<p><strong>Key takeaway:</strong> Proper weight initialization speeds up training and leads to lower final error rates. It defines the effective search region for your optimizer, and its influence persists throughout training.</p>
 </section>
 </section>
 <section id="normalization-fixing-what-initialization-cant" class="level2">
@@ -1093,7 +1086,6 @@ window.Quarto = {
 </div>
 </div>
 <p><strong>Key takeaway:</strong> Normalization layers fix the activation drift that initialization can only partially prevent. BatchNorm and LayerNorm make different trade-offs about <em>what to normalize over</em>, and the right choice depends on your architecture and batch size.</p>
-<hr>
 </section>
 </section>
 <section id="regularization-controlling-complexity" class="level2">
@@ -1102,7 +1094,7 @@ window.Quarto = {
 <section id="implicit-regularization" class="level3">
 <h3 class="anchored" data-anchor-id="implicit-regularization">Implicit Regularization</h3>
 <p>Before you add <em>any</em> explicit regularization, your training procedure already constrains the model. <strong>SGD with a particular initialization</strong> only explores a subset of all possible neural networks. The initialization defines the starting point, and the optimizer’s dynamics (step size, momentum, batch sampling) determine the trajectory through weight space.</p>
-<p>This is called <em>implicit regularization</em>, and it’s powerful. The fact that SGD-trained networks generalize well - even when they have enough capacity to memorize the training set - is partly due to these implicit biases of the optimization procedure.</p>
+<p>This is called <em>implicit regularization</em>, and it’s powerful. The fact that SGD-trained networks generalize well, even when they have enough capacity to memorize the training set, is partly due to these implicit biases of the optimization procedure.</p>
 </section>
 <section id="explicit-regularization" class="level3">
 <h3 class="anchored" data-anchor-id="explicit-regularization">Explicit Regularization</h3>
@@ -1121,11 +1113,10 @@ window.Quarto = {
 <div class="callout-body-container callout-body">
 <p>For vanilla SGD, L2 regularization and weight decay are mathematically equivalent. But for adaptive optimizers like <strong>Adam</strong>, they are <em>not</em> the same.</p>
 <p>Why? Adam computes first and second moments of the gradients. If you add the L2 penalty to the gradient (L2 regularization), the penalty gets scaled by Adam’s adaptive learning rate, making it <strong>less effective</strong> than intended. Weight decay, which adds the penalty directly to the parameter update step <em>without</em> modifying the gradient, avoids this issue.</p>
-<p>This distinction - first identified in the “Decoupled Weight Decay” paper (AdamW) - is why AdamW is preferred over Adam + L2 regularization in practice.</p>
+<p>This distinction was first identified in the “Decoupled Weight Decay” paper (AdamW), which is why AdamW is preferred over Adam + L2 regularization in practice.</p>
 </div>
 </div>
 <p><strong>Key takeaway:</strong> Regularization operates at two levels: the implicit biases of SGD and initialization, and explicit penalties like L2/weight decay and dropout. For Adam-family optimizers, always use weight decay (AdamW), not L2 regularization.</p>
-<hr>
 </section>
 </section>
 <section id="scaling-up-when-one-gpu-isnt-enough" class="level2">
@@ -1263,13 +1254,15 @@ window.Quarto = {
 <h4 class="anchored" data-anchor-id="data-parallelism">Data Parallelism</h4>
 <p>Every worker runs a <strong>full replica of the model</strong> on a different micro-batch. Since gradients are additive (they’re independent across examples), we just need to sum them across workers before performing the weight update.</p>
 <p>Two coordination strategies:</p>
-<p><strong>Parameter Server:</strong> A central server collects gradients from all workers, sums them, performs the update, and broadcasts the new weights. Workers can start sending gradients as soon as they’re computed (layer by layer), overlapping communication with computation.</p>
+<ul>
+<li><p><strong>Parameter Server:</strong> A central server collects gradients from all workers, sums them, performs the update, and broadcasts the new weights. Workers can start sending gradients as soon as they’re computed (layer by layer), overlapping communication with computation.</p>
 <ul>
 <li><strong>Bottleneck:</strong> The parameter server becomes a communication bottleneck as the number of workers grows. All traffic flows through one node.</li>
-</ul>
-<p><strong>AllReduce:</strong> A peer-to-peer approach where all workers collectively sum their gradients and each receives the result. No central bottleneck - communication scales more gracefully. Algorithms like Ring-AllReduce distribute the bandwidth load evenly.</p>
+</ul></li>
+<li><p><strong>AllReduce:</strong> A peer-to-peer approach where all workers collectively sum their gradients and each receives the result. No central bottleneck: communication scales more gracefully. Algorithms like Ring-AllReduce distribute the bandwidth load evenly.</p>
 <ul>
 <li><strong>Bottleneck:</strong> Total communication volume still grows with model size. Network bandwidth between nodes becomes the limiting factor.</li>
+</ul></li>
 </ul>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -1294,15 +1287,14 @@ window.Quarto = {
 <section id="model-parallelism-pipeline-parallelism" class="level4">
 <h4 class="anchored" data-anchor-id="model-parallelism-pipeline-parallelism">Model Parallelism (Pipeline Parallelism)</h4>
 <p>When the model itself doesn’t fit on one device, we split the computation graph across devices. Each device handles a different set of layers, and they <strong>pipeline</strong> the computation: while device 2 processes micro-batch 1, device 1 can start on micro-batch 2.</p>
-<p>Communication happens at layer boundaries via <code>send</code>/<code>recv</code> operations. The challenge is minimizing <strong>pipeline bubbles</strong> - idle time when a device is waiting for input from the previous stage.</p>
+<p>Communication happens at layer boundaries via <code>send</code>/<code>recv</code> operations. The challenge is minimizing <strong>pipeline bubbles</strong>, which is idle time when a device is waiting for input from the previous stage.</p>
 <p><strong>Key takeaway:</strong> Scaling from one GPU to many introduces a new bottleneck: communication. Data parallelism is simpler and scales well when the model fits on one device. Model/pipeline parallelism is necessary when it doesn’t, but introduces pipeline bubbles and more complex communication patterns.</p>
-<hr>
 </section>
 </section>
 </section>
 <section id="neural-network-architectures-through-a-systems-lens" class="level2">
 <h2 class="anchored" data-anchor-id="neural-network-architectures-through-a-systems-lens">Neural Network Architectures Through a Systems Lens</h2>
-<p>The remaining sections cover architectures not as algorithmic curiosities, but as <em>systems design decisions</em> - what problem does each one solve, and what trade-off does it introduce?</p>
+<p>The remaining sections cover architectures not as algorithmic curiosities, but as <em>systems design decisions</em>: what problem does each one solve, and what trade-off does it introduce?</p>
 <section id="convolutional-neural-networks-cnns" class="level3">
 <h3 class="anchored" data-anchor-id="convolutional-neural-networks-cnns">Convolutional Neural Networks (CNNs)</h3>
 <p>CNNs exploit three structural priors about spatial data:</p>
@@ -1337,7 +1329,7 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
-<p><strong>Dilation</strong> increases the receptive field without increasing parameters - each filter element is spread out by a dilation factor, giving access to a larger spatial area. This is particularly useful for temporal problems where context matters.</p>
+<p><strong>Dilation</strong> increases the receptive field without increasing parameters: each filter element is spread out by a dilation factor, giving access to a larger spatial area. This is particularly useful for temporal problems where context matters.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1388,21 +1380,20 @@ window.Quarto = {
 </section>
 <section id="transformers-global-receptive-field-via-attention" class="level3">
 <h3 class="anchored" data-anchor-id="transformers-global-receptive-field-via-attention">Transformers: Global Receptive Field via Attention</h3>
-<p>Transformers replace recurrence with <strong>attention</strong>, which gives every position direct access to every other position - a global receptive field.</p>
-<p>However, the attention mechanism is inherently <strong>order-invariant</strong>: permuting the input tokens permutes the output in the same way. There’s no notion of “first” or “last.” This is why <strong>positional encodings</strong> are essential - they inject order information that attention alone cannot capture.</p>
+<p>Transformers replace recurrence with <strong>attention</strong>, which gives every position direct access to every other position -&gt; a global receptive field.</p>
+<p>However, the attention mechanism is inherently <strong>order-invariant</strong>: permuting the input tokens permutes the output in the same way. There’s no notion of “first” or “last.” This is why <strong>positional encodings</strong> are essential: they inject order information that attention alone cannot capture.</p>
 <p>For <strong>autoregressive tasks</strong> (language modeling, text generation), a causal mask restricts each position to attend only to current and previous positions, preserving the left-to-right generation constraint.</p>
 </section>
 <section id="gans-adversarial-generation" class="level3">
 <h3 class="anchored" data-anchor-id="gans-adversarial-generation">GANs: Adversarial Generation</h3>
 <p>GANs learn to generate data by pitting two networks against each other:</p>
 <ul>
-<li><strong>Generator</strong>: Takes a random noise vector and tries to produce realistic images. Its objective is to <em>maximize</em> the discriminator’s error - make the discriminator believe the fake images are real.</li>
+<li><strong>Generator</strong>: Takes a random noise vector and tries to produce realistic images. Its objective is to <em>maximize</em> the discriminator’s error -&gt; make the discriminator believe the fake images are real.</li>
 <li><strong>Discriminator</strong>: Receives both real and generated images and tries to classify them correctly. It <em>minimizes</em> its classification loss.</li>
 </ul>
 <p>The discriminator acts as a learned loss function that guides the generator toward producing increasingly realistic outputs. The “adversarial” aspect refers to the generator learning to exploit subtle distributional differences that are imperceptible to humans.</p>
-<p><strong>Conv2dTranspose (Deconvolution):</strong> The generator typically needs to upsample from a small latent vector to a full-resolution image. Transposed convolution reverses the spatial dimension change of convolution - taking a small spatial input and producing a larger spatial output.</p>
+<p><strong>Conv2dTranspose (Deconvolution):</strong> The generator typically needs to upsample from a small latent vector to a full-resolution image. Transposed convolution reverses the spatial dimension change of convolution: taking a small spatial input and producing a larger spatial output.</p>
 <p><strong>Key takeaway:</strong> Each architecture encodes different assumptions about data structure. CNNs assume spatial locality. RNNs assume temporal ordering. Transformers assume that global relationships matter and let attention learn what to focus on. GANs assume that the best loss function is a learned one.</p>
-<hr>
 </section>
 </section>
 <section id="model-deployment-considerations" class="level2">
@@ -1414,7 +1405,6 @@ window.Quarto = {
 <li><strong>Integration</strong>: Fitting into existing application architectures and serving infrastructure</li>
 </ul>
 <p>These constraints often drive post-training optimizations like quantization, pruning, distillation, and conversion to inference-specific formats (ONNX, TensorRT, Core ML).</p>
-<hr>
 </section>
 <section id="tying-it-all-together" class="level2">
 <h2 class="anchored" data-anchor-id="tying-it-all-together">Tying It All Together</h2>
