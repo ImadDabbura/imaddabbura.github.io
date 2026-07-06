@@ -86,6 +86,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/bootstrap/bootstrap-fa35179067642d4b6b15face6660c236.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../../site_libs/bootstrap/bootstrap-dark-37a4ff71a472b0bd3151b84bce1e35f8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <link href="../../site_libs/bootstrap/bootstrap-fa35179067642d4b6b15face6660c236.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -163,11 +166,11 @@ background-size: cover;
 
 <link rel="stylesheet" href="../../assets/posts.css">
 <meta property="og:title" content="Inside Python’s Modules and Packages: The Machinery Behind import – Imad Dabbura">
-<meta property="og:description" content="Explore the inner workings of Python’s import system, including path resolution, package types, importlib internals, and advanced import hacks">
+<meta property="og:description" content="A reference-grade walk through Python’s import system — path resolution, package types, the spec → finder → loader pipeline, and the hooks that let you bend it">
 <meta property="og:image" content="https://imaddabbura.github.io/posts/python/images/modules-packages-image.jpeg">
 <meta property="og:site_name" content="Imad Dabbura">
 <meta name="twitter:title" content="Inside Python’s Modules and Packages: The Machinery Behind import – Imad Dabbura">
-<meta name="twitter:description" content="Explore the inner workings of Python’s import system, including path resolution, package types, importlib internals, and advanced import hacks">
+<meta name="twitter:description" content="A reference-grade walk through Python’s import system — path resolution, package types, the spec → finder → loader pipeline, and the hooks that let you bend it">
 <meta name="twitter:image" content="https://imaddabbura.github.io/posts/python/images/modules-packages-image.jpeg">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
@@ -429,7 +432,7 @@ background-size: cover;
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">Inside Python’s Modules and Packages: The Machinery Behind import</h1>
-            <p class="subtitle lead">Explore the inner workings of Python’s import system, including path resolution, package types, importlib internals, and advanced import hacks</p>
+            <p class="subtitle lead">A reference-grade walk through Python’s import system: path resolution, package types, the spec → finder → loader pipeline, and the hooks that let you bend it</p>
                                 <div class="quarto-categories">
                 <div class="quarto-category">Software Engineering</div>
               </div>
@@ -456,7 +459,7 @@ background-size: cover;
       <div>
       <div class="quarto-title-meta-heading">Modified</div>
       <div class="quarto-title-meta-contents">
-        <p class="date-modified">February 9, 2024</p>
+        <p class="date-modified">July 6, 2026</p>
       </div>
     </div>
       
@@ -472,10 +475,42 @@ background-size: cover;
    
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#sys.path" id="toc-sys.path" class="nav-link" data-scroll-target="#sys.path">Sys.path</a></li>
-  <li><a href="#modules" id="toc-modules" class="nav-link" data-scroll-target="#modules">Modules</a></li>
-  <li><a href="#module-compilation" id="toc-module-compilation" class="nav-link" data-scroll-target="#module-compilation">Module Compilation</a></li>
-  <li><a href="#experiments" id="toc-experiments" class="nav-link" data-scroll-target="#experiments">Experiments</a></li>
+  <li><a href="#what-import-actually-does" id="toc-what-import-actually-does" class="nav-link" data-scroll-target="#what-import-actually-does">1. What <code>import</code> Actually Does</a></li>
+  <li><a href="#modules-and-packages-the-object-model" id="toc-modules-and-packages-the-object-model" class="nav-link" data-scroll-target="#modules-and-packages-the-object-model">2. Modules and Packages: The Object Model</a>
+  <ul class="collapse">
+  <li><a href="#a-module-is-just-a-namespace-object" id="toc-a-module-is-just-a-namespace-object" class="nav-link" data-scroll-target="#a-module-is-just-a-namespace-object">2.1 A module is just a namespace object</a></li>
+  <li><a href="#a-package-is-a-module-with-a-__path__" id="toc-a-package-is-a-module-with-a-__path__" class="nav-link" data-scroll-target="#a-package-is-a-module-with-a-__path__">2.2 A package is a module with a <code>__path__</code></a></li>
+  <li><a href="#regular-vs.-namespace-packages" id="toc-regular-vs.-namespace-packages" class="nav-link" data-scroll-target="#regular-vs.-namespace-packages">2.3 Regular vs.&nbsp;namespace packages</a></li>
+  <li><a href="#what-__init__.py-is-for" id="toc-what-__init__.py-is-for" class="nav-link" data-scroll-target="#what-__init__.py-is-for">2.4 What <code>__init__.py</code> is for</a></li>
+  <li><a href="#dotted-imports-bind-submodules-to-their-parents" id="toc-dotted-imports-bind-submodules-to-their-parents" class="nav-link" data-scroll-target="#dotted-imports-bind-submodules-to-their-parents">2.5 Dotted imports bind submodules to their parents</a></li>
+  </ul></li>
+  <li><a href="#finding-modules-sys.path-and-the-search-space" id="toc-finding-modules-sys.path-and-the-search-space" class="nav-link" data-scroll-target="#finding-modules-sys.path-and-the-search-space">3. Finding Modules: <code>sys.path</code> and the Search Space</a></li>
+  <li><a href="#loading-modules-specs-finders-and-loaders" id="toc-loading-modules-specs-finders-and-loaders" class="nav-link" data-scroll-target="#loading-modules-specs-finders-and-loaders">4. Loading Modules: Specs, Finders, and Loaders</a>
+  <ul class="collapse">
+  <li><a href="#the-modulespec-a-modules-blueprint" id="toc-the-modulespec-a-modules-blueprint" class="nav-link" data-scroll-target="#the-modulespec-a-modules-blueprint">4.1 The <code>ModuleSpec</code>: a module’s blueprint</a></li>
+  <li><a href="#the-import-algorithm-in-pseudocode" id="toc-the-import-algorithm-in-pseudocode" class="nav-link" data-scroll-target="#the-import-algorithm-in-pseudocode">4.2 The import algorithm, in pseudocode</a></li>
+  <li><a href="#finders-and-loaders-create-vs.-execute-are-decoupled" id="toc-finders-and-loaders-create-vs.-execute-are-decoupled" class="nav-link" data-scroll-target="#finders-and-loaders-create-vs.-execute-are-decoupled">4.3 Finders and loaders: create vs.&nbsp;execute are decoupled</a></li>
+  <li><a href="#sys.meta_path-the-real-controller" id="toc-sys.meta_path-the-real-controller" class="nav-link" data-scroll-target="#sys.meta_path-the-real-controller">4.4 <code>sys.meta_path</code>: the real controller</a></li>
+  </ul></li>
+  <li><a href="#compilation-and-the-.pyc-cache" id="toc-compilation-and-the-.pyc-cache" class="nav-link" data-scroll-target="#compilation-and-the-.pyc-cache">5. Compilation and the <code>.pyc</code> Cache</a></li>
+  <li><a href="#bending-the-machinery" id="toc-bending-the-machinery" class="nav-link" data-scroll-target="#bending-the-machinery">6. Bending the Machinery</a>
+  <ul class="collapse">
+  <li><a href="#tracing-every-import" id="toc-tracing-every-import" class="nav-link" data-scroll-target="#tracing-every-import">6.1 Tracing every import</a></li>
+  <li><a href="#auto-installing-missing-packages" id="toc-auto-installing-missing-packages" class="nav-link" data-scroll-target="#auto-installing-missing-packages">6.2 Auto-installing missing packages</a></li>
+  <li><a href="#lazy-imports" id="toc-lazy-imports" class="nav-link" data-scroll-target="#lazy-imports">6.3 Lazy imports</a></li>
+  </ul></li>
+  <li><a href="#running-packages-as-programs-__main__-and--m" id="toc-running-packages-as-programs-__main__-and--m" class="nav-link" data-scroll-target="#running-packages-as-programs-__main__-and--m">7. Running Packages as Programs: <code>__main__</code> and <code>-m</code></a></li>
+  <li><a href="#gotchas-and-failure-modes" id="toc-gotchas-and-failure-modes" class="nav-link" data-scroll-target="#gotchas-and-failure-modes">8. Gotchas and Failure Modes</a>
+  <ul class="collapse">
+  <li><a href="#reload-creates-zombies" id="toc-reload-creates-zombies" class="nav-link" data-scroll-target="#reload-creates-zombies">8.1 <code>reload</code> creates zombies</a></li>
+  <li><a href="#prefer-relative-imports-inside-a-package" id="toc-prefer-relative-imports-inside-a-package" class="nav-link" data-scroll-target="#prefer-relative-imports-inside-a-package">8.2 Prefer relative imports inside a package</a></li>
+  <li><a href="#the-cache-is-mutable" id="toc-the-cache-is-mutable" class="nav-link" data-scroll-target="#the-cache-is-mutable">8.3 The cache is mutable</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a>
+  <ul class="collapse">
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key Takeaways</a></li>
+  </ul></li>
+  <li><a href="#references-resources" id="toc-references-resources" class="nav-link" data-scroll-target="#references-resources">References &amp; Resources</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -487,554 +522,697 @@ background-size: cover;
 
 
 
-<div class="status-badge-container" style="margin-bottom: 1rem;"><span class="status-badge growing">growing</span></div>
+<div class="status-badge-container" style="margin-bottom: 1rem;"><span class="status-badge evergreen">evergreen</span></div>
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>Python’s simplicity and versatility are largely attributed to its extensive ecosystem of modules and packages. These essential components enable developers to write clean, reusable, and efficient code, whether for simple scripts or complex applications.</p>
-<p>This article aims to deepen our understanding of Python’s modules and packages and the machinery involved, helping me become a more effective Python programmer. We will explore their structure and functionality, covering everything from the basics of importing to creating custom packages and managing dependencies. By unpacking the underlying machinery of how modules/packages get imported and what they really are, we’ll gain insights that will enhance our coding practices and project organization.</p>
-<ul>
-<li>Python has only one type of module object regardless of the language the module was implemented it (C/Python/…)</li>
-<li>Package provides a naming hierarchy to organize modules (same analogy to directory in Unix file system):
-<ul>
-<li>All packages are modules but not all modules are packages</li>
-<li>A module is a package that has <code>__path__</code></li>
-<li>A package can include subpackages (sub-directories)</li>
-</ul></li>
-<li>There are two types of packages:
-<ul>
-<li><strong>Regular packages</strong> are directories that have <code>__init__.py</code>. When importing a package/subpackage -&gt; implicitly executes all <code>__init__.py</code> files on the path and bound objects to names in the package’s namespace
-<ul>
-<li>When import machinery is looking for the package, it stops once it finds it</li>
-</ul></li>
-<li><strong>Namespace packages</strong> are directories that don’t have <code>__init__.py</code>
-<ul>
-<li>When import machinery is looking for the package, it does not stop when it finds it and assuming there may be a regular package in some other paths in <code>sys.path</code> but keep a record of all namespace packages it found during the search. If it finds a regular package with that name -&gt; discard all namespace packages it found and import the regular package. If it doesn’t find any regular package with that name -&gt; Use all the namespace packages it found during the search and combine their paths in <code>namespace_path</code> so when we try to import subpackage or modules, it checks all the paths in the namespace_path (which is a list)</li>
-<li>There can be multiple packages of the same name (under different directories) -&gt; They are all combined together and the <code>namespace_path</code> list would have the path for all of them. Therefore, the same package can be used to refer to completely different modules in different directories</li>
-<li>Python first scans the whole sys.path before deciding that the package is a namespace -&gt; If any name is found with <code>__init__.py</code> in it, it will give this priority and don’t continue.</li>
-</ul></li>
-</ul></li>
-<li>When importing subpackages such as <code>foo.bar.baz</code>, Python first imports foo, then foo.bar, then foo.bar.baz
-<ul>
-<li>Each of these will be cached in <code>sys.modules</code></li>
-</ul></li>
-<li><code>__init__.py</code> makes a directory a python package
-<ul>
-<li>We can use it to import useful stuff from different modules/subpackages so it can be available to user</li>
-<li>When importing an object, it has <code>__module__</code> attribute which determines the global environment for the object</li>
-<li>We can define <code>__all__</code> in <code>__init__</code> as concatenation of all <code>__all__</code> in modules
-<ul>
-<li>Example: <code>__all__ = foo.__all__ + bar.__all__</code> BUT we need to either first import foo and bar or import anything from them so they can be defined such as <code>from .foo import *</code> OR <code>from .foo import y</code></li>
-</ul></li>
-<li><code>__init__</code> can be used to also initialize things and maybe monkeypatch some other modules</li>
-</ul></li>
-<li>Each package has <code>__path__</code> attribute that helps when searching for subpackages. This will be given to path finder when loading subpackages
-<ul>
-<li>It is a list; similar to <code>sys.path</code> so we can change it. But it is not recommended</li>
-<li>Example: <code>import math; math.__path__.append(~/Documents")</code></li>
-</ul></li>
-<li>Relative import is preferred to absolute imports inside packages to avoid having issues if the package name is changed</li>
-<li>Packages get loaded once even if we import it multiple times</li>
-<li>We can in theory upgrade a package in the cache like this:
-<ul>
-<li><code>sys.modules[new_name] = package_name</code></li>
-</ul></li>
-<li>If we use <code>python -m package.module</code>, it executes module as the main program and <strong>relative imports</strong> works. Otherwise, relative imports won’t work.
-<ul>
-<li><code>m</code> stands for module</li>
-</ul></li>
-<li>The <code>__main__</code> module is a special case relative to Python’s import system. The <code>__main__</code> module is directly initialized at interpreter startup, much like <code>sys</code> and <code>builtins</code>. The manner in which <code>__main__</code> is initialized depends on the flags and other options with which the interpreter is invoked</li>
-<li><code>__main__.py</code> designates main for a package/subpackage and also allows package directory to be executable -&gt; explicitly marks the entry point. Examples:
-<ul>
-<li><code>python package</code> would look for <code>__main__.py</code> to execute it</li>
-<li><code>python -m package.subpackage</code> would look for <code>__main__.py</code> inside package/subpackage to execute</li>
-<li><code>__package__</code> is set so the relative imports still work</li>
-<li>A lot of programming tools utilize this to their own benefit: <code>python -m profile script.y</code> OR <code>python -m pdb script.py</code></li>
-<li>NOTE THAT <code>__init__.py</code> files on the path will still be executed</li>
-</ul></li>
-<li>Depending on how <code>__main__</code> is initialized, <code>__main__.__spec__</code> gets set appropriately or to None.
-<ul>
-<li>When Python is started with the -m option, <code>__spec__</code> is set to the module spec of the corresponding module or package. <code>__spec__</code> is also populated when the <code>__main__</code> module is loaded as part of executing a directory, zipfile or other sys.path entry.</li>
-<li>Otherwise, it will be set to None</li>
-</ul></li>
-</ul>
-<p><img src="images/executable-submodules.png" width="400px"></p>
-</section>
-<section id="sys.path" class="level2">
-<h2 class="anchored" data-anchor-id="sys.path">Sys.path</h2>
-<ul>
-<li><code>importlib</code> has a rich API to interact with import system. It is preferred over <code>__import__()</code></li>
-<li><code>__import__</code> Only does module search and creation without the name binding</li>
-<li><code>import</code> Does everything. Module search, creation, and name binding. It calls <code>__import__</code> under the hood</li>
-<li><code>.egg</code> files are just directories or .zip files with extra metadata for package managers</li>
-<li><code>sys.path</code> is where python looks to search for a module/package (last place) that we try to import. It traverses it from start-to-end
-<ul>
-<li>It has the name of directorires, .zipfiles, .egg files</li>
-<li>first match wins</li>
-<li>If it can’t find it -&gt; can not be imported</li>
-</ul></li>
-<li><code>sys.prefix</code> is where python is stored (<strong>os.py is the landmark</strong>) and <code>sys.exec_prefix</code> is where compiled binaries are stored (<strong>lib-dynload is the landmark</strong>)
-<ul>
-<li>With virtual environments -&gt; each one has its own sys.prefix</li>
-<li>It is constructed from <code>sys.prefix</code>, <code>PYTHONHOME</code>, and <code>site.py</code>. Setting <code>PYTHONHOME</code> would override <code>sys.prefix</code> and <code>sys.exec_prefic</code></li>
-<li>Python looks for its libraries starting from where it is and keep going up until the root of the file syetsm. It looks for <code>os.py</code> and use that location as a landmark</li>
-<li><code>python -S</code> skips site.py</li>
-<li><code>python -vv</code> to see what python tries to do with every statement</li>
-<li>Setting PYTHONPATH to some directories will insert them into the beginning of sys.path. Example:
-<ul>
-<li><code>env PYTHONPATH="/Users/imad/Documents python</code> to run python with documents inserted at the beginning of the sys.apth</li>
-</ul></li>
-<li><code>site.py</code> appends the path to third-party libraries. This is where installed packages get stored. Example: <code>/usr/local/lib/python3.4/site-packages</code></li>
-</ul></li>
-<li>Python now have builtin virtual environments that can create one using the <code>venv</code> module
-<ul>
-<li><code>python -m venv env_name</code> will create new environment called <em>env_name</em></li>
-<li>This environment will include few directories such as include, lib, site-packages, bin and pyvenv.cfg</li>
-<li>This new environment has no third party libraries or any system wide libraries such as those in /usr/local</li>
-<li>All third libraries will be installed in site-packages directory</li>
-<li>Python binary will refer to the original Python installation when the environment was created</li>
-<li>We can use <code>source path_to_env_name/bin/activate</code> to activate the environment. <code>deactivate</code> to deactivate it. Finally, <code>rm -r path_to_env_name</code> or <code>pyenv --rm</code> if we create it using <strong>poetry</strong></li>
-</ul></li>
-<li>Files with <code>.pth</code> extension in site-packages directory get added to the sys.path. We can list directories in those files that will be added to sys.path for any new instance of Python
-<ul>
-<li>Package managers and other third-party packages use this kind of hack to add paths to the sys.path</li>
-</ul></li>
-<li>sitecustomize and usercustomize also can be used to add stuff to the sys.path</li>
-<li>Finally the current working directory will be added to the path (at the beginning)</li>
-</ul>
-</section>
-<section id="modules" class="level2">
-<h2 class="anchored" data-anchor-id="modules">Modules</h2>
-<ul>
-<li>Modules are just objects of type ModuleType. They act like a dictionary that holds references to objects it holds; <code>module.__dict__</code>
-<ul>
-<li>When importing a module, it executes the module from top to bottom before returning to the caller</li>
-<li>Module can be namespace, py file, execution environment for statements or container of global variables</li>
-<li>We can set/delete attributes. <code>module.x = 10</code> is the same as <code>module.__dict__['x'] = 10</code></li>
-<li>The dictionary has preset attributes such as <code>__path__</code>, <code>__loader__</code> …</li>
-<li>Main attributes:
-<ul>
-<li><code>__name__</code> : ## Module name</li>
-<li><code>__file__</code> : ## Associated source file (if any)</li>
-<li><code>__doc__</code> : ## Doc string</li>
-<li><code>__path__</code> : ## Package path. It is used to look for package subcomponents</li>
-<li><code>__package__</code> : ## The module’s <code>__package__</code> attribute must be set. Its value must be a string, but it can be the same value as its <code>__name__</code>. When the module is a package, its <code>__package__</code> value should be set to its <code>__name__</code>. When the module is not a package, <code>__package__</code> should be set to the empty string for top-level modules, or for submodules, to the parent package’s name.</li>
-<li><code>__spec__</code> : ## Module spec</li>
-</ul></li>
-</ul></li>
-<li>The main difference between modules and packages is that packages have <code>__path__</code> and <code>__package__</code> defined (not None)</li>
-<li><code>sys.modules</code> serves as a cache for all imported modules/packages
-<ul>
-<li>It is a dictionary so we can delete/set keys</li>
-<li>If we delete a module, it will force Python to import it when we reimport it</li>
-<li>If we set module key to None -&gt; result in <code>ModuleNotFoundError</code></li>
-</ul></li>
-<li>Even if we import one object from a module/package, the module/package will be cached in the <code>sys.modules</code> but not available in the global name space</li>
-<li>The module created during loading and passed to exec_module() may not be the one returned at the end of the import
-<ul>
-<li>This can happen if the imported module set the <code>sys.modules[__name__]</code> to some other module</li>
-</ul></li>
-<li>The module’s attributes are set after creation and before execution</li>
-<li>Execution of the module is what populates the module’s <code>__dict__</code> (namespace of the module). This is done by the loader</li>
-<li>When a submodule is loaded using any mechanism, a binding is placed in the parent module’s namespace to the submodule object. For example, if we have a package called spam that has a submodule foo and it imports any of its objects like <code>from .foo import x</code>, after importing spam, spam will have an attribute foo which is bound to the submodule -&gt; We can now use <code>spam.foo</code></li>
-<li>Relative imports use leading dots. A single leading dot indicates a relative import, starting with the current package. Two or more leading dots indicate a relative import to the parent(s) of the current package, one level per dot after the first.
-<ul>
-<li>Relative imports can only use this form of import: <code>from &lt;&gt; import &lt;&gt;</code></li>
-<li>It can’t use <code>import .&lt;&gt;</code> because this is not a valid expression</li>
-</ul></li>
-<li>Absolute imports have to start from the top level package and go downward to refer to the module:
-<ul>
-<li><code>from package.subpackage import</code> module</li>
-<li>Not recommended because if we change the name of the package then we need to change all the import statements -&gt; relative imports are more robust and don’t care about namings</li>
-</ul></li>
-<li>Process when importing a module/package (after locating it):
+<p>Every Python program you have ever written begins with <code>import</code>. You type <code>import pandas as pd</code> or <code>from mypackage.utils import clean</code>, the name resolves, and you move on. But <em>what actually happens</em> in the fraction of a second between that statement and the module being ready to use? Where does Python look? Why can two directories with the same name merge into a single package? How does <code>import</code> tell a built-in module apart from a <code>.py</code> file on disk from a compiled extension, and why can you <em>intercept</em> that decision to, say, install a missing package on the fly?</p>
+<p>The import system is one of the most powerful and least understood parts of Python. It is not magic: it is a small, well-defined pipeline of objects (<strong>finders</strong>, <strong>loaders</strong>, and <strong>specs</strong>) that you can inspect, extend, and replace at runtime. Understanding it is the difference between someone who <em>uses</em> imports and someone who can debug a <code>ModuleNotFoundError</code> that makes no sense, build a plugin system, or reason about why a reload left their program in a broken state.</p>
+<p>By the end of this post, you will be able to:</p>
 <ol type="1">
-<li>First checks if it is cached. If not, continue</li>
-<li>It creates a ModuleType object with that name</li>
-<li>Cache the module in sys.modules</li>
-<li>Executes the source code inside the module (first prefixing it with .py and then assign <code>__file__</code>)
-<ul>
-<li>In the case of the package/subpackage, it assign it the <code>__init__.py</code> file</li>
-<li>It also executes all the <code>__init__.py</code> on the path</li>
-</ul></li>
-<li>Assign a variable to the module object</li>
-</ol></li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys, types</span>
+<li>Trace exactly what happens when Python executes <code>import x</code>, step by step.</li>
+<li>Explain the difference between a module and a package, and between regular and namespace packages, and <em>why</em> both exist.</li>
+<li>Read a <code>ModuleSpec</code> and follow the <code>finder → loader → module</code> pipeline that produces it.</li>
+<li>Extend the import system yourself: trace imports, lazy-load expensive modules, and hook <code>sys.meta_path</code>.</li>
+<li>Avoid the classic traps: reload “zombies”, brittle absolute imports, and cache corruption.</li>
+</ol>
+<p>We start with the ten-thousand-foot view of what <code>import</code> does, then work downward: the object model of modules and packages, how Python <em>finds</em> them (<code>sys.path</code>), how it <em>loads</em> them (specs, finders, loaders), how source gets compiled and cached, the hooks that let you bend the machinery, running packages as programs, and finally the failure modes worth knowing. Every claim is backed by a live snippet you can run yourself.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Versions and environment
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The examples were run on <strong>CPython 3.14</strong>. The import system has been stable since its “reboot” in Python 3.3–3.4 (<a href="https://peps.python.org/pep-0451/">PEP 451</a>), so everything here applies to any modern Python 3. Output that shows filesystem paths or the contents of <code>sys.meta_path</code> is environment-specific. Yours will differ in the details, not the shape.</p>
+</div>
+</div>
+<div id="abbc231c" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-06T15:45:26.622894Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-06T15:45:26.622827Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-06T15:45:26.626134Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-06T15:45:26.625678Z&quot;}}" data-execution_count="1">
+<details class="code-fold">
+<summary>Setup: a scratch workspace for the live demos (click to expand)</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys, os, tempfile, textwrap, importlib, importlib.util, types, builtins</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> import_module(modname):</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">## Check if it is in the cache first</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> modname <span class="kw">in</span> sys.modules:</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> sys.modules[modname]</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    sourcepath <span class="op">=</span> modname <span class="op">+</span> <span class="st">'.py'</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(sourcepath, <span class="st">'r'</span>) <span class="im">as</span> f:</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        sourcecode <span class="op">=</span> f.read()</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    mod <span class="op">=</span> types.ModuleType(modname)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    mod.<span class="va">__file__</span> <span class="op">=</span> sourcepath</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">## Cache the module</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    sys.modules[modname] <span class="op">=</span> mod</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="co">## Convert it to Python ByteCode</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    code <span class="op">=</span> <span class="bu">compile</span>(sourcecode, sourcepath, <span class="st">'exec'</span>)</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="co">## Execute the code in the module from top to bottom</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="co">## And update the state (globals) in the module's dictionary</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="bu">exec</span>(code, mod.__dict__)</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="co">## We return the cached one in case there is some patching inside the module</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> sys.modules[modname]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>WORKSPACE <span class="op">=</span> tempfile.mkdtemp(prefix<span class="op">=</span><span class="st">"import-demo-"</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>sys.path.insert(<span class="dv">0</span>, WORKSPACE)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> write_module(relpath, source):</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Write a module (or package file) under WORKSPACE; return its path."""</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    path <span class="op">=</span> os.path.join(WORKSPACE, relpath)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    os.makedirs(os.path.dirname(path) <span class="kw">or</span> WORKSPACE, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(path, <span class="st">"w"</span>) <span class="im">as</span> f:</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        f.write(textwrap.dedent(source).lstrip())</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> path</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
 </section>
-<section id="module-compilation" class="level2">
-<h2 class="anchored" data-anchor-id="module-compilation">Module Compilation</h2>
-<p><img src="images/module-compilation.png" width="400px"></p>
-<ul>
-<li>Python put a lock when importing a module until it is done so that we don’t have multiple threads trying to import the same module at the same time</li>
-<li><code>__import__</code> is the machinery behind <code>import</code> statement</li>
-<li>We can use <code>importlib.import_module(module)</code> which is the same thing as <code>__import__</code>
-<ul>
-<li><code>importlib.import_module(spam)</code> is the same as <code>import spam</code></li>
-<li><code>importlib.import_module('.spam', __package__)</code> is the same as <code>from . import spam</code></li>
-<li>We can track all imports as follows:</li>
-</ul></li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> builtins</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> imp_mod(modname, <span class="op">*</span>args, imp<span class="op">=</span><span class="bu">__import__</span>):</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Importing </span><span class="sc">{</span>modname<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> imp(modname, <span class="op">*</span>args)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>builtins.<span class="bu">__import__</span> <span class="op">=</span> imp_mod</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li><strong>Module Reloading</strong>:
-<ul>
-<li>It is not a good idea to reload a module because it creates zombies. Basically Python doesn’t try to clean up the dictionary from the old module, but instead exec() the new state of the module using the old <code>module.__dict__</code>. This means stuff from previous load may still exist and we end up having weird cases. This is how Python reloads a module:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>code <span class="op">=</span> <span class="bu">open</span>(module.<span class="va">__file__</span>, <span class="st">'rb'</span>).<span class="bu">open</span>()</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">exec</span>(code, module.__dict__)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>Also, submodules that are loaded in the module/package don’t get reloaded. They still have their old version. Exampe: If module has <code>import pandas as pd</code>, when reloading the module it doesn’t reload pandas.</li>
-<li>Also, if we have instances that use the old version of the module and then we reload -&gt; New instances of the same object (class) will refer to different code implementation than the instances created before the reload -&gt; Even though they refer to the same class, instances will have different types</li>
-</ul></li>
-<li><code>sys.path</code> is only the small part of the import machinery</li>
-<li>Imports is actually controlled by <code>sys.meta_path</code>
-<ul>
-<li>It is a list of importers</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>[_frozen_importlib.BuiltinImporter,</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>_frozen_importlib.FrozenImporter,</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>_frozen_importlib_external.PathFinder,</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>six._SixMetaPathImporter at <span class="bn">0x10c8769b0</span><span class="op">&gt;</span>,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>pkg_resources.extern.VendorImporter at <span class="bn">0x10dbf9300</span><span class="op">&gt;</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>Python’s default sys.meta_path has three meta path finders, one that knows how to import built-in modules, one that knows how to import frozen modules, and one that knows how to import modules from an import path</li>
-<li>For every import statement, it goes from start-to-end to know if sys.meta_path knows how to install it</li>
-</ul></li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>importlib.util <span class="im">as</span> imp</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> find_spec(modname):</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> imp <span class="kw">in</span> sys.meta_path:</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        spec <span class="op">=</span> imp.find_spec(modname)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> spec:</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> spec</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="va">None</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li><p>ModuleSpec of a module is its metadata that the loader uses to load it. We can also use <code>importlib.util.find_spec()</code> to get the module spec of any loaded package. If the package/module is not found -&gt; returns None. Example of pandas module spec:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>  ModuleSpec(name<span class="op">=</span><span class="st">'pandas'</span>, loader<span class="op">=&lt;</span>_frozen_importlib_external.SourceFileLoader <span class="bu">object</span> at <span class="bn">0x10e609f90</span><span class="op">&gt;</span>, origin<span class="op">=</span><span class="st">'/Users/imad/anaconda3/envs/python-exp/lib/python3.10/site-packages/pandas/__init__.py'</span>, submodule_search_locations<span class="op">=</span>[<span class="st">'/Users/imad/anaconda3/envs/python-exp/lib/python3.10/site-packages/pandas'</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>Module Spec main info:
-<ul>
-<li>spec.name : ## Full module name</li>
-<li>spec.parent : ## Enclosing package</li>
-<li>spec.submodule_search_locations : ## Package <strong>path</strong></li>
-<li>spec.has_location : ## Has external location</li>
-<li>spec.origin : ## Source file location</li>
-<li>spec.cached : ## Cached location</li>
-<li>spec.loader : ## Loader object</li>
-</ul></li>
-<li>We can use the <code>loader</code> from module spec to get the source code w/o importing it. They actually create the imported module:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>module <span class="op">=</span> spec.loader.create_module(spec)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">not</span> module:</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    module <span class="op">=</span> types.ModuleType(spec.name)</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    module.<span class="va">__file__</span> <span class="op">=</span> spec.origin</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    module.__loader__ <span class="op">=</span> spec.loader</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    module.__package__ <span class="op">=</span> spec.parent</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    module.__path__ <span class="op">=</span> spec.submodule_search_locations</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    module.__spec__ <span class="op">=</span> spec</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>We can create module from spec with <code>importlib.util.module_from_spec</code>. This DOES NOT LOAD THE MODEL., it only creates it. To load the module, the module must be executed with <code>spec.loader.exec_module(spec)</code> and then cache it <code>sys.modules[spec.name] module</code>. <code>exec_module</code> will populate the <code>__dict__</code> of the module.</li>
-</ul></li>
-<li><p>We can execute modules lazily on first access. Implementation example:</p></li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> types</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> _Module(types.ModuleType):</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">pass</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> _LazyModule(_Module):</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, spec):</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>(spec.name) </span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.<span class="va">__file__</span> <span class="op">=</span> spec.origin</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.__package__ <span class="op">=</span> spec.parent </span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.__loader__ <span class="op">=</span> spec.loader</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.__path__ <span class="op">=</span> spec.submodule_search_locations </span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.__spec__ <span class="op">=</span> spec</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__getattr__</span>(<span class="va">self</span>, name):</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.<span class="va">__class__</span> <span class="op">=</span> _Module</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.__spec__.loader.exec_module(<span class="va">self</span>)</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> sys.modules[<span class="va">self</span>.<span class="va">__name__</span>] <span class="op">==</span> <span class="va">self</span></span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">getattr</span>(<span class="va">self</span>, name)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> importlib.util, sys</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> lazy_import(name):</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>   <span class="co">## If already loaded, return the module</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> name <span class="kw">in</span> sys.modules:</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> sys.modules[name]</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">## Not loaded. Find the spec</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    spec <span class="op">=</span> importlib.util.find_spec(name)</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> spec:</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ImportError</span>(<span class="ss">f'No module </span><span class="sc">{</span>name<span class="sc">:</span>r<span class="sc">}</span><span class="ss">'</span>)</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">## Check for compatibility</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> <span class="bu">hasattr</span>(spec.loader, <span class="st">'exec_module'</span>):</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ImportError</span>(<span class="st">'Not supported'</span>)</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    <span class="co">## Perform the lazy import</span></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    module <span class="op">=</span> sys.modules[name] <span class="op">=</span> _LazyModule(spec)</span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> module</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>Therefore, the module create/loading has been decoupled in recent versions of Python</li>
-<li>We can insert an importer to <code>sys.meta_path</code> that can change the behavior of imports
-<ul>
-<li>If it is in the beginning, it supercedes all other loaders and we can do crazy things</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Watcher(<span class="bu">object</span>):</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">@classmethod</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> find_spec(cls, name, path, target<span class="op">=</span><span class="va">None</span>):</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">'Importing'</span>, name, path, target)</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">None</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>sys.meta_path.insert(<span class="dv">0</span>, Watcher)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
-<li>We can also use this idea to add some logic such as autoinstall packages that are not found using pip. We insert the installer at the end of <code>sys.meta_path</code></li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> subprocess</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> importlib.util</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> AutoInstall(<span class="bu">object</span>):</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    _loaded <span class="op">=</span> <span class="bu">set</span>()</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">@classmethod</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> find_spec(cls, name, path, target<span class="op">=</span><span class="va">None</span>):</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> path <span class="kw">is</span> <span class="va">None</span> <span class="kw">and</span> name <span class="kw">not</span> <span class="kw">in</span> cls._loaded: </span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>            cls._loaded.add(name)</span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="st">"Installing"</span>, name)</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>            <span class="cf">try</span>:</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>                out <span class="op">=</span> subprocess.check_output(</span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>                          [sys.executable, <span class="st">'-m'</span>, <span class="st">'pip'</span>, <span class="st">'install'</span>, name])</span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> importlib.util.find_spec(name) </span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>            <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span><span class="op">!</span> e:</span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>                <span class="bu">print</span>(<span class="st">"Failed"</span>)</span>
-<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">None</span></span>
-<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>sys.meta_path.append(AutoInstall)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li><p>We can also import packages not found on the system from some other systems such as Redis</p></li>
-<li><p><code>sys.path_hooks</code> is responsible for the actual loading of the module/package depending on the path</p>
-<ul>
-<li>Each entry in the <code>sys.path</code> is tested against a list of <strong>path hooks</strong> to assosiate a module finder with each path entry</li>
-<li>Path finders are used to locate module and return module spec along with loader</li>
-<li>Path finders get cached in <code>sys.path_importer_cache</code></li>
-</ul></li>
-<li><p>Both <code>loaders</code> and <code>finders</code> have <code>find_spec()</code> that returns <strong>spec</strong> of module if they know how to find/load it. Otherwise, they return <code>None</code></p></li>
-<li><p>What happens during import:</p></li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>modname <span class="op">=</span> <span class="st">'somemodulename'</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> entry <span class="kw">in</span> sys.path:</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    finder <span class="op">=</span> sys.path_importer_cache[entry]</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> finder:</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>        spec <span class="op">=</span> finder.find_spec(modname)</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> spec:</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">raise</span> <span class="pp">ImportError</span>(<span class="st">'No such module'</span>)</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>...</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co">## Load module from the spec</span></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="experiments" class="level2">
-<h2 class="anchored" data-anchor-id="experiments">Experiments</h2>
-<div id="4efe21f4-70e0-4876-a98d-51fbed950551" class="cell" data-execution_count="2">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>sys.path.append(<span class="st">"/Users/imad/Desktop/"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="3a689c5c-b33a-44c8-a65d-4f109f396781" class="cell" data-execution_count="3">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pck.mod <span class="im">import</span> X</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>pck.mod</code></pre>
-</div>
-</div>
-<div id="8c327a3a-78f7-444f-aee2-df36dee0bb7d" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>X</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="4">
-<pre><code>100</code></pre>
-</div>
-</div>
-<div id="420680d8-7c17-4db5-8b4c-dd234f31d620" class="cell" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pck.test <span class="im">import</span> X</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>pck.test</code></pre>
-</div>
-</div>
-<div id="099cd685-593f-474e-b20d-936c57883a19" class="cell" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>sys.modules[<span class="st">"pck"</span>].__path__</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="6">
-<pre><code>_NamespacePath(['/Users/imad/Documents/python-materials/modules-and-packages/pck', '/Users/imad/Documents/python-materials/modules-and-packages/pck', '/Users/imad/Desktop/pck'])</code></pre>
-</div>
-</div>
-<div id="26ae3e7c-313a-4388-bc49-9fc9e2d7a162" class="cell" data-execution_count="3">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>foo.__package__, foo.__path__</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-error">
-<div class="ansi-escaped-output">
-<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">AttributeError</span>                            Traceback (most recent call last)
-Input <span class="ansi-green-fg">In [3]</span>, in <span class="ansi-cyan-fg">&lt;module&gt;</span>
-<span class="ansi-green-fg">----&gt; 1</span> foo<span style="color:rgb(98,98,98)">.</span>__package__, <span class="ansi-yellow-bg">foo</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">__path__</span>
-
-<span class="ansi-red-fg">AttributeError</span>: module 'package.foo' has no attribute '__path__'</pre>
-</div>
-</div>
-</div>
-<div id="f204330c-1eff-4da4-a9fd-167e7a74c177" class="cell" data-execution_count="18">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="bu">globals</span>()[<span class="st">"foo"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="18">
-<pre><code>&lt;module 'package.foo' from '/Users/imad/Documents/python-materials/modules-and-packages/package/foo.py'&gt;</code></pre>
-</div>
-</div>
-<div id="596a075a-f58c-42d7-9d54-f1c0bbcef01b" class="cell" data-execution_count="21">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f():</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">pass</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="ce368771-aeb3-420b-847d-ef6418735c45" class="cell" data-execution_count="23">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pandas <span class="im">import</span> read_csv</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="38e03cfd-d29b-4564-bc74-e5b0d9bcaa2c" class="cell" data-execution_count="2">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>sys.path_hooks</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="what-import-actually-does" class="level2">
+<h2 class="anchored" data-anchor-id="what-import-actually-does">1. What <code>import</code> Actually Does</h2>
+<p>Before dissecting any individual piece, hold the whole pipeline in your head. When you write <code>import spam</code>, Python runs four steps in order:</p>
+<ol type="1">
+<li><strong>Search:</strong> walk a chain of <em>finders</em>, asking each “do you know how to locate <code>spam</code>?” The winner returns a <strong>spec</strong>: metadata describing where the module is and how to load it.</li>
+<li><strong>Create:</strong> build an empty module object (<code>types.ModuleType</code>) and set its attributes (<code>__name__</code>, <code>__file__</code>, <code>__spec__</code>, …).</li>
+<li><strong>Execute:</strong> run the module’s code <em>with the module’s own <code>__dict__</code> as its global namespace</em>. This is what populates it with functions, classes, and variables.</li>
+<li><strong>Bind:</strong> bind the resulting module object to a name in the scope that issued the import.</li>
+</ol>
+<p>Two facts do most of the work here. First, the finished module is cached in <strong><code>sys.modules</code></strong> <em>before</em> it is executed, and every later import of the same name is a plain dictionary lookup, not a re-execution:</p>
+<div id="7e7962e5" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-06T15:45:26.627732Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-06T15:45:26.627636Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-06T15:45:26.631286Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-06T15:45:26.630749Z&quot;}}" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>first <span class="op">=</span> sys.modules[<span class="st">"json"</span>]</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json                 <span class="co"># a second import is a dict lookup, not a re-run</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>first <span class="kw">is</span> sys.modules[<span class="st">"json"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="2">
+<pre><code>True</code></pre>
+</div>
+</div>
+<p><code>sys.modules</code> is why importing a module a thousand times costs almost nothing, and why a module’s top-level code runs exactly once per interpreter session. Second, “executing the module” is literally running its file top to bottom. There is no separate “definition mode.” A module <em>is</em> the accumulated side effects of running its source.</p>
+<blockquote class="blockquote">
+<p><em><code>import</code> is not a keyword that reads a file. It is a cache lookup that, on a miss, runs a find → create → execute → bind pipeline and memoizes the result.</em></p>
+</blockquote>
+</section>
+<section id="modules-and-packages-the-object-model" class="level2">
+<h2 class="anchored" data-anchor-id="modules-and-packages-the-object-model">2. Modules and Packages: The Object Model</h2>
+<section id="a-module-is-just-a-namespace-object" class="level3">
+<h3 class="anchored" data-anchor-id="a-module-is-just-a-namespace-object">2.1 A module is just a namespace object</h3>
+<p>A module is not a special language construct; it is an ordinary object of type <code>types.ModuleType</code> whose attributes live in its <code>__dict__</code>. Accessing <code>json.loads</code> is a dictionary lookup in <code>json.__dict__</code>; setting an attribute on a module writes to that same dict:</p>
+<div id="1ff443b6" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-06T15:45:26.632343Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-06T15:45:26.632264Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-06T15:45:26.634503Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-06T15:45:26.634126Z&quot;}}" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>json.custom <span class="op">=</span> <span class="dv">123</span>                 <span class="co"># identical to json.__dict__["custom"] = 123</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span>(json), json.<span class="va">__name__</span>, <span class="st">"loads"</span> <span class="kw">in</span> json.__dict__, json.__dict__[<span class="st">"custom"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<pre><code>(module, 'json', True, 123)</code></pre>
+</div>
+</div>
+<p><code>module.x = 10</code> and <code>module.__dict__["x"] = 10</code> are the same operation. This is why a module can play so many roles at once: a namespace, an execution environment for statements, and a container of globals. Every module carries a handful of dunder attributes that the import system sets on it:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Attribute</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>__name__</code></td>
+<td>Fully-qualified module name (<code>"json"</code>, <code>"os.path"</code>)</td>
+</tr>
+<tr class="even">
+<td><code>__file__</code></td>
+<td>Path to the source file, if it has one (built-ins don’t)</td>
+</tr>
+<tr class="odd">
+<td><code>__doc__</code></td>
+<td>The module docstring</td>
+</tr>
+<tr class="even">
+<td><code>__dict__</code></td>
+<td>The module’s namespace: everything defined at top level</td>
+</tr>
+<tr class="odd">
+<td><code>__package__</code></td>
+<td>The package this module belongs to (see §2.2)</td>
+</tr>
+<tr class="even">
+<td><code>__path__</code></td>
+<td><strong>Present only on packages:</strong> the search path for submodules</td>
+</tr>
+<tr class="odd">
+<td><code>__spec__</code></td>
+<td>The <code>ModuleSpec</code> used to load it (see §4)</td>
+</tr>
+<tr class="even">
+<td><code>__loader__</code></td>
+<td>The loader object that executed it</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="a-package-is-a-module-with-a-__path__" class="level3">
+<h3 class="anchored" data-anchor-id="a-package-is-a-module-with-a-__path__">2.2 A package is a module with a <code>__path__</code></h3>
+<p><strong>A package is simply a module that has a <code>__path__</code> attribute.</strong> <code>__path__</code> is a list of directories to search when importing that package’s <em>sub</em>modules; it is to a package what <code>sys.path</code> is to the interpreter. A plain module has no <code>__path__</code>; a package does, and that is what lets <code>import foo.bar</code> know where to find <code>bar</code>.</p>
+<blockquote class="blockquote">
+<p><em>All packages are modules, but not all modules are packages; only packages have <code>__path__</code>.</em></p>
+</blockquote>
+<p>For <code>__package__</code>: a package’s <code>__package__</code> equals its own <code>__name__</code>; a top-level module’s is the empty string; a submodule’s is its parent package’s name.</p>
+</section>
+<section id="regular-vs.-namespace-packages" class="level3">
+<h3 class="anchored" data-anchor-id="regular-vs.-namespace-packages">2.3 Regular vs.&nbsp;namespace packages</h3>
+<p>A <strong>regular package</strong> is a directory containing an <code>__init__.py</code>. Importing it runs that <code>__init__.py</code>, and its namespace becomes the package. Crucially, when the finder locates a regular package <strong>it stops searching</strong>: the first <code>__init__.py</code> of that name on <code>sys.path</code> wins.</p>
+<p>A <strong>namespace package</strong> is a directory <em>without</em> <code>__init__.py</code> (<a href="https://peps.python.org/pep-0420/">PEP 420</a>). It behaves completely differently during search: the finder does <strong>not</strong> stop at the first match. It scans <em>all</em> of <code>sys.path</code>, collecting every directory of that name, and, if it never finds a regular package with that name, fuses the collected directories into a single package whose <code>__path__</code> spans every one of them.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Regular package</th>
+<th>Namespace package</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Marker</td>
+<td>Has <code>__init__.py</code></td>
+<td>No <code>__init__.py</code></td>
+</tr>
+<tr class="even">
+<td>Search behavior</td>
+<td>Stops at first match</td>
+<td>Scans all of <code>sys.path</code>, collects every match</td>
+</tr>
+<tr class="odd">
+<td><code>__init__.py</code> runs</td>
+<td>Yes</td>
+<td>N/A</td>
+</tr>
+<tr class="even">
+<td><code>__path__</code></td>
+<td>Single directory</td>
+<td><code>_NamespacePath</code> spanning multiple directories</td>
+</tr>
+<tr class="odd">
+<td>Priority</td>
+<td>Always wins over a namespace package of the same name</td>
+<td>Used only if no regular package shadows it</td>
+</tr>
+<tr class="even">
+<td>Use case</td>
+<td>Normal, self-contained package</td>
+<td>One logical package split across installs (plugin ecosystems)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The same package name can pull submodules from completely different directories.</strong> Let’s prove it. We create two separate directories, each holding a <code>pck/</code> folder with <em>no</em> <code>__init__.py</code>, and put a different submodule in each:</p>
+<div id="50e394bc" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-06T15:45:26.635390Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-06T15:45:26.635324Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-06T15:45:26.639530Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-06T15:45:26.638964Z&quot;}}" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Two directories, each with a `pck/` folder that has NO __init__.py -&gt; namespace pkg</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>write_module(<span class="st">"locA/pck/mod.py"</span>,  <span class="st">"X = 100"</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>write_module(<span class="st">"locB/pck/test.py"</span>, <span class="st">"X = 200"</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>sys.path[:<span class="dv">0</span>] <span class="op">=</span> [<span class="ss">f"</span><span class="sc">{</span>WORKSPACE<span class="sc">}</span><span class="ss">/locA"</span>, <span class="ss">f"</span><span class="sc">{</span>WORKSPACE<span class="sc">}</span><span class="ss">/locB"</span>]</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pck.mod <span class="im">import</span> X <span class="im">as</span> from_A</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pck.test <span class="im">import</span> X <span class="im">as</span> from_B</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>from_A, from_B, <span class="bu">list</span>(sys.modules[<span class="st">"pck"</span>].__path__)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>(100,
+ 200,
+ ['/var/folders/hn/9dlqvjvx427_3m7wj0vxmpx80000gn/T/import-demo-v_vgrtrz/locA/pck',
+  '/var/folders/hn/9dlqvjvx427_3m7wj0vxmpx80000gn/T/import-demo-v_vgrtrz/locB/pck'])</code></pre>
+</div>
+</div>
+<p>The single name <code>pck</code> now resolves to a package whose <code>__path__</code> lists <strong>both</strong> temp directories, and <code>pck.mod</code> and <code>pck.test</code> were imported from different places on disk. This is exactly how large namespaced ecosystems (like the <code>google.*</code> cloud libraries) let independently-installed distributions contribute modules under one shared name.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Regular packages win and shadow the rest
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Python scans the entire <code>sys.path</code> before concluding a package is a namespace package. If <em>any</em> directory on the path contains that name with an <code>__init__.py</code>, the regular package wins and every namespace candidate is discarded. A stray <code>__init__.py</code> in the wrong place can silently “capture” a name you expected to be a namespace package.</p>
+</div>
+</div>
+</section>
+<section id="what-__init__.py-is-for" class="level3">
+<h3 class="anchored" data-anchor-id="what-__init__.py-is-for">2.4 What <code>__init__.py</code> is for</h3>
+<p>Beyond marking a directory as a regular package, <code>__init__.py</code> runs the first time the package is imported, which makes it the natural place to shape the package’s public surface. Common uses:</p>
+<ul>
+<li><strong>Re-export</strong> the useful names from submodules so callers write <code>from mypkg import Thing</code> instead of <code>from mypkg.internal.things import Thing</code>.</li>
+<li><strong>Assemble <code>__all__</code></strong> from submodules to control <code>from mypkg import *</code>, e.g.&nbsp;<code>__all__ = submod_a.__all__ + submod_b.__all__</code> (import the submodules first so their <code>__all__</code> exists).</li>
+<li><strong>Initialize package-level state</strong>, or occasionally monkeypatch another module.</li>
+</ul>
+<p>Keep <code>__init__.py</code> cheap: because it runs on first import, expensive work there is paid by <em>every</em> program that imports the package, whether or not it needs that work.</p>
+</section>
+<section id="dotted-imports-bind-submodules-to-their-parents" class="level3">
+<h3 class="anchored" data-anchor-id="dotted-imports-bind-submodules-to-their-parents">2.5 Dotted imports bind submodules to their parents</h3>
+<p>Importing <code>foo.bar.baz</code> imports <code>foo</code>, then <code>foo.bar</code>, then <code>foo.bar.baz</code>, in that order, caching each of the three separately in <code>sys.modules</code>. A subtle but important side effect: <strong>when a submodule is loaded, it is bound as an attribute on its parent package.</strong> After <code>import os.path</code>, the parent module <code>os</code> gains a <code>path</code> attribute pointing at the submodule:</p>
+<div id="1c10794c" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-06T15:45:26.640788Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-06T15:45:26.640710Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-06T15:45:26.642903Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-06T15:45:26.642403Z&quot;}}" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os.path</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">"os.path"</span> <span class="kw">in</span> sys.modules, <span class="bu">hasattr</span>(os, <span class="st">"path"</span>), os.path <span class="kw">is</span> sys.modules[<span class="st">"os.path"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre><code>(True, True, True)</code></pre>
+</div>
+</div>
+<p>This is why <code>import os.path</code> lets you write <code>os.path.join(...)</code> even though you only named <code>os</code>: the submodule attached itself to its parent during import.</p>
+</section>
+</section>
+<section id="finding-modules-sys.path-and-the-search-space" class="level2">
+<h2 class="anchored" data-anchor-id="finding-modules-sys.path-and-the-search-space">3. Finding Modules: <code>sys.path</code> and the Search Space</h2>
+<p>For file-based imports, the search space is <strong><code>sys.path</code></strong>: an ordered list of locations (directories, zip files, <code>.egg</code> archives) that Python walks <strong>front to back, first match wins</strong>. If nothing matches, you get <code>ModuleNotFoundError</code>.</p>
+<div id="c2254507" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-06T15:45:26.643764Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-06T15:45:26.643693Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-06T15:45:26.646367Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-06T15:45:26.645871Z&quot;}}" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>sys.path[:<span class="dv">6</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<pre><code>['/var/folders/hn/9dlqvjvx427_3m7wj0vxmpx80000gn/T/import-demo-v_vgrtrz/locA',
+ '/var/folders/hn/9dlqvjvx427_3m7wj0vxmpx80000gn/T/import-demo-v_vgrtrz/locB',
+ '/var/folders/hn/9dlqvjvx427_3m7wj0vxmpx80000gn/T/import-demo-v_vgrtrz',
+ '/opt/homebrew/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/lib/python314.zip',
+ '/opt/homebrew/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/lib/python3.14',
+ '/opt/homebrew/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload']</code></pre>
+</div>
+</div>
+<p>Where do these entries come from? Python assembles <code>sys.path</code> at startup from several sources:</p>
+<ul>
+<li><strong>The script’s directory</strong> (or the current working directory in an interactive session), added at the <em>front</em>, which is why a local <code>math.py</code> shadows the standard library.</li>
+<li><strong><code>PYTHONPATH</code></strong>, if set, prepended to the front.</li>
+<li><strong>The standard library</strong>, located relative to the interpreter.</li>
+<li><strong>Site packages:</strong> where third-party installs live, added by <code>site.py</code>.</li>
+<li><strong><code>.pth</code> files</strong> in site-packages: each line names a directory to append. Package managers and editable installs use this hook to inject paths.</li>
+</ul>
+<p>Two values anchor the whole scheme. <strong><code>sys.prefix</code></strong> is where the Python installation lives (its landmark is the standard library’s <code>os.py</code>); <strong><code>sys.exec_prefix</code></strong> is where platform-specific compiled binaries live (landmark: the <code>lib-dynload</code> directory). A virtual environment is, at heart, a directory with its own <code>sys.prefix</code> and <code>site-packages</code>, sharing the base interpreter’s binary.</p>
+<div id="e65a6007" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-06T15:45:26.647482Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-06T15:45:26.647398Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-06T15:45:26.649271Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-06T15:45:26.648965Z&quot;}}" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>sys.prefix, sys.exec_prefix</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<pre><code>('/Users/imad/dev/dl-venv', '/Users/imad/dev/dl-venv')</code></pre>
+</div>
+</div>
+<p>A few command-line switches and environment knobs shape all of this:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Flag / mechanism</th>
+<th>Effect on the import environment</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>python -m pkg.mod</code></td>
+<td>Run a module/package as <code>__main__</code> (relative imports work; see §7)</td>
+</tr>
+<tr class="even">
+<td><code>python -S</code></td>
+<td>Skip <code>site.py</code>: no site-packages, no <code>.pth</code> processing</td>
+</tr>
+<tr class="odd">
+<td><code>python -v</code> / <code>-vv</code></td>
+<td>Trace import activity (what Python tries, and where)</td>
+</tr>
+<tr class="even">
+<td><code>PYTHONPATH=…</code></td>
+<td>Prepend directories to <code>sys.path</code></td>
+</tr>
+<tr class="odd">
+<td><code>python -m venv env</code></td>
+<td>Create a virtual environment with its own prefix and site-packages</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span><code>sys.path</code> is only half the story
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>sys.path</code> answers “<em>where</em> on the filesystem do I look?”, but it is consulted by only <em>one</em> of the finders on <code>sys.meta_path</code> (the <code>PathFinder</code>). Built-in and frozen modules never touch <code>sys.path</code>. The real dispatch layer is <code>sys.meta_path</code>, which we get to in §4.4.</p>
+</div>
+</div>
+</section>
+<section id="loading-modules-specs-finders-and-loaders" class="level2">
+<h2 class="anchored" data-anchor-id="loading-modules-specs-finders-and-loaders">4. Loading Modules: Specs, Finders, and Loaders</h2>
+<section id="the-modulespec-a-modules-blueprint" class="level3">
+<h3 class="anchored" data-anchor-id="the-modulespec-a-modules-blueprint">4.1 The <code>ModuleSpec</code>: a module’s blueprint</h3>
+<p>Since the Python 3.4 import reboot (<a href="https://peps.python.org/pep-0451/">PEP 451</a>), the central object of the import system is the <strong><code>ModuleSpec</code></strong>: the metadata bundle that says <em>what</em> a module is and <em>how</em> to load it. You can obtain one without importing anything via <code>importlib.util.find_spec</code>:</p>
+<div id="73e39e9c" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-06T15:45:26.650162Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-06T15:45:26.650101Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-06T15:45:26.651987Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-06T15:45:26.651664Z&quot;}}" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>importlib.util.find_spec(<span class="st">"sys"</span>)        <span class="co"># a built-in: origin is 'built-in', no file</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>ModuleSpec(name='sys', loader=&lt;class '_frozen_importlib.BuiltinImporter'&gt;, origin='built-in')</code></pre>
+</div>
+</div>
+<div id="085e6043" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-06T15:45:26.652769Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-06T15:45:26.652710Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-06T15:45:26.655092Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-06T15:45:26.654738Z&quot;}}" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>spec <span class="op">=</span> importlib.util.find_spec(<span class="st">"pandas"</span>)   <span class="co"># a source package on disk</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>spec.name, spec.origin, spec.submodule_search_locations</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>('pandas',
+ '/Users/imad/dev/dl-venv/lib/python3.14/site-packages/pandas/__init__.py',
+ ['/Users/imad/dev/dl-venv/lib/python3.14/site-packages/pandas'])</code></pre>
+</div>
+</div>
+<p>The contrast tells the story: <code>sys</code> is a built-in with <code>origin='built-in'</code> and no file; <code>pandas</code> is a source package whose <code>origin</code> is its <code>__init__.py</code> and whose <code>submodule_search_locations</code> is the <code>__path__</code> it will receive. The spec’s important fields:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>name</code></td>
+<td>Fully-qualified module name</td>
+</tr>
+<tr class="even">
+<td><code>loader</code></td>
+<td>The object that will execute the module</td>
+</tr>
+<tr class="odd">
+<td><code>origin</code></td>
+<td>Where it comes from (<code>'built-in'</code>, a file path, …)</td>
+</tr>
+<tr class="even">
+<td><code>submodule_search_locations</code></td>
+<td>The future <code>__path__</code>: non-<code>None</code> only for packages</td>
+</tr>
+<tr class="odd">
+<td><code>parent</code></td>
+<td>Enclosing package name</td>
+</tr>
+<tr class="even">
+<td><code>cached</code></td>
+<td>Location of the compiled <code>.pyc</code>, if any</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="the-import-algorithm-in-pseudocode" class="level3">
+<h3 class="anchored" data-anchor-id="the-import-algorithm-in-pseudocode">4.2 The import algorithm, in pseudocode</h3>
+<p>Stripped to essentials, importing a not-yet-cached module looks like this:</p>
+<div id="6f92d2f1" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-06T15:45:26.655959Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-06T15:45:26.655901Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-06T15:45:26.658174Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-06T15:45:26.657496Z&quot;}}" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> import_module(name):</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> name <span class="kw">in</span> sys.modules:              <span class="co"># 1. cache hit -&gt; done</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> sys.modules[name]</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    spec <span class="op">=</span> find_spec(name)               <span class="co"># 2. search: finders -&gt; spec (or ImportError)</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    module <span class="op">=</span> importlib.util.module_from_spec(spec)   <span class="co"># 3. create the empty module</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    sys.modules[name] <span class="op">=</span> module           <span class="co"># 4. cache BEFORE executing (circular-safe)</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    spec.loader.exec_module(module)      <span class="co"># 5. execute the body into module.__dict__</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> sys.modules[name]             <span class="co"># 6. return cached (may differ if code swapped it)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Two details are worth internalizing. The module is <strong>cached before it is executed</strong>, so a circular import finds a partially-initialized module rather than looping forever. And the <em>cached</em> object is what’s returned: a module that reassigns <code>sys.modules[__name__]</code> to something else during execution can hand back a different object than the one that started loading.</p>
+</section>
+<section id="finders-and-loaders-create-vs.-execute-are-decoupled" class="level3">
+<h3 class="anchored" data-anchor-id="finders-and-loaders-create-vs.-execute-are-decoupled">4.3 Finders and loaders: create vs.&nbsp;execute are decoupled</h3>
+<p>The pipeline splits cleanly in two. A <strong>finder</strong> answers “can I locate this name?” and returns a spec. A <strong>loader</strong> does the work, and even that is split: <code>create_module(spec)</code> builds the empty module object, and <code>exec_module(module)</code> runs its code. <code>importlib.util.module_from_spec</code> gives you the created-but-not-executed module; nothing runs until you call <code>exec_module</code>:</p>
+<div id="5292fa9f" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-06T15:45:26.659045Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-06T15:45:26.658976Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-06T15:45:26.662031Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-06T15:45:26.661627Z&quot;}}" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>write_module(<span class="st">"heavy.py"</span>, <span class="st">"""</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="st">    print("&gt;&gt;&gt; heavy.py body is executing")</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="st">    VALUE = 42</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span>)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>spec <span class="op">=</span> importlib.util.find_spec(<span class="st">"heavy"</span>)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>heavy <span class="op">=</span> importlib.util.module_from_spec(spec)   <span class="co"># created, but NOT executed</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="bu">hasattr</span>(heavy, <span class="st">"VALUE"</span>)                          <span class="co"># -&gt; False: the body hasn't run</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>False</code></pre>
+</div>
+</div>
+<div id="1a305a64" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-06T15:45:26.663368Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-06T15:45:26.663296Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-06T15:45:26.665988Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-06T15:45:26.665630Z&quot;}}" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>spec.loader.exec_module(heavy)                   <span class="co"># now the body runs</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>heavy.VALUE</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&gt;&gt;&gt; heavy.py body is executing</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<pre><code>42</code></pre>
+</div>
+</div>
+<p>This decoupling is exactly what makes lazy loading (§6.3) possible: you can hold a fully-formed module object and defer the expensive <code>exec_module</code> until someone actually touches it.</p>
+</section>
+<section id="sys.meta_path-the-real-controller" class="level3">
+<h3 class="anchored" data-anchor-id="sys.meta_path-the-real-controller">4.4 <code>sys.meta_path</code>: the real controller</h3>
+<p>Every import is dispatched through <strong><code>sys.meta_path</code></strong>, an ordered list of <strong>meta path finders</strong>. Python asks each one, front to back, <code>find_spec(name, path, target)</code> until one returns a spec:</p>
+<div id="fa076ceb" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-06T15:45:26.666934Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-06T15:45:26.666870Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-06T15:45:26.668818Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-06T15:45:26.668490Z&quot;}}" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>sys.meta_path</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<pre><code>[&lt;_distutils_hack.DistutilsMetaFinder at 0x1096146e0&gt;,
+ &lt;_virtualenv._Finder at 0x109614590&gt;,
+ _frozen_importlib.BuiltinImporter,
+ _frozen_importlib.FrozenImporter,
+ _frozen_importlib_external.PathFinder,
+ &lt;six._SixMetaPathImporter at 0x10a44e900&gt;]</code></pre>
+</div>
+</div>
+<p>The three that always ship with CPython are <code>BuiltinImporter</code> (compiled-in modules like <code>sys</code>), <code>FrozenImporter</code> (modules frozen into the binary, including <code>importlib</code> itself), and <code>PathFinder</code>, the only one that consults <code>sys.path</code>. Libraries and tools can prepend or append their own finders, so you may also see entries from setuptools or editable installs. Conceptually the search is just:</p>
+<div id="a8180019" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-06T15:45:26.669624Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-06T15:45:26.669566Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-06T15:45:26.671232Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-06T15:45:26.670890Z&quot;}}" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> find_spec(name, path<span class="op">=</span><span class="va">None</span>, target<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> finder <span class="kw">in</span> sys.meta_path:</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>        spec <span class="op">=</span> finder.find_spec(name, path, target)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> spec <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> spec</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">raise</span> <span class="pp">ModuleNotFoundError</span>(name)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>PathFinder</code> in turn delegates to <strong><code>sys.path_hooks</code></strong>: each <code>sys.path</code> entry is handed to these hooks to produce a path-specific finder (a directory gets a <code>FileFinder</code>; a <code>.zip</code> gets a <code>zipimporter</code>). The results are memoized in <code>sys.path_importer_cache</code>.</p>
+<div id="26476c84" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-06T15:45:26.672034Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-06T15:45:26.671974Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-06T15:45:26.673733Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-06T15:45:26.673355Z&quot;}}" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>sys.path_hooks</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="15">
 <pre><code>[zipimport.zipimporter,
  &lt;function _frozen_importlib_external.FileFinder.path_hook.&lt;locals&gt;.path_hook_for_FileFinder(path)&gt;]</code></pre>
 </div>
 </div>
-<div id="86da7a73-13f4-4c85-83c6-7c209370a0f0" class="cell" data-execution_count="17">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="bu">list</span>(sys.path_importer_cache.keys())[:<span class="dv">10</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="17">
-<pre><code>['/Users/imad/anaconda3/envs/python-exp/lib/python310.zip',
- '/Users/imad/anaconda3/envs/python-exp/lib/python3.10',
- '/Users/imad/anaconda3/envs/python-exp/lib/python3.10/encodings',
- '/Users/imad/anaconda3/envs/python-exp/lib/python3.10/importlib',
- '/Users/imad/anaconda3/envs/python-exp/lib/python3.10/site-packages',
- '/Users/imad/anaconda3/envs/python-exp/lib/python3.10/lib-dynload',
- '/Users/imad/anaconda3/envs/python-exp/lib/python3.10/site-packages/PyYAML-6.0-py3.10-macosx-10.9-x86_64.egg',
- '/Users/imad/Documents/python-materials/modules-and-packages',
- '/Users/imad/anaconda3/envs/python-exp/lib/python3.10/site-packages/ipykernel',
- '/Users/imad/anaconda3/envs/python-exp/lib/python3.10/json']</code></pre>
+<p>This layered design (<code>meta_path</code> → <code>PathFinder</code> → <code>path_hooks</code> → per-entry finder → loader) is the seam that makes §6 possible.</p>
+</section>
+</section>
+<section id="compilation-and-the-.pyc-cache" class="level2">
+<h2 class="anchored" data-anchor-id="compilation-and-the-.pyc-cache">5. Compilation and the <code>.pyc</code> Cache</h2>
+<p>When a loader executes a source module, it doesn’t interpret the <code>.py</code> text directly: it first <strong>compiles</strong> the source to bytecode (a code object), then executes that. Compilation isn’t free, so CPython caches the result: the bytecode is written to a <code>.pyc</code> file inside a <code>__pycache__/</code> directory next to the source (<a href="https://peps.python.org/pep-3147/">PEP 3147</a>). On the next import, if the cache is still valid, Python skips compilation and loads the bytecode directly, which is why the <em>second</em> startup of a program that imports a big library is noticeably faster than the first.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/module-compilation.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure 1: A .pyc file is a small header followed by the marshalled code object. The header holds a magic number (a version tag; bytecode from a different Python version is rejected), plus the source’s mtime and size. On import, Python compares those against the current source file; if either changed, the cache is stale and the module is recompiled. (Slide from David Beazley’s “Modules and Packages: Live and Let Die!”)"><img src="images/module-compilation.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500" alt="Figure 1: A .pyc file is a small header followed by the marshalled code object. The header holds a magic number (a version tag; bytecode from a different Python version is rejected), plus the source’s mtime and size. On import, Python compares those against the current source file; if either changed, the cache is stale and the module is recompiled. (Slide from David Beazley’s “Modules and Packages: Live and Let Die!”)"></a></p>
+</figure>
+</div>
+<figcaption><strong>Figure 1:</strong> A <code>.pyc</code> file is a small header followed by the marshalled code object. The header holds a <strong>magic number</strong> (a version tag; bytecode from a different Python version is rejected), plus the source’s <strong>mtime</strong> and <strong>size</strong>. On import, Python compares those against the current source file; if either changed, the cache is stale and the module is recompiled. <em>(Slide from David Beazley’s “Modules and Packages: Live and Let Die!”)</em></figcaption>
+</figure>
+</div>
+<p><code>importlib.util</code> exposes the pieces of this scheme directly: the version tag, the magic number that gates cache validity, and the function that maps a source path to its cached bytecode path.</p>
+<div id="9b8f2a13" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-06T15:45:26.674535Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-06T15:45:26.674466Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-06T15:45:26.676297Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-06T15:45:26.675948Z&quot;}}" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>(sys.implementation.cache_tag,</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a> importlib.util.MAGIC_NUMBER,</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a> importlib.util.cache_from_source(<span class="st">"widget.py"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="16">
+<pre><code>('cpython-314', b'+\x0e\r\n', '__pycache__/widget.cpython-314.pyc')</code></pre>
 </div>
 </div>
-<div id="e4ece638-93da-4b93-a594-52d3984b93c1" class="cell" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> importlib.util <span class="im">import</span> find_spec</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="9e70eb1d-aee1-4c99-8222-0f1a114b78ba" class="cell" data-execution_count="14">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> find_spec(<span class="st">"mod"</span>)</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>m.loader.get_source(<span class="st">"mod"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="14">
-<pre><code>'y = 200\nprint(y)\n\nclass A:\n    print("A")\n'</code></pre>
-</div>
-</div>
-<div id="83c9c028-470a-49b3-a6cc-d9f967425469" class="cell" data-execution_count="8">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>sys.meta_path</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="8">
-<pre><code>[_frozen_importlib.BuiltinImporter,
- _frozen_importlib.FrozenImporter,
- _frozen_importlib_external.PathFinder,
- &lt;six._SixMetaPathImporter at 0x10c8769b0&gt;,
- &lt;pkg_resources.extern.VendorImporter at 0x10dbf9300&gt;]</code></pre>
-</div>
-</div>
-<div id="89c67452-6262-4f27-8ec2-df6628331245" class="cell" data-execution_count="1">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> mod</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The <code>cache_tag</code> (<code>cpython-314</code>) is embedded in the <code>.pyc</code> filename so that multiple Python versions can share a source tree without clobbering each other’s bytecode. Invalidation is normally based on the source’s modification time and size, but Python also supports <strong>hash-based</strong> <code>.pyc</code> files (comparing a hash of the source instead), which make builds reproducible when timestamps aren’t reliable.</p>
+</section>
+<section id="bending-the-machinery" class="level2">
+<h2 class="anchored" data-anchor-id="bending-the-machinery">6. Bending the Machinery</h2>
+<p>Because finders are just objects on a list, you can insert your own and change what <code>import</code> <em>means</em>. Two placements matter: <strong>prepend</strong> to <code>sys.meta_path</code> to intercept every import before the real finders run, or <strong>append</strong> to catch imports that would otherwise fail.</p>
+<section id="tracing-every-import" class="level3">
+<h3 class="anchored" data-anchor-id="tracing-every-import">6.1 Tracing every import</h3>
+<p>A finder that prints and then returns <code>None</code> observes imports without handling them; returning <code>None</code> politely defers to the finders behind it:</p>
+<div id="81906988" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-06T15:45:26.677132Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-06T15:45:26.677071Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-06T15:45:26.680361Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-06T15:45:26.680019Z&quot;}}" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Watcher:</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"A meta-path finder that observes imports, then defers by returning None."</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">@classmethod</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> find_spec(cls, name, path, target<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"find_spec -&gt;"</span>, name)</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">None</span>                    <span class="co"># None =&gt; let the finders behind us handle it</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>write_module(<span class="st">"observed.py"</span>, <span class="st">"VALUE = 1"</span>)</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>sys.meta_path.insert(<span class="dv">0</span>, Watcher)       <span class="co"># prepend: we see every import first</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> observed                    <span class="co"># a fresh module, so the finder actually fires</span></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a><span class="cf">finally</span>:</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>    sys.meta_path.remove(Watcher)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>200
-A</code></pre>
+<pre><code>find_spec -&gt; observed</code></pre>
 </div>
 </div>
-<div id="f02003c4-f556-4db3-92d3-949103c9f7a5" class="cell" data-execution_count="2">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> mod.A()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="bde71e6e-5ca3-49e0-8c90-6d268ca6ec55" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> importlib <span class="im">import</span> <span class="bu">reload</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="35796286-737b-4a22-a13c-d02fece9e169" class="cell" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="bu">reload</span>(mod)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The same idea one level up (wrapping <code>builtins.__import__</code>) intercepts the <code>import</code> statement itself:</p>
+<div id="6770c1b8" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-06T15:45:26.681300Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-06T15:45:26.681236Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-06T15:45:26.683881Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-06T15:45:26.683494Z&quot;}}" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>_real_import <span class="op">=</span> builtins.<span class="bu">__import__</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> traced_import(name, <span class="op">*</span>args, <span class="op">**</span>kwargs):</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> name <span class="kw">not</span> <span class="kw">in</span> sys.modules:        <span class="co"># only announce first-time imports</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"importing:"</span>, name)</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _real_import(name, <span class="op">*</span>args, <span class="op">**</span>kwargs)</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>builtins.<span class="bu">__import__</span> <span class="op">=</span> traced_import</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> graphlib</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a><span class="cf">finally</span>:</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>    builtins.<span class="bu">__import__</span> <span class="op">=</span> _real_import</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>200
-A</code></pre>
-</div>
-<div class="cell-output cell-output-display" data-execution_count="5">
-<pre><code>&lt;module 'mod' from '/Users/imad/Documents/python-materials/modules-and-packages/mod.py'&gt;</code></pre>
+<pre><code>importing: graphlib</code></pre>
 </div>
 </div>
-<div id="41431941-be17-499a-b2af-699511a131c8" class="cell" data-execution_count="3">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> mod.A()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="auto-installing-missing-packages" class="level3">
+<h3 class="anchored" data-anchor-id="auto-installing-missing-packages">6.2 Auto-installing missing packages</h3>
+<p>Append a finder to the <em>end</em> of <code>sys.meta_path</code> and it becomes a last resort, consulted only after every real finder has failed. Here is the (in)famous auto-installer: on the first miss for a top-level name, it pip-installs the package and returns its now-findable spec.</p>
+<div id="052eb5a1" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-06T15:45:26.684672Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-06T15:45:26.684612Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-06T15:45:26.686573Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-06T15:45:26.686264Z&quot;}}" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> subprocess</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> AutoInstall:</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Last-resort finder: pip-install a missing top-level module on first miss."</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    _tried <span class="op">=</span> <span class="bu">set</span>()</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">@classmethod</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> find_spec(cls, name, path, target<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> path <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span> <span class="kw">or</span> name <span class="kw">in</span> cls._tried:</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="va">None</span>                <span class="co"># only top-level names, and only try once</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>        cls._tried.add(name)</span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>        subprocess.check_call([sys.executable, <span class="st">"-m"</span>, <span class="st">"pip"</span>, <span class="st">"install"</span>, name])</span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> importlib.util.find_spec(name)</span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>sys.meta_path.append(AutoInstall)      <span class="co"># append =&gt; consulted only after real finders fail</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="de332317-b541-45cf-9da2-991928a725eb" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>a.<span class="va">__class__</span>, b.<span class="va">__class__</span>, <span class="bu">type</span>(a) <span class="op">==</span> <span class="bu">type</span>(b)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="4">
-<pre><code>(mod.A, mod.A, True)</code></pre>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
-</div>
-<div id="345de28d-d954-4a18-b2c4-580bf0a3b6a5" class="cell" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> importlib.util <span class="im">import</span> find_spec</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="291d72dd-a4eb-45ca-83d5-dddc6856ddc3" class="cell" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>find_spec(<span class="st">"sys"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="7">
-<pre><code>ModuleSpec(name='sys', loader=&lt;class '_frozen_importlib.BuiltinImporter'&gt;, origin='built-in')</code></pre>
-</div>
-</div>
-<div id="08e6b24b-7546-4545-a621-73a9a63fa2ec" class="cell" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>find_spec(<span class="st">"pandas"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="6">
-<pre><code>ModuleSpec(name='pandas', loader=&lt;_frozen_importlib_external.SourceFileLoader object at 0x10e609f90&gt;, origin='/Users/imad/anaconda3/envs/python-exp/lib/python3.10/site-packages/pandas/__init__.py', submodule_search_locations=['/Users/imad/anaconda3/envs/python-exp/lib/python3.10/site-packages/pandas'])</code></pre>
-</div>
-</div>
-<div id="4c91a469-0147-495b-8e41-92232fbede57" class="cell" data-execution_count="21">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> importlib</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="22a22d5e-b7bd-431d-99b4-cdcea27de573" class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>importlib.import_module()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="76d1435d-6edd-4834-967c-98800b78b12c" class="cell" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>pd.__path__, pd.<span class="va">__name__</span>, pd.__package__, pd.<span class="va">__file__</span>, pd.__doc__</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="11">
-<pre><code>(['/Users/imad/anaconda3/envs/python-exp/lib/python3.10/site-packages/pandas'],
- 'pandas',
- 'pandas',
- '/Users/imad/anaconda3/envs/python-exp/lib/python3.10/site-packages/pandas/__init__.py',
- '\npandas - a powerful data analysis and manipulation library for Python\n=====================================================================\n\n**pandas** is a Python package providing fast, flexible, and expressive data\nstructures designed to make working with "relational" or "labeled" data both\neasy and intuitive. It aims to be the fundamental high-level building block for\ndoing practical, **real world** data analysis in Python. Additionally, it has\nthe broader goal of becoming **the most powerful and flexible open source data\nanalysis / manipulation tool available in any language**. It is already well on\nits way toward this goal.\n\nMain Features\n-------------\nHere are just a few of the things that pandas does well:\n\n  - Easy handling of missing data in floating point as well as non-floating\n    point data.\n  - Size mutability: columns can be inserted and deleted from DataFrame and\n    higher dimensional objects\n  - Automatic and explicit data alignment: objects can be explicitly aligned\n    to a set of labels, or the user can simply ignore the labels and let\n    `Series`, `DataFrame`, etc. automatically align the data for you in\n    computations.\n  - Powerful, flexible group by functionality to perform split-apply-combine\n    operations on data sets, for both aggregating and transforming data.\n  - Make it easy to convert ragged, differently-indexed data in other Python\n    and NumPy data structures into DataFrame objects.\n  - Intelligent label-based slicing, fancy indexing, and subsetting of large\n    data sets.\n  - Intuitive merging and joining data sets.\n  - Flexible reshaping and pivoting of data sets.\n  - Hierarchical labeling of axes (possible to have multiple labels per tick).\n  - Robust IO tools for loading data from flat files (CSV and delimited),\n    Excel files, databases, and saving/loading data from the ultrafast HDF5\n    format.\n  - Time series-specific functionality: date range generation and frequency\n    conversion, moving window statistics, date shifting and lagging.\n')</code></pre>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Cute, not production
 </div>
 </div>
+<div class="callout-body-container callout-body">
+<p>Auto-installing at import time is a great way to <em>understand</em> <code>meta_path</code>, and a terrible idea in real software: it runs the network and mutates the environment as a side effect of an <code>import</code>, with no version pinning and no reproducibility. Use it to learn; use a real dependency manager to ship.</p>
+</div>
+</div>
+</section>
+<section id="lazy-imports" class="level3">
+<h3 class="anchored" data-anchor-id="lazy-imports">6.3 Lazy imports</h3>
+<p>The create/execute split from §4.3 turns lazy loading into a few lines. The standard library ships <code>importlib.util.LazyLoader</code>, which wraps a loader so the module’s body doesn’t run until its first attribute access:</p>
+<div id="37ff2121" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-06T15:45:26.687335Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-06T15:45:26.687275Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-06T15:45:26.690342Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-06T15:45:26.690061Z&quot;}}" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> lazy_import(name):</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    spec <span class="op">=</span> importlib.util.find_spec(name)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> spec <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ModuleNotFoundError</span>(name)</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    spec.loader <span class="op">=</span> importlib.util.LazyLoader(spec.loader)</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    module <span class="op">=</span> importlib.util.module_from_spec(spec)</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    sys.modules[name] <span class="op">=</span> module</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>    spec.loader.exec_module(module)    <span class="co"># arms lazy loading; the body still hasn't run</span></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> module</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>write_module(<span class="st">"expensive.py"</span>, <span class="st">"""</span></span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a><span class="st">    print("&gt;&gt;&gt; expensive.py body is executing")</span></span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a><span class="st">    ANSWER = 99</span></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span>)</span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>mod <span class="op">=</span> lazy_import(<span class="st">"expensive"</span>)</span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"bound lazily, nothing above printed yet"</span>)</span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a>mod.ANSWER                             <span class="co"># first attribute access triggers execution</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>bound lazily, nothing above printed yet
+&gt;&gt;&gt; expensive.py body is executing</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="20">
+<pre><code>99</code></pre>
+</div>
+</div>
+<p>Nothing printed when we “imported” <code>expensive</code>: the body ran only when we touched <code>mod.ANSWER</code>. Internally, <code>LazyLoader</code> uses exactly the trick you’d invent yourself: it returns a module whose <code>__getattr__</code> triggers the real <code>exec_module</code> on first access, then swaps its own class back to a plain module so subsequent accesses are normal. This is how libraries with heavy optional dependencies keep <code>import</code> cheap.</p>
+</section>
+</section>
+<section id="running-packages-as-programs-__main__-and--m" class="level2">
+<h2 class="anchored" data-anchor-id="running-packages-as-programs-__main__-and--m">7. Running Packages as Programs: <code>__main__</code> and <code>-m</code></h2>
+<p>The <code>__main__</code> module is a special case. It is initialized directly at interpreter startup (like <code>sys</code> and <code>builtins</code>), and <em>how</em> it’s initialized depends on how you launched Python. Run a script and <code>__main__</code> is that script; start a REPL and <code>__main__</code> is the interactive session.</p>
+<p>The <code>-m</code> flag is where this intersects the import system. <code>python -m pkg.mod</code> <strong>imports</strong> <code>pkg</code> (running its <code>__init__.py</code>), then runs <code>pkg.mod</code> as <code>__main__</code>, but with <code>__package__</code> set correctly, so <strong>relative imports work</strong>. Run the same file as a bare path (<code>python path/to/mod.py</code>) and it has no package context, so relative imports fail. This mechanism is behind <code>python -m pdb script.py</code>, <code>python -m http.server</code>, and <code>python -m venv</code>.</p>
+<p>A directory or zip file can itself be executable if it contains a <strong><code>__main__.py</code></strong>: <code>python pkg/</code> (or <code>python -m pkg</code>) looks for <code>pkg/__main__.py</code> and runs it as the entry point, with the relevant <code>__init__.py</code> files still executing first.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/executable-submodules.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure 2: Executable submodules. A __main__.py inside a subpackage turns it into a runnable entry point: python -m spam.test executes spam/test/__main__.py (after running spam/__init__.py and spam/test/__init__.py), while a subpackage without one, like spam.core, is import-only. (Slide from David Beazley’s “Modules and Packages: Live and Let Die!”)"><img src="images/executable-submodules.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="450" alt="Figure 2: Executable submodules. A __main__.py inside a subpackage turns it into a runnable entry point: python -m spam.test executes spam/test/__main__.py (after running spam/__init__.py and spam/test/__init__.py), while a subpackage without one, like spam.core, is import-only. (Slide from David Beazley’s “Modules and Packages: Live and Let Die!”)"></a></p>
+</figure>
+</div>
+<figcaption><strong>Figure 2:</strong> Executable submodules. A <code>__main__.py</code> inside a subpackage turns it into a runnable entry point: <code>python -m spam.test</code> executes <code>spam/test/__main__.py</code> (after running <code>spam/__init__.py</code> and <code>spam/test/__init__.py</code>), while a subpackage without one, like <code>spam.core</code>, is import-only. <em>(Slide from David Beazley’s “Modules and Packages: Live and Let Die!”)</em></figcaption>
+</figure>
+</div>
+<p>Whether <code>__main__.__spec__</code> is set reflects all of this: launched with <code>-m</code> (or as a directory or zip), <code>__spec__</code> holds the corresponding module spec; launched as a plain script or with <code>-c</code>, it is <code>None</code>.</p>
+</section>
+<section id="gotchas-and-failure-modes" class="level2">
+<h2 class="anchored" data-anchor-id="gotchas-and-failure-modes">8. Gotchas and Failure Modes</h2>
+<section id="reload-creates-zombies" class="level3">
+<h3 class="anchored" data-anchor-id="reload-creates-zombies">8.1 <code>reload</code> creates zombies</h3>
+<p><code>importlib.reload</code> does not give you a clean slate. It re-executes the module’s source <em>into the same <code>__dict__</code></em>, so names from the previous version linger, and, worse, any <code>class</code> statement produces a <strong>brand-new class object</strong> while the old instances keep pointing at the old one. The two classes share a name but are not the same object:</p>
+<div id="7f2cbd6a" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-06T15:45:26.691249Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-06T15:45:26.691191Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-06T15:45:26.694752Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-06T15:45:26.694135Z&quot;}}" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>write_module(<span class="st">"widget.py"</span>, <span class="st">"""</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="st">    print("widget.py body ran")</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="st">    class Widget:</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="st">        pass</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span>)</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> widget</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>old <span class="op">=</span> widget.Widget()</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> importlib <span class="im">import</span> <span class="bu">reload</span></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a><span class="bu">reload</span>(widget)                         <span class="co"># re-runs the body into the SAME module dict</span></span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>new <span class="op">=</span> widget.Widget()</span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Same class *name*, but a different class object -&gt; old instances are "zombies":</span></span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>old.<span class="va">__class__</span>, new.<span class="va">__class__</span>, <span class="bu">type</span>(old) <span class="kw">is</span> <span class="bu">type</span>(new), <span class="bu">isinstance</span>(old, widget.Widget)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>widget.py body ran
+widget.py body ran</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="21">
+<pre><code>(widget.Widget, widget.Widget, False, False)</code></pre>
+</div>
+</div>
+<p>Both objects report their class as <code>widget.Widget</code>, yet <code>type(old) is type(new)</code> is <code>False</code> and <code>isinstance(old, widget.Widget)</code> is <code>False</code>: <code>old</code> is now an instance of a class that no longer exists under that name. Reload also does <strong>not</strong> re-import already-loaded submodules (a <code>reload</code>-ed module that does <code>import pandas</code> keeps the old <code>pandas</code>). This is why reload is a REPL convenience, not a hot-swap mechanism: for anything stateful, restart the interpreter.</p>
+</section>
+<section id="prefer-relative-imports-inside-a-package" class="level3">
+<h3 class="anchored" data-anchor-id="prefer-relative-imports-inside-a-package">8.2 Prefer relative imports inside a package</h3>
+<p>Absolute imports (<code>from mypackage.sub import thing</code>) hard-code the package’s name into every import statement. Rename the package and every one of them breaks. Relative imports (<code>from .sub import thing</code>) refer to location, not name, and survive renames. Relative imports must use the <code>from … import …</code> form: <code>import .sub</code> is a syntax error, and a leading dot counts one level per dot (<code>from ..pkg import x</code> goes up two).</p>
+</section>
+<section id="the-cache-is-mutable" class="level3">
+<h3 class="anchored" data-anchor-id="the-cache-is-mutable">8.3 The cache is mutable</h3>
+<p><code>sys.modules</code> is a plain dict, which is powerful and dangerous. Deleting a key forces a genuine reimport next time (a cleaner reset than <code>reload</code>). Aliasing a module under a second name (<code>sys.modules["new"] = sys.modules["old"]</code>) makes both names resolve to the same object. But setting an entry to <code>None</code> poisons that name: Python treats it as “known to be unimportable” and raises <code>ModuleNotFoundError</code>. Reach into the cache deliberately, not casually.</p>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>The import system rewards study out of all proportion to its size. Underneath <code>import x</code> is a four-step pipeline (find, create, execute, bind) dispatched through ordered lists of finders you can read and rewrite at runtime. Once you can see that pipeline, a whole class of problems stops being mysterious: shadowed modules, namespace packages that pick up the wrong directory, reloads that leave broken objects behind, plugin systems that must discover code dynamically.</p>
+<section id="key-takeaways" class="level3">
+<h3 class="anchored" data-anchor-id="key-takeaways">Key Takeaways</h3>
+<ol type="1">
+<li><strong><code>import</code> is a cached pipeline, not a keyword that reads a file.</strong> Find → create → execute → bind, with <code>sys.modules</code> short-circuiting everything after the first import.</li>
+<li><strong>A package is just a module with <code>__path__</code>.</strong> Regular packages (<code>__init__.py</code>) stop the search and win; namespace packages (no <code>__init__.py</code>) merge directories from across <code>sys.path</code>.</li>
+<li><strong><code>sys.path</code> is only the <code>PathFinder</code>’s input.</strong> The real dispatch layer is <code>sys.meta_path</code> → <code>PathFinder</code> → <code>sys.path_hooks</code> → per-entry finder → loader.</li>
+<li><strong>The <code>ModuleSpec</code> is the hub.</strong> Finders produce specs; loaders consume them; create and execute are decoupled, which is what makes lazy loading possible.</li>
+<li><strong>Source is compiled once and cached</strong> as version-tagged bytecode in <code>__pycache__</code>, validated against the source’s timestamp and size.</li>
+<li><strong>Everything is pluggable.</strong> Prepend a finder to intercept imports, append one to catch failures: that’s all tracing, lazy imports, and auto-install really are.</li>
+<li><strong>Know the traps.</strong> <code>reload</code> creates zombie objects, absolute imports are brittle to renames, and writing to <code>sys.modules</code> can corrupt the cache.</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>The machinery is stable
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The spec/finder/loader design has been in place since Python 3.4 and hasn’t fundamentally changed since. Learn it once and it applies to every modern Python: the contents of <code>sys.meta_path</code> vary by environment, but the shape of the pipeline does not.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="references-resources" class="level2">
+<h2 class="anchored" data-anchor-id="references-resources">References &amp; Resources</h2>
+<ul>
+<li><strong>Python documentation.</strong> <a href="https://docs.python.org/3/reference/import.html">The import system</a>. The authoritative reference for everything here.</li>
+<li><strong>Python documentation.</strong> <a href="https://docs.python.org/3/library/importlib.html"><code>importlib</code></a> and <a href="https://docs.python.org/3/library/importlib.html#module-importlib.util"><code>importlib.util</code></a>. The APIs used throughout this post.</li>
+<li><strong>David Beazley.</strong> <a href="https://dabeaz.com/modulepackage/"><em>Modules and Packages: Live and Let Die!</em></a> (PyCon 2015). The talk this post grew out of; the tracing, auto-install, and lazy-import demos trace back to it, and both figures are from its slides.</li>
+<li><strong>PEP 328.</strong> <a href="https://peps.python.org/pep-0328/">Imports: Multi-Line and Absolute/Relative</a>.</li>
+<li><strong>PEP 420.</strong> <a href="https://peps.python.org/pep-0420/">Implicit Namespace Packages</a>.</li>
+<li><strong>PEP 451.</strong> <a href="https://peps.python.org/pep-0451/">A ModuleSpec Type for the Import System</a>. The 3.4 “import reboot” that made specs central.</li>
+<li><strong>PEP 3147.</strong> <a href="https://peps.python.org/pep-3147/">PYC Repository Directories</a>. Why compiled files live in <code>__pycache__</code>.</li>
+<li><strong>Python documentation.</strong> <a href="https://docs.python.org/3/library/venv.html"><code>venv</code></a>.</li>
+</ul>
 
 
 </section>
@@ -1598,6 +1776,38 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 
