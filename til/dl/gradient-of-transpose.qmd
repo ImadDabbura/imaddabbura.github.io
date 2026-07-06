@@ -1,0 +1,24 @@
+---
+title: "Why is the gradient of a transpose another transpose?"
+date: 2026-07-01
+categories: ML/DL
+---
+
+A transpose is not a computation, it is a **permutation of indices**. In the
+forward pass, each element of the input tensor is moved to a new location
+in the output. No values are modified; only their positions change.
+
+During backpropagation, gradients must be routed back to the input elements
+that originally produced each output element. Since the forward pass permuted
+the elements, the backward pass must apply the **inverse permutation** to the
+gradients. The transpose operation is its own inverse:
+
+$$(X^T)^T = X$$
+
+Therefore, $$\frac{\partial L}{\partial X} = \left(\frac{\partial L}{\partial X^T}\right)^T$$
+
+More generally, **the backward of any data movement operation (transpose, permute,
+reshape, gather, etc.) is simply the inverse data movement applied to the
+gradients**. For example, the backward of the _stack_ operation is the _split_
+operation and vice versa. No new numerical computation is performed: the backward pass merely
+routes gradients back to the locations from which the forward values originated.
