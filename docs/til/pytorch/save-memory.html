@@ -458,7 +458,10 @@ ga('send', {
 
 
 
-<p>To avoid allocating new memory when operating on tensors, we can either: - Do inplace operations</p>
+<p>To avoid allocating new memory when operating on tensors, we can either:</p>
+<ul>
+<li>Do inplace operations</li>
+</ul>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> torch.randn(<span class="dv">1000</span>, <span class="dv">1000</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>before <span class="op">=</span> <span class="bu">id</span>(x)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>x.add_(<span class="dv">100</span>)</span>
