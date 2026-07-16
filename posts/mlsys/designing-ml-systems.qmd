@@ -7,7 +7,7 @@ date: "2025-01-29"
 date-modified: "2026-07-14"
 categories: [ML Systems]
 status: growing
-draft: true
+draft: false
 ---
 
 ## Introduction
@@ -26,7 +26,7 @@ But production failures are not a grab bag. They have exactly one shape, and onc
 
 None of these is a modelling problem, and none is visible in a holdout metric. They are all versions of the same underlying failure.
 
-Two things went into this guide: the canon, mostly Chip Huyen's [*Designing Machine Learning Systems*](https://www.oreilly.com/library/view/designing-machine-learning/9781098107956/) and Cathy Chen's [*Reliable Machine Learning*](https://www.oreilly.com/library/view/reliable-machine-learning/9781098106218/), which I am not trying to replace and will cite as I go; and a decade of building these systems across smart devices, healthcare, and enterprise AI, which is where the scars come from. What I have tried to add is the derivations. Where the canon hands you a rule of thumb, I show you where it comes from, because a rule you can derive is a rule you also know when to break. And where I expected one thing and the measurement said another, I say so.
+This guide comes from two places: a decade of leading and designing ML systems across smart devices, healthcare, and enterprise AI, which is where the scars come from; and years of reading widely and working the ideas through from first principles until they were my own. What I have tried to add is the derivations. Where the standard advice hands you a rule of thumb, I show you where it comes from, because a rule you can derive is a rule you also know when to break. And where I expected one thing and the measurement said another, I say so.
 
 The next section works out the frame. Every section after it is an attack on one of the three gaps that frame names. By the end you should be able to:
 
@@ -354,7 +354,7 @@ Two things stand out in that figure, and the second matters more:
 2. **The basin is flat.** Anywhere from roughly 0.002 to 0.05 is nearly optimal. You do not need to compute $t^{*}$ precisely. You need to not be at 0.5.
 
 ::: {.callout-warning}
-## This is the entire reason calibration matters
+## Calibration is a precondition, not a polish step
 The derivation assumed $p$ is a *calibrated probability*: when the model says 0.01, the event happens 1% of the time. If the model is overconfident, $t^{*}$ is computed against a number that does not mean what it says, and the whole thing collapses.
 
 Modern neural networks are systematically overconfident ([Guo et al., 2017](https://arxiv.org/abs/1706.04599)). So calibration is not a finishing touch you apply if there is time. It is the precondition for making a cost-optimal decision at all, and it is why [the calibration section](#sec-calibration) exists.
@@ -468,7 +468,7 @@ You compute `avg_session_length` in a Pandas notebook for training. Someone reim
 There is exactly one robust fix: the training path and the serving path must execute **the same code**, not two separate implementations that are meant to agree.
 
 ::: {.callout-note}
-## A digression on feature stores, since I have been circling them for three sections
+## What a feature store actually gives you
 This is what feature stores (Feast, Tecton) are *for*, and they are not just a database with a new label on it. A feature store's actual contribution is that it makes the feature definition a single artifact with two execution paths (a batch one for training, a low-latency one for serving) generated from one definition, plus point-in-time-correct joins so that when you build a training set you get the feature values *as they were at the prediction timestamp*, not as they are now.
 
 That second property is a leakage prevention mechanism ([temporal leakage](#sec-temporal-leakage)), and it is the one people underrate. Most teams can hand-roll the first property. Almost nobody hand-rolls point-in-time correctness without getting it wrong at least once.
@@ -590,7 +590,7 @@ These catch spurious correlations that validation metrics reward.
 
 The counterintuitive part is that in an online system, **feature computation usually dominates latency, not model inference.** The model is a few matrix multiplies; the features need a fan-out to several services and a cache miss, which is the [fan-out problem](#sec-tail) again. Optimizing the model while features are the bottleneck is a common and costly mistake, and the subject of a [separate post on finding the constraint that governs a system](improving-mlsys-theory-of-constraint.qmd).
 
-So: **hybrid**. Precompute the expensive, slow-moving features in batch (user embeddings, 90-day aggregates). Compute the cheap, fast-moving ones online (current session, current context). Join at request time. This is what most mature systems converge on, and it is why the [feature store digression](#sec-skew) exists.
+So: **hybrid**. Precompute the expensive, slow-moving features in batch (user embeddings, 90-day aggregates). Compute the cheap, fast-moving ones online (current session, current context). Join at request time. This is what most mature systems converge on, and keeping the batch and online paths consistent is exactly what [feature stores](#sec-skew) are for.
 
 ### Compression {#sec-compression}
 
@@ -614,7 +614,7 @@ The pattern converging in practice is **partitioning**: a small model on device 
 
 ## After Deployment: Monitoring, Drift, and Retraining {#sec-after-deployment}
 
-Deployment is the beginning of the system's life, not the end of the project. That is why this is the longest section in the post.
+Deployment is the beginning of the system's life, not the end of the project. Most of what determines whether a model succeeds happens here, after the metrics on the holdout set stop mattering.
 
 ### ML Systems Fail Silently {#sec-silent-failures}
 
@@ -664,7 +664,7 @@ Drift is the question of *which factor moved*. The two factorizations enumerate 
 That third row is the dangerous one, and the table explains why in a way a list cannot: no amount of reweighting or recalibration can repair a function that is estimating the wrong thing. Covariate and label shift are bookkeeping problems. Concept drift is an obsolescence problem.
 
 ::: {.callout-warning}
-## Before you conclude the world moved, check that you did not move
+## Rule out your own bug before calling it drift
 Most "drift" is a bug. A pipeline change, a config rollout, a new app version that reorders a form, an upstream schema migration. All of these look exactly like drift in your monitoring.
 
 Check your own deploy log before you retrain. Retraining on corrupted features does not fix anything and it launders the bug into the model, where it is much harder to find.

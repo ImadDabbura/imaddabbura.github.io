@@ -166,7 +166,6 @@ background-size: cover;
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <link href="https://fonts.googleapis.com/css2?family=Petrona:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Red+Hat+Text:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;display=swap" rel="stylesheet">
-<meta name="quarto:status" content="draft">
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -375,7 +374,7 @@ window.Quarto = {
   </script>
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top quarto-banner"><div id="quarto-draft-alert" class="alert alert-warning"><i class="bi bi-pencil-square"></i>Draft</div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
@@ -608,7 +607,7 @@ window.Quarto = {
 <li>Shipping the default 0.5 decision threshold is a silent assertion that a false alarm costs exactly as much as a missed fraud. In a simulation of two million transactions, that assertion costs <strong>6.3x more per transaction</strong> than the threshold the cost matrix implies (<a href="#sec-threshold">the arithmetic is here</a>).</li>
 </ul>
 <p>None of these is a modelling problem, and none is visible in a holdout metric. They are all versions of the same underlying failure.</p>
-<p>Two things went into this guide: the canon, mostly Chip Huyen’s <a href="https://www.oreilly.com/library/view/designing-machine-learning/9781098107956/"><em>Designing Machine Learning Systems</em></a> and Cathy Chen’s <a href="https://www.oreilly.com/library/view/reliable-machine-learning/9781098106218/"><em>Reliable Machine Learning</em></a>, which I am not trying to replace and will cite as I go; and a decade of building these systems across smart devices, healthcare, and enterprise AI, which is where the scars come from. What I have tried to add is the derivations. Where the canon hands you a rule of thumb, I show you where it comes from, because a rule you can derive is a rule you also know when to break. And where I expected one thing and the measurement said another, I say so.</p>
+<p>This guide comes from two places: a decade of leading and designing ML systems across smart devices, healthcare, and enterprise AI, which is where the scars come from; and years of reading widely and working the ideas through from first principles until they were my own. What I have tried to add is the derivations. Where the standard advice hands you a rule of thumb, I show you where it comes from, because a rule you can derive is a rule you also know when to break. And where I expected one thing and the measurement said another, I say so.</p>
 <p>The next section works out the frame. Every section after it is an attack on one of the three gaps that frame names. By the end you should be able to:</p>
 <ol type="1">
 <li>Derive a tail-latency budget from your architecture instead of guessing one</li>
@@ -1096,7 +1095,7 @@ window.Quarto = {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>This is the entire reason calibration matters
+<span class="screen-reader-only">Warning</span>Calibration is a precondition, not a polish step
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -1218,7 +1217,7 @@ window.Quarto = {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>A digression on feature stores, since I have been circling them for three sections
+<span class="screen-reader-only">Note</span>What a feature store actually gives you
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -1319,7 +1318,7 @@ window.Quarto = {
 <p><strong>Batch prediction</strong> precomputes everything on a schedule and serves from a lookup table. No latency problem, arbitrary model complexity, cheap serving. Three costs: storage grows with users × items, most of what you compute is never used, and every prediction is stale by up to one cycle. Staleness is worse than it sounds, because intent moves fast. A user shopping for a laptop this morning may be shopping for a monitor now, and a nightly batch cannot reflect that.</p>
 <p><strong>Online prediction</strong> computes on demand. Always fresh, nothing wasted, and now you are inside a latency budget.</p>
 <p>The counterintuitive part is that in an online system, <strong>feature computation usually dominates latency, not model inference.</strong> The model is a few matrix multiplies; the features need a fan-out to several services and a cache miss, which is the <a href="#sec-tail">fan-out problem</a> again. Optimizing the model while features are the bottleneck is a common and costly mistake, and the subject of a <a href="../../posts/mlsys/improving-mlsys-theory-of-constraint.html">separate post on finding the constraint that governs a system</a>.</p>
-<p>So: <strong>hybrid</strong>. Precompute the expensive, slow-moving features in batch (user embeddings, 90-day aggregates). Compute the cheap, fast-moving ones online (current session, current context). Join at request time. This is what most mature systems converge on, and it is why the <a href="#sec-skew">feature store digression</a> exists.</p>
+<p>So: <strong>hybrid</strong>. Precompute the expensive, slow-moving features in batch (user embeddings, 90-day aggregates). Compute the cheap, fast-moving ones online (current session, current context). Join at request time. This is what most mature systems converge on, and keeping the batch and online paths consistent is exactly what <a href="#sec-skew">feature stores</a> are for.</p>
 </section>
 <section id="sec-compression" class="level3">
 <h3 class="anchored" data-anchor-id="sec-compression">Compression</h3>
@@ -1341,7 +1340,7 @@ window.Quarto = {
 </section>
 <section id="sec-after-deployment" class="level2">
 <h2 class="anchored" data-anchor-id="sec-after-deployment">After Deployment: Monitoring, Drift, and Retraining</h2>
-<p>Deployment is the beginning of the system’s life, not the end of the project. That is why this is the longest section in the post.</p>
+<p>Deployment is the beginning of the system’s life, not the end of the project. Most of what determines whether a model succeeds happens here, after the metrics on the holdout set stop mattering.</p>
 <section id="sec-silent-failures" class="level3">
 <h3 class="anchored" data-anchor-id="sec-silent-failures">ML Systems Fail Silently</h3>
 <p>Ordinary software failures announce themselves. Servers crash, requests 500, alerts fire. Handle these with ordinary SRE practice: redundancy, health checks, circuit breakers, gradual rollout. If you do not have these, ML-specific failures are not your biggest problem.</p>
@@ -1452,7 +1451,7 @@ P(X, Y) \;=\; \underbrace{P(Y \mid X)}_{\text{concept}} \cdot \underbrace{P(X)}_
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>Before you conclude the world moved, check that you did not move
+<span class="screen-reader-only">Warning</span>Rule out your own bug before calling it drift
 </div>
 </div>
 <div class="callout-body-container callout-body">
