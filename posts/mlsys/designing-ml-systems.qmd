@@ -554,6 +554,8 @@ The [threshold derivation](#sec-threshold) already made the case: **the cost-opt
 
 Check with a reliability diagram: bucket predictions by predicted probability, and plot predicted against observed frequency. A calibrated model sits on the diagonal.
 
+![**Figure 4:** A reliability diagram. The calibrated model (green) tracks the diagonal: when it says 0.7, the event happens 70% of the time. The overconfident model (red) is flatter, so a stated 0.9 corresponds to a true 72%. The threshold rule in the previous section is computed against the x-axis; only the green model makes it safe.](images/reliability-diagram.svg)
+
 Fix with **Platt scaling** (fit a logistic regression on the model's outputs) or **isotonic regression** (fit a monotonic step function; more flexible, needs more data). Fit either on a held-out set, never on training data.
 
 Modern networks tend to be overconfident, and the effect got *worse* as models got bigger and more accurate ([Guo et al., 2017](https://arxiv.org/abs/1706.04599)). Accuracy and calibration are separate properties. You have to check both.
@@ -642,6 +644,17 @@ You need all four, and the value is in the connections between them.
 
 A drop in the business metric traces to a shift in the prediction distribution, which traces to a feature whose missing-rate jumped, which traces to an upstream schema change that shipped on Tuesday. With only the business layer, you can tell something is wrong but not what. With only the system layer, every dashboard is green while the model quietly fails.
 
+```{mermaid}
+graph TB
+    S["System / pipeline<br/>schema change ships (root cause)"]
+    D["Data layer<br/>feature missing-rate jumps"]
+    M["Model layer<br/>prediction distribution shifts"]
+    B["Business layer<br/>conversion drops (what you see first)"]
+    S --> D --> M --> B
+```
+
+Causation runs bottom to top: a low-level change propagates up into a business symptom. Detection runs the other way: you notice the business number first and trace back down. A single layer gives you one end of that chain; you need all four to connect them.
+
 ### Why There Are Exactly Three Kinds of Drift {#sec-drift}
 
 Mismatch 3 was "$D_{\text{serve}}$ moved." The question is *moved how?* We factorize the **data** distribution, which exists whether or not your model estimates it, so none of this depends on a probabilistic model.
@@ -660,6 +673,8 @@ Drift is the question of *which factor moved*. The two factorizations enumerate 
 | **Covariate shift** | $P(X)$ | $P(Y \mid X)$ | The learned function is still *correct*, you are just evaluating it in new places | Reweight training data; retrain if the new inputs fall outside the old support |
 | **Label shift** | $P(Y)$ | $P(X \mid Y)$ | Ranking is still correct; the posterior is off by exactly the prior ratio | **Recalibrate.** The model is fine |
 | **Concept drift** | $P(Y \mid X)$ | (nothing you can lean on) | The relationship you learned is now false | **Retrain.** Nothing else works |
+
+![**Figure 5:** The three shifts, with the same two classes and decision boundary in each panel. Covariate shift moves the input region (the boundary is still right, but serving now lands where training was sparse). Label shift changes the class balance (the ranking is fine, the base rate is not). Concept drift moves the boundary itself (the shaded band is where labels have flipped). Only the third invalidates the learned function.](images/drift-types.svg)
 
 That third row is the dangerous one, and the table explains why in a way a list cannot: no amount of reweighting or recalibration can repair a function that is estimating the wrong thing. Covariate and label shift are bookkeeping problems. Concept drift is an obsolescence problem.
 

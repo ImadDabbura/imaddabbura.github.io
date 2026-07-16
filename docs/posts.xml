@@ -2064,6 +2064,12 @@ font-style: inherit;">None</span>)</span></code></pre></div></div>
 <h3 class="anchored" data-anchor-id="sec-calibration">Calibration</h3>
 <p>The threshold derivation already made the case: <strong>the cost-optimal threshold is only meaningful on calibrated probabilities.</strong> If your model says 0.70 and the event happens 40% of the time, then every downstream decision keyed to that number is wrong, and the model’s ranking being excellent does not save you.</p>
 <p>Check with a reliability diagram: bucket predictions by predicted probability, and plot predicted against observed frequency. A calibrated model sits on the diagonal.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/reliability-diagram.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Figure 4: A reliability diagram. The calibrated model (green) tracks the diagonal: when it says 0.7, the event happens 70% of the time. The overconfident model (red) is flatter, so a stated 0.9 corresponds to a true 72%. The threshold rule in the previous section is computed against the x-axis; only the green model makes it safe."><img src="https://imaddabbura.github.io/posts/mlsys/images/reliability-diagram.svg" class="img-fluid figure-img" alt="Figure 4: A reliability diagram. The calibrated model (green) tracks the diagonal: when it says 0.7, the event happens 70% of the time. The overconfident model (red) is flatter, so a stated 0.9 corresponds to a true 72%. The threshold rule in the previous section is computed against the x-axis; only the green model makes it safe."></a></p>
+<figcaption><strong>Figure 4:</strong> A reliability diagram. The calibrated model (green) tracks the diagonal: when it says 0.7, the event happens 70% of the time. The overconfident model (red) is flatter, so a stated 0.9 corresponds to a true 72%. The threshold rule in the previous section is computed against the x-axis; only the green model makes it safe.</figcaption>
+</figure>
+</div>
 <p>Fix with <strong>Platt scaling</strong> (fit a logistic regression on the model’s outputs) or <strong>isotonic regression</strong> (fit a monotonic step function; more flexible, needs more data). Fit either on a held-out set, never on training data.</p>
 <p>Modern networks tend to be overconfident, and the effect got <em>worse</em> as models got bigger and more accurate (<a href="https://arxiv.org/abs/1706.04599">Guo et al., 2017</a>). Accuracy and calibration are separate properties. You have to check both.</p>
 </section>
@@ -2168,6 +2174,24 @@ font-style: inherit;">None</span>)</span></code></pre></div></div>
 </tbody>
 </table>
 <p>A drop in the business metric traces to a shift in the prediction distribution, which traces to a feature whose missing-rate jumped, which traces to an upstream schema change that shipped on Tuesday. With only the business layer, you can tell something is wrong but not what. With only the system layer, every dashboard is green while the model quietly fails.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">graph TB
+    S["System / pipeline&lt;br/&gt;schema change ships (root cause)"]
+    D["Data layer&lt;br/&gt;feature missing-rate jumps"]
+    M["Model layer&lt;br/&gt;prediction distribution shifts"]
+    B["Business layer&lt;br/&gt;conversion drops (what you see first)"]
+    S --&gt; D --&gt; M --&gt; B
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>Causation runs bottom to top: a low-level change propagates up into a business symptom. Detection runs the other way: you notice the business number first and trace back down. A single layer gives you one end of that chain; you need all four to connect them.</p>
 </section>
 <section id="sec-drift" class="level3">
 <h3 class="anchored" data-anchor-id="sec-drift">Why There Are Exactly Three Kinds of Drift</h3>
@@ -2216,6 +2240,12 @@ font-style: inherit;">None</span>)</span></code></pre></div></div>
 </tr>
 </tbody>
 </table>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/drift-types.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Figure 5: The three shifts, with the same two classes and decision boundary in each panel. Covariate shift moves the input region (the boundary is still right, but serving now lands where training was sparse). Label shift changes the class balance (the ranking is fine, the base rate is not). Concept drift moves the boundary itself (the shaded band is where labels have flipped). Only the third invalidates the learned function."><img src="https://imaddabbura.github.io/posts/mlsys/images/drift-types.svg" class="img-fluid figure-img" alt="Figure 5: The three shifts, with the same two classes and decision boundary in each panel. Covariate shift moves the input region (the boundary is still right, but serving now lands where training was sparse). Label shift changes the class balance (the ranking is fine, the base rate is not). Concept drift moves the boundary itself (the shaded band is where labels have flipped). Only the third invalidates the learned function."></a></p>
+<figcaption><strong>Figure 5:</strong> The three shifts, with the same two classes and decision boundary in each panel. Covariate shift moves the input region (the boundary is still right, but serving now lands where training was sparse). Label shift changes the class balance (the ranking is fine, the base rate is not). Concept drift moves the boundary itself (the shaded band is where labels have flipped). Only the third invalidates the learned function.</figcaption>
+</figure>
+</div>
 <p>That third row is the dangerous one, and the table explains why in a way a list cannot: no amount of reweighting or recalibration can repair a function that is estimating the wrong thing. Covariate and label shift are bookkeeping problems. Concept drift is an obsolescence problem.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
