@@ -14942,17 +14942,23 @@ font-style: inherit;">## B x T_dec x vocab_sz</span></span></code></pre></div></
 
 
 <div class="status-badge-container" style="margin-bottom: 1rem;"><span class="status-badge evergreen">evergreen</span></div>
-<section id="why-implement-an-lstm-from-scratch" class="level2">
-<h2 class="anchored" data-anchor-id="why-implement-an-lstm-from-scratch">Why Implement an LSTM from Scratch?</h2>
-<p>If you’ve used <code>nn.LSTM</code> in PyTorch, you’ve seen it work. But <em>how</em> does it decide what to remember and what to forget? Why does it need four gates instead of one? And why is it so much better than a vanilla RNN at handling long sequences?</p>
-<p>The best way to answer these questions is to build one yourself. In this post, we’ll start with the problem that motivated LSTMs (vanishing gradients), build up the intuition for how they solve it, then implement both <code>LSTMCell</code> and a multi-layer <code>LSTM</code> from scratch in PyTorch, verifying each against the official implementation down to floating-point precision.</p>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>A plain RNN cannot learn long-range dependencies. During backpropagation, the gradient that links a distant pair of tokens shrinks geometrically with the distance between them: across 100 steps, with a dominant eigenvalue of 0.9, by a factor of about <img src="https://latex.codecogs.com/png.latex?0.9%5E%7B100%7D%20%5Capprox%203%20%5Ctimes%2010%5E%7B-5%7D">. The influence of early tokens is gone, and training cannot recover it. This is the vanishing gradient problem.</p>
+<p>The LSTM (<a href="https://www.bioinf.jku.at/publications/older/2604.pdf">Hochreiter and Schmidhuber, 1997</a>) fixes it by adding a separate memory channel that is updated additively rather than overwritten, so the gradient can pass through it without decaying. This is the residual connection from ResNets, applied across time instead of depth, and the same idea underlies the residual stream in Transformers. The cost is more machinery: two state vectors and four gates in place of one state and none.</p>
+<p>This post implements <code>LSTMCell</code> and a multi-layer <code>LSTM</code> from scratch and verifies both against PyTorch to floating-point precision. We start from the vanishing gradient, use it to explain the two states and four gates, then write and check the code.</p>
 </section>
 <section id="the-vanishing-gradient-problem" class="level2">
 <h2 class="anchored" data-anchor-id="the-vanishing-gradient-problem">The Vanishing Gradient Problem</h2>
-<p><strong>Long Short-Term Memory (LSTM)</strong> is a recurrent neural network architecture introduced by <a href="https://www.bioinf.jku.at/publications/older/2604.pdf">Hochreiter and Schmidhuber (1997)</a> to solve the <strong>vanishing gradient problem</strong>: the central failure mode of vanilla RNNs on long sequences.</p>
-<p>To understand why LSTMs exist, we first need to understand what goes wrong. In a vanilla RNN, the hidden state is <em>completely overwritten</em> at every time step:</p>
+<p>The decay comes from repeated multiplication by the same weight. In a vanilla RNN, the hidden state is <em>completely overwritten</em> at every time step:</p>
 <p><img src="https://latex.codecogs.com/png.latex?h_t%20=%20%5Ctanh(W_%7Bhh%7D%20%5Ccdot%20h_%7Bt-1%7D%20+%20W_%7Bxh%7D%20%5Ccdot%20x_t%20+%20b)"></p>
 <p>During backpropagation, the gradient of the loss with respect to an early hidden state <img src="https://latex.codecogs.com/png.latex?h_1"> must pass through the <img src="https://latex.codecogs.com/png.latex?%5Ctanh"> nonlinearity and the weight matrix <img src="https://latex.codecogs.com/png.latex?W_%7Bhh%7D"> at <em>every single time step</em> between <img src="https://latex.codecogs.com/png.latex?h_T"> and <img src="https://latex.codecogs.com/png.latex?h_1">. If the sequence has 100 tokens, the gradient is multiplied by <img src="https://latex.codecogs.com/png.latex?W_%7Bhh%7D"> roughly 100 times. If the dominant eigenvalue of <img src="https://latex.codecogs.com/png.latex?W_%7Bhh%7D"> is even slightly less than 1 (say 0.9), the gradient shrinks by a factor of <img src="https://latex.codecogs.com/png.latex?0.9%5E%7B100%7D%20%5Capprox%200.00003">. The signal from early tokens effectively disappears.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/vanishing-gradient-decay.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure 1: Repeated multiplication by the recurrent weight. Back-propagating through n time steps multiplies the gradient by W_{hh} roughly n times, so the decay is governed by its dominant eigenvalue \lambda. At \lambda = 0.9 the signal from 100 steps back is scaled by 0.9^{100} \approx 3 \times 10^{-5} and vanishes (blue); at \lambda = 1.1 it explodes (red). The LSTM holds the effective factor near 1 (green), which is the whole point of the next section."><img src="https://imaddabbura.github.io/posts/nlp/images/vanishing-gradient-decay.svg" class="img-fluid figure-img" alt="Figure 1: Repeated multiplication by the recurrent weight. Back-propagating through n time steps multiplies the gradient by W_{hh} roughly n times, so the decay is governed by its dominant eigenvalue \lambda. At \lambda = 0.9 the signal from 100 steps back is scaled by 0.9^{100} \approx 3 \times 10^{-5} and vanishes (blue); at \lambda = 1.1 it explodes (red). The LSTM holds the effective factor near 1 (green), which is the whole point of the next section."></a></p>
+<figcaption><strong>Figure 1:</strong> Repeated multiplication by the recurrent weight. Back-propagating through <img src="https://latex.codecogs.com/png.latex?n"> time steps multiplies the gradient by <img src="https://latex.codecogs.com/png.latex?W_%7Bhh%7D"> roughly <img src="https://latex.codecogs.com/png.latex?n"> times, so the decay is governed by its dominant eigenvalue <img src="https://latex.codecogs.com/png.latex?%5Clambda">. At <img src="https://latex.codecogs.com/png.latex?%5Clambda%20=%200.9"> the signal from 100 steps back is scaled by <img src="https://latex.codecogs.com/png.latex?0.9%5E%7B100%7D%20%5Capprox%203%20%5Ctimes%2010%5E%7B-5%7D"> and vanishes (blue); at <img src="https://latex.codecogs.com/png.latex?%5Clambda%20=%201.1"> it explodes (red). The LSTM holds the effective factor near 1 (green), which is the whole point of the next section.</figcaption>
+</figure>
+</div>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -15008,14 +15014,12 @@ font-style: inherit;">## B x T_dec x vocab_sz</span></span></code></pre></div></
 </table>
 <p>The cell state update is <strong>additive</strong>: when the forget gate <img src="https://latex.codecogs.com/png.latex?f_t"> is close to 1 and the input gate <img src="https://latex.codecogs.com/png.latex?i_t"> is close to 0, the cell state passes through <em>unchanged</em>: <img src="https://latex.codecogs.com/png.latex?c_t%20%5Capprox%20c_%7Bt-1%7D">. Gradients flow backward through time with minimal decay: no weight matrix or nonlinearity in the way.</p>
 <p>If this looks familiar, it should. It’s the same principle behind <strong>residual connections</strong> in ResNets. In a ResNet, each layer computes <img src="https://latex.codecogs.com/png.latex?y%20=%20F(x)%20+%20x">: the input passes through unchanged, and the layer only learns the <em>residual</em>. The LSTM cell state works the same way, but across <strong>time instead of depth</strong>: the previous cell state passes through (scaled by <img src="https://latex.codecogs.com/png.latex?f_t">), and the network adds a residual update (<img src="https://latex.codecogs.com/png.latex?i_t%20%5Codot%20g_t">). Both create a gradient highway. ResNets made it possible to train 100+ layer networks; the LSTM cell state makes it possible to learn dependencies across 100+ time steps. Same insight, different axis.</p>
-<p align="center">
-<img src="https://imaddabbura.github.io/posts/nlp/images/lstm-cell.jpeg" style="width: 500px;"><br>
-
-</p><center>
-<u><b><font color="00b7e4">Figure 1:</font></b></u> The LSTM cell. The horizontal line at the top is the cell state: the “highway” through time. The four yellow boxes (<img src="https://latex.codecogs.com/png.latex?%5Csigma,%20%5Csigma,%20%5Ctanh,%20%5Csigma">) are the forget, input, cell, and output gates respectively. The cell state is updated additively (the ⊕ node), while the gates use element-wise multiplication (⊗) to control information flow.
-</center>
-
-<p></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/lstm-cell.jpeg" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure 2: The LSTM cell. The horizontal line along the top is the cell state, the “highway” through time. The four gates (\sigma, \sigma, \tanh, \sigma) are the forget, input, cell, and output gates. The cell state is updated additively (the \oplus node), while the gates use element-wise multiplication (\otimes) to control information flow."><img src="https://imaddabbura.github.io/posts/nlp/images/lstm-cell.jpeg" class="img-fluid figure-img" width="500" alt="Figure 2: The LSTM cell. The horizontal line along the top is the cell state, the “highway” through time. The four gates (\sigma, \sigma, \tanh, \sigma) are the forget, input, cell, and output gates. The cell state is updated additively (the \oplus node), while the gates use element-wise multiplication (\otimes) to control information flow."></a></p>
+<figcaption><strong>Figure 2:</strong> The LSTM cell. The horizontal line along the top is the cell state, the “highway” through time. The four gates (<img src="https://latex.codecogs.com/png.latex?%5Csigma,%20%5Csigma,%20%5Ctanh,%20%5Csigma">) are the forget, input, cell, and output gates. The cell state is updated additively (the <img src="https://latex.codecogs.com/png.latex?%5Coplus"> node), while the gates use element-wise multiplication (<img src="https://latex.codecogs.com/png.latex?%5Cotimes">) to control information flow.</figcaption>
+</figure>
+</div>
 <section id="why-two-states" class="level3">
 <h3 class="anchored" data-anchor-id="why-two-states">Why Two States?</h3>
 <p>A vanilla RNN has a single hidden state that must do <em>everything</em>: store long-term memory, carry short-term context, and produce the output that downstream layers consume. That’s too many jobs for one vector: optimizing the hidden state for the current prediction destroys the long-term information stored in it.</p>
@@ -15193,7 +15197,7 @@ font-style: inherit;">## B x T_dec x vocab_sz</span></span></code></pre></div></
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Even though we describe four separate gates, in practice we compute them all in <strong>one matrix multiplication</strong> by concatenating the four weight matrices into a single <code>4 * hidden_size</code> matrix. We then split the result into four chunks. This is much faster because it replaces four small matmuls with one large one, better utilizing GPU parallelism and memory bandwidth.</p>
+<p>Even though we describe four separate gates, in practice we compute them all in <strong>one matrix multiplication</strong> by concatenating the four weight matrices into a single <code>4 * hidden_size</code> matrix. We then split the result into four chunks. This is much faster because it replaces four small matmuls with one large one, better using GPU parallelism and memory bandwidth.</p>
 </div>
 </div>
 </section>
@@ -15860,9 +15864,9 @@ font-style: inherit;">-</span> c_t.detach().numpy()),</span>
 <section id="key-takeaways" class="level3">
 <h3 class="anchored" data-anchor-id="key-takeaways">Key Takeaways</h3>
 <ol type="1">
-<li><p><strong>LSTMs solve vanishing gradients through additive cell state updates.</strong> The forget gate can stay close to 1, allowing gradients to flow through many time steps without exponential decay. This is fundamentally different from vanilla RNNs, where the hidden state is completely overwritten at each step.</p></li>
-<li><p><strong>Four gates, one matrix multiplication.</strong> The input, forget, cell, and output gates are computed together in a single fused operation, then split, a practical optimization that significantly improves throughput by better utilizing hardware parallelism.</p></li>
-<li><p><strong>Sequential processing is the fundamental bottleneck.</strong> The output at time <img src="https://latex.codecogs.com/png.latex?t"> depends on the hidden state from <img src="https://latex.codecogs.com/png.latex?t-1">, making parallelization across time steps impossible. This is the limitation that motivated the Transformer’s self-attention mechanism.</p></li>
+<li><p><strong>LSTMs solve vanishing gradients through additive cell state updates.</strong> The forget gate can stay close to 1, so gradients flow through many time steps without exponential decay. This is fundamentally different from vanilla RNNs, where the hidden state is completely overwritten at each step.</p></li>
+<li><p><strong>Four gates, one matrix multiplication.</strong> The input, forget, cell, and output gates are computed together in a single fused operation, then split, a practical optimization that improves throughput by better using hardware parallelism.</p></li>
+<li><p><strong>Sequential processing is the fundamental bottleneck.</strong> The output at time <img src="https://latex.codecogs.com/png.latex?t"> depends on the hidden state from <img src="https://latex.codecogs.com/png.latex?t-1">, so parallelization across time steps is impossible. This is the limitation that motivated the Transformer’s self-attention mechanism.</p></li>
 <li><p><strong>Truncated BPTT is essential for long sequences.</strong> Detaching hidden states between batches prevents gradient computation from spanning the entire sequence, reducing both memory usage and gradient instability.</p></li>
 <li><p><strong>Memory layout matters.</strong> Using sequence-first tensors (<code>T × B × D</code>) ensures contiguous memory access at each time step, avoiding hidden performance penalties from implicit copies.</p></li>
 </ol>
