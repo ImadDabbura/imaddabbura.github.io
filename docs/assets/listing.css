@@ -134,6 +134,20 @@ main#quarto-document-content > p,
 
 /*-- Dark mode handled by theme-dark.scss --*/
 
+/*-- Book covers: force a uniform 2:3 box regardless of source ratio --*/
+/* Quarto drops the height attribute and .img-fluid forces height:auto, so
+   each cover otherwise keeps its own ratio. aspect-ratio fixes the box shape
+   (responsive via width), object-fit:cover crops non-2:3 covers to fill it. */
+img[src^="reading-list/"] {
+  width: 300px;
+  max-width: 100%;
+  aspect-ratio: 2 / 3;
+  height: auto;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 4px;
+}
+
 /*-- Pagination --*/
 .page-link {
   color: var(--spc-primary, #002642);
