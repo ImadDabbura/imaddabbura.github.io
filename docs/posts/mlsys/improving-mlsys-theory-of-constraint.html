@@ -561,15 +561,14 @@ window.Quarto = {
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>You burn six months “optimizing.” Swap in transformers. Squeeze another +<span class="math inline">\(0.5\%\)</span> accuracy. Rewrite the feature pipeline. Add a shiny GPU cluster. And still: alert fatigue, missed incidents, and latency that kills real-time response.</p>
-<p>This pattern shows up everywhere in production ML. Fraud teams add transaction features that never reduce false positives. Recommendation engines get fancier models that don’t move click-through rates. Forecasting pipelines gain complexity without improving planning accuracy. Parts get optimized. Systems don’t.</p>
+<p>This pattern shows up everywhere in production ML. Fraud teams add transaction features that never reduce false positives. Recommendation engines get fancier models that don’t move click-through rates. Forecasting pipelines gain complexity without improving planning accuracy. Parts get optimized with the hope that the full system would improve, which almost never happened.</p>
 <p>This post gives you a systematic method to break out of the cycle. It’s based on the Theory of Constraints, originally developed for manufacturing, but a natural fit for ML systems. We’ll use a network anomaly detection system as our running example, but the playbook works for any ML system in production.</p>
 </section>
 <section id="the-theory-of-constraints-in-brief" class="level2">
 <h2 class="anchored" data-anchor-id="the-theory-of-constraints-in-brief">The Theory of Constraints in Brief</h2>
 <p>The traditional approach to improving ML systems is based on a seemingly logical but flawed assumption: if you improve each component, the whole system improves. It doesn’t. <em>The sum of all local improvements doesn’t give you a system improvement.</em></p>
 <p>The breakthrough insight, from Eli Goldratt’s <em>The Goal</em> (1984) and made operational by Alan Barnard’s pairing method, is simple: every system has exactly one constraint at any given moment, the single resource or stage you don’t have enough of. That constraint sets the ceiling for the entire system. Improving anything else delivers diminishing-to-zero returns.</p>
-<p>A factory line can only produce as fast as its slowest machine. If the paint booth takes 10 minutes per car while everything else takes 2 minutes, buying faster welding robots changes nothing. You have to speed up the paint booth, or the line will forever produce one car every 10 minutes.</p>
-<p>In a serial pipeline (which is what most ML systems are), this is even starker than it sounds. Throughput equals the throughput of the slowest stage. If your feature extraction handles 30K records/sec and everything else handles 100K, the system does 30K. Making inference 10x faster? Still 30K. Doubling ingest capacity? Still 30K. Only improving the bottleneck stage moves the number. Every other “optimization” is buying faster welding robots while the paint booth sets the pace.</p>
+<p>In a serial pipeline (which is what most ML systems are), throughput equals the throughput of the slowest stage. If your feature extraction handles 30K records/sec and everything else handles 100K, the system does 30K. Making inference 10x faster OR doubling ingest capacity would still give us 30K records/sec.&nbsp;Only improving the bottleneck stage moves the number.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><a href="images/amdahl-law-optimization.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure 1: Amdahl’s Law applied to the pipeline. Making model inference (20% of runtime) 2x faster yields about 11% end-to-end improvement; making feature extraction (70%, the constraint) 2x faster yields about 35%. Only the constraint moves the system number."><img src="images/amdahl-law-optimization.svg" class="img-fluid figure-img" alt="Figure 1: Amdahl’s Law applied to the pipeline. Making model inference (20% of runtime) 2x faster yields about 11% end-to-end improvement; making feature extraction (70%, the constraint) 2x faster yields about 35%. Only the constraint moves the system number."></a></p>
@@ -581,11 +580,11 @@ window.Quarto = {
 <li><strong>Goal → Constraint</strong>: WHAT do I want? More of the Goal. HOW? By getting more of the Constraint, the single resource I don’t have enough of.</li>
 <li><strong>Constraint → Problem</strong>: WHAT limits the Constraint? The one Problem causing at least 50% of the gap.</li>
 <li><strong>Problem → Conflict</strong>: WHY hasn’t the Problem been solved? Because it’s an unresolved Conflict between two necessary-but-competing approaches.</li>
-<li><strong>Conflict → Innovation</strong>: HOW do I resolve it? With an Innovation that captures the Pros of <em>both</em> the current approach and the new idea. The aim is all the Pros, but some tradeoffs may remain. The key is they’re deliberate and tolerable, not the paralyzing either/or you started with.</li>
+<li><strong>Conflict → Innovation</strong>: HOW do I resolve it? With an Innovation that captures the Pros of <em>both</em> the current approach and the new idea. The aim is all the Pros, but some tradeoffs may remain.</li>
 <li><strong>Innovation → Experiment</strong>: HOW do I know it works? With a Minimally Viable Experiment, before building anything.</li>
 </ol>
 <p>The five how-to steps below translate these pairings into ML-systems language. Step 1 defines the Goal (SLOs) and finds the Constraint (bottleneck). Step 2 uncovers the Problem (root cause). Step 3 maps the Conflict (hidden tradeoff). Step 4 designs the Innovation. Step 5 runs the Experiment.</p>
-<p>So why does this matter for ML specifically? Because ML pipelines are textbook flow systems: ingest → features → inference → action. They have measurable stages with capacity limits. And they accumulate complexity over time: teams add features, models, and infrastructure without ever removing anything. This makes them natural candidates for constraint-based thinking. But ML teams rarely think this way, because they’re trained to optimize <em>models</em>, not <em>systems</em>.</p>
+<p>So why does this matter for ML specifically? Because ML pipelines are flow systems: ingest → features → inference → action. They have measurable stages with capacity limits. And they accumulate complexity over time: teams add features, models, and infrastructure without ever removing anything. This makes them natural candidates for constraint-based thinking. But ML teams rarely think this way, because they’re trained to optimize <em>models</em>, not <em>systems</em>.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><a href="images/ml-pipeline-weak-constraint.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure 2: The pipeline as a chain. Throughput is capped by the weakest link, Feature-Tier2 at 30K/s, no matter how much faster the other stages run."><img src="images/ml-pipeline-weak-constraint.svg" class="img-fluid figure-img" alt="Figure 2: The pipeline as a chain. Throughput is capped by the weakest link, Feature-Tier2 at 30K/s, no matter how much faster the other stages run."></a></p>
@@ -595,10 +594,10 @@ window.Quarto = {
 </section>
 <section id="step-1-define-your-goal-and-find-the-bottleneck" class="level2">
 <h2 class="anchored" data-anchor-id="step-1-define-your-goal-and-find-the-bottleneck">Step 1: Define Your Goal and Find the Bottleneck</h2>
-<p>Before you can find the bottleneck, you need to define what success actually means, in numbers, not aspirations. And before you can fix the bottleneck, you need to know which stage is actually holding the system back. This step covers both.</p>
+<p>Before you can find the bottleneck, you need to define what success actually means in numbers (predefined metrics). And before you can fix the bottleneck, you need to know which stage is actually holding the system back. This step covers both.</p>
 <section id="set-your-slos" class="level3">
 <h3 class="anchored" data-anchor-id="set-your-slos">Set Your SLOs</h3>
-<p>“Detect anomalies,” “reduce fraud,” and “improve recommendations” aren’t goals. They’re wishes. Without measurable targets, every team member optimizes for a different thing, and you can’t tell whether you’re constrained by latency, precision, coverage, or something else entirely.</p>
+<p>“Detect anomalies,” “reduce fraud,” and “improve recommendations” aren’t goals. Without measurable targets, every team member optimizes for a different thing, and you can’t tell whether you’re constrained by latency, precision, coverage, or something else entirely.</p>
 <p>The fix is Service Level Objectives (specific, measurable thresholds tied to business outcomes):</p>
 <table class="caption-top table">
 <colgroup>
@@ -900,11 +899,11 @@ window.Quarto = {
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ss">  3. </span>One model handles all decisions</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>Challenge each:</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>Is assumption 1 always true? No - routine DNS queries</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>Is assumption 1 always true? No, routine DNS queries</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    don't need the same scrutiny as connections to unknown IPs.</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>Is assumption 2 always true? No - historical comparisons</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>Is assumption 2 always true? No, historical comparisons</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    could be asynchronous.</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>Is assumption 3 always true? No - different attack types</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>Is assumption 3 always true? No, different attack types</span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    could use specialized models.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>This template works for any ML conflict. A fraud detection team might write: “We need comprehensive transaction analysis AND sub-200ms decisions. Hidden assumption: every transaction needs the same analysis depth.” A recommendation team: “We need deep personalization AND instant page load. Hidden assumption: personalization must happen at request time.”</p>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -1178,9 +1177,9 @@ window.Quarto = {
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<p>Most ML teams are stuck in optimization theater: tuning components that don’t govern system performance. The Theory of Constraints gives you a way out: find the one bottleneck that sets the ceiling, understand why it’s stuck, and design an innovation that breaks the tradeoff instead of compromising on it.</p>
-<p>The method is five steps, but the discipline is one idea: <em>at any moment, only one thing limits your system.</em> Find it. Fix it. Then find the next one.</p>
-<p>If you take one thing from this post, make it this: before your next “optimization” sprint, build the constraint ledger. Measure every stage. Find the row with high utilization and a growing queue. That’s where your effort belongs, and nowhere else.</p>
+<p>Most ML teams are stuck in optimization chaos: tuning components that don’t govern system performance. The Theory of Constraints gives you a way out: find the one bottleneck that sets the ceiling, understand why it’s stuck, and design an innovation that breaks the tradeoff instead of compromising on it.</p>
+<p><em>At any moment, only one thing limits your system: Find it &amp; Fix it.</em></p>
+<p>If you take one thing from this post, make it this: before your next “optimization” sprint, build the constraint ledger. Measure every stage. Find the row with high utilization and a growing queue. That’s where your effort yields the best results.</p>
 </section>
 <section id="references" class="level2">
 <h2 class="anchored" data-anchor-id="references">References</h2>
