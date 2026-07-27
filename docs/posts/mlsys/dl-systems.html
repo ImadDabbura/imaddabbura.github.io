@@ -51,6 +51,9 @@ ul.task-list li input[type="checkbox"] {
 <link href="../../site_libs/bootstrap/bootstrap-fa35179067642d4b6b15face6660c236.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../../site_libs/bootstrap/bootstrap-dark-37a4ff71a472b0bd3151b84bce1e35f8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <link href="../../site_libs/bootstrap/bootstrap-fa35179067642d4b6b15face6660c236.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -469,17 +472,14 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#why-build-a-deep-learning-framework-from-scratch" id="toc-why-build-a-deep-learning-framework-from-scratch" class="nav-link active" data-scroll-target="#why-build-a-deep-learning-framework-from-scratch">Why Build a Deep Learning Framework from Scratch?</a>
-  <ul class="collapse">
-  <li><a href="#roadmap" id="toc-roadmap" class="nav-link" data-scroll-target="#roadmap">Roadmap</a></li>
-  </ul></li>
+  <li><a href="#why-build-a-deep-learning-framework-from-scratch" id="toc-why-build-a-deep-learning-framework-from-scratch" class="nav-link active" data-scroll-target="#why-build-a-deep-learning-framework-from-scratch">Why Build a Deep Learning Framework from Scratch?</a></li>
   <li><a href="#the-evolution-of-dl-frameworks" id="toc-the-evolution-of-dl-frameworks" class="nav-link" data-scroll-target="#the-evolution-of-dl-frameworks">The Evolution of DL Frameworks</a>
   <ul class="collapse">
-  <li><a href="#caffe-layers-all-the-way-down" id="toc-caffe-layers-all-the-way-down" class="nav-link" data-scroll-target="#caffe-layers-all-the-way-down">Caffe: Layers All the Way Down</a></li>
+  <li><a href="#caffe-everything-is-a-layer" id="toc-caffe-everything-is-a-layer" class="nav-link" data-scroll-target="#caffe-everything-is-a-layer">Caffe: Everything Is a Layer</a></li>
   <li><a href="#tensorflow-1.x-the-static-graph" id="toc-tensorflow-1.x-the-static-graph" class="nav-link" data-scroll-target="#tensorflow-1.x-the-static-graph">TensorFlow 1.x: The Static Graph</a></li>
   <li><a href="#pytorch-define-by-run" id="toc-pytorch-define-by-run" class="nav-link" data-scroll-target="#pytorch-define-by-run">PyTorch: Define by Run</a></li>
   </ul></li>
-  <li><a href="#automatic-differentiation-the-engine-room" id="toc-automatic-differentiation-the-engine-room" class="nav-link" data-scroll-target="#automatic-differentiation-the-engine-room">Automatic Differentiation: The Engine Room</a>
+  <li><a href="#automatic-differentiation" id="toc-automatic-differentiation" class="nav-link" data-scroll-target="#automatic-differentiation">Automatic Differentiation</a>
   <ul class="collapse">
   <li><a href="#forward-mode-ad" id="toc-forward-mode-ad" class="nav-link" data-scroll-target="#forward-mode-ad">Forward Mode AD</a></li>
   <li><a href="#reverse-mode-ad-backpropagation" id="toc-reverse-mode-ad-backpropagation" class="nav-link" data-scroll-target="#reverse-mode-ad-backpropagation">Reverse Mode AD (Backpropagation)</a></li>
@@ -503,7 +503,8 @@ window.Quarto = {
   </ul></li>
   <li><a href="#weight-initialization-the-effects-that-persist" id="toc-weight-initialization-the-effects-that-persist" class="nav-link" data-scroll-target="#weight-initialization-the-effects-that-persist">Weight Initialization: The Effects That Persist</a>
   <ul class="collapse">
-  <li><a href="#why-initialization-matters-more-than-you-think" id="toc-why-initialization-matters-more-than-you-think" class="nav-link" data-scroll-target="#why-initialization-matters-more-than-you-think">Why Initialization Matters More Than You Think</a></li>
+  <li><a href="#why-initialization-matters" id="toc-why-initialization-matters" class="nav-link" data-scroll-target="#why-initialization-matters">Why Initialization Matters</a></li>
+  <li><a href="#why-sqrt2n" id="toc-why-sqrt2n" class="nav-link" data-scroll-target="#why-sqrt2n">Why <span class="math inline">\(\sqrt{2/n}\)</span></a></li>
   <li><a href="#how-to-diagnose-initialization-problems" id="toc-how-to-diagnose-initialization-problems" class="nav-link" data-scroll-target="#how-to-diagnose-initialization-problems">How to Diagnose Initialization Problems</a></li>
   </ul></li>
   <li><a href="#normalization-fixing-what-initialization-cant" id="toc-normalization-fixing-what-initialization-cant" class="nav-link" data-scroll-target="#normalization-fixing-what-initialization-cant">Normalization: Fixing What Initialization Can’t</a>
@@ -531,7 +532,8 @@ window.Quarto = {
   <li><a href="#gans-adversarial-generation" id="toc-gans-adversarial-generation" class="nav-link" data-scroll-target="#gans-adversarial-generation">GANs: Adversarial Generation</a></li>
   </ul></li>
   <li><a href="#model-deployment-considerations" id="toc-model-deployment-considerations" class="nav-link" data-scroll-target="#model-deployment-considerations">Model Deployment Considerations</a></li>
-  <li><a href="#tying-it-all-together" id="toc-tying-it-all-together" class="nav-link" data-scroll-target="#tying-it-all-together">Tying It All Together</a></li>
+  <li><a href="#how-the-layers-interact" id="toc-how-the-layers-interact" class="nav-link" data-scroll-target="#how-the-layers-interact">How the Layers Interact</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/imaddabbura/imaddabbura.github.io/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -547,86 +549,26 @@ window.Quarto = {
 <section id="why-build-a-deep-learning-framework-from-scratch" class="level2">
 <h2 class="anchored" data-anchor-id="why-build-a-deep-learning-framework-from-scratch">Why Build a Deep Learning Framework from Scratch?</h2>
 <p>Every deep learning practitioner eventually runs <code>loss.backward()</code> and watches gradients flow. But what <em>actually</em> happens inside that call? Where do the intermediate tensors live? Why does your GPU run out of memory on a model that “should” fit? And why does reshaping a tensor sometimes silently copy gigabytes of data?</p>
-<p>I built <a href="https://github.com/ImadDabbura/tiny-pytorch"><code>tiny_pytorch</code></a> to answer these questions for myself. Along the way, I encountered nearly every foundational design decision that real frameworks like PyTorch, TensorFlow, and Caffe had to make and learned <em>why</em> they made them.</p>
+<p>I built <a href="https://github.com/ImadDabbura/tiny-pytorch"><code>tiny_pytorch</code></a> to answer these questions for myself. Along the way, I encountered nearly every foundational design decision that real frameworks like <a href="https://arxiv.org/abs/1912.01703">PyTorch</a>, <a href="https://arxiv.org/abs/1605.08695">TensorFlow</a>, and <a href="https://arxiv.org/abs/1408.5093">Caffe</a> had to make and learned <em>why</em> they made them.</p>
 <p>This post distills everything I learned into a coherent narrative. We’ll start from the framework-level design philosophy, work our way down to how bytes are laid out in memory, and then zoom back out to distributed training across multiple GPUs. The goal is <strong>intuition</strong>: mental models you can carry with you when debugging real systems.</p>
-<section id="roadmap" class="level3">
-<h3 class="anchored" data-anchor-id="roadmap">Roadmap</h3>
-<p>Here’s what we’ll cover and why it matters:</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Section</th>
-<th>What You’ll Learn</th>
-<th>Why It Matters</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>Framework Design</strong></td>
-<td>Static vs.&nbsp;dynamic graphs, and the Caffe → TF → PyTorch arc</td>
-<td>Understand trade-offs you inherit from your framework</td>
-</tr>
-<tr class="even">
-<td><strong>Automatic Differentiation</strong></td>
-<td>Forward vs.&nbsp;reverse mode AD, what gets saved</td>
-<td>Know <em>why</em> backward passes consume so much memory</td>
-</tr>
-<tr class="odd">
-<td><strong>Memory Layout</strong></td>
-<td>Shapes, strides, views, and when copies happen</td>
-<td>Stop guessing about tensor memory behavior</td>
-</tr>
-<tr class="even">
-<td><strong>Hardware Acceleration</strong></td>
-<td>Alignment, parallelism, BLAS, im2col</td>
-<td>Understand the layer between your code and silicon</td>
-</tr>
-<tr class="odd">
-<td><strong>Initialization &amp; Normalization</strong></td>
-<td>Why init persists, and how norms fix training</td>
-<td>Debug training instabilities at their root</td>
-</tr>
-<tr class="even">
-<td><strong>Regularization</strong></td>
-<td>Implicit vs.&nbsp;explicit, dropout mechanics</td>
-<td>Apply regularization correctly (L2 ≠ weight decay!)</td>
-</tr>
-<tr class="odd">
-<td><strong>Scaling Up</strong></td>
-<td>Checkpointing, data/model/pipeline parallelism</td>
-<td>Train models that don’t fit in memory</td>
-</tr>
-<tr class="even">
-<td><strong>Neural Network Architectures</strong></td>
-<td>CNN, RNN, LSTM, Transformer, GAN design choices</td>
-<td>See architectures through a <em>systems</em> lens</td>
-</tr>
-</tbody>
-</table>
-</section>
 </section>
 <section id="the-evolution-of-dl-frameworks" class="level2">
 <h2 class="anchored" data-anchor-id="the-evolution-of-dl-frameworks">The Evolution of DL Frameworks</h2>
 <p>Before writing a single line of code, it helps to understand the three philosophies that shaped modern deep learning frameworks. Each solved a real problem and introduced new ones.</p>
-<section id="caffe-layers-all-the-way-down" class="level3">
-<h3 class="anchored" data-anchor-id="caffe-layers-all-the-way-down">Caffe: Layers All the Way Down</h3>
-<p>Caffe (C++ only) was beautifully simple. You defined your computation as a stack of <strong>layers</strong>, each implementing a <code>forward()</code> and <code>backward()</code> method. The backward pass was a direct implementation of the backpropagation algorithm from Hinton’s seminal work where each layer knew how to compute its own gradients, and updates happened in-place.</p>
+<section id="caffe-everything-is-a-layer" class="level3">
+<h3 class="anchored" data-anchor-id="caffe-everything-is-a-layer">Caffe: Everything Is a Layer</h3>
+<p>Caffe (C++ only) was beautifully simple. You defined your computation as a stack of <strong>layers</strong>, each implementing a <code>forward()</code> and <code>backward()</code> method. The backward pass was a direct implementation of the <a href="https://www.nature.com/articles/323533a0">backpropagation algorithm</a>, where each layer knew how to compute its own gradients, and updates happened in-place.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Mental Model
+<span class="screen-reader-only">Tip</span>Composable but Rigid
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Think of Caffe layers like a stack of Lego bricks. Each brick knows its own shape (forward) and how to “unstick” itself (backward). Simple, intuitive, but rigid - you can’t easily build non-linear architectures.</p>
+<p>Think of Caffe layers like a stack of Lego bricks. Each brick knows its own shape (forward) and how to “unstick” itself (backward). Simple, intuitive, but rigid: you can’t easily build non-linear architectures.</p>
 </div>
 </div>
 </section>
@@ -637,7 +579,7 @@ window.Quarto = {
 </section>
 <section id="pytorch-define-by-run" class="level3">
 <h3 class="anchored" data-anchor-id="pytorch-define-by-run">PyTorch: Define by Run</h3>
-<p>PyTorch flipped the script with <strong>dynamic computation graphs</strong> - the graph is built on-the-fly as you execute operations. This is called <em>define by run</em>. You can mix Python control flow (if/else, loops) directly with tensor operations, set breakpoints anywhere, and inspect intermediate values trivially.</p>
+<p>PyTorch flipped the script with <strong>dynamic computation graphs</strong>: the graph is built on-the-fly as you execute operations. This is called <em>define by run</em>. You can mix Python control flow (if/else, loops) directly with tensor operations, set breakpoints anywhere, and inspect intermediate values trivially.</p>
 <p>The trade-off? Dynamic graphs are typically harder to optimize ahead of time. You lose the global view that static compilation provides. Modern PyTorch addresses this with <code>torch.compile()</code> and JIT compilation, getting closer to static-graph performance while keeping the dynamic-graph developer experience.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -645,7 +587,7 @@ window.Quarto = {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>The Trade-off Triangle
+<span class="screen-reader-only">Note</span>Three Competing Goals
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -662,10 +604,6 @@ window.Quarto = {
     B --&gt; C["&lt;b&gt;PyTorch&lt;/b&gt;&lt;br/&gt;Dynamic graph&lt;br/&gt;Define-by-run&lt;br/&gt;Python-native"]
     C --&gt; D["&lt;b&gt;Modern PyTorch&lt;/b&gt;&lt;br/&gt;torch.compile / JIT&lt;br/&gt;Best of both worlds"]
 
-    style A fill:#f9f,stroke:#333
-    style B fill:#bbf,stroke:#333
-    style C fill:#fbb,stroke:#333
-    style D fill:#bfb,stroke:#333
 </pre>
 </div>
 <p></p><figcaption> The evolution of DL framework design philosophies</figcaption> </figure><p></p>
@@ -675,9 +613,9 @@ window.Quarto = {
 <p><strong>Key takeaway:</strong> Framework design is fundamentally about <em>when</em> the computation graph is known. Know it early (static) and you can optimize aggressively. Know it late (dynamic) and you can iterate fast. Modern systems try to give you both.</p>
 </section>
 </section>
-<section id="automatic-differentiation-the-engine-room" class="level2">
-<h2 class="anchored" data-anchor-id="automatic-differentiation-the-engine-room">Automatic Differentiation: The Engine Room</h2>
-<p>Automatic differentiation (AD) is the core engine of every deep learning framework. It’s what makes <code>loss.backward()</code> work. But there are two fundamentally different approaches, and understanding <em>why</em> we use one over the other is essential.</p>
+<section id="automatic-differentiation" class="level2">
+<h2 class="anchored" data-anchor-id="automatic-differentiation">Automatic Differentiation</h2>
+<p>Automatic differentiation (AD) is the core engine of every deep learning framework. It’s what makes <code>loss.backward()</code> work. But there are two fundamentally different approaches, and understanding <em>why</em> we use one over the other is essential. I dig into forward versus reverse mode, dual numbers, and the memory trade-off in a companion post, <a href="../../posts/mlsys/automatic-differentiation.html">Automatic Differentiation Demystified</a>.</p>
 <section id="forward-mode-ad" class="level3">
 <h3 class="anchored" data-anchor-id="forward-mode-ad">Forward Mode AD</h3>
 <p>In forward mode, we walk from <strong>inputs to outputs</strong>. At each node, we compute the partial derivative of that node with respect to a <em>single</em> input variable. This means:</p>
@@ -685,11 +623,11 @@ window.Quarto = {
 <li>For <strong>each input variable</strong>, we need a <em>full forward pass</em> through the graph.</li>
 <li>If we have <span class="math inline">\(n\)</span> inputs, we need <span class="math inline">\(n\)</span> forward AD passes.</li>
 </ul>
-<p>For a typical deep learning loss function - a scalar output with millions of input parameters - this is catastrophically inefficient. We’d need millions of passes just to get one gradient update.</p>
+<p>For a typical deep learning loss function (a scalar output with millions of input parameters), this is catastrophically inefficient. We’d need millions of passes just to get one gradient update.</p>
 </section>
 <section id="reverse-mode-ad-backpropagation" class="level3">
 <h3 class="anchored" data-anchor-id="reverse-mode-ad-backpropagation">Reverse Mode AD (Backpropagation)</h3>
-<p>Reverse mode flips the direction. We walk from the <strong>output back to inputs</strong>, computing the gradient of the scalar output with respect to <em>all</em> input nodes in a <strong>single backward pass</strong>. This is why it’s the standard for deep learning: one output, millions of inputs, one pass.</p>
+<p>Reverse mode flips the direction. We walk from the <strong>output back to inputs</strong>, computing the gradient of the scalar output with respect to <em>all</em> input nodes in a <strong>single backward pass</strong>. This is why it’s the standard for deep learning: one output, millions of inputs, one pass. I implement both passes by hand, and check them against numerical gradients, in <a href="../../posts/coding-nn/fwd-bkwd-propagation/Coding-Neural-Network-Forwad-Back-Propagation.html">Coding Neural Network: Forward and Backward Propagation</a>.</p>
 <div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div>
@@ -707,7 +645,7 @@ window.Quarto = {
     end
 </pre>
 </div>
-<p></p><figcaption> Forward vs.&nbsp;reverse mode AD - reverse mode computes all gradients in a single backward pass</figcaption> </figure><p></p>
+<p></p><figcaption> Forward vs.&nbsp;reverse mode AD: reverse mode computes all gradients in a single backward pass</figcaption> </figure><p></p>
 </div>
 </div>
 </div>
@@ -721,7 +659,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Reverse mode has a catch: to compute gradients during the backward pass, we need the <strong>intermediate values from the forward pass</strong>. For each operation, we must store the input tensors and remember which operation created them. This is why training uses far more memory than inference - all those “saved tensors” accumulate on the graph.</p>
+<p>Reverse mode has a catch: to compute gradients during the backward pass, we need the <strong>intermediate values from the forward pass</strong>. For each operation, we must store the input tensors and remember which operation created them. This is why training uses far more memory than inference: all those “saved tensors” accumulate on the graph.</p>
 </div>
 </div>
 <p>Here’s what the autograd system actually tracks:</p>
@@ -744,12 +682,9 @@ window.Quarto = {
     mul -.-&gt; x
     mul -.-&gt; w
 
-    style x fill:#e8f5e9
-    style w fill:#e8f5e9
-    style L fill:#ffcdd2
 </pre>
 </div>
-<p></p><figcaption> What the autograd engine saves during a forward pass - every intermediate result and its creator must be retained for backward</figcaption> </figure><p></p>
+<p></p><figcaption> What the autograd engine saves during a forward pass: every intermediate result and its creator must be retained for backward</figcaption> </figure><p></p>
 </div>
 </div>
 </div>
@@ -768,7 +703,7 @@ window.Quarto = {
 </div>
 </div>
 <p>One powerful consequence: the backward pass itself builds a computation graph for the gradients. This means you can compute <strong>gradients of gradients</strong> simply by adding more operations, which is exactly what second-order methods and some meta-learning approaches do.</p>
-<p><strong>Key takeaway:</strong> Reverse mode AD gives us all gradients in one pass, but the price is memory - every intermediate tensor from the forward pass must be kept alive until it’s consumed by the backward pass.</p>
+<p><strong>Key takeaway:</strong> Reverse mode AD gives us all gradients in one pass, but the price is memory: every intermediate tensor from the forward pass must be kept alive until it’s consumed by the backward pass.</p>
 </section>
 </section>
 <section id="memory-layout-shapes-strides-and-the-viewcopy-divide" class="level2">
@@ -776,7 +711,7 @@ window.Quarto = {
 <p>This is where the rubber meets the road. Understanding how tensors are stored in memory explains a surprising number of performance issues and subtle bugs.</p>
 <section id="the-flat-array-reality" class="level3">
 <h3 class="anchored" data-anchor-id="the-flat-array-reality">The Flat Array Reality</h3>
-<p>Whether you’re on CPU or GPU, the hardware gives you a <strong>flat, contiguous block of memory</strong>. There are no “dimensions” at the hardware level - just consecutive slots. To create the <em>illusion</em> of an N-dimensional array, we need three pieces of metadata:</p>
+<p>Whether you’re on CPU or GPU, the hardware gives you a <strong>flat, contiguous block of memory</strong>. There are no “dimensions” at the hardware level, just consecutive slots. To create the <em>illusion</em> of an N-dimensional array, we need three pieces of metadata:</p>
 <ul>
 <li><strong>Shape</strong>: The logical dimensions (e.g., <code>[3, 4]</code> for a 3×4 matrix)</li>
 <li><strong>Stride</strong>: How many elements to skip in the flat array to move one step along each dimension</li>
@@ -794,8 +729,8 @@ window.Quarto = {
 <div class="callout-body-container callout-body">
 <p>For a 2D array <code>A</code> with shape <code>[R, C]</code>:</p>
 <ul>
-<li><strong>Row-major</strong> (C/NumPy/PyTorch default): <code>stride = [C, 1]</code> - rows are contiguous</li>
-<li><strong>Column-major</strong> (Fortran/BLAS): <code>stride = [1, R]</code> - columns are contiguous</li>
+<li><strong>Row-major</strong> (C/NumPy/PyTorch default): <code>stride = [C, 1]</code>, rows are contiguous</li>
+<li><strong>Column-major</strong> (Fortran/BLAS): <code>stride = [1, R]</code>, columns are contiguous</li>
 </ul>
 <p>Most BLAS libraries (the workhorses of linear algebra) are implemented in Fortran and expect column-major layout. This is why you sometimes see frameworks internally transposing data before calling into BLAS routines.</p>
 </div>
@@ -866,10 +801,6 @@ window.Quarto = {
 
     trans --&gt; |"reshape(-1) on&lt;br/&gt;non-contiguous tensor"| copy["New flat memory&lt;br/&gt;&lt;b&gt;COPY (new allocation)&lt;/b&gt;"]
 
-    style flat fill:#fff3e0
-    style slice fill:#e8f5e9
-    style trans fill:#e8f5e9
-    style copy fill:#ffcdd2
 </pre>
 </div>
 <p></p><figcaption> View operations share memory; some operations force a copy when data is non-contiguous</figcaption> </figure><p></p>
@@ -894,14 +825,14 @@ window.Quarto = {
 </section>
 <section id="broadcasting-and-its-gradient-implications" class="level2">
 <h2 class="anchored" data-anchor-id="broadcasting-and-its-gradient-implications">Broadcasting and Its Gradient Implications</h2>
-<p>Broadcasting is one of the most convenient features in numerical computing - and one of the most misunderstood when it comes to gradients.</p>
+<p>Broadcasting is one of the most convenient features in numerical computing, and one of the most misunderstood when it comes to gradients.</p>
 <section id="the-forward-pass-implicit-repetition" class="level3">
 <h3 class="anchored" data-anchor-id="the-forward-pass-implicit-repetition">The Forward Pass: Implicit Repetition</h3>
 <p>When you add a bias vector <code>b</code> of shape <code>[1, C]</code> to an activation matrix <code>A</code> of shape <code>[N, C]</code>, broadcasting logically <em>repeats</em> <code>b</code> along the batch dimension <code>N</code> times. But crucially, <strong>no data is copied</strong>. The framework simply sets the stride to 0 along the broadcast dimension, so the same values are read repeatedly.</p>
 </section>
 <section id="the-backward-pass-sum-reduce" class="level3">
 <h3 class="anchored" data-anchor-id="the-backward-pass-sum-reduce">The Backward Pass: Sum-Reduce</h3>
-<p>Here’s the subtle part. During the backward pass, if a value was broadcast (repeated) across a dimension, the gradients must be <strong>summed along that dimension</strong>. Why? Because the same parameter contributed to multiple outputs -&gt; its total influence is the sum of all its partial effects.</p>
+<p>Here’s the subtle part. During the backward pass, if a value was broadcast (repeated) across a dimension, the gradients must be <strong>summed along that dimension</strong>. Why? Because the same parameter contributed to multiple outputs, so its total influence is the sum of all its partial effects.</p>
 <div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div>
@@ -956,7 +887,7 @@ window.Quarto = {
 <p>Understanding the hardware layer helps you write code that runs fast <em>by default</em> instead of fighting the machine.</p>
 <section id="memory-alignment" class="level3">
 <h3 class="anchored" data-anchor-id="memory-alignment">Memory Alignment</h3>
-<p>Hardware loads data into caches in fixed-size chunks called <strong>cache lines</strong> (typically 64 bytes). If your data is aligned to cache line boundaries, a single load brings in exactly what you need. If it’s misaligned, you need <em>two</em> loads for data that spans a boundary -&gt; doubling the memory traffic for that access.</p>
+<p>Hardware loads data into caches in fixed-size chunks called <strong>cache lines</strong> (typically 64 bytes). If your data is aligned to cache line boundaries, a single load brings in exactly what you need. If it’s misaligned, you need <em>two</em> loads for data that spans a boundary, doubling the memory traffic for that access.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -974,11 +905,11 @@ window.Quarto = {
 <section id="parallelization-with-openmp" class="level3">
 <h3 class="anchored" data-anchor-id="parallelization-with-openmp">Parallelization with OpenMP</h3>
 <p>On CPU, the simplest form of parallelism is loop parallelization. Tools like <strong>OpenMP</strong> let you annotate a loop with <code>#pragma omp parallel for</code>, and the runtime splits iterations across CPU cores automatically.</p>
-<p>This is the basis for CPU-accelerated tensor operations. Each core processes a different slice of the tensor, and the results are combined. The bottleneck shifts from compute to <strong>memory bandwidth</strong> - reading and writing large tensors becomes the limiting factor, not arithmetic.</p>
+<p>This is the basis for CPU-accelerated tensor operations. Each core processes a different slice of the tensor, and the results are combined. The bottleneck shifts from compute to <strong>memory bandwidth</strong>: reading and writing large tensors becomes the limiting factor, not arithmetic.</p>
 </section>
 <section id="the-im2col-trick-convolution-as-matrix-multiplication" class="level3">
 <h3 class="anchored" data-anchor-id="the-im2col-trick-convolution-as-matrix-multiplication">The im2col Trick: Convolution as Matrix Multiplication</h3>
-<p>Convolution is the most compute-intensive operation in CNNs. The <strong>im2col</strong> (image-to-column) trick converts convolution into matrix multiplication, which lets us use heavily optimized BLAS routines.</p>
+<p>Convolution is the most compute-intensive operation in CNNs. The <strong>im2col</strong> (image-to-column) trick (<a href="https://arxiv.org/abs/1410.0759">Chetlur et al., 2014</a>) converts convolution into matrix multiplication, which lets us use heavily optimized BLAS routines.</p>
 <p>The process for a batch of images (<code>N × H × W × Cᵢₙ</code>) with filters (<code>K × K × Cᵢₙ × Cₒᵤₜ</code>):</p>
 <ol type="1">
 <li>Create a 6D strided view: <code>N × H_out × W_out × K × K × Cᵢₙ</code></li>
@@ -997,7 +928,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The im2col matrix is typically <strong>much larger</strong> than the original image tensor because filter patches overlap. Each input pixel appears in multiple rows of the im2col matrix. The reshape from the 6D strided view to 2D <em>cannot</em> be done as a view (the data isn’t contiguous in the right order), so it triggers a <strong>full copy</strong>. This is a significant memory cost - for large images with many channels, the im2col matrix can be several times the size of the input.</p>
+<p>The im2col matrix is typically <strong>much larger</strong> than the original image tensor because filter patches overlap. Each input pixel appears in multiple rows of the im2col matrix. The reshape from the 6D strided view to 2D <em>cannot</em> be done as a view (the data isn’t contiguous in the right order), so it triggers a <strong>full copy</strong>. This is a significant memory cost: for large images with many channels, the im2col matrix can be several times the size of the input.</p>
 <p><strong>When it helps:</strong> When your BLAS library is highly optimized (which it usually is). The speedup from using GEMM far outweighs the memory copy cost.</p>
 <p><strong>When it hurts:</strong> When you’re memory-constrained. Alternative approaches like FFT-based convolution or Winograd transforms can reduce memory usage at the cost of implementation complexity.</p>
 </div>
@@ -1007,12 +938,12 @@ window.Quarto = {
 </section>
 <section id="weight-initialization-the-effects-that-persist" class="level2">
 <h2 class="anchored" data-anchor-id="weight-initialization-the-effects-that-persist">Weight Initialization: The Effects That Persist</h2>
-<p>Weight initialization might seem like a minor detail: just pick some random numbers and start training. But the evidence tells a more nuanced story.</p>
-<section id="why-initialization-matters-more-than-you-think" class="level3">
-<h3 class="anchored" data-anchor-id="why-initialization-matters-more-than-you-think">Why Initialization Matters More Than You Think</h3>
+<p>Weight initialization might seem like a minor detail: just pick some random numbers and start training. But the evidence tells a more nuanced story. I implement several initialization schemes from scratch and watch their effect on training in <a href="../../posts/coding-nn/param-initialization/Coding-Neural-Network-Parameters-Initialization.html">Coding Neural Network: Parameters’ Initialization</a>.</p>
+<section id="why-initialization-matters" class="level3">
+<h3 class="anchored" data-anchor-id="why-initialization-matters">Why Initialization Matters</h3>
 <p>Two observations that changed how I think about initialization:</p>
 <ol type="1">
-<li><p><strong>The effect of initialization persists throughout training.</strong> Bad initialization affects the relative norms of activations and gradients <em>at every step</em>. If you don’t initialize appropriately (e.g., using a standard deviation of <span class="math inline">\(\sqrt{\frac{2}{n}}\)</span> for ReLU networks, known as He initialization), the L2-norm of activations or gradients will drift -&gt; vanishing signals or exploding values.</p></li>
+<li><p><strong>The effect of initialization persists throughout training.</strong> Bad initialization affects the relative norms of activations and gradients <em>at every step</em>. If you don’t initialize appropriately (e.g., using a standard deviation of <span class="math inline">\(\sqrt{\frac{2}{n}}\)</span> for ReLU networks, known as He initialization), the L2-norm of activations or gradients will drift: vanishing signals or exploding values.</p></li>
 <li><p><strong>Weights don’t move far from their initial values.</strong> This is surprising. If you plot the variance of weights before and after training for each layer, you’ll see remarkably similar values. The weights shift in certain directions, but relative to their initial magnitude, the change is small especially for deep networks.</p></li>
 </ol>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -1027,6 +958,18 @@ window.Quarto = {
 <div class="callout-body-container callout-body">
 <p>Together, these observations mean initialization isn’t just “where you start”, it effectively defines the <em>neighborhood</em> of weight space you’ll explore during training. Proper initialization puts you in a good neighborhood. Bad initialization puts you somewhere the optimizer can’t easily escape.</p>
 </div>
+</div>
+</section>
+<section id="why-sqrt2n" class="level3">
+<h3 class="anchored" data-anchor-id="why-sqrt2n">Why <span class="math inline">\(\sqrt{2/n}\)</span></h3>
+<p>Where does the <span class="math inline">\(\sqrt{2/n}\)</span> come from? Take one layer <span class="math inline">\(y = Wx\)</span> with fan-in <span class="math inline">\(n\)</span>, weights drawn i.i.d. with mean zero and variance <span class="math inline">\(\sigma^2\)</span>, and an input <span class="math inline">\(x\)</span> whose components are i.i.d. Each output is a sum of <span class="math inline">\(n\)</span> independent products, so</p>
+<p><span class="math display">\[\operatorname{Var}(y) = n\,\sigma^2\,\operatorname{Var}(x).\]</span></p>
+<p>For the signal to neither grow nor shrink through the layer, we need <span class="math inline">\(n\sigma^2 = 1\)</span>, i.e.&nbsp;<span class="math inline">\(\sigma^2 = 1/n\)</span>. That is <a href="http://proceedings.mlr.press/v9/glorot10a.html">Xavier initialization</a>, and it is right for a <em>linear</em> layer. A ReLU network is not linear: ReLU zeroes the negative half of a zero-mean pre-activation, halving the second moment of what passes through, <span class="math inline">\(\mathbb{E}[\operatorname{ReLU}(y)^2] = \tfrac{1}{2}\mathbb{E}[y^2]\)</span>. Folding that factor into the balance condition gives <span class="math inline">\(\tfrac{1}{2}n\sigma^2 = 1\)</span>, so <span class="math inline">\(\sigma^2 = 2/n\)</span>. That is <a href="https://arxiv.org/abs/1502.01852">He initialization</a>, and the factor of 2 is the entire difference from Xavier: it compensates for the half of the signal ReLU discards. Under Xavier each ReLU layer loses a factor of <span class="math inline">\(\sqrt2\)</span> in activation scale, so after <span class="math inline">\(L\)</span> layers the signal is down by <span class="math inline">\((1/\sqrt2)^{L}\)</span>; by 40 layers that is about <span class="math inline">\(10^{-6}\)</span>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/init-signal-preservation.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure: Activation RMS by depth in a 40-layer ReLU network, averaged over 30 random inputs at width 512. He (\sigma=\sqrt{2/n}) holds the signal flat; Xavier (\sigma=\sqrt{1/n}) ignores the ReLU factor of 2 and decays by 1/\sqrt2 per layer; a naive \sigma=0.02 collapses within a few layers. The vanishing-gradient problem at initialization is the same curve read backward."><img src="images/init-signal-preservation.svg" class="img-fluid figure-img" alt="Figure: Activation RMS by depth in a 40-layer ReLU network, averaged over 30 random inputs at width 512. He (\sigma=\sqrt{2/n}) holds the signal flat; Xavier (\sigma=\sqrt{1/n}) ignores the ReLU factor of 2 and decays by 1/\sqrt2 per layer; a naive \sigma=0.02 collapses within a few layers. The vanishing-gradient problem at initialization is the same curve read backward."></a></p>
+<figcaption><strong>Figure:</strong> Activation RMS by depth in a 40-layer ReLU network, averaged over 30 random inputs at width 512. He (<span class="math inline">\(\sigma=\sqrt{2/n}\)</span>) holds the signal flat; Xavier (<span class="math inline">\(\sigma=\sqrt{1/n}\)</span>) ignores the ReLU factor of 2 and decays by <span class="math inline">\(1/\sqrt2\)</span> per layer; a naive <span class="math inline">\(\sigma=0.02\)</span> collapses within a few layers. The vanishing-gradient problem at initialization is the same curve read backward.</figcaption>
+</figure>
 </div>
 </section>
 <section id="how-to-diagnose-initialization-problems" class="level3">
@@ -1045,7 +988,7 @@ window.Quarto = {
 <p>If we know that activation norms can drift during training (due to imperfect initialization or the dynamics of optimization itself), why not just <em>force</em> them to be well-behaved? That’s the idea behind normalization layers.</p>
 <section id="batch-normalization" class="level3">
 <h3 class="anchored" data-anchor-id="batch-normalization">Batch Normalization</h3>
-<p>Batch Normalization normalizes activations <strong>across the batch dimension</strong> for each feature independently. For a given feature, it computes the mean and variance across all examples in the batch, then normalizes to zero mean and unit variance.</p>
+<p><a href="https://arxiv.org/abs/1502.03167">Batch Normalization</a> normalizes activations <strong>across the batch dimension</strong> for each feature independently. For a given feature, it computes the mean and variance across all examples in the batch, then normalizes to zero mean and unit variance.</p>
 <p><strong>When it helps:</strong></p>
 <ul>
 <li>Dramatically speeds up training by maintaining stable activation norms</li>
@@ -1053,18 +996,18 @@ window.Quarto = {
 </ul>
 <p><strong>When it hurts:</strong></p>
 <ul>
-<li>Creates <strong>dependency between samples</strong> in a batch - each example’s normalized activation depends on the other examples in the batch</li>
-<li><strong>Unstable with small batches</strong> - statistics become noisy, and with a batch of 1, the variance is undefined</li>
-<li><strong>Doesn’t work well with RNNs</strong> - the hidden state has temporal dependencies across time steps, and computing batch statistics independently at each time step ignores this structure</li>
+<li>Creates <strong>dependency between samples</strong> in a batch: each example’s normalized activation depends on the other examples in the batch</li>
+<li><strong>Unstable with small batches</strong>: statistics become noisy, and with a batch of 1, the variance is undefined</li>
+<li><strong>Doesn’t work well with RNNs</strong>: the hidden state has temporal dependencies across time steps, and computing batch statistics independently at each time step ignores this structure</li>
 </ul>
 </section>
 <section id="layer-normalization" class="level3">
 <h3 class="anchored" data-anchor-id="layer-normalization">Layer Normalization</h3>
-<p>Layer Normalization normalizes <strong>across all features</strong> for each sample independently. No dependency on other samples in the batch.</p>
+<p><a href="https://arxiv.org/abs/1607.06450">Layer Normalization</a> normalizes <strong>across all features</strong> for each sample independently. No dependency on other samples in the batch.</p>
 <p><strong>When it helps:</strong></p>
 <ul>
 <li>Works with <strong>any batch size</strong>, including batch size 1</li>
-<li><strong>Perfect for RNNs and Transformers</strong> - it normalizes across the embedding dimension for each token in each example, respecting temporal structure</li>
+<li><strong>Perfect for RNNs and Transformers</strong>: it normalizes across the embedding dimension for each token in each example, respecting temporal structure</li>
 <li>This is why it’s the standard in Transformer architectures</li>
 </ul>
 <p><strong>When it hurts:</strong></p>
@@ -1093,14 +1036,14 @@ window.Quarto = {
 <p>Regularization prevents models from memorizing the training data, forcing them to learn patterns that generalize to unseen examples.</p>
 <section id="implicit-regularization" class="level3">
 <h3 class="anchored" data-anchor-id="implicit-regularization">Implicit Regularization</h3>
-<p>Before you add <em>any</em> explicit regularization, your training procedure already constrains the model. <strong>SGD with a particular initialization</strong> only explores a subset of all possible neural networks. The initialization defines the starting point, and the optimizer’s dynamics (step size, momentum, batch sampling) determine the trajectory through weight space.</p>
+<p>Before you add <em>any</em> explicit regularization, your training procedure already constrains the model. <strong>SGD with a particular initialization</strong> only explores a subset of all possible neural networks. The initialization defines the starting point, and the optimizer’s dynamics (step size, momentum, batch sampling) determine the trajectory through weight space. I derive SGD, momentum, and Adam from scratch in <a href="../../posts/optimization/gradient-descent.html">Gradient Descent and Its Variants</a>.</p>
 <p>This is called <em>implicit regularization</em>, and it’s powerful. The fact that SGD-trained networks generalize well, even when they have enough capacity to memorize the training set, is partly due to these implicit biases of the optimization procedure.</p>
 </section>
 <section id="explicit-regularization" class="level3">
 <h3 class="anchored" data-anchor-id="explicit-regularization">Explicit Regularization</h3>
 <p>Explicit regularization directly limits the functions the model can learn:</p>
-<p><strong>L2 Regularization</strong> adds a penalty proportional to the squared magnitude of the weights. The premise: smoother functions (which don’t change dramatically for small input changes) tend to have smaller weights. By penalizing large weights, we encourage smoother, simpler functions.</p>
-<p><strong>Dropout</strong> randomly zeroes out activations with probability <span class="math inline">\(p\)</span> during training. A useful mental model: dropout is a <em>stochastic approximation</em> of each layer’s activations, similar to how SGD approximates the full gradient with a mini-batch sample. During inference, we multiply activations by <span class="math inline">\(\frac{1}{1-p}\)</span> (or equivalently, scale during training) to keep the expected value consistent.</p>
+<p><strong>L2 Regularization</strong> adds a penalty proportional to the squared magnitude of the weights. The premise: smoother functions (which don’t change dramatically for small input changes) tend to have smaller weights. By penalizing large weights, we encourage smoother, simpler functions. I code L2 regularization from scratch in <a href="../../posts/coding-nn/regularization/Coding-Neural-Network-Regularization.html">Coding Neural Network: Regularization</a>.</p>
+<p><strong><a href="https://jmlr.org/papers/v15/srivastava14a.html">Dropout</a></strong> randomly zeroes out activations with probability <span class="math inline">\(p\)</span> during training. A useful mental model: dropout is a <em>stochastic approximation</em> of each layer’s activations, similar to how SGD approximates the full gradient with a mini-batch sample. During inference, we multiply activations by <span class="math inline">\(\frac{1}{1-p}\)</span> (or equivalently, scale during training) to keep the expected value consistent. I implement dropout from scratch in <a href="../../posts/coding-nn/dropout/Coding-Neural-Network-Dropout.html">Coding Neural Network: Dropout</a>.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1113,7 +1056,7 @@ window.Quarto = {
 <div class="callout-body-container callout-body">
 <p>For vanilla SGD, L2 regularization and weight decay are mathematically equivalent. But for adaptive optimizers like <strong>Adam</strong>, they are <em>not</em> the same.</p>
 <p>Why? Adam computes first and second moments of the gradients. If you add the L2 penalty to the gradient (L2 regularization), the penalty gets scaled by Adam’s adaptive learning rate, making it <strong>less effective</strong> than intended. Weight decay, which adds the penalty directly to the parameter update step <em>without</em> modifying the gradient, avoids this issue.</p>
-<p>This distinction was first identified in the “Decoupled Weight Decay” paper (AdamW), which is why AdamW is preferred over Adam + L2 regularization in practice.</p>
+<p>This distinction was first identified in the <a href="https://arxiv.org/abs/1711.05101">“Decoupled Weight Decay” paper</a> (AdamW), which is why AdamW is preferred over Adam + L2 regularization in practice.</p>
 </div>
 </div>
 <p><strong>Key takeaway:</strong> Regularization operates at two levels: the implicit biases of SGD and initialization, and explicit penalties like L2/weight decay and dropout. For Adam-family optimizers, always use weight decay (AdamW), not L2 regularization.</p>
@@ -1126,9 +1069,9 @@ window.Quarto = {
 <h3 class="anchored" data-anchor-id="the-memory-bottleneck">The Memory Bottleneck</h3>
 <p>The memory hierarchy tells the story:</p>
 <ul>
-<li><strong>Shared memory per core (GPU):</strong> ~64 KB - fast, tiny</li>
-<li><strong>Global GPU memory:</strong> 10–80 GB depending on the device - this is the typical bottleneck</li>
-<li><strong>CPU RAM:</strong> 64–512 GB - large but slow to access from GPU</li>
+<li><strong>Shared memory per core (GPU):</strong> ~64 KB, fast and tiny</li>
+<li><strong>Global GPU memory:</strong> 10–80 GB depending on the device, the typical bottleneck</li>
+<li><strong>CPU RAM:</strong> 64–512 GB, large but slow to access from GPU</li>
 </ul>
 <p>Most large models can’t fit entirely in GPU global memory during training, because we need to store: model parameters, optimizer state (2x or 3x model size for Adam), activations (saved for backward), and gradients.</p>
 </section>
@@ -1146,6 +1089,13 @@ window.Quarto = {
 <li>Only store activations at <strong>segment boundaries</strong> (checkpoints)</li>
 <li>During the backward pass, <strong>recompute</strong> the forward pass within each segment to recover the needed activations</li>
 </ol>
+<p>Why <span class="math inline">\(\sqrt{N}\)</span> segments? Store a checkpoint every <span class="math inline">\(k\)</span> layers. During the backward pass two things sit in memory: the checkpoints themselves, <span class="math inline">\(N/k\)</span> of them, and, while recomputing one segment, up to <span class="math inline">\(k\)</span> activations inside it. Peak activation memory is therefore <span class="math inline">\(M(k) = N/k + k\)</span>. Minimizing over <span class="math inline">\(k\)</span> gives <span class="math inline">\(M'(k) = -N/k^2 + 1 = 0\)</span>, so <span class="math inline">\(k = \sqrt N\)</span> and the peak is <span class="math inline">\(2\sqrt N\)</span>. Storing everything, <span class="math inline">\(O(N)\)</span>, drops to <span class="math inline">\(O(\sqrt N)\)</span> for the price of recomputing each segment once, a single extra forward pass (<a href="https://arxiv.org/abs/1604.06174">Chen et al., 2016</a>).</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/checkpointing-tradeoff.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure: Peak activation memory N/k + k against segment length for a 64-layer network. More checkpoints (small k) trade off against a larger recompute buffer (large k); the sum bottoms out at k=\sqrt N = 8 with peak 2\sqrt N = 16, a 4x reduction from storing all 64."><img src="images/checkpointing-tradeoff.svg" class="img-fluid figure-img" alt="Figure: Peak activation memory N/k + k against segment length for a 64-layer network. More checkpoints (small k) trade off against a larger recompute buffer (large k); the sum bottoms out at k=\sqrt N = 8 with peak 2\sqrt N = 16, a 4x reduction from storing all 64."></a></p>
+<figcaption><strong>Figure:</strong> Peak activation memory <span class="math inline">\(N/k + k\)</span> against segment length for a 64-layer network. More checkpoints (small <span class="math inline">\(k\)</span>) trade off against a larger recompute buffer (large <span class="math inline">\(k\)</span>); the sum bottoms out at <span class="math inline">\(k=\sqrt N = 8\)</span> with peak <span class="math inline">\(2\sqrt N = 16\)</span>, a 4x reduction from storing all 64.</figcaption>
+</figure>
+</div>
 <div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div>
@@ -1165,12 +1115,6 @@ window.Quarto = {
     seg1 --&gt; |"✓ checkpoint"| seg2
     seg2 --&gt; |"✓ checkpoint"| seg3
 
-    style L1 fill:#e8f5e9,stroke:#333
-    style L3 fill:#e8f5e9,stroke:#333
-    style L4 fill:#e8f5e9,stroke:#333
-    style L6 fill:#e8f5e9,stroke:#333
-    style L7 fill:#e8f5e9,stroke:#333
-    style L9 fill:#e8f5e9,stroke:#333
 </pre>
 </div>
 <p></p><figcaption> Activation checkpointing: store only segment boundaries, recompute the rest during backward</figcaption> </figure><p></p>
@@ -1241,9 +1185,6 @@ window.Quarto = {
     MP --&gt; TP["Tensor Parallelism&lt;br/&gt;Split layers across devices"]
     MP --&gt; PP["Pipeline Parallelism&lt;br/&gt;Different layers on different devices"]
 
-    style DT fill:#fff3e0
-    style DP fill:#e3f2fd
-    style MP fill:#fce4ec
 </pre>
 </div>
 <p></p><figcaption> Taxonomy of distributed training approaches</figcaption> </figure><p></p>
@@ -1259,7 +1200,7 @@ window.Quarto = {
 <ul>
 <li><strong>Bottleneck:</strong> The parameter server becomes a communication bottleneck as the number of workers grows. All traffic flows through one node.</li>
 </ul></li>
-<li><p><strong>AllReduce:</strong> A peer-to-peer approach where all workers collectively sum their gradients and each receives the result. No central bottleneck: communication scales more gracefully. Algorithms like Ring-AllReduce distribute the bandwidth load evenly.</p>
+<li><p><strong>AllReduce:</strong> A peer-to-peer approach where all workers collectively sum their gradients and each receives the result. No central bottleneck: communication scales more gracefully. Algorithms like <a href="https://arxiv.org/abs/1802.05799">Ring-AllReduce</a> distribute the bandwidth load evenly.</p>
 <ul>
 <li><strong>Bottleneck:</strong> Total communication volume still grows with model size. Network bandwidth between nodes becomes the limiting factor.</li>
 </ul></li>
@@ -1286,7 +1227,7 @@ window.Quarto = {
 </section>
 <section id="model-parallelism-pipeline-parallelism" class="level4">
 <h4 class="anchored" data-anchor-id="model-parallelism-pipeline-parallelism">Model Parallelism (Pipeline Parallelism)</h4>
-<p>When the model itself doesn’t fit on one device, we split the computation graph across devices. Each device handles a different set of layers, and they <strong>pipeline</strong> the computation: while device 2 processes micro-batch 1, device 1 can start on micro-batch 2.</p>
+<p>When the model itself doesn’t fit on one device, we split the computation graph across devices (<a href="https://arxiv.org/abs/1811.06965">Huang et al., 2019</a>). Each device handles a different set of layers, and they <strong>pipeline</strong> the computation: while device 2 processes micro-batch 1, device 1 can start on micro-batch 2.</p>
 <p>Communication happens at layer boundaries via <code>send</code>/<code>recv</code> operations. The challenge is minimizing <strong>pipeline bubbles</strong>, which is idle time when a device is waiting for input from the previous stage.</p>
 <p><strong>Key takeaway:</strong> Scaling from one GPU to many introduces a new bottleneck: communication. Data parallelism is simpler and scales well when the model fits on one device. Model/pipeline parallelism is necessary when it doesn’t, but introduces pipeline bubbles and more complex communication patterns.</p>
 </section>
@@ -1340,7 +1281,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>We can express convolution as a matrix multiplication where the weight matrix has a specific sparsity pattern (filled with actual weights and zeros reflecting the filter structure). We don’t actually construct this matrix - it would be enormous - but this view explains why the backward pass of a convolution is a convolution with a flipped filter: multiplying by the transpose of the convolution matrix is equivalent to convolving with the spatially flipped kernel.</p>
+<p>We can express convolution as a matrix multiplication where the weight matrix has a specific sparsity pattern (filled with actual weights and zeros reflecting the filter structure). We don’t actually construct this matrix (it would be enormous), but this view explains why the backward pass of a convolution is a convolution with a flipped filter: multiplying by the transpose of the convolution matrix is equivalent to convolving with the spatially flipped kernel.</p>
 </div>
 </div>
 </section>
@@ -1349,10 +1290,17 @@ window.Quarto = {
 <p>RNNs address temporal dependencies by maintaining a <strong>hidden state</strong> that gets updated at each time step as a function of the current input and the previous hidden state. In theory, the last hidden state captures the entire input history.</p>
 <p>In practice, the hidden state is a bottleneck. The entire past is <em>compacted</em> into a single vector, and information from early time steps (<span class="math inline">\(x_1\)</span>) gets diluted compared to recent ones (<span class="math inline">\(x_t\)</span>).</p>
 <p><strong>Backpropagation Through Time (BPTT):</strong> Because weights are shared across time steps, gradients must flow through the entire unrolled sequence. If the dominant eigenvalue of the weight matrix is less than 1, gradients <strong>vanish</strong> exponentially with sequence length. Greater than 1, they <strong>explode</strong>.</p>
+<p>Concretely, the gradient reaching an early hidden state is a product of one per-step Jacobian for every step it travels back, so along the repeated direction it scales like <span class="math inline">\(\rho^{\,t}\)</span>, where <span class="math inline">\(\rho\)</span> is that dominant eigenvalue magnitude and <span class="math inline">\(t\)</span> is the number of steps. Any <span class="math inline">\(\rho \neq 1\)</span> is unstable over long sequences, and no single value is safe at every horizon.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/bptt-gradient-norm.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure: Gradient norm against how many steps it propagates back, for three spectral radii. Only \rho=1 is stable; \rho=0.9 has lost three orders of magnitude by 70 steps and \rho=1.1 has gained three. This is why a vanilla RNN cannot learn long-range dependencies, and why the fix is architectural rather than a matter of tuning."><img src="images/bptt-gradient-norm.svg" class="img-fluid figure-img" alt="Figure: Gradient norm against how many steps it propagates back, for three spectral radii. Only \rho=1 is stable; \rho=0.9 has lost three orders of magnitude by 70 steps and \rho=1.1 has gained three. This is why a vanilla RNN cannot learn long-range dependencies, and why the fix is architectural rather than a matter of tuning."></a></p>
+<figcaption><strong>Figure:</strong> Gradient norm against how many steps it propagates back, for three spectral radii. Only <span class="math inline">\(\rho=1\)</span> is stable; <span class="math inline">\(\rho=0.9\)</span> has lost three orders of magnitude by 70 steps and <span class="math inline">\(\rho=1.1\)</span> has gained three. This is why a vanilla RNN cannot learn long-range dependencies, and why the fix is architectural rather than a matter of tuning.</figcaption>
+</figure>
+</div>
 </section>
 <section id="lstm-gating-the-information-flow" class="level3">
 <h3 class="anchored" data-anchor-id="lstm-gating-the-information-flow">LSTM: Gating the Information Flow</h3>
-<p>LSTMs address vanishing gradients by separating the hidden state into two components:</p>
+<p><a href="https://doi.org/10.1162/neco.1997.9.8.1735">LSTMs</a> address vanishing gradients by separating the hidden state into two components:</p>
 <ul>
 <li><strong>Cell state</strong>: A “highway” for long-range information flow</li>
 <li><strong>Hidden state</strong>: The working memory exposed to the next layer</li>
@@ -1364,6 +1312,7 @@ window.Quarto = {
 <li><strong>Cell update</strong>: The candidate new information</li>
 <li><strong>Output gate</strong>: What to expose as the hidden state</li>
 </ol>
+<p>I build an LSTM cell from scratch, gate by gate, and profile where the time actually goes in <a href="../../posts/nlp/LSTM-Annotated-Implementation.html">Inside LSTMs</a>.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1380,15 +1329,15 @@ window.Quarto = {
 </section>
 <section id="transformers-global-receptive-field-via-attention" class="level3">
 <h3 class="anchored" data-anchor-id="transformers-global-receptive-field-via-attention">Transformers: Global Receptive Field via Attention</h3>
-<p>Transformers replace recurrence with <strong>attention</strong>, which gives every position direct access to every other position -&gt; a global receptive field.</p>
+<p><a href="https://arxiv.org/abs/1706.03762">Transformers</a> replace recurrence with <strong>attention</strong>, which gives every position direct access to every other position, a global receptive field.</p>
 <p>However, the attention mechanism is inherently <strong>order-invariant</strong>: permuting the input tokens permutes the output in the same way. There’s no notion of “first” or “last.” This is why <strong>positional encodings</strong> are essential: they inject order information that attention alone cannot capture.</p>
-<p>For <strong>autoregressive tasks</strong> (language modeling, text generation), a causal mask restricts each position to attend only to current and previous positions, preserving the left-to-right generation constraint.</p>
+<p>For <strong>autoregressive tasks</strong> (language modeling, text generation), a causal mask restricts each position to attend only to current and previous positions, preserving the left-to-right generation constraint. I walk through attention, positional encodings, and masking in <a href="../../posts/nlp/Transformer-Architecture-Explained.html">The Transformer Architecture: A Deep Dive</a>, then assemble them into a working model in <a href="../../posts/nlp/GPT2-From-Scratch.html">Building GPT from Scratch</a>.</p>
 </section>
 <section id="gans-adversarial-generation" class="level3">
 <h3 class="anchored" data-anchor-id="gans-adversarial-generation">GANs: Adversarial Generation</h3>
-<p>GANs learn to generate data by pitting two networks against each other:</p>
+<p><a href="https://arxiv.org/abs/1406.2661">GANs</a> learn to generate data by pitting two networks against each other:</p>
 <ul>
-<li><strong>Generator</strong>: Takes a random noise vector and tries to produce realistic images. Its objective is to <em>maximize</em> the discriminator’s error -&gt; make the discriminator believe the fake images are real.</li>
+<li><strong>Generator</strong>: Takes a random noise vector and tries to produce realistic images. Its objective is to <em>maximize</em> the discriminator’s error, making the discriminator believe the fake images are real.</li>
 <li><strong>Discriminator</strong>: Receives both real and generated images and tries to classify them correctly. It <em>minimizes</em> its classification loss.</li>
 </ul>
 <p>The discriminator acts as a learned loss function that guides the generator toward producing increasingly realistic outputs. The “adversarial” aspect refers to the generator learning to exploit subtle distributional differences that are imperceptible to humans.</p>
@@ -1406,8 +1355,8 @@ window.Quarto = {
 </ul>
 <p>These constraints often drive post-training optimizations like quantization, pruning, distillation, and conversion to inference-specific formats (ONNX, TensorRT, Core ML).</p>
 </section>
-<section id="tying-it-all-together" class="level2">
-<h2 class="anchored" data-anchor-id="tying-it-all-together">Tying It All Together</h2>
+<section id="how-the-layers-interact" class="level2">
+<h2 class="anchored" data-anchor-id="how-the-layers-interact">How the Layers Interact</h2>
 <p>If you’ve made it this far, you’ve traced the full stack of a deep learning system:</p>
 <ol type="1">
 <li><strong>Framework design</strong> determines your development experience and optimization ceiling</li>
@@ -1426,13 +1375,35 @@ window.Quarto = {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>The Systems Thinking Payoff
+<span class="screen-reader-only">Tip</span>Why Building One Helps
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The next time training is slow, memory is exploding, or loss isn’t decreasing - you’ll have a mental model of the full stack to reason about where the problem might be. That’s the real value of building a framework from scratch.</p>
+<p>The next time training is slow, memory is exploding, or loss isn’t decreasing, you’ll have a mental model of the full stack to reason about where the problem might be. That’s the real value of building a framework from scratch.</p>
 </div>
 </div>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<ul>
+<li><strong>Rumelhart, D., Hinton, G., &amp; Williams, R.</strong> (1986). <a href="https://www.nature.com/articles/323533a0">Learning Representations by Back-Propagating Errors</a>. <em>Nature</em>, 323.</li>
+<li><strong>Hochreiter, S. &amp; Schmidhuber, J.</strong> (1997). <a href="https://doi.org/10.1162/neco.1997.9.8.1735">Long Short-Term Memory</a>. <em>Neural Computation</em>, 9(8).</li>
+<li><strong>Glorot, X. &amp; Bengio, Y.</strong> (2010). <a href="http://proceedings.mlr.press/v9/glorot10a.html">Understanding the Difficulty of Training Deep Feedforward Neural Networks</a>. <em>AISTATS</em>.</li>
+<li><strong>Jia, Y. et al.</strong> (2014). <a href="https://arxiv.org/abs/1408.5093">Caffe: Convolutional Architecture for Fast Feature Embedding</a>. <em>ACM MM</em>.</li>
+<li><strong>Goodfellow, I. et al.</strong> (2014). <a href="https://arxiv.org/abs/1406.2661">Generative Adversarial Networks</a>. <em>NeurIPS</em>.</li>
+<li><strong>Chetlur, S. et al.</strong> (2014). <a href="https://arxiv.org/abs/1410.0759">cuDNN: Efficient Primitives for Deep Learning</a>.</li>
+<li><strong>Srivastava, N. et al.</strong> (2014). <a href="https://jmlr.org/papers/v15/srivastava14a.html">Dropout: A Simple Way to Prevent Neural Networks from Overfitting</a>. <em>JMLR</em>, 15.</li>
+<li><strong>He, K. et al.</strong> (2015). <a href="https://arxiv.org/abs/1502.01852">Delving Deep into Rectifiers</a>. <em>ICCV</em>.</li>
+<li><strong>Ioffe, S. &amp; Szegedy, C.</strong> (2015). <a href="https://arxiv.org/abs/1502.03167">Batch Normalization</a>. <em>ICML</em>.</li>
+<li><strong>Abadi, M. et al.</strong> (2016). <a href="https://arxiv.org/abs/1605.08695">TensorFlow: A System for Large-Scale Machine Learning</a>. <em>OSDI</em>.</li>
+<li><strong>Ba, J., Kiros, J., &amp; Hinton, G.</strong> (2016). <a href="https://arxiv.org/abs/1607.06450">Layer Normalization</a>.</li>
+<li><strong>Chen, T. et al.</strong> (2016). <a href="https://arxiv.org/abs/1604.06174">Training Deep Nets with Sublinear Memory Cost</a>.</li>
+<li><strong>Vaswani, A. et al.</strong> (2017). <a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need</a>. <em>NeurIPS</em>.</li>
+<li><strong>Sergeev, A. &amp; Del Balso, M.</strong> (2018). <a href="https://arxiv.org/abs/1802.05799">Horovod: Fast and Easy Distributed Deep Learning</a>.</li>
+<li><strong>Huang, Y. et al.</strong> (2019). <a href="https://arxiv.org/abs/1811.06965">GPipe: Efficient Training of Giant Neural Networks Using Pipeline Parallelism</a>. <em>NeurIPS</em>.</li>
+<li><strong>Loshchilov, I. &amp; Hutter, F.</strong> (2019). <a href="https://arxiv.org/abs/1711.05101">Decoupled Weight Decay Regularization</a>. <em>ICLR</em>.</li>
+<li><strong>Paszke, A. et al.</strong> (2019). <a href="https://arxiv.org/abs/1912.01703">PyTorch: An Imperative Style, High-Performance Deep Learning Library</a>. <em>NeurIPS</em>.</li>
+</ul>
 
 
 </section>
@@ -1996,6 +1967,38 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

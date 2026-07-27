@@ -1,5 +1,5 @@
 ---
-title: "Make ML Systems Ship Again"
+title: "Improving ML Systems with the Theory of Constraints"
 subtitle: "A practitioner's guide to finding and fixing the one bottleneck that governs your system's performance."
 image: "images/ml-toc.png"
 title-block-banner: "images/ml-toc.png"
@@ -15,56 +15,41 @@ status: evergreen
 
 You burn six months "optimizing." Swap in transformers. Squeeze another +$0.5\%$ accuracy. Rewrite the feature pipeline. Add a shiny GPU cluster. And still: alert fatigue, missed incidents, and latency that kills real-time response.
 
-That's optimization theater.
-
-This pattern shows up everywhere in production ML. Fraud teams add transaction features that never reduce false positives. Recommendation engines get fancier models that don't move click-through rates. Forecasting pipelines gain complexity without improving planning accuracy. Parts get optimized. Systems don't.
+This pattern shows up everywhere in production ML. Fraud teams add transaction features that never reduce false positives. Recommendation engines get fancier models that don't move click-through rates. Forecasting pipelines gain complexity without improving planning accuracy. Parts get optimized with the hope that the full system would improve, which almost never happened.
 
 This post gives you a systematic method to break out of the cycle. It's based on the Theory of Constraints, originally developed for manufacturing, but a natural fit for ML systems. We'll use a network anomaly detection system as our running example, but the playbook works for any ML system in production.
 
-### Roadmap
-
-| Section | What You'll Learn / Do | Why It Matters |
-|---------|----------------------|----------------|
-| **The Theory of Constraints** | The core idea and why single-bottleneck focus works | Gives you the mental model that makes the steps principled, not arbitrary |
-| **1. Goal & Constraint** | Set SLOs, then build a constraint ledger to find the bottleneck | Defines success and focuses effort on the one thing that governs throughput |
-| **2. Understand Why It's Stuck** | Root-cause analysis | Prevents solving symptoms |
-| **3. See the Hidden Tradeoff** | Map the conflict | Reveals why simple fixes haven't worked |
-| **4. Break the Tradeoff** | Challenge assumptions, then innovate | Achieves step-function improvement |
-| **5. Prove It Works** | Minimum Viable Experiment | Validates before full investment |
-
-## The Theory of Constraints in 5 Minutes
+## The Theory of Constraints in Brief
 
 The traditional approach to improving ML systems is based on a seemingly logical but flawed assumption: if you improve each component, the whole system improves. It doesn't. *The sum of all local improvements doesn't give you a system improvement.*
 
 The breakthrough insight, from Eli Goldratt's *The Goal* (1984) and made operational by Alan Barnard's pairing method, is simple: every system has exactly one constraint at any given moment, the single resource or stage you don't have enough of. That constraint sets the ceiling for the entire system. Improving anything else delivers diminishing-to-zero returns.
 
-A factory line can only produce as fast as its slowest machine. If the paint booth takes 10 minutes per car while everything else takes 2 minutes, buying faster welding robots changes nothing. You have to speed up the paint booth, or the line will forever produce one car every 10 minutes.
+In a serial pipeline (which is what most ML systems are), throughput equals the throughput of the slowest stage. If your feature extraction handles 30K records/sec and everything else handles 100K, the system does 30K. Making inference 10x faster OR doubling ingest capacity would still give us 30K records/sec. Only improving the bottleneck stage moves the number.
 
-In a serial pipeline (which is what most ML systems are), this is even starker than it sounds. Throughput equals the throughput of the slowest stage. If your feature extraction handles 30K records/sec and everything else handles 100K, the system does 30K. Making inference 10x faster? Still 30K. Doubling ingest capacity? Still 30K. Only improving the bottleneck stage moves the number. Every other "optimization" is buying faster welding robots while the paint booth sets the pace.
-
-![](images/amdahl-law-optimization.svg)
+![**Figure 1:** Amdahl's Law applied to the pipeline. Making model inference (20% of runtime) 2x faster yields about 11% end-to-end improvement; making feature extraction (70%, the constraint) 2x faster yields about 35%. Only the constraint moves the system number.](images/amdahl-law-optimization.svg)
 
 Barnard turns this into a strict chain of focused pairings. Each pairing links a WHAT (what you need) to a HOW (how to get it), maintaining a one-to-one relationship that keeps focus razor-sharp:
 
 1. **Goal → Constraint**: WHAT do I want? More of the Goal. HOW? By getting more of the Constraint, the single resource I don't have enough of.
 2. **Constraint → Problem**: WHAT limits the Constraint? The one Problem causing at least 50% of the gap.
 3. **Problem → Conflict**: WHY hasn't the Problem been solved? Because it's an unresolved Conflict between two necessary-but-competing approaches.
-4. **Conflict → Innovation**: HOW do I resolve it? With an Innovation that captures the Pros of *both* the current approach and the new idea. The aim is all the Pros, but some tradeoffs may remain. The key is they're deliberate and tolerable, not the paralyzing either/or you started with.
+4. **Conflict → Innovation**: HOW do I resolve it? With an Innovation that captures the Pros of *both* the current approach and the new idea. The aim is all the Pros, but some tradeoffs may remain.
 5. **Innovation → Experiment**: HOW do I know it works? With a Minimally Viable Experiment, before building anything.
 
 The five how-to steps below translate these pairings into ML-systems language. Step 1 defines the Goal (SLOs) and finds the Constraint (bottleneck). Step 2 uncovers the Problem (root cause). Step 3 maps the Conflict (hidden tradeoff). Step 4 designs the Innovation. Step 5 runs the Experiment.
 
-So why does this matter for ML specifically? Because ML pipelines are textbook flow systems: ingest → features → inference → action. They have measurable stages with capacity limits. And they accumulate complexity over time: teams add features, models, and infrastructure without ever removing anything. This makes them natural candidates for constraint-based thinking. But ML teams rarely think this way, because they're trained to optimize *models*, not *systems*.
+So why does this matter for ML specifically? Because ML pipelines are flow systems: ingest → features → inference → action. They have measurable stages with capacity limits. And they accumulate complexity over time: teams add features, models, and infrastructure without ever removing anything. This makes them natural candidates for constraint-based thinking. But ML teams rarely think this way, because they're trained to optimize *models*, not *systems*.
 
-![](images/ml-pipeline-weak-constraint.svg)
+![**Figure 2:** The pipeline as a chain. Throughput is capped by the weakest link, Feature-Tier2 at 30K/s, no matter how much faster the other stages run.](images/ml-pipeline-weak-constraint.svg)
 
 ## Step 1: Define Your Goal and Find the Bottleneck
 
-Before you can find the bottleneck, you need to define what success actually means, in numbers, not aspirations. And before you can fix the bottleneck, you need to know which stage is actually holding the system back. This step covers both.
+Before you can find the bottleneck, you need to define what success actually means in numbers (predefined metrics). And before you can fix the bottleneck, you need to know which stage is actually holding the system back. This step covers both.
 
 ### Set Your SLOs
 
-"Detect anomalies," "reduce fraud," and "improve recommendations" aren't goals. They're wishes. Without measurable targets, every team member optimizes for a different thing, and you can't tell whether you're constrained by latency, precision, coverage, or something else entirely.
+"Detect anomalies," "reduce fraud," and "improve recommendations" aren't goals. Without measurable targets, every team member optimizes for a different thing, and you can't tell whether you're constrained by latency, precision, coverage, or something else entirely.
 
 The fix is Service Level Objectives (specific, measurable thresholds tied to business outcomes):
 
@@ -86,7 +71,7 @@ Here's how our network anomaly detection system instantiated these:
 
 The same template applies to other domains. A fraud detection team might set TTD ≤ 200ms with ≤ 50 manual reviews/day. A recommendation system might target TTD ≤ 100ms with CTR-weighted precision ≥ X%.
 
-![](images/slo-hierarchy.svg)
+![**Figure 3:** SLOs cascade from a business goal down to technical metrics. Each layer's target (time, quality, coverage) constrains the ones below it.](images/slo-hierarchy.svg)
 
 When defining SLOs, involve the people who *use* the system's outputs, not just the team that builds it. Security analysts, operations teams, business stakeholders. When they disagree (and they will: security wants recall, ops wants fewer alerts), the SLOs make the tradeoff explicit rather than hiding it inside model thresholds.
 
@@ -100,7 +85,7 @@ SLOs don't just measure success; they *reveal* what's blocking it. If you can't 
 ### Find the Bottleneck
 
 ::: {.callout-tip}
-## Mental Model
+## Spotting the Constraint
 Your ML pipeline is a series of stages, each with a capacity ceiling. The stage with the lowest effective capacity is your constraint: it sets the ceiling for the entire system. Everything upstream queues up; everything downstream sits idle. Barnard's memorable shortcut: *"Check what you're waiting for. Where's the backlog?"*
 :::
 
@@ -127,7 +112,7 @@ Before building anything, run a 24-hour experiment: temporarily throw 3x resourc
 
 We provisioned 3x compute for Feature-Tier2, enabling 90K records/sec. The results were dramatic: detection time dropped, false positives decreased (the model makes better decisions with complete feature sets), and we nearly met our SLOs. No other improvement (not model accuracy, not infrastructure, not threshold tuning) would have achieved this.
 
-![](images/before-after-dashboard.svg)
+![**Figure 4:** The 24-hour validation test. Provisioning 3x compute for Feature-Tier2 alone lifted throughput from 30K to 90K rec/s and detection-within-5-minutes from 47% to 94%, confirming it was the true constraint.](images/before-after-dashboard.svg)
 
 ::: {.callout-warning}
 ## Pitfall: Premature Model Optimization
@@ -144,7 +129,7 @@ You've found the bottleneck. Now resist the urge to fix the surface symptom. "Fe
 
 The Five Whys technique is simple: ask "why" repeatedly until you reach a root cause, but *validate each answer with evidence* before proceeding to the next. Unvalidated whys lead to plausible-sounding but wrong root causes.
 
-![](images/five-whys.svg)
+![**Figure 5:** Five Whys on the bottleneck, each answer validated with evidence. The chain bottoms out at an organizational root cause, not a technical one.](images/five-whys.svg)
 
 Here's how this played out for our Feature-Tier2 bottleneck:
 
@@ -156,7 +141,7 @@ Here's how this played out for our Feature-Tier2 bottleneck:
 
 Notice where we ended up: the root cause isn't technical; it's organizational.
 
-![](images/iceberg-visible-constraint.svg)
+![**Figure 6:** The visible constraint (Feature-Tier2 throughput) sits above technical, analytical, process, and cultural causes. Fixing the surface symptom without the causes beneath it lets the bottleneck return.](images/iceberg-visible-constraint.svg)
 
 ::: {.callout-note}
 ## Common Root Causes in ML Systems: Check Which Applies
@@ -180,7 +165,7 @@ You know the root cause. So why hasn't anyone fixed it? Almost always, it's beca
 
 Barnard puts it precisely: *any problem can be defined as an unresolved conflict.* In our case, the Feature-Tier2 bottleneck persists because of a fundamental tension:
 
-![](images/feature-extraction-conflict.svg)
+![**Figure 7:** The conflict as two competing requirements. A rich feature set buys 94% recall but only 30K rec/s; a minimal set handles 100K rec/s at 61% recall.](images/feature-extraction-conflict.svg)
 
 We need **rich feature analysis** for accurate detection of sophisticated attacks. We *also* need **efficient processing** for real-time response and cost control. These seem to contradict each other, so the team oscillates: add features after a missed attack, remove features after a performance degradation. Two years later, they're exactly where they started.
 
@@ -198,7 +183,7 @@ Most ML teams alternate between these two modes without recognizing the pattern.
 A textbook case of oscillation: facing missed incidents, teams lower thresholds (overreacting). This floods analysts with alerts, who start ignoring them, leading to *more* missed incidents, which triggers another round of threshold lowering. Little's Law makes the math concrete: L = λW. If analysts can investigate 50 alerts/day and each takes 45 minutes, that's the hard capacity ceiling. No threshold change can overcome it. This is the precision/coverage conflict manifesting as a vicious cycle.
 :::
 
-![](images/alert-fatigue.svg)
+![**Figure 8:** The alert-fatigue cycle. Lowering thresholds to catch more attacks floods analysts, who begin ignoring alerts, which causes more misses and another round of threshold lowering.](images/alert-fatigue.svg)
 
 ### Map Your Conflict
 
@@ -213,11 +198,11 @@ These conflict because we assume:
   3. One model handles all decisions
 
 Challenge each:
-  - Is assumption 1 always true? No - routine DNS queries
+  - Is assumption 1 always true? No, routine DNS queries
     don't need the same scrutiny as connections to unknown IPs.
-  - Is assumption 2 always true? No - historical comparisons
+  - Is assumption 2 always true? No, historical comparisons
     could be asynchronous.
-  - Is assumption 3 always true? No - different attack types
+  - Is assumption 3 always true? No, different attack types
     could use specialized models.
 ```
 
@@ -267,11 +252,11 @@ In our case, the most load-bearing assumption was: *"All records need the same a
 | **Tier-3**: Deep Analysis | 100 features | Complex | ~4% | ~100ms |
 | **Forensic**: Full Analysis | All features | Exhaustive | <1% | ~500ms |
 
-![](images/progressive-analysis-architecture.svg)
+![**Figure 9:** The progressive architecture. Cheap triage clears 70% of traffic at wire speed; only uncertain records escalate to the more expensive tiers.](images/progressive-analysis-architecture.svg)
 
 Each stage outputs a prediction *and* a confidence score. High-confidence benign traffic exits immediately. Low confidence escalates. When stages experience backlog, confidence thresholds adjust dynamically: low-risk records defer to async processing during congestion, ensuring high-risk traffic always gets full analysis. And alerts are generated immediately with basic info, then progressively enriched over 30 seconds with connection context, historical patterns, and full forensics.
 
-![](images/feature-dependency.svg)
+![**Figure 10:** Feature caching across tiers. Computing base features once and reusing them downstream turns a 255ms full recompute into 85ms at an 84% cache hit rate.](images/feature-dependency.svg)
 
 ### Fix the Organization Too
 
@@ -304,7 +289,7 @@ tier1_model = LogisticRegression(C=1.0)
 tier1_model.fit(X_train[tier1_features], y_train_benign)
 ```
 
-![](images/mve-experiment-timeline.svg)
+![**Figure 11:** The 14-day minimum viable experiment, testing the single riskiest assumption before any production build.](images/mve-experiment-timeline.svg)
 
 ### Results
 
@@ -372,30 +357,25 @@ flowchart LR
     D --> E["<b>Experiment</b><br/>MVE → rollout"]
     E --> |"Constraint moves"| A
 
-    style A fill:#e8f5e9,stroke:#333
-    style B fill:#e3f2fd,stroke:#333
-    style C fill:#fff3e0,stroke:#333
-    style D fill:#fce4ec,stroke:#333
-    style E fill:#f3e5f5,stroke:#333
 ```
 
 The Theory of Constraints isn't another optimization technique. It's an operating system for continuous improvement. The constraint keeps moving, but so do you.
 
 ## Conclusion
 
-Most ML teams are stuck in optimization theater: tuning components that don't govern system performance. The Theory of Constraints gives you a way out: find the one bottleneck that sets the ceiling, understand why it's stuck, and design an innovation that breaks the tradeoff instead of compromising on it.
+Most ML teams are stuck in optimization chaos: tuning components that don't govern system performance. The Theory of Constraints gives you a way out: find the one bottleneck that sets the ceiling, understand why it's stuck, and design an innovation that breaks the tradeoff instead of compromising on it.
 
-The method is five steps, but the discipline is one idea: *at any moment, only one thing limits your system.* Find it. Fix it. Then find the next one.
+*At any moment, only one thing limits your system: Find it & Fix it.*
 
-If you take one thing from this post, make it this: before your next "optimization" sprint, build the constraint ledger. Measure every stage. Find the row with high utilization and a growing queue. That's where your effort belongs, and nowhere else.
+If you take one thing from this post, make it this: before your next "optimization" sprint, build the constraint ledger. Measure every stage. Find the row with high utilization and a growing queue. That's where your effort yields the best results.
 
 ## References
 
-- Goldratt, E. M. (1984). "The Goal: A Process of Ongoing Improvement." North River Press.
-- Sculley, D., et al. (2015). "Hidden Technical Debt in Machine Learning Systems." NIPS 2015.
-- Paleyes, A., et al. (2022). "Challenges in Deploying Machine Learning: A Survey of Case Studies." ACM Computing Surveys.
-- Kleppmann, M. (2017). "Designing Data-Intensive Applications." O'Reilly Media.
-- Polyzotis, N., et al. (2018). "Data Lifecycle Challenges in Production Machine Learning." SIGMOD Record.
-- Chandola, V., et al. (2009). "Anomaly Detection: A Survey." ACM Computing Surveys.
-- Ahmed, M., et al. (2016). "A Survey of Network Anomaly Detection Techniques." Journal of Network and Computer Applications.
-- Sommer, R., & Paxson, V. (2010). "Outside the Closed World: On Using Machine Learning for Network Intrusion Detection." IEEE S&P.
+- **Goldratt, E. M.** (1984). [The Goal: A Process of Ongoing Improvement](https://en.wikipedia.org/wiki/The_Goal_(novel)). *North River Press*.
+- **Chandola, V., Banerjee, A., & Kumar, V.** (2009). [Anomaly Detection: A Survey](https://doi.org/10.1145/1541880.1541882). *ACM Computing Surveys*, 41(3).
+- **Sommer, R. & Paxson, V.** (2010). [Outside the Closed World: On Using Machine Learning for Network Intrusion Detection](https://www.icir.org/robin/papers/oakland10-ml.pdf). *IEEE S&P*.
+- **Sculley, D. et al.** (2015). [Hidden Technical Debt in Machine Learning Systems](https://papers.nips.cc/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html). *NeurIPS*.
+- **Ahmed, M., Mahmood, A., & Hu, J.** (2016). [A Survey of Network Anomaly Detection Techniques](https://doi.org/10.1016/j.jnca.2015.11.016). *Journal of Network and Computer Applications*, 60.
+- **Kleppmann, M.** (2017). [Designing Data-Intensive Applications](https://dataintensive.net/). *O'Reilly*.
+- **Polyzotis, N. et al.** (2018). [Data Lifecycle Challenges in Production Machine Learning](https://doi.org/10.1145/3299887.3299891). *SIGMOD Record*, 47(2).
+- **Paleyes, A., Urma, R., & Lawrence, N.** (2022). [Challenges in Deploying Machine Learning: A Survey of Case Studies](https://arxiv.org/abs/2011.09926). *ACM Computing Surveys*, 55(6).

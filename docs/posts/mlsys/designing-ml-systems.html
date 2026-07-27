@@ -599,15 +599,15 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>Fitting a model is the most commoditized skill in machine learning. Gradient boosting on tabular data, a fine-tuned transformer on text: these are an afternoon of work, and the libraries that do them are free, fast, and written by people better at it than you or me. The modelling half of this field has been solved so thoroughly that it is now the easy part.</p>
 <p>Everything after <code>model.fit()</code> has not been solved, and that is where most ML projects fail.</p>
-<p>The usual response is a checklist. Monitor your features. Version your data. Watch for drift. Every item is correct, but the list is unsatisfying, because it tells you <em>what</em> to do without telling you <em>why those things and not a hundred others</em>.</p>
+<p>The usual response is a checklist. Monitor your features, version your data, watch for drift, etc. Every item is correct, but the list is unsatisfying because it tells you <em>what</em> to do without telling you <em>why those things and not a hundred others</em>.</p>
 <p>But production failures are not a grab bag. They have exactly one shape, and once you can write that shape down, the checklist stops being something you memorize and becomes something you derive. Three things that fall out of it:</p>
 <ul>
 <li>A backend service that is slow 1% of the time, called 100 times per user request, makes <strong>63% of your requests slow</strong>. Your p99 is a property of your architecture, not of any service in it (<a href="#sec-tail">the arithmetic is here</a>).</li>
-<li>A fraud model with 99% sensitivity <em>and</em> 99% specificity, deployed at a 0.1% base rate, is <strong>wrong nine times out of ten every time it fires</strong>. Nothing is broken. That is arithmetic, and no amount of retraining changes it (<a href="#sec-base-rate">the arithmetic is here</a>).</li>
+<li>A fraud model with 99% sensitivity <em>and</em> 99% specificity, deployed at a 0.1% base rate, is <strong>wrong nine times out of ten every time it fires</strong>. Nothing is broken and no amount of retraining changes it (<a href="#sec-base-rate">the arithmetic is here</a>).</li>
 <li>Shipping the default 0.5 decision threshold is a silent assertion that a false alarm costs exactly as much as a missed fraud. In a simulation of two million transactions, that assertion costs <strong>6.3x more per transaction</strong> than the threshold the cost matrix implies (<a href="#sec-threshold">the arithmetic is here</a>).</li>
 </ul>
 <p>None of these is a modelling problem, and none is visible in a holdout metric. They are all versions of the same underlying failure.</p>
-<p>This guide comes from two places: a decade of leading and designing ML systems across smart devices, healthcare, and enterprise AI, which is where the scars come from; and years of reading widely and working the ideas through from first principles until they were my own. What I have tried to add is the derivations. Where the standard advice hands you a rule of thumb, I show you where it comes from, because a rule you can derive is a rule you also know when to break. And where I expected one thing and the measurement said another, I say so.</p>
+<p>This guide comes from two places: a decade of leading and designing ML systems across smart devices, healthcare, and enterprise AI, which is where the learnings come from; and years of reading widely and working the ideas through from first principles. What I have tried to add is the derivations. Where the standard advice hands you a rule of thumb, I show you where it comes from, because a rule you can derive is a rule you also know when to break. And where I expected one thing and the measurement said another, I say so.</p>
 <p>The next section works out the frame. Every section after it is an attack on one of the three gaps that frame names. By the end you should be able to:</p>
 <ol type="1">
 <li>Derive a tail-latency budget from your architecture instead of guessing one</li>
@@ -661,7 +661,6 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
-<p>That is the whole taxonomy, and it is exhaustive by construction: there is nothing else in the expression that can differ.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -673,7 +672,7 @@ window.Quarto = {
 </div>
 <div class="callout-body-container callout-body">
 <p><span class="math inline">\(f\)</span> is any decision function. A hinge-loss SVM, a gradient-boosted ranker, and a logistic regression face the same three gaps, because the gaps are properties of <strong>the data and the objective, not of the model class.</strong> What varies is which repairs you get: the <a href="#sec-threshold">threshold rule</a> needs a calibrated probability, while <a href="#sec-sampling">importance reweighting</a> and the <a href="#sec-drift">drift analysis</a> do not.</p>
-<p>The real limit is that this is about <strong>supervised prediction</strong>, where a label eventually arrives and <span class="math inline">\(L_{\text{business}}\)</span> is a cost per decision. Reinforcement learning and unsupervised systems have their own failure taxonomies, and I will not pretend this one covers them.</p>
+<p>The real limit is that this is about <strong>supervised prediction</strong>, where a label eventually arrives and <span class="math inline">\(L_{\text{business}}\)</span> is a cost per decision. Reinforcement learning and unsupervised systems have their own failure taxonomies, which aren’t covered by this frame.</p>
 </div>
 </div>
 <hr>
@@ -740,26 +739,25 @@ window.Quarto = {
 <p>This is why a 10 ms operation can take 500 ms once it crosses twenty service boundaries: tail latency is a property of your <em>architecture</em>, not of any component in it. You cannot fix it by optimizing the slowest service. You fix it by reducing fan-out, hedging requests, or making each hop’s p99 extremely good.</p>
 </div>
 </div>
-<p>The practical consequence is a trade-off people resist. An ensemble might buy 3% accuracy. If it pushes p99 past the budget, take the simpler model. Users rarely notice a slightly worse recommendation, but they always notice a slow page.</p>
 </section>
 <section id="sec-proxies" class="level3">
 <h3 class="anchored" data-anchor-id="sec-proxies">ML Metrics Are Proxies</h3>
 <p>ML metrics are not business value. They are correlated with it, sometimes, over some range. A recommender’s NDCG is not revenue. A fraud model’s precision is not dollars saved.</p>
-<p>I learned this properly on a content recommendation system. We spent three months lifting the ranking model’s AUC from 0.78 to 0.82, which is a real improvement by any offline standard. We deployed it and engagement did not move. The reason took another week to find: nearly all of the gain was in how we ranked items 50 through 100, and users almost never scrolled past item 20. We had spent a quarter optimizing a region of the ranking that no human being ever looked at.</p>
-<p>AUC is not the villain. The problem is that an aggregate metric averages over regions of the input space that carry unequal business weight, and the model will happily buy its gains in the cheap ones. Before you optimize a metric, establish three things with whoever owns the P&amp;L:</p>
+<p>I learned this properly on a content recommendation system. We spent three months lifting the ranking model’s AUC from 0.78 to 0.82, which is a real improvement by any offline standard. We deployed it and engagement did not move. The reason took another week to find: nearly all of the gain was in how we ranked items 50 through 100, and users almost never scrolled past item 20. We had spent a quarter optimizing a region of the ranking that almost no one ever looked at.</p>
+<p>The problem is NOT AUC, it is that an aggregate metric averages over regions of the input space that carry unequal business weight, and the model will happily buy its gains in the cheap ones. Before you optimize a metric, establish three things with whoever owns the P&amp;L:</p>
 <ol type="1">
 <li>What user behavior actually drives value?</li>
 <li>How does the model’s output change that behavior?</li>
 <li>What is the <em>sensitivity</em>: how much business metric per unit of ML metric?</li>
 </ol>
-<p>Question 3 is the one that gets skipped, and it is the only one that tells you whether the project is worth doing. Sometimes the answer is that ML is a small term in a large equation. In a loan approval system, the model estimates creditworthiness, but the approval decision is dominated by regulatory floors, capital availability, and portfolio strategy. A better model may move nothing at all, and it is much cheaper to discover that in a spreadsheet than after two quarters of engineering.</p>
+<p>Question 3 is the one that usually gets skipped, and it is the only one that tells you whether the project is worth doing. Sometimes the answer is that ML is a small term in a large equation. In a loan approval system, the model estimates creditworthiness, but the approval decision is dominated by regulatory floors, capital availability, and portfolio strategy. A better model may move nothing at all, and it is much cheaper to discover that in a spreadsheet than after two quarters of engineering.</p>
 </section>
 <section id="sec-pillars" class="level3">
 <h3 class="anchored" data-anchor-id="sec-pillars">The Four Pillars</h3>
-<p>Huyen’s framing, and it holds up. Production systems need reliability, scalability, maintainability, and adaptability. Most of this is standard software engineering, so I will only dwell on the part that is ML-specific.</p>
+<p>Production systems need reliability, scalability, maintainability, and adaptability. Most of this is standard software engineering, so I will only dwell on the part that is ML-specific.</p>
 <p><strong>Reliability</strong> in ML means more than uptime, because ML systems fail <em>silently</em>. A web server that breaks returns a 500. A model whose feature pipeline breaks returns a confident, plausible, wrong number, and it keeps doing so for months. The defense is a <strong>degradation ladder</strong> that is decided in advance:</p>
 <pre><code>primary model  →  simpler/cached model  →  business rules  →  cached prediction  →  safe default</code></pre>
-<p>Every rung must be implemented and <em>tested</em>, and the bottom rung must be safe rather than merely available. A fraud system whose fallback is “approve everything” is not degrading gracefully; it is failing open, and that is expensive.</p>
+<p>Every level of the system must be implemented and <em>tested</em>, and the lowest/basic level must be safe rather than merely available. A fraud system whose fallback is “approve everything” is not degrading gracefully; it is failing open, and that is expensive.</p>
 <p><strong>Scalability</strong> has three axes that interact: model complexity, request volume, and <em>number of models</em>. The third is the one that surprises teams. An architecture tuned for one large model often collapses under three hundred small ones, because per-model overhead (loading, memory, monitoring, versioning) was never on anyone’s radar.</p>
 <p><strong>Maintainability</strong> is versioning, and in ML that means versioning code, data, models, configs, and feature definitions, because any one of them drifting silently produces a different system. Six months from now, nobody remembers why that threshold was 0.37.</p>
 <p><strong>Adaptability</strong> is the ability to change quickly, which requires modularity, monitoring that tells you <em>when</em> to change, and a safe rollout path (<a href="#sec-testing-prod">testing in production</a>).</p>
@@ -770,7 +768,7 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="sec-framing">Framing the Problem</h2>
 <section id="sec-hierarchy" class="level3">
 <h3 class="anchored" data-anchor-id="sec-hierarchy">Hierarchical Classification: What It Buys and What It Doesn’t</h3>
-<p>For classification with many classes, decomposing into a hierarchy (coarse categories first, specialized models at the leaves) is often the right move. Three reasons it helps, and one common claim for it that does not survive scrutiny.</p>
+<p>For classification with many classes, decomposing into a hierarchy (coarse categories first, specialized models at the leaves) is often the right move.</p>
 <p>First, <strong>different features at different levels</strong>. Top-level routing can use broad, cheap features. Leaf models can use narrow features that only make sense within their subtree (“screen size” is meaningful for phones and meaningless for groceries).</p>
 <p>Second, <strong>the option to abstain</strong>. If the top-level classifier is not confident, you can stop and return the coarse label. In production, a confident wrong answer at the leaf (“iPhone 13”) is usually worse than a vague right one (“Electronics”). Flat classifiers do not give you this choice for free.</p>
 <p>Third, <strong>maintainability</strong>. You can retrain one subtree without touching the rest, and errors localize to a level.</p>
@@ -786,7 +784,7 @@ window.Quarto = {
 <div class="callout-body-container callout-body">
 <p>It is commonly claimed that hierarchical classification slashes your data requirements. With a rule of thumb of ~100 samples per class, a flat 10,000-class problem needs ~1M samples, and the hierarchy supposedly needs a fraction of that.</p>
 <p><strong>This is wrong.</strong> The leaf models still have to separate the fine-grained classes. If you want to distinguish 10,000 products, <em>something</em> in your system must see enough examples of each of the 10,000. Pooling data helps the <em>internal</em> nodes, where many leaf classes collapse into one coarse label. It does nothing for the leaves.</p>
-<p>What hierarchy actually reduces is the <em>difficulty of each decision</em>, not the <em>total supervision required</em>. Each classifier solves an easier problem over a more homogeneous input distribution with a purpose-built feature set. That is a substantial benefit. It is just not a data discount.</p>
+<p>What hierarchy actually reduces is the <em>difficulty of each decision</em>, not the <em>total supervision required</em>. Each classifier solves an easier problem over a more homogeneous input distribution with a purpose-built feature set, which is a substantial benefit.</p>
 </div>
 </div>
 </section>
@@ -797,18 +795,17 @@ window.Quarto = {
 </section>
 <section id="sec-objectives" class="level3">
 <h3 class="anchored" data-anchor-id="sec-objectives">Multiple Objectives: Decouple Them</h3>
-<p>When a system must serve several objectives (relevance, engagement, revenue), the tempting move is one model with a blended loss. Resist it. A single model with three objectives baked into its weights forces you to retrain the model every time the business changes its mind about the trade-off, which it will do quarterly.</p>
+<p>When a system must serve several objectives (relevance, engagement, revenue), the tempting move is one model with a blended loss. A single model with three objectives baked into its weights forces you to retrain the model every time the business changes its mind about the trade-off, which it will do quarterly.</p>
 <p>Train one model per objective. Combine at serving time with weights:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> score(item, user_ctx, business_ctx, models, rules):</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""One model per objective; the trade-off lives in config, not in weights."""</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""One model per objective; trade-off specified in config NOT in weights."""</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    scores <span class="op">=</span> {name: m.predict(item) <span class="cf">for</span> name, m <span class="kw">in</span> models.items()}</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Weights are configuration. Changing the business trade-off is a deploy,</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># not a retrain: bump revenue during a sale, engagement for new users.</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    weights <span class="op">=</span> get_weights(user_ctx, business_ctx)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    blended <span class="op">=</span> <span class="bu">sum</span>(weights[name] <span class="op">*</span> s <span class="cf">for</span> name, s <span class="kw">in</span> scores.items())</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> apply_business_rules(blended, item, rules)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Changing the business trade-off requires new deployment NOT retraining</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    weights <span class="op">=</span> get_weights(user_ctx, business_ctx)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    blended <span class="op">=</span> <span class="bu">sum</span>(weights[name] <span class="op">*</span> s <span class="cf">for</span> name, s <span class="kw">in</span> scores.items())</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> apply_business_rules(blended, item, rules)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>This buys four things: you can retune priorities without retraining, update one model without touching the others, debug a single objective in isolation, and use a different architecture per objective. The cost is that you now serve three models instead of one (<a href="#sec-pillars">scalability, axis three</a>), and it is worth paying: the flexibility buys you more than the extra compute costs.</p>
 <hr>
 </section>
@@ -819,10 +816,10 @@ window.Quarto = {
 <h3 class="anchored" data-anchor-id="sec-chaos">First-, Second-, and Third-Party Data</h3>
 <p>Data gets more valuable and more chaotic the closer it sits to you. The three tiers differ in how they break.</p>
 <p><strong>First-party data</strong> (collected directly from your users) is the most valuable, because it is about <em>your</em> users doing <em>your</em> thing. It is also the filthiest data you will ever handle. Users leave fields blank, type <code>asdf@asdf.com</code>, and behave in ways no schema anticipated.</p>
-<p>On one system I found that 15% of users were born on January 1st. This was not a demographic anomaly. Our date picker defaulted to January 1st and most people did not bother changing it. The feature was not “date of birth.” It was “date of birth, or evidence that the user was in a hurry,” and those are different features with different relationships to the target.</p>
-<p>The rule for first-party data is defensive processing. Validate everything. Assume every field is adversarial, not because users are malicious but because interfaces leak their defaults into your data.</p>
-<p><strong>Second-party data</strong> (from partners) breaks on semantics rather than syntax. The schema matches; the meanings do not. One partner’s “active user” is a 30-day login; another’s is a 90-day purchase. Nothing in the data will tell you this. Build validation that checks distributions, not just types, and alert when a partner’s field shifts.</p>
-<p><strong>Third-party data</strong> gives you coverage at the price of staleness, unknown bias, and legal exposure. That purchased demographic set may be two years old. That API may be gone next quarter when the terms change. Treat it as a dependency that could be withdrawn at any time.</p>
+<p>On one system I found that 15% of users were born on January 1st. Our date picker defaulted to January 1st and most people did not bother changing it. Therefore, January 1st now has two meanings (<code>NULL</code> and people who were actually born on January 1st) and we can extract more features out of “date of birth”</p>
+<p>The rule for first-party data is defensive processing. Validate everything and assume every field is adversarial, not because users are malicious but because interfaces leak their defaults into your data.</p>
+<p><strong>Second-party data</strong> (from partners) breaks on semantics rather than syntax. One partner’s “active user” is a 30-day login; another’s is a 90-day purchase. Nothing in the data will tell you this. Build validation that checks distributions, not just types, and alert when a partner’s field shifts.</p>
+<p><strong>Third-party data</strong> gives you coverage at the price of staleness, unknown bias, and legal exposure. For example, a purchased demographic set may be two years old. Treat it as a dependency that could be withdrawn at any time.</p>
 </section>
 <section id="sec-transport" class="level3">
 <h3 class="anchored" data-anchor-id="sec-transport">Data Passing Modes: Database, Service, Streaming</h3>
@@ -834,9 +831,9 @@ window.Quarto = {
 </section>
 <section id="sec-batch-streaming" class="level3">
 <h3 class="anchored" data-anchor-id="sec-batch-streaming">Batch and Streaming Features</h3>
-<p><strong>Batch features</strong> (also called static) are computed periodically over large datasets: lifetime value, 90-day purchase histogram, demographic aggregates. Because nothing is waiting on them, they can be arbitrarily expensive. They are stable, cheap to serve, and <em>stale by construction</em>.</p>
-<p><strong>Streaming features</strong> (dynamic) capture the present: items viewed in the last ten minutes, current session depth, current location. They must fit inside the request budget, so they are simple by necessity: counters, sliding windows.</p>
-<p>Most real systems need both, and the moment you have both, you have created a new source of Mismatch 1. The batch pipeline computes <code>avg_order_value</code> in Spark. The streaming pipeline computes it in Flink. They disagree about how to handle nulls, or about whether the window is inclusive, and now your model is trained on one definition and served another. Nobody notices, because both numbers look reasonable.</p>
+<p><strong>Batch features</strong> (also called static) are computed periodically over large datasets: lifetime value, 90-day purchase histogram, demographic aggregates. Because nothing is waiting on them, they can be arbitrarily expensive. They are stable, cheap to serve, and <em>stale</em>.</p>
+<p><strong>Streaming features</strong> (dynamic) capture the present: items viewed in the last ten minutes, current session depth, current location. They must fit inside the request budget, so they are simple by necessity.</p>
+<p>Most real systems need both, and the moment you have both, you have created a new source of Mismatch. The batch pipeline computes <code>avg_order_value</code> in Spark. The streaming pipeline computes it in Flink. They disagree about how to handle nulls, or about whether the window is inclusive, and now your model is trained on one definition and served another. Nobody notices, because both numbers look reasonable.</p>
 <p>This is the single most common silent failure in production ML, and the section on <a href="#sec-skew">training/serving skew</a> covers what to do about it.</p>
 <hr>
 </section>
@@ -845,8 +842,7 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="sec-sampling-labels">Sampling and Labels</h2>
 <section id="sec-sampling" class="level3">
 <h3 class="anchored" data-anchor-id="sec-sampling">Sampling Strategies</h3>
-<p>The default instinct is to grab the most recent data because it is convenient. This is <strong>nonprobability sampling</strong> and it is how you get burned.</p>
-<p>I once trained a fraud model on the most recent month available, which happened to be December. The model was excellent in validation and mediocre in production. December fraud is holiday fraud: different merchants, different amounts, different velocity. We had built a Christmas detector and deployed it in March.</p>
+<p>The default instinct is to grab the most recent data because it is convenient. This is <strong>nonprobability sampling</strong> and it is the source of some production headaches.</p>
 <p>The rest of the toolkit, briefly, because the choice is usually obvious once you name the constraint:</p>
 <table class="caption-top table">
 <colgroup>
@@ -889,7 +885,6 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
-<p>Importance sampling deserves a note, because it is the direct antidote to Mismatch 1 when you know the shift: reweight each training example by <span class="math inline">\(w(x) = P_{\text{target}}(x) / P_{\text{train}}(x)\)</span> and you recover an unbiased estimate under the target distribution. It works. It also has variance proportional to how badly the two distributions disagree, so when the overlap is poor, the reweighted estimate is unbiased and useless.</p>
 </section>
 <section id="sec-feedback" class="level3">
 <h3 class="anchored" data-anchor-id="sec-feedback">Feedback Signals: Volume, Delay, Noise</h3>
@@ -964,17 +959,16 @@ window.Quarto = {
 </section>
 <section id="sec-no-labels" class="level3">
 <h3 class="anchored" data-anchor-id="sec-no-labels">When You Do Not Have Labels</h3>
-<p>Labels are expensive. Four ways out, in rough order of how often they work.</p>
+<p>Labels are expensive. Four alternative in rough order of how often they work.</p>
 <p><strong>Transfer learning</strong> is the first thing to try, and it usually wins. Start from a model pretrained on a related task and fine-tune. The amount of task-specific data you need is often shockingly small: hundreds of examples, not hundreds of thousands, because the pretrained model already has the representation and you are only teaching it the decision.</p>
 <p><strong>Weak supervision</strong> replaces hand-labeling with <em>labeling functions</em>: heuristics, patterns, external knowledge, each individually noisy. A generative model learns how much to trust each one and resolves their disagreements (<a href="https://arxiv.org/abs/1711.10160">Ratner et al., 2017</a>). I used this for content moderation, where the labeling functions were things like profanity lists, all-caps ratios, “reported by 3+ distinct users,” and known-bad domains. No single function was better than mediocre. Combined, they were good enough to train on.</p>
-<p><strong>Semi-supervision</strong> bootstraps from a small labeled set: train, predict on unlabeled data, keep the confident predictions, retrain. It works, and it has a nasty failure mode. The model is being trained on its own beliefs, so its errors are self-reinforcing. Confidence goes up while accuracy goes down, and the metric you would use to catch this is the one that has been corrupted. Always hold out a genuinely labeled validation set and stop when it degrades.</p>
+<p><strong>Semi-supervision</strong> bootstraps from a small labeled set: train, predict on unlabeled data, keep the confident predictions, retrain. It works, but it has a dangerous failure mode. The model is being trained on its own beliefs, so its errors are self-reinforcing. Confidence goes up while accuracy goes down, and the metric you would use to catch this is the one that has been corrupted. Always hold out a genuinely labeled validation set and stop when it degrades.</p>
 <p><strong>Active learning</strong> spends your labeling budget where it buys the most: uncertain examples, boundary cases, cluster representatives. The chicken-and-egg problem is that selecting informative examples requires a model, and the model requires labels, so start with a small random seed set and iterate.</p>
 <hr>
 </section>
 </section>
 <section id="sec-imbalance" class="level2">
 <h2 class="anchored" data-anchor-id="sec-imbalance">Class Imbalance and the Cost of Errors</h2>
-<p>This is where the standard advice does the most damage.</p>
 <section id="sec-base-rate" class="level3">
 <h3 class="anchored" data-anchor-id="sec-base-rate">Why Accuracy Fails Under Imbalance</h3>
 <p>Everyone knows the first-order version: a model that always predicts “not fraud” scores 99.9% accuracy and catches nothing. The usual response, switch to precision and recall, does not go deep enough, because <strong>even a genuinely good model produces a mostly-useless alert queue</strong>, and no choice of metric changes that.</p>
@@ -1020,7 +1014,6 @@ window.Quarto = {
 </tbody>
 </table>
 <p>At 1% prevalence, a 99%/99% model is <strong>a coin flip</strong>. At 0.1%, nine out of every ten alerts you send a human are wrong.</p>
-<p>This is the base-rate fallacy. It is not a modelling failure but a consequence of arithmetic: the model is doing its job, and the low prior overwhelms it. Two consequences follow immediately: your human review queue will be mostly false positives no matter how good the model gets, and you must therefore decide <em>what an alert is worth</em> before you decide what to alert on.</p>
 </section>
 <section id="sec-threshold" class="level3">
 <h3 class="anchored" data-anchor-id="sec-threshold">Why 0.5 Is the Wrong Threshold</h3>
@@ -1095,7 +1088,7 @@ window.Quarto = {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>Calibration is a precondition, not a polish step
+<span class="screen-reader-only">Warning</span>Importance of calibration
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -1123,7 +1116,7 @@ window.Quarto = {
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># not the real one, and t* is computed against a lie.</span></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>model.set_learning_rate(<span class="fl">0.1</span> <span class="op">*</span> lr)</span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>model.fit(X_train, y_train)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Phase 2 is not optional, and it is the step everyone skips. A model trained only on rebalanced data has learned the <em>rebalanced prior</em>, so its probabilities are wrong by exactly the resampling ratio, which breaks <a href="#sec-threshold">the threshold rule</a>.</p>
+<p>A model trained only on rebalanced data has learned the <em>rebalanced prior</em>, so its probabilities are wrong by exactly the resampling ratio, which breaks <a href="#sec-threshold">the threshold rule</a>.</p>
 </section>
 <section id="sec-loss" class="level3">
 <h3 class="anchored" data-anchor-id="sec-loss">Algorithm-Level Fixes: Cost-Sensitive and Focal Loss</h3>
@@ -1145,24 +1138,24 @@ window.Quarto = {
 <li><strong>MAR</strong> (Missing At Random): missingness depends on other observed variables. Mobile users skip long forms. Predictable from what you do have.</li>
 <li><strong>MCAR</strong> (Missing Completely At Random): genuinely random. A dropped packet. Rare in practice, and if you think your data is MCAR, look harder.</li>
 </ul>
-<p>One rule gets repeated everywhere and justified nowhere: <strong>always add a missing indicator.</strong> It follows directly from the MNAR definition.</p>
+<p><strong>Always add a missing indicator.</strong> It follows directly from the MNAR definition.</p>
 <p>Let <span class="math inline">\(M\)</span> be the binary missingness mask for a feature. Under MNAR, <span class="math inline">\(M\)</span> depends on the unobserved value, which means:</p>
 <p><span class="math display">\[P(Y \mid X_{\text{obs}}, M=1) \neq P(Y \mid X_{\text{obs}}, M=0)\]</span></p>
 <p>The two populations have different label distributions <em>given everything else you observed</em>. So <span class="math inline">\(M\)</span> carries information that is not recoverable from <span class="math inline">\(X_{\text{obs}}\)</span>, and therefore not recoverable from any imputed value, because imputation is a function of <span class="math inline">\(X_{\text{obs}}\)</span>. <strong>Imputation destroys <span class="math inline">\(M\)</span>. The indicator preserves it.</strong></p>
 <p>This also tells you exactly when the rule does not apply: under MCAR, the two distributions are equal, <span class="math inline">\(M\)</span> is independent of <span class="math inline">\(Y\)</span>, and the indicator is pure noise. That is the only case where you can skip it, and it is the case you almost never have.</p>
-<p>The rest follows:</p>
+<p>From this, several practical guidelines follow:</p>
 <ul>
 <li><strong>Do not drop columns</strong> for being 30% missing. That column is informative for the 70%, and its missingness is informative for the rest.</li>
 <li><strong>Be careful dropping rows.</strong> Under MAR or MNAR you are deleting a <em>segment</em>, and it is usually a segment you care about.</li>
 <li><strong>Median/mode imputation plus an indicator</strong> is a strong baseline and beats most of what people replace it with.</li>
-<li><strong>Predictive imputation</strong> is a model inside your model. Fit it on training data only, or you have built a leakage pipeline (<a href="#sec-other-leakage">preprocessing leakage</a>).</li>
+<li><strong>Predictive imputation</strong> is a model inside your model. Fit it on training data only to avoid leakage(<a href="#sec-other-leakage">preprocessing leakage</a>).</li>
 </ul>
 </section>
 <section id="sec-scaling" class="level3">
 <h3 class="anchored" data-anchor-id="sec-scaling">Scaling</h3>
-<p>Textbook scaling is <code>StandardScaler</code>. Production scaling has two problems the textbook does not mention.</p>
+<p>The most know scaling technique is <code>StandardScaler</code>, which has two problems:</p>
 <p>The first is that <strong>outliers destroy your scaling parameters</strong> before they ever touch your model. One value of <span class="math inline">\(10^9\)</span> in a column that otherwise ranges over <span class="math inline">\([0, 100]\)</span> drags the mean, inflates the standard deviation, and compresses every real value into a sliver near zero. Clip first (1st and 99th percentile), <em>then</em> compute statistics. In that order.</p>
-<p>The second is that <strong>training-time statistics go stale</strong>. You standardized using a mean from six months ago. User behavior moved. Your “standardized” feature is now centered at 3.</p>
+<p>The second is that <strong>training-time statistics go stale</strong>. You standardized using a mean from six months ago, but user behavior moves continuously in productionand.</p>
 <p>Match the transform to the distribution:</p>
 <table class="caption-top table">
 <thead>
@@ -1197,8 +1190,8 @@ window.Quarto = {
 </section>
 <section id="sec-encoding" class="level3">
 <h3 class="anchored" data-anchor-id="sec-encoding">Encoding</h3>
-<p>One-hot is fine until the cardinality is 10,000 and your feature matrix explodes. Target encoding (replace each category with its mean target) is clever and leaks: the target of the row you are encoding is inside the encoding. If you do use it, compute the encoding out-of-fold, and know that you have taken on a debt.</p>
-<p>The <strong>hashing trick</strong> is what tends to survive contact with production. Hash the category into a fixed number of buckets. Bounded dimensionality, no vocabulary to maintain, and (this is the part that matters) <strong>unseen categories at serving time just work</strong>, because hashing is defined for inputs you have never observed. One-hot and target encoding both have to be told what to do with a new category, and what they usually do is crash or silently return zeros.</p>
+<p>One-hot is fine until the cardinality is 10,000 and your feature matrix explodes. Target encoding (replace each category with its mean target) is clever and leaks: the target of the row you are encoding is inside the encoding. If you do use it, compute the encoding out-of-fold.</p>
+<p>The <strong>hashing trick</strong> is what tends to survive contact with production. Hash the category into a fixed number of buckets. Bounded dimensionality, no vocabulary to maintain, and (this is the part that matters) <strong>unseen categories at serving time just work</strong>, because hashing is defined for inputs you have never observed. One-hot and target encoding both have to be told what to do with a new category.</p>
 <p>A collision costs a little accuracy, which is a far better failure than an unhandled new category crashing the request path at serving time.</p>
 </section>
 <section id="sec-crossing" class="level3">
@@ -1208,7 +1201,6 @@ window.Quarto = {
 </section>
 <section id="sec-skew" class="level3">
 <h3 class="anchored" data-anchor-id="sec-skew">Training/Serving Skew</h3>
-<p>This is Mismatch 1 in its purest form.</p>
 <p>You compute <code>avg_session_length</code> in a Pandas notebook for training. Someone reimplements it in Scala for the serving path. They handle a null differently, or round differently, or use a half-open interval where you used a closed one. The model now sees a feature at serving time that is subtly not the one it was trained on. Nothing throws an error and both numbers look reasonable, so performance degrades quietly, and every investigation starts at the model, which is not where the problem is.</p>
 <p>There is exactly one robust fix: the training path and the serving path must execute <strong>the same code</strong>, not two separate implementations that are meant to agree.</p>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -1221,9 +1213,9 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>This is what feature stores (Feast, Tecton) are <em>for</em>, and they are not just a database with a new label on it. A feature store’s actual contribution is that it makes the feature definition a single artifact with two execution paths (a batch one for training, a low-latency one for serving) generated from one definition, plus point-in-time-correct joins so that when you build a training set you get the feature values <em>as they were at the prediction timestamp</em>, not as they are now.</p>
-<p>That second property is a leakage prevention mechanism (<a href="#sec-temporal-leakage">temporal leakage</a>), and it is the one people underrate. Most teams can hand-roll the first property. Almost nobody hand-rolls point-in-time correctness without getting it wrong at least once.</p>
-<p>Whether you need one is a scale question. Whether you need the <em>properties</em> is not: if you have batch and streaming features and no feature store, you have to enforce those two invariants yourself, by hand, forever.</p>
+<p>This is what feature stores (Feast, Tecton) are <em>for</em>, and they are not just a database. A feature store’s actual contribution is that it makes the feature definition a single artifact with two execution paths (a batch one for training, a low-latency one for serving) generated from one definition, plus point-in-time-correct joins so that when you build a training set you get the feature values <em>as they were at the prediction timestamp</em>, not as they are now.</p>
+<p>That second property is a leakage prevention mechanism (<a href="#sec-temporal-leakage">temporal leakage</a>). Most teams can hand-roll the first property, but very few hand-rolls point-in-time correctness without getting it wrong at least once.</p>
+<p>Whether you need one is a scale question, but you need the two <em>properties</em> especially if you have batch and streaming features.</p>
 </div>
 </div>
 <hr>
@@ -1231,25 +1223,25 @@ window.Quarto = {
 </section>
 <section id="sec-leakage" class="level2">
 <h2 class="anchored" data-anchor-id="sec-leakage">Data Leakage</h2>
-<p>Leakage has caused more of the production failures I have personally debugged than any other single cause. It is uniquely nasty because it does not look like a bug. It looks like success, right up until you deploy.</p>
+<p>Leakage has caused more of the production failures I have personally debugged than any other single cause. It is uniquely dangerous because it does not look like a bug.</p>
 <section id="sec-temporal-leakage" class="level3">
 <h3 class="anchored" data-anchor-id="sec-temporal-leakage">Temporal Leakage</h3>
 <p>Temporal leakage is using information from after the prediction time to make the prediction. Stated that way it sounds impossible to do by accident, and yet it is one of the easiest mistakes to make.</p>
-<p>I debugged a churn model that scored 99% accuracy in validation. The team was ready to ship. In production it fell to 60%.</p>
-<p>The culprit was a feature called <code>account_status</code>, which was computed by a nightly job <em>after</em> churn was recorded. The model had not learned to predict churn. It had learned to recognize customers who had already churned. Offline, that field makes the model look 99% accurate. Online, at prediction time, it always reads “active,” so the model has learned nothing it can use.</p>
+<p>I debugged a churn model that scored 99% accuracy in validation. In production it fell to 60%.</p>
+<p>The issue was a feature called <code>account_status</code>, which was computed by a nightly job <em>after</em> churn was recorded. The model had not learned to predict churn. It had learned to recognize customers who had already churned. Offline, that field makes the model look 99% accurate. Online, at prediction time, it always reads “active,” so the model has learned nothing it can use.</p>
 <p>Any aggregate can hide this. <code>days_since_last_purchase</code> computed relative to <em>today</em> instead of relative to the prediction date. <code>lifetime_value</code> that includes the transaction you are trying to predict. The question to ask about every single feature is: <strong>at the moment I need to make this prediction in production, does this value exist yet?</strong></p>
-<p>And the structural defense: <strong>split by time, never at random</strong>, for any problem with a temporal component. Your validation set must come from strictly after your training set, because that is the shape of the production task.</p>
+<p><strong>Always split by time, never at random</strong>, for any problem with a temporal component. Your validation set must come from strictly after your training set, because that is the shape of the production task.</p>
 </section>
 <section id="sec-other-leakage" class="level3">
 <h3 class="anchored" data-anchor-id="sec-other-leakage">Preprocessing, Duplicate, and Group Leakage</h3>
 <p><strong>Preprocessing leakage.</strong> You computed the scaler’s mean over the full dataset, then split. The test set’s statistics are now baked into the training transform. Same for imputation values, feature selection, and text vocabularies. The rule: fit every transform on training data only, then apply the frozen transform to test.</p>
-<p><strong>Duplicate leakage.</strong> The same record (or a near-duplicate) appears in both train and test. Your test score measures memorization. Deduplicate before splitting, and check for fuzzy duplicates, not just exact ones.</p>
-<p><strong>Group leakage.</strong> Correlated records straddle the split. Ten photos of the same person, split across train and test. Multiple transactions from one user on one day. The model learns to identify the <em>group</em> rather than the <em>pattern</em>, and the test set rewards it. Split by group, not by row.</p>
+<p><strong>Duplicate leakage.</strong> The same record (or a near-duplicate) appears in both train and test. Deduplicate before splitting, and check for fuzzy duplicates, not just exact ones.</p>
+<p><strong>Group leakage.</strong> Correlated records straddle the split. Ten photos of the same person, split across train and test. Multiple transactions from one user on one day. The model learns to identify the <em>group</em> rather than the <em>pattern</em>. Therefore, split by group, not by row.</p>
 </section>
 <section id="sec-adversarial" class="level3">
 <h3 class="anchored" data-anchor-id="sec-adversarial">Detecting Leakage: Adversarial Validation</h3>
 <p>The best general-purpose leakage detector is a classifier that tries to tell your training set apart from your test set.</p>
-<p>The logic is exact: <strong>if train and test are drawn from the same distribution, no classifier can separate them better than chance.</strong> Any model, given infinite capacity and infinite data, achieves AUC 0.5. So an AUC materially above 0.5 is <em>evidence</em> that the two sets differ, and the features the classifier leans on are the ones that differ.</p>
+<p>The logic is: <strong>if train and test are drawn from the same distribution, no classifier can separate them better than chance.</strong> Any model, given infinite capacity and infinite data, achieves AUC 0.5. So an AUC materially above 0.5 is <em>evidence</em> that the two sets differ, and the features the classifier leans on are the ones that differ.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> cross_val_score</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np, pandas <span class="im">as</span> pd</span>
@@ -1266,8 +1258,12 @@ window.Quarto = {
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    clf.fit(X, is_test)</span>
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    suspects <span class="op">=</span> pd.Series(clf.feature_importances_, index<span class="op">=</span>X.columns).nlargest(<span class="dv">5</span>)</span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> auc, (suspects <span class="cf">if</span> auc <span class="op">&gt;</span> threshold <span class="cf">else</span> <span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The 0.7 is a practical tolerance for finite-sample noise, not a law. Treat anything above ~0.6 as worth a look.</p>
-<p>Two cheaper checks are worth running first. <strong>Feature importance</strong>: if one feature dominates every other, be suspicious rather than pleased. Genuine predictive features are rarely that dominant, and a feature that is “too good” usually contains the answer. <strong>Ablation</strong>: drop one feature, retrain, and see if performance collapses. Genuine predictive signal is usually spread across many features, whereas leakage tends to concentrate in one.</p>
+<p>The 0.7 is a practical tolerance for finite-sample noise. Treat anything above ~0.6 as worth a look.</p>
+<p>Two cheaper checks are worth running first.</p>
+<ul>
+<li><strong>Feature importance</strong>: if one feature dominates every other, be suspicious. Genuine predictive features are rarely that dominant, and a feature that is “too good” usually contains the answer.</li>
+<li><strong>Ablation</strong>: drop one feature, retrain, and see if performance collapses. Genuine predictive signal is usually spread across many features, whereas leakage tends to concentrate in one.</li>
+</ul>
 <hr>
 </section>
 </section>
@@ -1283,7 +1279,7 @@ window.Quarto = {
 <li><strong>Simple ML.</strong> Logistic regression, gradient-boosted trees.</li>
 </ol>
 <p>Then ask whether the complex model’s margin over step 4 is worth its cost, where “cost” includes serving latency, debugging difficulty, retraining time, and the engineer-months it will consume for as long as it lives.</p>
-<p>Simple models win in production more often than anyone likes to admit. They are faster, more interpretable, degrade more gracefully, and fail in ways you can reason about.</p>
+<p>Simple models win in production more often than not. They are faster, more interpretable, degrade more gracefully, and fail in ways you can reason about.</p>
 </section>
 <section id="sec-calibration" class="level3">
 <h3 class="anchored" data-anchor-id="sec-calibration">Calibration</h3>
@@ -1301,7 +1297,7 @@ window.Quarto = {
 <section id="sec-slices" class="level3">
 <h3 class="anchored" data-anchor-id="sec-slices">Slice-Based Evaluation</h3>
 <p>An aggregate metric is an average over a population, and averages hide the segments that matter.</p>
-<p>I deployed a recommendation system that performed well overall and terribly for new users. We had trained and tuned on users with rich histories, because that was where most of the data was, and the model learned to lean hard on history. New users had none. The aggregate metric was fine, because new users were a small fraction of sessions. They were also the entire growth channel, and the model we shipped was pushing them away.</p>
+<p>I deployed a model that performed well overall and terribly for new users. We had trained and tuned on users with rich histories, because that was where most of the data was, and the model learned to lean hard on history. New users had none. The aggregate metric was fine, because new users were a small fraction of sessions. They were also the entire growth channel, and the model we shipped was pushing them away.</p>
 <p>Evaluate on slices, always, and choose them by business importance rather than by data volume: new versus returning, geography, device, language, high-value versus low-value customers, and the rare-but-critical cases. A model that is 2% better on average and 15% worse on new users is a worse model.</p>
 </section>
 <section id="sec-behavioral" class="level3">
@@ -1312,7 +1308,7 @@ window.Quarto = {
 <li><strong>Invariance</strong>: changing a customer’s name should not change their credit decision.</li>
 <li><strong>Directional expectation</strong>: adding a known-fraudulent signal should raise the fraud score.</li>
 </ul>
-<p>These catch spurious correlations that validation metrics reward.</p>
+<p>These catch spurious correlations that validation metrics won’t catch.</p>
 <p><strong>Robustness tests</strong> perturb inputs slightly and check that predictions do not swing wildly. Production is full of noise: sensor error, truncation, retries, typos. A model that is unstable under small perturbations will be unstable in production.</p>
 <hr>
 </section>
@@ -1321,7 +1317,7 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="sec-serving">Serving</h2>
 <section id="sec-serving-modes" class="level3">
 <h3 class="anchored" data-anchor-id="sec-serving-modes">Batch, Online, and the Hybrid</h3>
-<p><strong>Batch prediction</strong> precomputes everything on a schedule and serves from a lookup table. No latency problem, arbitrary model complexity, cheap serving. Three costs: storage grows with users × items, most of what you compute is never used, and every prediction is stale by up to one cycle. Staleness is worse than it sounds, because intent moves fast. A user shopping for a laptop this morning may be shopping for a monitor now, and a nightly batch cannot reflect that.</p>
+<p><strong>Batch prediction</strong> precomputes everything on a schedule and serves from a lookup table. No latency problem, arbitrary model complexity, cheap serving. Three costs: storage grows with users x items, most of what you compute is never used, and every prediction is stale by up to one cycle. Staleness is worse than it sounds, because intent moves fast. A user shopping for a laptop this morning may be shopping for a monitor now, and a nightly batch cannot reflect that.</p>
 <p><strong>Online prediction</strong> computes on demand. Always fresh, nothing wasted, and now you are inside a latency budget.</p>
 <p>The counterintuitive part is that in an online system, <strong>feature computation usually dominates latency, not model inference.</strong> The model is a few matrix multiplies; the features need a fan-out to several services and a cache miss, which is the <a href="#sec-tail">fan-out problem</a> again. Optimizing the model while features are the bottleneck is a common and costly mistake, and the subject of a <a href="../../posts/mlsys/improving-mlsys-theory-of-constraint.html">separate post on finding the constraint that governs a system</a>.</p>
 <p>So: <strong>hybrid</strong>. Precompute the expensive, slow-moving features in batch (user embeddings, 90-day aggregates). Compute the cheap, fast-moving ones online (current session, current context). Join at request time. This is what most mature systems converge on, and keeping the batch and online paths consistent is exactly what <a href="#sec-skew">feature stores</a> are for.</p>
@@ -1332,7 +1328,7 @@ window.Quarto = {
 <ul>
 <li><strong>Quantization</strong>: 32-bit floats to 8-bit ints. ~4x smaller, usually negligible accuracy loss. Try this first; it is nearly free.</li>
 <li><strong>Pruning</strong>: remove low-magnitude weights. A large fraction of parameters can often go with little damage, and pruning sometimes <em>improves</em> generalization by acting as a regularizer.</li>
-<li><strong>Distillation</strong> (<a href="https://arxiv.org/abs/1503.02531">Hinton et al., 2015</a>): train a small student on the large teacher’s soft outputs. The soft targets carry more information than hard labels (they encode the teacher’s uncertainty across classes), which is why the student can outperform the same architecture trained from scratch. Compression ratios vary a lot by task; treat any specific number you read (including the “100x” you will see quoted) as a claim about someone else’s problem.</li>
+<li><strong>Distillation</strong> (<a href="https://arxiv.org/abs/1503.02531">Hinton et al., 2015</a>): train a small student on the large teacher’s soft outputs. The soft targets carry more information than hard labels (they encode the teacher’s uncertainty across classes), which is why the student can outperform the same architecture trained from scratch. Compression ratios vary a lot by task.</li>
 </ul>
 <p>The unifying observation is that <strong>model capacity and useful capacity are different quantities</strong>, and compression removes the difference.</p>
 </section>
@@ -1349,12 +1345,12 @@ window.Quarto = {
 <p>Deployment is the beginning of the system’s life, not the end of the project. Most of what determines whether a model succeeds happens here, after the metrics on the holdout set stop mattering.</p>
 <section id="sec-silent-failures" class="level3">
 <h3 class="anchored" data-anchor-id="sec-silent-failures">ML Systems Fail Silently</h3>
-<p>Ordinary software failures announce themselves. Servers crash, requests 500, alerts fire. Handle these with ordinary SRE practice: redundancy, health checks, circuit breakers, gradual rollout. If you do not have these, ML-specific failures are not your biggest problem.</p>
-<p>ML-specific failures do not announce themselves at all:</p>
+<p>Ordinary software failures are transparent. Servers crash, requests 500, alerts fire, etc. You can handle these with ordinary SRE practice: redundancy, health checks, circuit breakers, gradual rollout. If you do not have these, ML-specific failures are not your biggest problem.</p>
+<p>Some ML-specific failures:</p>
 <ul>
-<li><strong>Pipeline corruption.</strong> A join key changes, a timestamp format shifts, an upstream system starts emitting a placeholder. Features become garbage. The model keeps serving confident predictions.</li>
+<li><strong>Pipeline corruption.</strong> A join key changes, a timestamp format shifts, an upstream system starts emitting a placeholder -&gt; Features become garbage.</li>
 <li><strong><a href="#sec-skew">Training/serving skew</a>.</strong> Two implementations of one feature, quietly disagreeing.</li>
-<li><strong>Silent degradation.</strong> Distribution drifts, accuracy decays, and with no ground-truth labels arriving you have no way to see it. I have seen models decay toward random while still returning confident, plausible numbers.</li>
+<li><strong>Silent degradation.</strong> Distribution drifts, accuracy decays, and with no ground-truth labels arriving you have no way to see it.</li>
 <li><strong>Feedback loops.</strong> The model’s outputs become its own future training data. A recommender only gets feedback on what it recommended, so it learns that what it recommends is what users want. The system converges on a self-confirming worldview, and the metric that would reveal this has been corrupted by the same loop.</li>
 </ul>
 <p>Every one of these leaves the system running and responsive while its outputs are wrong.</p>
@@ -1421,12 +1417,12 @@ window.Quarto = {
 <section id="sec-drift" class="level3">
 <h3 class="anchored" data-anchor-id="sec-drift">Why There Are Exactly Three Kinds of Drift</h3>
 <p>Mismatch 3 was “<span class="math inline">\(D_{\text{serve}}\)</span> moved.” The question is <em>moved how?</em> We factorize the <strong>data</strong> distribution, which exists whether or not your model estimates it, so none of this depends on a probabilistic model.</p>
-<p>The three types of drift are usually presented as a list to memorize. They are not a list. They are a consequence of the fact that the joint distribution factorizes two ways:</p>
+<p>The three types of drift are a consequence of the fact that the joint distribution factorizes two ways:</p>
 <p><span class="math display">\[
 P(X, Y) \;=\; \underbrace{P(Y \mid X)}_{\text{concept}} \cdot \underbrace{P(X)}_{\text{covariate}}
 \;=\; \underbrace{P(X \mid Y)}_{\text{class-conditional}} \cdot \underbrace{P(Y)}_{\text{label}}
 \]</span></p>
-<p>Drift is the question of <em>which factor moved</em>. The two factorizations enumerate the possibilities exhaustively, and the consequences fall out of the algebra rather than having to be memorized (<a href="https://doi.org/10.1016/j.patcog.2011.06.019">Moreno-Torres et al., 2012</a>):</p>
+<p>Drift is the question of <em>which factor moved</em>. The two factorizations enumerate the possibilities exhaustively (<a href="https://doi.org/10.1016/j.patcog.2011.06.019">Moreno-Torres et al., 2012</a>):</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 20%">
@@ -1474,7 +1470,7 @@ P(X, Y) \;=\; \underbrace{P(Y \mid X)}_{\text{concept}} \cdot \underbrace{P(X)}_
 <figcaption><strong>Figure 5:</strong> The three shifts, with the same two classes and decision boundary in each panel. Covariate shift moves the input region (the boundary is still right, but serving now lands where training was sparse). Label shift changes the class balance (the ranking is fine, the base rate is not). Concept drift moves the boundary itself (the shaded band is where labels have flipped). Only the third invalidates the learned function.</figcaption>
 </figure>
 </div>
-<p>That third row is the dangerous one, and the table explains why in a way a list cannot: no amount of reweighting or recalibration can repair a function that is estimating the wrong thing. Covariate and label shift are bookkeeping problems. Concept drift is an obsolescence problem.</p>
+<p>That third row is the dangerous one, and the table explains why: no amount of reweighting or recalibration can repair a function that is estimating the wrong thing.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1493,7 +1489,7 @@ P(X, Y) \;=\; \underbrace{P(Y \mid X)}_{\text{concept}} \cdot \underbrace{P(X)}_
 <section id="sec-drift-detection" class="level3">
 <h3 class="anchored" data-anchor-id="sec-drift-detection">Detecting Drift</h3>
 <p>The obvious approach is a statistical test (Kolmogorov-Smirnov, chi-square) on each feature’s distribution. This is a trap, and the reason is subtle.</p>
-<p><strong>The power of any statistical test goes to 1 as <span class="math inline">\(n \to \infty\)</span> for any nonzero effect.</strong> At 10 million requests a day, every feature will differ from its training distribution at <span class="math inline">\(p &lt; 0.001\)</span>, every single day, because no two empirical distributions are ever exactly equal and you have enough samples to prove it. Your p-value is measuring your traffic volume, not your drift.</p>
+<p><strong>The power of any statistical test goes to 1 as <span class="math inline">\(n \to \infty\)</span> for any nonzero effect.</strong> At 10 million requests a day, every feature will differ from its training distribution at <span class="math inline">\(p &lt; 0.001\)</span>, every single day, because no two empirical distributions are ever exactly equal and you have enough samples to prove it.</p>
 <p>The fix is to <strong>threshold on effect size, not significance</strong>. Population Stability Index is the standard choice:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -1509,17 +1505,14 @@ P(X, Y) \;=\; \underbrace{P(Y \mid X)}_{\text{concept}} \cdot \underbrace{P(X)}_
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    e, a <span class="op">=</span> np.clip(e, <span class="fl">1e-6</span>, <span class="va">None</span>), np.clip(a, <span class="fl">1e-6</span>, <span class="va">None</span>)  <span class="co"># avoid log(0)</span></span>
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">float</span>(np.<span class="bu">sum</span>((a <span class="op">-</span> e) <span class="op">*</span> np.log(a <span class="op">/</span> e)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Never page a human on a p-value.</p>
 <p>The other approach is <strong><a href="#sec-adversarial">adversarial validation</a> again</strong>, applied to reference-versus-current data instead of train-versus-test. It is more robust than per-feature tests because it catches shifts in the <em>joint</em> distribution that no marginal test would see, and it tells you which features moved.</p>
 <p>Performance monitoring is the ground truth, and it requires labels, which are delayed or absent precisely when you most need them.</p>
 </section>
 <section id="sec-retraining" class="level3">
 <h3 class="anchored" data-anchor-id="sec-retraining">How Often to Retrain</h3>
 <p><strong>Stateless retraining</strong> rebuilds from scratch on a recent window. Reproducible, no catastrophic forgetting, clean lineage. Expensive and slow to adapt.</p>
-<p><strong>Stateful training</strong> updates the existing model incrementally. Cheap and fast-adapting. Risks catastrophic forgetting, is permanently corruptible by bad data, and makes “what did this model actually learn from?” an unanswerable question.</p>
+<p><strong>Stateful training</strong> updates the existing model incrementally. Cheap and fast-adapting. Risks catastrophic forgetting, is permanently corruptible by bad data, and makes “what did this model actually learn from?” hard to answer.</p>
 <p>Most mature systems do both: incremental updates for responsiveness, periodic full retrains for stability and lineage.</p>
-<p>The cadence question has an actual empirical answer, and almost nobody measures it. <strong>Train models on progressively older data, evaluate all of them on current data, and plot performance against data age.</strong> The curve is your domain’s half-life, and it tells you your retraining schedule.</p>
-<p>Run this experiment. It will surprise you. I expected a financial fraud model to need daily retraining and it was fine on a monthly cadence, because the underlying fraud patterns turned out to move slowly and my intuition was just wrong. Meanwhile a content recommendation model I had assumed was stable needed daily updates, because user interest is genuinely volatile. Both of my priors were backwards, and an afternoon of measurement was worth more than either of them.</p>
 <p>Trigger retraining on a combination of signals, because each one alone has a gap:</p>
 <table class="caption-top table">
 <colgroup>
@@ -1560,7 +1553,7 @@ P(X, Y) \;=\; \underbrace{P(Y \mid X)}_{\text{concept}} \cdot \underbrace{P(X)}_
 </section>
 <section id="sec-testing-prod" class="level3">
 <h3 class="anchored" data-anchor-id="sec-testing-prod">Testing in Production</h3>
-<p>Each stage catches a different class of problem. Skipping stages is how you find out what they were for.</p>
+<p>Each stage catches a different class of problem.</p>
 <ol type="1">
 <li><strong>Holdout.</strong> Necessary, wildly insufficient. Tells you the model learned patterns. Says nothing about production.</li>
 <li><strong>Backtesting.</strong> Evaluate on the most recent data available. If a model trained on last year fails on last month, it will fail tomorrow.</li>
@@ -1572,11 +1565,10 @@ P(X, Y) \;=\; \underbrace{P(Y \mid X)}_{\text{concept}} \cdot \underbrace{P(X)}_
 </section>
 <section id="sec-cost" class="level3">
 <h3 class="anchored" data-anchor-id="sec-cost">The True Cost of Ownership</h3>
-<p>The compute bill is the part everyone models, and it is rarely the largest term.</p>
 <p><strong>Training</strong> costs labeling (usually the biggest single line item), the hundreds of failed experiments behind each success, and the engineer-months.</p>
 <p><strong>Serving</strong> costs feature computation and storage, network, caching, monitoring, and the on-call rotation, of which model inference is often a minority.</p>
 <p><strong>Humans</strong> cost the most: development, incident response, debugging, stakeholder communication, and the knowledge transfer when someone leaves.</p>
-<p>The conclusion that follows is uncomfortable and correct: <strong>a simple model on more expensive hardware is frequently cheaper than a complex model that requires a dedicated team.</strong> Optimize for total cost, and count the humans.</p>
+<p>In conclusion: <strong>a simple model on more expensive hardware is frequently cheaper than a complex model that requires a dedicated team.</strong> Optimize for total cost, and count the humans.</p>
 <hr>
 </section>
 </section>
@@ -1592,13 +1584,11 @@ P(X, Y) \;=\; \underbrace{P(Y \mid X)}_{\text{concept}} \cdot \underbrace{P(X)}_
 <li><p><strong>Drift is a question of which factor of <span class="math inline">\(P(X,Y)\)</span> moved.</strong> Covariate and label shift are bookkeeping problems that reweighting and recalibration solve. Concept drift means your function is wrong, and only retraining helps.</p></li>
 <li><p><strong>Training/serving skew is the most common silent failure in production ML.</strong> The only robust fix is that both paths execute the same code.</p></li>
 <li><p><strong>Data quality beats model sophistication, every time.</strong> I have never seen a complex model rescue bad data. I have often seen a simple model succeed on good data.</p></li>
-<li><p><strong>Measure your data’s half-life instead of guessing your retraining cadence.</strong> My intuitions about this were backwards in both directions, and one afternoon of measurement settled it.</p></li>
 <li><p><strong>The model is 10% of the system</strong> (<a href="https://papers.nips.cc/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html">Sculley et al., 2015</a>). The rest is pipelines, features, serving, monitoring, and people.</p></li>
 </ol>
 </section>
 <section id="a-roadmap-for-a-new-system" class="level3">
 <h3 class="anchored" data-anchor-id="a-roadmap-for-a-new-system">A Roadmap for a New System</h3>
-<p>In order, and do not skip step 2 because it is boring:</p>
 <ol type="1">
 <li><strong>Write down the cost matrix.</strong> What does a false positive cost? A false negative? If nobody can answer, you do not yet have a problem specification, and every threshold you pick afterward is a guess.</li>
 <li><strong>Build the <a href="#sec-baselines">baselines</a></strong> and measure the business metric they produce. This is your real bar, and sometimes it is already high enough that you can stop.</li>

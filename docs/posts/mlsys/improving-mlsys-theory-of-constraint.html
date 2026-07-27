@@ -9,7 +9,7 @@
 <meta name="author" content="Imad Dabbura">
 <meta name="dcterms.date" content="2025-09-21">
 
-<title>Make ML Systems Ship Again – Imad Dabbura</title>
+<title>Improving ML Systems with the Theory of Constraints – Imad Dabbura</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -198,13 +198,13 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="../../assets/posts.css">
-<meta property="og:title" content="Make ML Systems Ship Again – Imad Dabbura">
+<meta property="og:title" content="Improving ML Systems with the Theory of Constraints – Imad Dabbura">
 <meta property="og:description" content="A practitioner’s guide to finding and fixing the one bottleneck that governs your system’s performance.">
 <meta property="og:image" content="https://imaddabbura.github.io/posts/mlsys/images/ml-toc.png">
 <meta property="og:site_name" content="Imad Dabbura">
 <meta property="og:image:height" content="1024">
 <meta property="og:image:width" content="1536">
-<meta name="twitter:title" content="Make ML Systems Ship Again – Imad Dabbura">
+<meta name="twitter:title" content="Improving ML Systems with the Theory of Constraints – Imad Dabbura">
 <meta name="twitter:description" content="A practitioner’s guide to finding and fixing the one bottleneck that governs your system’s performance.">
 <meta name="twitter:image" content="https://imaddabbura.github.io/posts/mlsys/images/ml-toc.png">
 <meta name="twitter:creator" content="@imaddabbura">
@@ -468,7 +468,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Make ML Systems Ship Again</h1>
+      <h1 class="title">Improving ML Systems with the Theory of Constraints</h1>
             <p class="subtitle lead">A practitioner’s guide to finding and fixing the one bottleneck that governs your system’s performance.</p>
                                 <div class="quarto-categories">
                 <div class="quarto-category">ML Systems</div>
@@ -511,11 +511,8 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a>
-  <ul class="collapse">
-  <li><a href="#roadmap" id="toc-roadmap" class="nav-link" data-scroll-target="#roadmap">Roadmap</a></li>
-  </ul></li>
-  <li><a href="#the-theory-of-constraints-in-5-minutes" id="toc-the-theory-of-constraints-in-5-minutes" class="nav-link" data-scroll-target="#the-theory-of-constraints-in-5-minutes">The Theory of Constraints in 5 Minutes</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#the-theory-of-constraints-in-brief" id="toc-the-theory-of-constraints-in-brief" class="nav-link" data-scroll-target="#the-theory-of-constraints-in-brief">The Theory of Constraints in Brief</a></li>
   <li><a href="#step-1-define-your-goal-and-find-the-bottleneck" id="toc-step-1-define-your-goal-and-find-the-bottleneck" class="nav-link" data-scroll-target="#step-1-define-your-goal-and-find-the-bottleneck">Step 1: Define Your Goal and Find the Bottleneck</a>
   <ul class="collapse">
   <li><a href="#set-your-slos" id="toc-set-your-slos" class="nav-link" data-scroll-target="#set-your-slos">Set Your SLOs</a></li>
@@ -564,66 +561,21 @@ window.Quarto = {
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>You burn six months “optimizing.” Swap in transformers. Squeeze another +<span class="math inline">\(0.5\%\)</span> accuracy. Rewrite the feature pipeline. Add a shiny GPU cluster. And still: alert fatigue, missed incidents, and latency that kills real-time response.</p>
-<p>That’s optimization theater.</p>
 <p>This pattern shows up everywhere in production ML. Fraud teams add transaction features that never reduce false positives. Recommendation engines get fancier models that don’t move click-through rates. Forecasting pipelines gain complexity without improving planning accuracy. Parts get optimized. Systems don’t.</p>
 <p>This post gives you a systematic method to break out of the cycle. It’s based on the Theory of Constraints, originally developed for manufacturing, but a natural fit for ML systems. We’ll use a network anomaly detection system as our running example, but the playbook works for any ML system in production.</p>
-<section id="roadmap" class="level3">
-<h3 class="anchored" data-anchor-id="roadmap">Roadmap</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 19%">
-<col style="width: 46%">
-<col style="width: 34%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Section</th>
-<th>What You’ll Learn / Do</th>
-<th>Why It Matters</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>The Theory of Constraints</strong></td>
-<td>The core idea and why single-bottleneck focus works</td>
-<td>Gives you the mental model that makes the steps principled, not arbitrary</td>
-</tr>
-<tr class="even">
-<td><strong>1. Goal &amp; Constraint</strong></td>
-<td>Set SLOs, then build a constraint ledger to find the bottleneck</td>
-<td>Defines success and focuses effort on the one thing that governs throughput</td>
-</tr>
-<tr class="odd">
-<td><strong>2. Understand Why It’s Stuck</strong></td>
-<td>Root-cause analysis</td>
-<td>Prevents solving symptoms</td>
-</tr>
-<tr class="even">
-<td><strong>3. See the Hidden Tradeoff</strong></td>
-<td>Map the conflict</td>
-<td>Reveals why simple fixes haven’t worked</td>
-</tr>
-<tr class="odd">
-<td><strong>4. Break the Tradeoff</strong></td>
-<td>Challenge assumptions, then innovate</td>
-<td>Achieves step-function improvement</td>
-</tr>
-<tr class="even">
-<td><strong>5. Prove It Works</strong></td>
-<td>Minimum Viable Experiment</td>
-<td>Validates before full investment</td>
-</tr>
-</tbody>
-</table>
 </section>
-</section>
-<section id="the-theory-of-constraints-in-5-minutes" class="level2">
-<h2 class="anchored" data-anchor-id="the-theory-of-constraints-in-5-minutes">The Theory of Constraints in 5 Minutes</h2>
+<section id="the-theory-of-constraints-in-brief" class="level2">
+<h2 class="anchored" data-anchor-id="the-theory-of-constraints-in-brief">The Theory of Constraints in Brief</h2>
 <p>The traditional approach to improving ML systems is based on a seemingly logical but flawed assumption: if you improve each component, the whole system improves. It doesn’t. <em>The sum of all local improvements doesn’t give you a system improvement.</em></p>
 <p>The breakthrough insight, from Eli Goldratt’s <em>The Goal</em> (1984) and made operational by Alan Barnard’s pairing method, is simple: every system has exactly one constraint at any given moment, the single resource or stage you don’t have enough of. That constraint sets the ceiling for the entire system. Improving anything else delivers diminishing-to-zero returns.</p>
 <p>A factory line can only produce as fast as its slowest machine. If the paint booth takes 10 minutes per car while everything else takes 2 minutes, buying faster welding robots changes nothing. You have to speed up the paint booth, or the line will forever produce one car every 10 minutes.</p>
 <p>In a serial pipeline (which is what most ML systems are), this is even starker than it sounds. Throughput equals the throughput of the slowest stage. If your feature extraction handles 30K records/sec and everything else handles 100K, the system does 30K. Making inference 10x faster? Still 30K. Doubling ingest capacity? Still 30K. Only improving the bottleneck stage moves the number. Every other “optimization” is buying faster welding robots while the paint booth sets the pace.</p>
-<p><a href="images/amdahl-law-optimization.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="images/amdahl-law-optimization.svg" class="img-fluid"></a></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/amdahl-law-optimization.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure 1: Amdahl’s Law applied to the pipeline. Making model inference (20% of runtime) 2x faster yields about 11% end-to-end improvement; making feature extraction (70%, the constraint) 2x faster yields about 35%. Only the constraint moves the system number."><img src="images/amdahl-law-optimization.svg" class="img-fluid figure-img" alt="Figure 1: Amdahl’s Law applied to the pipeline. Making model inference (20% of runtime) 2x faster yields about 11% end-to-end improvement; making feature extraction (70%, the constraint) 2x faster yields about 35%. Only the constraint moves the system number."></a></p>
+<figcaption><strong>Figure 1:</strong> Amdahl’s Law applied to the pipeline. Making model inference (20% of runtime) 2x faster yields about 11% end-to-end improvement; making feature extraction (70%, the constraint) 2x faster yields about 35%. Only the constraint moves the system number.</figcaption>
+</figure>
+</div>
 <p>Barnard turns this into a strict chain of focused pairings. Each pairing links a WHAT (what you need) to a HOW (how to get it), maintaining a one-to-one relationship that keeps focus razor-sharp:</p>
 <ol type="1">
 <li><strong>Goal → Constraint</strong>: WHAT do I want? More of the Goal. HOW? By getting more of the Constraint, the single resource I don’t have enough of.</li>
@@ -634,7 +586,12 @@ window.Quarto = {
 </ol>
 <p>The five how-to steps below translate these pairings into ML-systems language. Step 1 defines the Goal (SLOs) and finds the Constraint (bottleneck). Step 2 uncovers the Problem (root cause). Step 3 maps the Conflict (hidden tradeoff). Step 4 designs the Innovation. Step 5 runs the Experiment.</p>
 <p>So why does this matter for ML specifically? Because ML pipelines are textbook flow systems: ingest → features → inference → action. They have measurable stages with capacity limits. And they accumulate complexity over time: teams add features, models, and infrastructure without ever removing anything. This makes them natural candidates for constraint-based thinking. But ML teams rarely think this way, because they’re trained to optimize <em>models</em>, not <em>systems</em>.</p>
-<p><a href="images/ml-pipeline-weak-constraint.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="images/ml-pipeline-weak-constraint.svg" class="img-fluid"></a></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/ml-pipeline-weak-constraint.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure 2: The pipeline as a chain. Throughput is capped by the weakest link, Feature-Tier2 at 30K/s, no matter how much faster the other stages run."><img src="images/ml-pipeline-weak-constraint.svg" class="img-fluid figure-img" alt="Figure 2: The pipeline as a chain. Throughput is capped by the weakest link, Feature-Tier2 at 30K/s, no matter how much faster the other stages run."></a></p>
+<figcaption><strong>Figure 2:</strong> The pipeline as a chain. Throughput is capped by the weakest link, Feature-Tier2 at 30K/s, no matter how much faster the other stages run.</figcaption>
+</figure>
+</div>
 </section>
 <section id="step-1-define-your-goal-and-find-the-bottleneck" class="level2">
 <h2 class="anchored" data-anchor-id="step-1-define-your-goal-and-find-the-bottleneck">Step 1: Define Your Goal and Find the Bottleneck</h2>
@@ -692,7 +649,12 @@ window.Quarto = {
 <li><strong>Incident-Weighted Recall</strong>: ≥ 90%</li>
 </ul>
 <p>The same template applies to other domains. A fraud detection team might set TTD ≤ 200ms with ≤ 50 manual reviews/day. A recommendation system might target TTD ≤ 100ms with CTR-weighted precision ≥ X%.</p>
-<p><a href="images/slo-hierarchy.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="images/slo-hierarchy.svg" class="img-fluid"></a></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/slo-hierarchy.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Figure 3: SLOs cascade from a business goal down to technical metrics. Each layer’s target (time, quality, coverage) constrains the ones below it."><img src="images/slo-hierarchy.svg" class="img-fluid figure-img" alt="Figure 3: SLOs cascade from a business goal down to technical metrics. Each layer’s target (time, quality, coverage) constrains the ones below it."></a></p>
+<figcaption><strong>Figure 3:</strong> SLOs cascade from a business goal down to technical metrics. Each layer’s target (time, quality, coverage) constrains the ones below it.</figcaption>
+</figure>
+</div>
 <p>When defining SLOs, involve the people who <em>use</em> the system’s outputs, not just the team that builds it. Security analysts, operations teams, business stakeholders. When they disagree (and they will: security wants recall, ops wants fewer alerts), the SLOs make the tradeoff explicit rather than hiding it inside model thresholds.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -717,7 +679,7 @@ window.Quarto = {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Mental Model
+<span class="screen-reader-only">Tip</span>Spotting the Constraint
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -805,7 +767,12 @@ window.Quarto = {
 <h3 class="anchored" data-anchor-id="validate-before-you-invest">Validate Before You Invest</h3>
 <p>Before building anything, run a 24-hour experiment: temporarily throw 3x resources at your suspected bottleneck. If system-level metrics improve dramatically, you’ve found the right constraint. If not, look elsewhere. This experiment costs a day; building the wrong solution costs months.</p>
 <p>We provisioned 3x compute for Feature-Tier2, enabling 90K records/sec.&nbsp;The results were dramatic: detection time dropped, false positives decreased (the model makes better decisions with complete feature sets), and we nearly met our SLOs. No other improvement (not model accuracy, not infrastructure, not threshold tuning) would have achieved this.</p>
-<p><a href="images/before-after-dashboard.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="images/before-after-dashboard.svg" class="img-fluid"></a></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/before-after-dashboard.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Figure 4: The 24-hour validation test. Provisioning 3x compute for Feature-Tier2 alone lifted throughput from 30K to 90K rec/s and detection-within-5-minutes from 47% to 94%, confirming it was the true constraint."><img src="images/before-after-dashboard.svg" class="img-fluid figure-img" alt="Figure 4: The 24-hour validation test. Provisioning 3x compute for Feature-Tier2 alone lifted throughput from 30K to 90K rec/s and detection-within-5-minutes from 47% to 94%, confirming it was the true constraint."></a></p>
+<figcaption><strong>Figure 4:</strong> The 24-hour validation test. Provisioning 3x compute for Feature-Tier2 alone lifted throughput from 30K to 90K rec/s and detection-within-5-minutes from 47% to 94%, confirming it was the true constraint.</figcaption>
+</figure>
+</div>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -828,7 +795,12 @@ window.Quarto = {
 <section id="five-whys-with-evidence" class="level3">
 <h3 class="anchored" data-anchor-id="five-whys-with-evidence">Five Whys: With Evidence</h3>
 <p>The Five Whys technique is simple: ask “why” repeatedly until you reach a root cause, but <em>validate each answer with evidence</em> before proceeding to the next. Unvalidated whys lead to plausible-sounding but wrong root causes.</p>
-<p><a href="images/five-whys.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="images/five-whys.svg" class="img-fluid"></a></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/five-whys.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="Figure 5: Five Whys on the bottleneck, each answer validated with evidence. The chain bottoms out at an organizational root cause, not a technical one."><img src="images/five-whys.svg" class="img-fluid figure-img" alt="Figure 5: Five Whys on the bottleneck, each answer validated with evidence. The chain bottoms out at an organizational root cause, not a technical one."></a></p>
+<figcaption><strong>Figure 5:</strong> Five Whys on the bottleneck, each answer validated with evidence. The chain bottoms out at an organizational root cause, not a technical one.</figcaption>
+</figure>
+</div>
 <p>Here’s how this played out for our Feature-Tier2 bottleneck:</p>
 <ol type="1">
 <li><strong>Why</strong> is Feature-Tier2 at 95% utilization? → It computes 47 features per record. <em>(Validated: profiling shows 89% of computation in 12% of features)</em></li>
@@ -838,7 +810,12 @@ window.Quarto = {
 <li><strong>Why</strong> silos? → No ownership of end-to-end system performance.</li>
 </ol>
 <p>Notice where we ended up: the root cause isn’t technical; it’s organizational.</p>
-<p><a href="images/iceberg-visible-constraint.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="images/iceberg-visible-constraint.svg" class="img-fluid"></a></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/iceberg-visible-constraint.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="Figure 6: The visible constraint (Feature-Tier2 throughput) sits above technical, analytical, process, and cultural causes. Fixing the surface symptom without the causes beneath it lets the bottleneck return."><img src="images/iceberg-visible-constraint.svg" class="img-fluid figure-img" alt="Figure 6: The visible constraint (Feature-Tier2 throughput) sits above technical, analytical, process, and cultural causes. Fixing the surface symptom without the causes beneath it lets the bottleneck return."></a></p>
+<figcaption><strong>Figure 6:</strong> The visible constraint (Feature-Tier2 throughput) sits above technical, analytical, process, and cultural causes. Fixing the surface symptom without the causes beneath it lets the bottleneck return.</figcaption>
+</figure>
+</div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -877,7 +854,12 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="step-3-see-the-hidden-tradeoff">Step 3: See the Hidden Tradeoff</h2>
 <p>You know the root cause. So why hasn’t anyone fixed it? Almost always, it’s because the problem is an unresolved conflict, and people are stuck choosing between two approaches that both seem necessary.</p>
 <p>Barnard puts it precisely: <em>any problem can be defined as an unresolved conflict.</em> In our case, the Feature-Tier2 bottleneck persists because of a fundamental tension:</p>
-<p><a href="images/feature-extraction-conflict.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-8"><img src="images/feature-extraction-conflict.svg" class="img-fluid"></a></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/feature-extraction-conflict.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="Figure 7: The conflict as two competing requirements. A rich feature set buys 94% recall but only 30K rec/s; a minimal set handles 100K rec/s at 61% recall."><img src="images/feature-extraction-conflict.svg" class="img-fluid figure-img" alt="Figure 7: The conflict as two competing requirements. A rich feature set buys 94% recall but only 30K rec/s; a minimal set handles 100K rec/s at 61% recall."></a></p>
+<figcaption><strong>Figure 7:</strong> The conflict as two competing requirements. A rich feature set buys 94% recall but only 30K rec/s; a minimal set handles 100K rec/s at 61% recall.</figcaption>
+</figure>
+</div>
 <p>We need <strong>rich feature analysis</strong> for accurate detection of sophisticated attacks. We <em>also</em> need <strong>efficient processing</strong> for real-time response and cost control. These seem to contradict each other, so the team oscillates: add features after a missed attack, remove features after a performance degradation. Two years later, they’re exactly where they started.</p>
 <section id="why-teams-get-stuck" class="level3">
 <h3 class="anchored" data-anchor-id="why-teams-get-stuck">Why Teams Get Stuck</h3>
@@ -900,7 +882,12 @@ window.Quarto = {
 <p>A textbook case of oscillation: facing missed incidents, teams lower thresholds (overreacting). This floods analysts with alerts, who start ignoring them, leading to <em>more</em> missed incidents, which triggers another round of threshold lowering. Little’s Law makes the math concrete: L = λW. If analysts can investigate 50 alerts/day and each takes 45 minutes, that’s the hard capacity ceiling. No threshold change can overcome it. This is the precision/coverage conflict manifesting as a vicious cycle.</p>
 </div>
 </div>
-<p><a href="images/alert-fatigue.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-9"><img src="images/alert-fatigue.svg" class="img-fluid"></a></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/alert-fatigue.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="Figure 8: The alert-fatigue cycle. Lowering thresholds to catch more attacks floods analysts, who begin ignoring alerts, which causes more misses and another round of threshold lowering."><img src="images/alert-fatigue.svg" class="img-fluid figure-img" alt="Figure 8: The alert-fatigue cycle. Lowering thresholds to catch more attacks floods analysts, who begin ignoring alerts, which causes more misses and another round of threshold lowering."></a></p>
+<figcaption><strong>Figure 8:</strong> The alert-fatigue cycle. Lowering thresholds to catch more attacks floods analysts, who begin ignoring alerts, which causes more misses and another round of threshold lowering.</figcaption>
+</figure>
+</div>
 </section>
 <section id="map-your-conflict" class="level3">
 <h3 class="anchored" data-anchor-id="map-your-conflict">Map Your Conflict</h3>
@@ -1012,9 +999,19 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
-<p><a href="images/progressive-analysis-architecture.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-10"><img src="images/progressive-analysis-architecture.svg" class="img-fluid"></a></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/progressive-analysis-architecture.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-10" title="Figure 9: The progressive architecture. Cheap triage clears 70% of traffic at wire speed; only uncertain records escalate to the more expensive tiers."><img src="images/progressive-analysis-architecture.svg" class="img-fluid figure-img" alt="Figure 9: The progressive architecture. Cheap triage clears 70% of traffic at wire speed; only uncertain records escalate to the more expensive tiers."></a></p>
+<figcaption><strong>Figure 9:</strong> The progressive architecture. Cheap triage clears 70% of traffic at wire speed; only uncertain records escalate to the more expensive tiers.</figcaption>
+</figure>
+</div>
 <p>Each stage outputs a prediction <em>and</em> a confidence score. High-confidence benign traffic exits immediately. Low confidence escalates. When stages experience backlog, confidence thresholds adjust dynamically: low-risk records defer to async processing during congestion, ensuring high-risk traffic always gets full analysis. And alerts are generated immediately with basic info, then progressively enriched over 30 seconds with connection context, historical patterns, and full forensics.</p>
-<p><a href="images/feature-dependency.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-11"><img src="images/feature-dependency.svg" class="img-fluid"></a></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/feature-dependency.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-11" title="Figure 10: Feature caching across tiers. Computing base features once and reusing them downstream turns a 255ms full recompute into 85ms at an 84% cache hit rate."><img src="images/feature-dependency.svg" class="img-fluid figure-img" alt="Figure 10: Feature caching across tiers. Computing base features once and reusing them downstream turns a 255ms full recompute into 85ms at an 84% cache hit rate."></a></p>
+<figcaption><strong>Figure 10:</strong> Feature caching across tiers. Computing base features once and reusing them downstream turns a 255ms full recompute into 85ms at an 84% cache hit rate.</figcaption>
+</figure>
+</div>
 </section>
 <section id="fix-the-organization-too" class="level3">
 <h3 class="anchored" data-anchor-id="fix-the-organization-too">Fix the Organization Too</h3>
@@ -1040,7 +1037,12 @@ window.Quarto = {
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>tier1_model <span class="op">=</span> LogisticRegression(C<span class="op">=</span><span class="fl">1.0</span>)</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>tier1_model.fit(X_train[tier1_features], y_train_benign)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><a href="images/mve-experiment-timeline.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-12"><img src="images/mve-experiment-timeline.svg" class="img-fluid"></a></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/mve-experiment-timeline.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-12" title="Figure 11: The 14-day minimum viable experiment, testing the single riskiest assumption before any production build."><img src="images/mve-experiment-timeline.svg" class="img-fluid figure-img" alt="Figure 11: The 14-day minimum viable experiment, testing the single riskiest assumption before any production build."></a></p>
+<figcaption><strong>Figure 11:</strong> The 14-day minimum viable experiment, testing the single riskiest assumption before any production build.</figcaption>
+</figure>
+</div>
 </section>
 <section id="results" class="level3">
 <h3 class="anchored" data-anchor-id="results">Results</h3>
@@ -1166,11 +1168,6 @@ window.Quarto = {
     D --&gt; E["&lt;b&gt;Experiment&lt;/b&gt;&lt;br/&gt;MVE → rollout"]
     E --&gt; |"Constraint moves"| A
 
-    style A fill:#e8f5e9,stroke:#333
-    style B fill:#e3f2fd,stroke:#333
-    style C fill:#fff3e0,stroke:#333
-    style D fill:#fce4ec,stroke:#333
-    style E fill:#f3e5f5,stroke:#333
 </pre>
 </div>
 <p></p><figcaption> The Theory of Constraints is a cycle, not a line</figcaption> </figure><p></p>
@@ -1188,14 +1185,14 @@ window.Quarto = {
 <section id="references" class="level2">
 <h2 class="anchored" data-anchor-id="references">References</h2>
 <ul>
-<li>Goldratt, E. M. (1984). “The Goal: A Process of Ongoing Improvement.” North River Press.</li>
-<li>Sculley, D., et al.&nbsp;(2015). “Hidden Technical Debt in Machine Learning Systems.” NIPS 2015.</li>
-<li>Paleyes, A., et al.&nbsp;(2022). “Challenges in Deploying Machine Learning: A Survey of Case Studies.” ACM Computing Surveys.</li>
-<li>Kleppmann, M. (2017). “Designing Data-Intensive Applications.” O’Reilly Media.</li>
-<li>Polyzotis, N., et al.&nbsp;(2018). “Data Lifecycle Challenges in Production Machine Learning.” SIGMOD Record.</li>
-<li>Chandola, V., et al.&nbsp;(2009). “Anomaly Detection: A Survey.” ACM Computing Surveys.</li>
-<li>Ahmed, M., et al.&nbsp;(2016). “A Survey of Network Anomaly Detection Techniques.” Journal of Network and Computer Applications.</li>
-<li>Sommer, R., &amp; Paxson, V. (2010). “Outside the Closed World: On Using Machine Learning for Network Intrusion Detection.” IEEE S&amp;P.</li>
+<li><strong>Goldratt, E. M.</strong> (1984). <a href="https://en.wikipedia.org/wiki/The_Goal_(novel)">The Goal: A Process of Ongoing Improvement</a>. <em>North River Press</em>.</li>
+<li><strong>Chandola, V., Banerjee, A., &amp; Kumar, V.</strong> (2009). <a href="https://doi.org/10.1145/1541880.1541882">Anomaly Detection: A Survey</a>. <em>ACM Computing Surveys</em>, 41(3).</li>
+<li><strong>Sommer, R. &amp; Paxson, V.</strong> (2010). <a href="https://www.icir.org/robin/papers/oakland10-ml.pdf">Outside the Closed World: On Using Machine Learning for Network Intrusion Detection</a>. <em>IEEE S&amp;P</em>.</li>
+<li><strong>Sculley, D. et al.</strong> (2015). <a href="https://papers.nips.cc/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html">Hidden Technical Debt in Machine Learning Systems</a>. <em>NeurIPS</em>.</li>
+<li><strong>Ahmed, M., Mahmood, A., &amp; Hu, J.</strong> (2016). <a href="https://doi.org/10.1016/j.jnca.2015.11.016">A Survey of Network Anomaly Detection Techniques</a>. <em>Journal of Network and Computer Applications</em>, 60.</li>
+<li><strong>Kleppmann, M.</strong> (2017). <a href="https://dataintensive.net/">Designing Data-Intensive Applications</a>. <em>O’Reilly</em>.</li>
+<li><strong>Polyzotis, N. et al.</strong> (2018). <a href="https://doi.org/10.1145/3299887.3299891">Data Lifecycle Challenges in Production Machine Learning</a>. <em>SIGMOD Record</em>, 47(2).</li>
+<li><strong>Paleyes, A., Urma, R., &amp; Lawrence, N.</strong> (2022). <a href="https://arxiv.org/abs/2011.09926">Challenges in Deploying Machine Learning: A Survey of Case Studies</a>. <em>ACM Computing Surveys</em>, 55(6).</li>
 </ul>
 
 

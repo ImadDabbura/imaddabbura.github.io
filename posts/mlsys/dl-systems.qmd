@@ -14,36 +14,21 @@ status: evergreen
 
 Every deep learning practitioner eventually runs `loss.backward()` and watches gradients flow. But what *actually* happens inside that call? Where do the intermediate tensors live? Why does your GPU run out of memory on a model that "should" fit? And why does reshaping a tensor sometimes silently copy gigabytes of data?
 
-I built [`tiny_pytorch`](https://github.com/ImadDabbura/tiny-pytorch) to answer these questions for myself. Along the way, I encountered nearly every foundational design decision that real frameworks like PyTorch, TensorFlow, and Caffe had to make and learned *why* they made them.
+I built [`tiny_pytorch`](https://github.com/ImadDabbura/tiny-pytorch) to answer these questions for myself. Along the way, I encountered nearly every foundational design decision that real frameworks like [PyTorch](https://arxiv.org/abs/1912.01703), [TensorFlow](https://arxiv.org/abs/1605.08695), and [Caffe](https://arxiv.org/abs/1408.5093) had to make and learned *why* they made them.
 
 This post distills everything I learned into a coherent narrative. We'll start from the framework-level design philosophy, work our way down to how bytes are laid out in memory, and then zoom back out to distributed training across multiple GPUs. The goal is **intuition**: mental models you can carry with you when debugging real systems.
-
-### Roadmap
-
-Here's what we'll cover and why it matters:
-
-| Section | What You'll Learn | Why It Matters |
-|---|---|---|
-| **Framework Design** | Static vs. dynamic graphs, and the Caffe → TF → PyTorch arc | Understand trade-offs you inherit from your framework |
-| **Automatic Differentiation** | Forward vs. reverse mode AD, what gets saved | Know *why* backward passes consume so much memory |
-| **Memory Layout** | Shapes, strides, views, and when copies happen | Stop guessing about tensor memory behavior |
-| **Hardware Acceleration** | Alignment, parallelism, BLAS, im2col | Understand the layer between your code and silicon |
-| **Initialization & Normalization** | Why init persists, and how norms fix training | Debug training instabilities at their root |
-| **Regularization** | Implicit vs. explicit, dropout mechanics | Apply regularization correctly (L2 ≠ weight decay!) |
-| **Scaling Up** | Checkpointing, data/model/pipeline parallelism | Train models that don't fit in memory |
-| **Neural Network Architectures** | CNN, RNN, LSTM, Transformer, GAN design choices | See architectures through a *systems* lens |
 
 ## The Evolution of DL Frameworks
 
 Before writing a single line of code, it helps to understand the three philosophies that shaped modern deep learning frameworks. Each solved a real problem and introduced new ones.
 
-### Caffe: Layers All the Way Down
+### Caffe: Everything Is a Layer
 
-Caffe (C++ only) was beautifully simple. You defined your computation as a stack of **layers**, each implementing a `forward()` and `backward()` method. The backward pass was a direct implementation of the backpropagation algorithm from Hinton's seminal work where each layer knew how to compute its own gradients, and updates happened in-place.
+Caffe (C++ only) was beautifully simple. You defined your computation as a stack of **layers**, each implementing a `forward()` and `backward()` method. The backward pass was a direct implementation of the [backpropagation algorithm](https://www.nature.com/articles/323533a0), where each layer knew how to compute its own gradients, and updates happened in-place.
 
 ::: {.callout-tip}
-## Mental Model
-Think of Caffe layers like a stack of Lego bricks. Each brick knows its own shape (forward) and how to "unstick" itself (backward). Simple, intuitive, but rigid - you can't easily build non-linear architectures.
+## Composable but Rigid
+Think of Caffe layers like a stack of Lego bricks. Each brick knows its own shape (forward) and how to "unstick" itself (backward). Simple, intuitive, but rigid: you can't easily build non-linear architectures.
 :::
 
 ### TensorFlow 1.x: The Static Graph
@@ -54,12 +39,12 @@ The cost? Debugging was painful. You couldn't just print a tensor mid-computatio
 
 ### PyTorch: Define by Run
 
-PyTorch flipped the script with **dynamic computation graphs** - the graph is built on-the-fly as you execute operations. This is called *define by run*. You can mix Python control flow (if/else, loops) directly with tensor operations, set breakpoints anywhere, and inspect intermediate values trivially.
+PyTorch flipped the script with **dynamic computation graphs**: the graph is built on-the-fly as you execute operations. This is called *define by run*. You can mix Python control flow (if/else, loops) directly with tensor operations, set breakpoints anywhere, and inspect intermediate values trivially.
 
 The trade-off? Dynamic graphs are typically harder to optimize ahead of time. You lose the global view that static compilation provides. Modern PyTorch addresses this with `torch.compile()` and JIT compilation, getting closer to static-graph performance while keeping the dynamic-graph developer experience.
 
 ::: {.callout-note}
-## The Trade-off Triangle
+## Three Competing Goals
 Every DL framework navigates three competing goals: **ease of debugging**, **optimization potential**, and **flexibility**. Caffe optimized for simplicity, TensorFlow for optimization, and PyTorch for flexibility. No framework gets all three for free.
 :::
 
@@ -70,17 +55,13 @@ flowchart LR
     B --> C["<b>PyTorch</b><br/>Dynamic graph<br/>Define-by-run<br/>Python-native"]
     C --> D["<b>Modern PyTorch</b><br/>torch.compile / JIT<br/>Best of both worlds"]
 
-    style A fill:#f9f,stroke:#333
-    style B fill:#bbf,stroke:#333
-    style C fill:#fbb,stroke:#333
-    style D fill:#bfb,stroke:#333
 ```
 
 **Key takeaway:** Framework design is fundamentally about *when* the computation graph is known. Know it early (static) and you can optimize aggressively. Know it late (dynamic) and you can iterate fast. Modern systems try to give you both.
 
-## Automatic Differentiation: The Engine Room
+## Automatic Differentiation
 
-Automatic differentiation (AD) is the core engine of every deep learning framework. It's what makes `loss.backward()` work. But there are two fundamentally different approaches, and understanding *why* we use one over the other is essential.
+Automatic differentiation (AD) is the core engine of every deep learning framework. It's what makes `loss.backward()` work. But there are two fundamentally different approaches, and understanding *why* we use one over the other is essential. I dig into forward versus reverse mode, dual numbers, and the memory trade-off in a companion post, [Automatic Differentiation Demystified](automatic-differentiation.qmd).
 
 ### Forward Mode AD
 
@@ -89,14 +70,14 @@ In forward mode, we walk from **inputs to outputs**. At each node, we compute th
 - For **each input variable**, we need a *full forward pass* through the graph.
 - If we have $n$ inputs, we need $n$ forward AD passes.
 
-For a typical deep learning loss function - a scalar output with millions of input parameters - this is catastrophically inefficient. We'd need millions of passes just to get one gradient update.
+For a typical deep learning loss function (a scalar output with millions of input parameters), this is catastrophically inefficient. We'd need millions of passes just to get one gradient update.
 
 ### Reverse Mode AD (Backpropagation)
 
-Reverse mode flips the direction. We walk from the **output back to inputs**, computing the gradient of the scalar output with respect to *all* input nodes in a **single backward pass**. This is why it's the standard for deep learning: one output, millions of inputs, one pass.
+Reverse mode flips the direction. We walk from the **output back to inputs**, computing the gradient of the scalar output with respect to *all* input nodes in a **single backward pass**. This is why it's the standard for deep learning: one output, millions of inputs, one pass. I implement both passes by hand, and check them against numerical gradients, in [Coding Neural Network: Forward and Backward Propagation](../coding-nn/fwd-bkwd-propagation/Coding-Neural-Network-Forwad-Back-Propagation.ipynb).
 
 ```{mermaid}
-%%| fig-cap: "Forward vs. reverse mode AD - reverse mode computes all gradients in a single backward pass"
+%%| fig-cap: "Forward vs. reverse mode AD: reverse mode computes all gradients in a single backward pass"
 flowchart TD
     subgraph forward["Forward Mode (one pass per input)"]
         direction LR
@@ -111,13 +92,13 @@ flowchart TD
 
 ::: {.callout-important}
 ## The Memory Cost of Reverse Mode
-Reverse mode has a catch: to compute gradients during the backward pass, we need the **intermediate values from the forward pass**. For each operation, we must store the input tensors and remember which operation created them. This is why training uses far more memory than inference - all those "saved tensors" accumulate on the graph.
+Reverse mode has a catch: to compute gradients during the backward pass, we need the **intermediate values from the forward pass**. For each operation, we must store the input tensors and remember which operation created them. This is why training uses far more memory than inference: all those "saved tensors" accumulate on the graph.
 :::
 
 Here's what the autograd system actually tracks:
 
 ```{mermaid}
-%%| fig-cap: "What the autograd engine saves during a forward pass - every intermediate result and its creator must be retained for backward"
+%%| fig-cap: "What the autograd engine saves during a forward pass: every intermediate result and its creator must be retained for backward"
 flowchart LR
     x["Input x<br/><i>leaf tensor</i>"] --> mul["Mul"]
     w["Weight W<br/><i>leaf tensor</i>"] --> mul
@@ -132,9 +113,6 @@ flowchart LR
     mul -.-> x
     mul -.-> w
 
-    style x fill:#e8f5e9
-    style w fill:#e8f5e9
-    style L fill:#ffcdd2
 ```
 
 The dashed arrows show the backward pass, which retraces the forward graph in reverse. At each node, the saved tensors are consumed to compute local gradients.
@@ -146,7 +124,7 @@ The gradient at each node tells you: *"In which direction would changing this va
 
 One powerful consequence: the backward pass itself builds a computation graph for the gradients. This means you can compute **gradients of gradients** simply by adding more operations, which is exactly what second-order methods and some meta-learning approaches do.
 
-**Key takeaway:** Reverse mode AD gives us all gradients in one pass, but the price is memory - every intermediate tensor from the forward pass must be kept alive until it's consumed by the backward pass.
+**Key takeaway:** Reverse mode AD gives us all gradients in one pass, but the price is memory: every intermediate tensor from the forward pass must be kept alive until it's consumed by the backward pass.
 
 ## Memory Layout: Shapes, Strides, and the View/Copy Divide
 
@@ -154,7 +132,7 @@ This is where the rubber meets the road. Understanding how tensors are stored in
 
 ### The Flat Array Reality
 
-Whether you're on CPU or GPU, the hardware gives you a **flat, contiguous block of memory**. There are no "dimensions" at the hardware level - just consecutive slots. To create the *illusion* of an N-dimensional array, we need three pieces of metadata:
+Whether you're on CPU or GPU, the hardware gives you a **flat, contiguous block of memory**. There are no "dimensions" at the hardware level, just consecutive slots. To create the *illusion* of an N-dimensional array, we need three pieces of metadata:
 
 - **Shape**: The logical dimensions (e.g., `[3, 4]` for a 3×4 matrix)
 - **Stride**: How many elements to skip in the flat array to move one step along each dimension
@@ -164,8 +142,8 @@ Whether you're on CPU or GPU, the hardware gives you a **flat, contiguous block 
 ## Row-Major vs. Column-Major via Strides
 For a 2D array `A` with shape `[R, C]`:
 
-- **Row-major** (C/NumPy/PyTorch default): `stride = [C, 1]` - rows are contiguous
-- **Column-major** (Fortran/BLAS): `stride = [1, R]` - columns are contiguous
+- **Row-major** (C/NumPy/PyTorch default): `stride = [C, 1]`, rows are contiguous
+- **Column-major** (Fortran/BLAS): `stride = [1, R]`, columns are contiguous
 
 Most BLAS libraries (the workhorses of linear algebra) are implemented in Fortran and expect column-major layout. This is why you sometimes see frameworks internally transposing data before calling into BLAS routines.
 :::
@@ -203,10 +181,6 @@ flowchart TD
 
     trans --> |"reshape(-1) on<br/>non-contiguous tensor"| copy["New flat memory<br/><b>COPY (new allocation)</b>"]
 
-    style flat fill:#fff3e0
-    style slice fill:#e8f5e9
-    style trans fill:#e8f5e9
-    style copy fill:#ffcdd2
 ```
 
 ::: {.callout-tip}
@@ -218,7 +192,7 @@ If you chain `transpose` + `reshape`, you're almost certainly triggering a copy.
 
 ## Broadcasting and Its Gradient Implications
 
-Broadcasting is one of the most convenient features in numerical computing - and one of the most misunderstood when it comes to gradients.
+Broadcasting is one of the most convenient features in numerical computing, and one of the most misunderstood when it comes to gradients.
 
 ### The Forward Pass: Implicit Repetition
 
@@ -226,7 +200,7 @@ When you add a bias vector `b` of shape `[1, C]` to an activation matrix `A` of 
 
 ### The Backward Pass: Sum-Reduce
 
-Here's the subtle part. During the backward pass, if a value was broadcast (repeated) across a dimension, the gradients must be **summed along that dimension**. Why? Because the same parameter contributed to multiple outputs -> its total influence is the sum of all its partial effects.
+Here's the subtle part. During the backward pass, if a value was broadcast (repeated) across a dimension, the gradients must be **summed along that dimension**. Why? Because the same parameter contributed to multiple outputs, so its total influence is the sum of all its partial effects.
 
 ```{mermaid}
 %%| fig-cap: "Broadcasting repeats values in the forward pass; gradients must sum-reduce along broadcast dimensions in the backward pass"
@@ -273,7 +247,7 @@ Understanding the hardware layer helps you write code that runs fast *by default
 
 ### Memory Alignment
 
-Hardware loads data into caches in fixed-size chunks called **cache lines** (typically 64 bytes). If your data is aligned to cache line boundaries, a single load brings in exactly what you need. If it's misaligned, you need *two* loads for data that spans a boundary -> doubling the memory traffic for that access.
+Hardware loads data into caches in fixed-size chunks called **cache lines** (typically 64 bytes). If your data is aligned to cache line boundaries, a single load brings in exactly what you need. If it's misaligned, you need *two* loads for data that spans a boundary, doubling the memory traffic for that access.
 
 ::: {.callout-tip}
 ## Practical Impact
@@ -284,11 +258,11 @@ Memory alignment mostly matters for custom kernels and low-level code. High-leve
 
 On CPU, the simplest form of parallelism is loop parallelization. Tools like **OpenMP** let you annotate a loop with `#pragma omp parallel for`, and the runtime splits iterations across CPU cores automatically.
 
-This is the basis for CPU-accelerated tensor operations. Each core processes a different slice of the tensor, and the results are combined. The bottleneck shifts from compute to **memory bandwidth** - reading and writing large tensors becomes the limiting factor, not arithmetic.
+This is the basis for CPU-accelerated tensor operations. Each core processes a different slice of the tensor, and the results are combined. The bottleneck shifts from compute to **memory bandwidth**: reading and writing large tensors becomes the limiting factor, not arithmetic.
 
 ### The im2col Trick: Convolution as Matrix Multiplication
 
-Convolution is the most compute-intensive operation in CNNs. The **im2col** (image-to-column) trick converts convolution into matrix multiplication, which lets us use heavily optimized BLAS routines.
+Convolution is the most compute-intensive operation in CNNs. The **im2col** (image-to-column) trick ([Chetlur et al., 2014](https://arxiv.org/abs/1410.0759)) converts convolution into matrix multiplication, which lets us use heavily optimized BLAS routines.
 
 The process for a batch of images (`N × H × W × Cᵢₙ`) with filters (`K × K × Cᵢₙ × Cₒᵤₜ`):
 
@@ -300,7 +274,7 @@ The process for a batch of images (`N × H × W × Cᵢₙ`) with filters (`K ×
 
 ::: {.callout-warning}
 ## im2col Memory Overhead
-The im2col matrix is typically **much larger** than the original image tensor because filter patches overlap. Each input pixel appears in multiple rows of the im2col matrix. The reshape from the 6D strided view to 2D *cannot* be done as a view (the data isn't contiguous in the right order), so it triggers a **full copy**. This is a significant memory cost - for large images with many channels, the im2col matrix can be several times the size of the input.
+The im2col matrix is typically **much larger** than the original image tensor because filter patches overlap. Each input pixel appears in multiple rows of the im2col matrix. The reshape from the 6D strided view to 2D *cannot* be done as a view (the data isn't contiguous in the right order), so it triggers a **full copy**. This is a significant memory cost: for large images with many channels, the im2col matrix can be several times the size of the input.
 
 **When it helps:** When your BLAS library is highly optimized (which it usually is). The speedup from using GEMM far outweighs the memory copy cost.
 
@@ -311,13 +285,13 @@ The im2col matrix is typically **much larger** than the original image tensor be
 
 ## Weight Initialization: The Effects That Persist
 
-Weight initialization might seem like a minor detail: just pick some random numbers and start training. But the evidence tells a more nuanced story.
+Weight initialization might seem like a minor detail: just pick some random numbers and start training. But the evidence tells a more nuanced story. I implement several initialization schemes from scratch and watch their effect on training in [Coding Neural Network: Parameters' Initialization](../coding-nn/param-initialization/Coding-Neural-Network-Parameters-Initialization.ipynb).
 
-### Why Initialization Matters More Than You Think
+### Why Initialization Matters
 
 Two observations that changed how I think about initialization:
 
-1. **The effect of initialization persists throughout training.** Bad initialization affects the relative norms of activations and gradients *at every step*. If you don't initialize appropriately (e.g., using a standard deviation of $\sqrt{\frac{2}{n}}$ for ReLU networks, known as He initialization), the L2-norm of activations or gradients will drift -> vanishing signals or exploding values.
+1. **The effect of initialization persists throughout training.** Bad initialization affects the relative norms of activations and gradients *at every step*. If you don't initialize appropriately (e.g., using a standard deviation of $\sqrt{\frac{2}{n}}$ for ReLU networks, known as He initialization), the L2-norm of activations or gradients will drift: vanishing signals or exploding values.
 
 2. **Weights don't move far from their initial values.** This is surprising. If you plot the variance of weights before and after training for each layer, you'll see remarkably similar values. The weights shift in certain directions, but relative to their initial magnitude, the change is small especially for deep networks.
 
@@ -325,6 +299,16 @@ Two observations that changed how I think about initialization:
 ## The Implication
 Together, these observations mean initialization isn't just "where you start", it effectively defines the *neighborhood* of weight space you'll explore during training. Proper initialization puts you in a good neighborhood. Bad initialization puts you somewhere the optimizer can't easily escape.
 :::
+
+### Why $\sqrt{2/n}$
+
+Where does the $\sqrt{2/n}$ come from? Take one layer $y = Wx$ with fan-in $n$, weights drawn i.i.d. with mean zero and variance $\sigma^2$, and an input $x$ whose components are i.i.d. Each output is a sum of $n$ independent products, so
+
+$$\operatorname{Var}(y) = n\,\sigma^2\,\operatorname{Var}(x).$$
+
+For the signal to neither grow nor shrink through the layer, we need $n\sigma^2 = 1$, i.e. $\sigma^2 = 1/n$. That is [Xavier initialization](http://proceedings.mlr.press/v9/glorot10a.html), and it is right for a *linear* layer. A ReLU network is not linear: ReLU zeroes the negative half of a zero-mean pre-activation, halving the second moment of what passes through, $\mathbb{E}[\operatorname{ReLU}(y)^2] = \tfrac{1}{2}\mathbb{E}[y^2]$. Folding that factor into the balance condition gives $\tfrac{1}{2}n\sigma^2 = 1$, so $\sigma^2 = 2/n$. That is [He initialization](https://arxiv.org/abs/1502.01852), and the factor of 2 is the entire difference from Xavier: it compensates for the half of the signal ReLU discards. Under Xavier each ReLU layer loses a factor of $\sqrt2$ in activation scale, so after $L$ layers the signal is down by $(1/\sqrt2)^{L}$; by 40 layers that is about $10^{-6}$.
+
+![**Figure:** Activation RMS by depth in a 40-layer ReLU network, averaged over 30 random inputs at width 512. He ($\sigma=\sqrt{2/n}$) holds the signal flat; Xavier ($\sigma=\sqrt{1/n}$) ignores the ReLU factor of 2 and decays by $1/\sqrt2$ per layer; a naive $\sigma=0.02$ collapses within a few layers. The vanishing-gradient problem at initialization is the same curve read backward.](images/init-signal-preservation.svg)
 
 ### How to Diagnose Initialization Problems
 
@@ -343,7 +327,7 @@ If we know that activation norms can drift during training (due to imperfect ini
 
 ### Batch Normalization
 
-Batch Normalization normalizes activations **across the batch dimension** for each feature independently. For a given feature, it computes the mean and variance across all examples in the batch, then normalizes to zero mean and unit variance.
+[Batch Normalization](https://arxiv.org/abs/1502.03167) normalizes activations **across the batch dimension** for each feature independently. For a given feature, it computes the mean and variance across all examples in the batch, then normalizes to zero mean and unit variance.
 
 **When it helps:**
 
@@ -352,18 +336,18 @@ Batch Normalization normalizes activations **across the batch dimension** for ea
 
 **When it hurts:**
 
-- Creates **dependency between samples** in a batch - each example's normalized activation depends on the other examples in the batch
-- **Unstable with small batches** - statistics become noisy, and with a batch of 1, the variance is undefined
-- **Doesn't work well with RNNs** - the hidden state has temporal dependencies across time steps, and computing batch statistics independently at each time step ignores this structure
+- Creates **dependency between samples** in a batch: each example's normalized activation depends on the other examples in the batch
+- **Unstable with small batches**: statistics become noisy, and with a batch of 1, the variance is undefined
+- **Doesn't work well with RNNs**: the hidden state has temporal dependencies across time steps, and computing batch statistics independently at each time step ignores this structure
 
 ### Layer Normalization
 
-Layer Normalization normalizes **across all features** for each sample independently. No dependency on other samples in the batch.
+[Layer Normalization](https://arxiv.org/abs/1607.06450) normalizes **across all features** for each sample independently. No dependency on other samples in the batch.
 
 **When it helps:**
 
 - Works with **any batch size**, including batch size 1
-- **Perfect for RNNs and Transformers** - it normalizes across the embedding dimension for each token in each example, respecting temporal structure
+- **Perfect for RNNs and Transformers**: it normalizes across the embedding dimension for each token in each example, respecting temporal structure
 - This is why it's the standard in Transformer architectures
 
 **When it hurts:**
@@ -384,7 +368,7 @@ Regularization prevents models from memorizing the training data, forcing them t
 
 ### Implicit Regularization
 
-Before you add *any* explicit regularization, your training procedure already constrains the model. **SGD with a particular initialization** only explores a subset of all possible neural networks. The initialization defines the starting point, and the optimizer's dynamics (step size, momentum, batch sampling) determine the trajectory through weight space.
+Before you add *any* explicit regularization, your training procedure already constrains the model. **SGD with a particular initialization** only explores a subset of all possible neural networks. The initialization defines the starting point, and the optimizer's dynamics (step size, momentum, batch sampling) determine the trajectory through weight space. I derive SGD, momentum, and Adam from scratch in [Gradient Descent and Its Variants](../optimization/gradient-descent.qmd).
 
 This is called *implicit regularization*, and it's powerful. The fact that SGD-trained networks generalize well, even when they have enough capacity to memorize the training set, is partly due to these implicit biases of the optimization procedure.
 
@@ -392,9 +376,9 @@ This is called *implicit regularization*, and it's powerful. The fact that SGD-t
 
 Explicit regularization directly limits the functions the model can learn:
 
-**L2 Regularization** adds a penalty proportional to the squared magnitude of the weights. The premise: smoother functions (which don't change dramatically for small input changes) tend to have smaller weights. By penalizing large weights, we encourage smoother, simpler functions.
+**L2 Regularization** adds a penalty proportional to the squared magnitude of the weights. The premise: smoother functions (which don't change dramatically for small input changes) tend to have smaller weights. By penalizing large weights, we encourage smoother, simpler functions. I code L2 regularization from scratch in [Coding Neural Network: Regularization](../coding-nn/regularization/Coding-Neural-Network-Regularization.ipynb).
 
-**Dropout** randomly zeroes out activations with probability $p$ during training. A useful mental model: dropout is a *stochastic approximation* of each layer's activations, similar to how SGD approximates the full gradient with a mini-batch sample. During inference, we multiply activations by $\frac{1}{1-p}$ (or equivalently, scale during training) to keep the expected value consistent.
+**[Dropout](https://jmlr.org/papers/v15/srivastava14a.html)** randomly zeroes out activations with probability $p$ during training. A useful mental model: dropout is a *stochastic approximation* of each layer's activations, similar to how SGD approximates the full gradient with a mini-batch sample. During inference, we multiply activations by $\frac{1}{1-p}$ (or equivalently, scale during training) to keep the expected value consistent. I implement dropout from scratch in [Coding Neural Network: Dropout](../coding-nn/dropout/Coding-Neural-Network-Dropout.ipynb).
 
 ::: {.callout-warning}
 ## L2 Regularization ≠ Weight Decay (for Adam!)
@@ -402,7 +386,7 @@ For vanilla SGD, L2 regularization and weight decay are mathematically equivalen
 
 Why? Adam computes first and second moments of the gradients. If you add the L2 penalty to the gradient (L2 regularization), the penalty gets scaled by Adam's adaptive learning rate, making it **less effective** than intended. Weight decay, which adds the penalty directly to the parameter update step *without* modifying the gradient, avoids this issue.
 
-This distinction was first identified in the "Decoupled Weight Decay" paper (AdamW), which is why AdamW is preferred over Adam + L2 regularization in practice.
+This distinction was first identified in the ["Decoupled Weight Decay" paper](https://arxiv.org/abs/1711.05101) (AdamW), which is why AdamW is preferred over Adam + L2 regularization in practice.
 :::
 
 **Key takeaway:** Regularization operates at two levels: the implicit biases of SGD and initialization, and explicit penalties like L2/weight decay and dropout. For Adam-family optimizers, always use weight decay (AdamW), not L2 regularization.
@@ -415,9 +399,9 @@ Large datasets demand large models, and large models push hardware to its limits
 
 The memory hierarchy tells the story:
 
-- **Shared memory per core (GPU):** ~64 KB - fast, tiny
-- **Global GPU memory:** 10–80 GB depending on the device - this is the typical bottleneck
-- **CPU RAM:** 64–512 GB - large but slow to access from GPU
+- **Shared memory per core (GPU):** ~64 KB, fast and tiny
+- **Global GPU memory:** 10–80 GB depending on the device, the typical bottleneck
+- **CPU RAM:** 64–512 GB, large but slow to access from GPU
 
 Most large models can't fit entirely in GPU global memory during training, because we need to store: model parameters, optimizer state (2x or 3x model size for Adam), activations (saved for backward), and gradients.
 
@@ -435,6 +419,10 @@ During training, we normally keep *all* activations for the backward pass. Check
 2. Only store activations at **segment boundaries** (checkpoints)
 3. During the backward pass, **recompute** the forward pass within each segment to recover the needed activations
 
+Why $\sqrt{N}$ segments? Store a checkpoint every $k$ layers. During the backward pass two things sit in memory: the checkpoints themselves, $N/k$ of them, and, while recomputing one segment, up to $k$ activations inside it. Peak activation memory is therefore $M(k) = N/k + k$. Minimizing over $k$ gives $M'(k) = -N/k^2 + 1 = 0$, so $k = \sqrt N$ and the peak is $2\sqrt N$. Storing everything, $O(N)$, drops to $O(\sqrt N)$ for the price of recomputing each segment once, a single extra forward pass ([Chen et al., 2016](https://arxiv.org/abs/1604.06174)).
+
+![**Figure:** Peak activation memory $N/k + k$ against segment length for a 64-layer network. More checkpoints (small $k$) trade off against a larger recompute buffer (large $k$); the sum bottoms out at $k=\sqrt N = 8$ with peak $2\sqrt N = 16$, a 4x reduction from storing all 64.](images/checkpointing-tradeoff.svg)
+
 ```{mermaid}
 %%| fig-cap: "Activation checkpointing: store only segment boundaries, recompute the rest during backward"
 flowchart LR
@@ -451,12 +439,6 @@ flowchart LR
     seg1 --> |"✓ checkpoint"| seg2
     seg2 --> |"✓ checkpoint"| seg3
 
-    style L1 fill:#e8f5e9,stroke:#333
-    style L3 fill:#e8f5e9,stroke:#333
-    style L4 fill:#e8f5e9,stroke:#333
-    style L6 fill:#e8f5e9,stroke:#333
-    style L7 fill:#e8f5e9,stroke:#333
-    style L9 fill:#e8f5e9,stroke:#333
 ```
 
 | Approach | Memory | Compute Overhead |
@@ -486,9 +468,6 @@ flowchart TD
     MP --> TP["Tensor Parallelism<br/>Split layers across devices"]
     MP --> PP["Pipeline Parallelism<br/>Different layers on different devices"]
 
-    style DT fill:#fff3e0
-    style DP fill:#e3f2fd
-    style MP fill:#fce4ec
 ```
 
 #### Data Parallelism
@@ -501,7 +480,7 @@ Two coordination strategies:
 
   - **Bottleneck:** The parameter server becomes a communication bottleneck as the number of workers grows. All traffic flows through one node.
 
-- **AllReduce:** A peer-to-peer approach where all workers collectively sum their gradients and each receives the result. No central bottleneck: communication scales more gracefully. Algorithms like Ring-AllReduce distribute the bandwidth load evenly.
+- **AllReduce:** A peer-to-peer approach where all workers collectively sum their gradients and each receives the result. No central bottleneck: communication scales more gracefully. Algorithms like [Ring-AllReduce](https://arxiv.org/abs/1802.05799) distribute the bandwidth load evenly.
 
   - **Bottleneck:** Total communication volume still grows with model size. Network bandwidth between nodes becomes the limiting factor.
 
@@ -518,7 +497,7 @@ Rule of thumb: if your per-step compute time is less than 3x the gradient synchr
 
 #### Model Parallelism (Pipeline Parallelism)
 
-When the model itself doesn't fit on one device, we split the computation graph across devices. Each device handles a different set of layers, and they **pipeline** the computation: while device 2 processes micro-batch 1, device 1 can start on micro-batch 2.
+When the model itself doesn't fit on one device, we split the computation graph across devices ([Huang et al., 2019](https://arxiv.org/abs/1811.06965)). Each device handles a different set of layers, and they **pipeline** the computation: while device 2 processes micro-batch 1, device 1 can start on micro-batch 2.
 
 Communication happens at layer boundaries via `send`/`recv` operations. The challenge is minimizing **pipeline bubbles**, which is idle time when a device is waiting for input from the previous stage.
 
@@ -542,7 +521,7 @@ CNNs exploit three structural priors about spatial data:
 
 ::: {.callout-note}
 ## Convolution as Matrix Multiplication
-We can express convolution as a matrix multiplication where the weight matrix has a specific sparsity pattern (filled with actual weights and zeros reflecting the filter structure). We don't actually construct this matrix - it would be enormous - but this view explains why the backward pass of a convolution is a convolution with a flipped filter: multiplying by the transpose of the convolution matrix is equivalent to convolving with the spatially flipped kernel.
+We can express convolution as a matrix multiplication where the weight matrix has a specific sparsity pattern (filled with actual weights and zeros reflecting the filter structure). We don't actually construct this matrix (it would be enormous), but this view explains why the backward pass of a convolution is a convolution with a flipped filter: multiplying by the transpose of the convolution matrix is equivalent to convolving with the spatially flipped kernel.
 :::
 
 ### Recurrent Neural Networks (RNNs)
@@ -553,9 +532,13 @@ In practice, the hidden state is a bottleneck. The entire past is *compacted* in
 
 **Backpropagation Through Time (BPTT):** Because weights are shared across time steps, gradients must flow through the entire unrolled sequence. If the dominant eigenvalue of the weight matrix is less than 1, gradients **vanish** exponentially with sequence length. Greater than 1, they **explode**.
 
+Concretely, the gradient reaching an early hidden state is a product of one per-step Jacobian for every step it travels back, so along the repeated direction it scales like $\rho^{\,t}$, where $\rho$ is that dominant eigenvalue magnitude and $t$ is the number of steps. Any $\rho \neq 1$ is unstable over long sequences, and no single value is safe at every horizon.
+
+![**Figure:** Gradient norm against how many steps it propagates back, for three spectral radii. Only $\rho=1$ is stable; $\rho=0.9$ has lost three orders of magnitude by 70 steps and $\rho=1.1$ has gained three. This is why a vanilla RNN cannot learn long-range dependencies, and why the fix is architectural rather than a matter of tuning.](images/bptt-gradient-norm.svg)
+
 ### LSTM: Gating the Information Flow
 
-LSTMs address vanishing gradients by separating the hidden state into two components:
+[LSTMs](https://doi.org/10.1162/neco.1997.9.8.1735) address vanishing gradients by separating the hidden state into two components:
 
 - **Cell state**: A "highway" for long-range information flow
 - **Hidden state**: The working memory exposed to the next layer
@@ -567,6 +550,8 @@ Four gates (learned transformations) control information flow at each step:
 3. **Cell update**: The candidate new information
 4. **Output gate**: What to expose as the hidden state
 
+I build an LSTM cell from scratch, gate by gate, and profile where the time actually goes in [Inside LSTMs](../nlp/LSTM-Annotated-Implementation.ipynb).
+
 ::: {.callout-warning}
 ## LSTMs Don't Fully Solve Long-Range Dependencies
 Despite the gating mechanism, both RNNs and LSTMs struggle with information far in the past. Recent tokens have a much more direct connection to the current hidden state. The cell state highway helps, but it's not a complete solution for very long sequences. This is the fundamental motivation for attention mechanisms.
@@ -574,17 +559,17 @@ Despite the gating mechanism, both RNNs and LSTMs struggle with information far 
 
 ### Transformers: Global Receptive Field via Attention
 
-Transformers replace recurrence with **attention**, which gives every position direct access to every other position -> a global receptive field.
+[Transformers](https://arxiv.org/abs/1706.03762) replace recurrence with **attention**, which gives every position direct access to every other position, a global receptive field.
 
 However, the attention mechanism is inherently **order-invariant**: permuting the input tokens permutes the output in the same way. There's no notion of "first" or "last." This is why **positional encodings** are essential: they inject order information that attention alone cannot capture.
 
-For **autoregressive tasks** (language modeling, text generation), a causal mask restricts each position to attend only to current and previous positions, preserving the left-to-right generation constraint.
+For **autoregressive tasks** (language modeling, text generation), a causal mask restricts each position to attend only to current and previous positions, preserving the left-to-right generation constraint. I walk through attention, positional encodings, and masking in [The Transformer Architecture: A Deep Dive](../nlp/Transformer-Architecture-Explained.ipynb), then assemble them into a working model in [Building GPT from Scratch](../nlp/GPT2-From-Scratch.ipynb).
 
 ### GANs: Adversarial Generation
 
-GANs learn to generate data by pitting two networks against each other:
+[GANs](https://arxiv.org/abs/1406.2661) learn to generate data by pitting two networks against each other:
 
-- **Generator**: Takes a random noise vector and tries to produce realistic images. Its objective is to *maximize* the discriminator's error -> make the discriminator believe the fake images are real.
+- **Generator**: Takes a random noise vector and tries to produce realistic images. Its objective is to *maximize* the discriminator's error, making the discriminator believe the fake images are real.
 - **Discriminator**: Receives both real and generated images and tries to classify them correctly. It *minimizes* its classification loss.
 
 The discriminator acts as a learned loss function that guides the generator toward producing increasingly realistic outputs. The "adversarial" aspect refers to the generator learning to exploit subtle distributional differences that are imperceptible to humans.
@@ -603,7 +588,7 @@ Training a model is only half the battle. Deploying it introduces a different se
 
 These constraints often drive post-training optimizations like quantization, pruning, distillation, and conversion to inference-specific formats (ONNX, TensorRT, Core ML).
 
-## Tying It All Together
+## How the Layers Interact
 
 If you've made it this far, you've traced the full stack of a deep learning system:
 
@@ -619,6 +604,26 @@ If you've made it this far, you've traced the full stack of a deep learning syst
 These layers interact. Autograd's saved tensors create memory pressure, which motivates checkpointing, which trades memory for recomputation. Initialization determines activation norms, which normalization layers can stabilize, which affects gradient flow, which determines whether training converges. Strides determine memory access patterns, which determine kernel performance, which determines whether you're compute-bound or memory-bound.
 
 ::: {.callout-tip}
-## The Systems Thinking Payoff
-The next time training is slow, memory is exploding, or loss isn't decreasing - you'll have a mental model of the full stack to reason about where the problem might be. That's the real value of building a framework from scratch.
+## Why Building One Helps
+The next time training is slow, memory is exploding, or loss isn't decreasing, you'll have a mental model of the full stack to reason about where the problem might be. That's the real value of building a framework from scratch.
 :::
+
+## References
+
+- **Rumelhart, D., Hinton, G., & Williams, R.** (1986). [Learning Representations by Back-Propagating Errors](https://www.nature.com/articles/323533a0). *Nature*, 323.
+- **Hochreiter, S. & Schmidhuber, J.** (1997). [Long Short-Term Memory](https://doi.org/10.1162/neco.1997.9.8.1735). *Neural Computation*, 9(8).
+- **Glorot, X. & Bengio, Y.** (2010). [Understanding the Difficulty of Training Deep Feedforward Neural Networks](http://proceedings.mlr.press/v9/glorot10a.html). *AISTATS*.
+- **Jia, Y. et al.** (2014). [Caffe: Convolutional Architecture for Fast Feature Embedding](https://arxiv.org/abs/1408.5093). *ACM MM*.
+- **Goodfellow, I. et al.** (2014). [Generative Adversarial Networks](https://arxiv.org/abs/1406.2661). *NeurIPS*.
+- **Chetlur, S. et al.** (2014). [cuDNN: Efficient Primitives for Deep Learning](https://arxiv.org/abs/1410.0759).
+- **Srivastava, N. et al.** (2014). [Dropout: A Simple Way to Prevent Neural Networks from Overfitting](https://jmlr.org/papers/v15/srivastava14a.html). *JMLR*, 15.
+- **He, K. et al.** (2015). [Delving Deep into Rectifiers](https://arxiv.org/abs/1502.01852). *ICCV*.
+- **Ioffe, S. & Szegedy, C.** (2015). [Batch Normalization](https://arxiv.org/abs/1502.03167). *ICML*.
+- **Abadi, M. et al.** (2016). [TensorFlow: A System for Large-Scale Machine Learning](https://arxiv.org/abs/1605.08695). *OSDI*.
+- **Ba, J., Kiros, J., & Hinton, G.** (2016). [Layer Normalization](https://arxiv.org/abs/1607.06450).
+- **Chen, T. et al.** (2016). [Training Deep Nets with Sublinear Memory Cost](https://arxiv.org/abs/1604.06174).
+- **Vaswani, A. et al.** (2017). [Attention Is All You Need](https://arxiv.org/abs/1706.03762). *NeurIPS*.
+- **Sergeev, A. & Del Balso, M.** (2018). [Horovod: Fast and Easy Distributed Deep Learning](https://arxiv.org/abs/1802.05799).
+- **Huang, Y. et al.** (2019). [GPipe: Efficient Training of Giant Neural Networks Using Pipeline Parallelism](https://arxiv.org/abs/1811.06965). *NeurIPS*.
+- **Loshchilov, I. & Hutter, F.** (2019). [Decoupled Weight Decay Regularization](https://arxiv.org/abs/1711.05101). *ICLR*.
+- **Paszke, A. et al.** (2019). [PyTorch: An Imperative Style, High-Performance Deep Learning Library](https://arxiv.org/abs/1912.01703). *NeurIPS*.

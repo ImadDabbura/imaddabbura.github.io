@@ -16,17 +16,17 @@ Fitting a model is the most commoditized skill in machine learning. Gradient boo
 
 Everything after `model.fit()` has not been solved, and that is where most ML projects fail.
 
-The usual response is a checklist. Monitor your features. Version your data. Watch for drift. Every item is correct, but the list is unsatisfying, because it tells you *what* to do without telling you *why those things and not a hundred others*.
+The usual response is a checklist. Monitor your features, version your data, watch for drift, etc. Every item is correct, but the list is unsatisfying because it tells you *what* to do without telling you *why those things and not a hundred others*.
 
 But production failures are not a grab bag. They have exactly one shape, and once you can write that shape down, the checklist stops being something you memorize and becomes something you derive. Three things that fall out of it:
 
 - A backend service that is slow 1% of the time, called 100 times per user request, makes **63% of your requests slow**. Your p99 is a property of your architecture, not of any service in it ([the arithmetic is here](#sec-tail)).
-- A fraud model with 99% sensitivity *and* 99% specificity, deployed at a 0.1% base rate, is **wrong nine times out of ten every time it fires**. Nothing is broken. That is arithmetic, and no amount of retraining changes it ([the arithmetic is here](#sec-base-rate)).
+- A fraud model with 99% sensitivity *and* 99% specificity, deployed at a 0.1% base rate, is **wrong nine times out of ten every time it fires**. Nothing is broken and no amount of retraining changes it ([the arithmetic is here](#sec-base-rate)).
 - Shipping the default 0.5 decision threshold is a silent assertion that a false alarm costs exactly as much as a missed fraud. In a simulation of two million transactions, that assertion costs **6.3x more per transaction** than the threshold the cost matrix implies ([the arithmetic is here](#sec-threshold)).
 
 None of these is a modelling problem, and none is visible in a holdout metric. They are all versions of the same underlying failure.
 
-This guide comes from two places: a decade of leading and designing ML systems across smart devices, healthcare, and enterprise AI, which is where the scars come from; and years of reading widely and working the ideas through from first principles until they were my own. What I have tried to add is the derivations. Where the standard advice hands you a rule of thumb, I show you where it comes from, because a rule you can derive is a rule you also know when to break. And where I expected one thing and the measurement said another, I say so.
+This guide comes from two places: a decade of leading and designing ML systems across smart devices, healthcare, and enterprise AI, which is where the learnings come from; and years of reading widely and working the ideas through from first principles. What I have tried to add is the derivations. Where the standard advice hands you a rule of thumb, I show you where it comes from, because a rule you can derive is a rule you also know when to break. And where I expected one thing and the measurement said another, I say so.
 
 The next section works out the frame. Every section after it is an attack on one of the three gaps that frame names. By the end you should be able to:
 
@@ -57,13 +57,11 @@ Compare the two expressions. An expected risk has exactly two arguments, **a dis
 | **2** | **Metric $\neq$ Value** | $L_{\text{train}} \neq L_{\text{business}}$ | AUC that moves no revenue, accuracy under imbalance, symmetric loss under asymmetric cost, median latency under a tail SLO |
 | **3** | **Past $\neq$ Present** | $D_{\text{serve}}(t)$ moves with $t$ | Drift, staleness, feedback loops |
 
-That is the whole taxonomy, and it is exhaustive by construction: there is nothing else in the expression that can differ.
-
 ::: {.callout-note}
 ## Scope: supervised prediction, any model class
 $f$ is any decision function. A hinge-loss SVM, a gradient-boosted ranker, and a logistic regression face the same three gaps, because the gaps are properties of **the data and the objective, not of the model class.** What varies is which repairs you get: the [threshold rule](#sec-threshold) needs a calibrated probability, while [importance reweighting](#sec-sampling) and the [drift analysis](#sec-drift) do not.
 
-The real limit is that this is about **supervised prediction**, where a label eventually arrives and $L_{\text{business}}$ is a cost per decision. Reinforcement learning and unsupervised systems have their own failure taxonomies, and I will not pretend this one covers them.
+The real limit is that this is about **supervised prediction**, where a label eventually arrives and $L_{\text{business}}$ is a cost per decision. Reinforcement learning and unsupervised systems have their own failure taxonomies, which aren't covered by this frame.
 :::
 
 ---
@@ -95,25 +93,23 @@ At a fan-out of 100, a one-in-a-hundred event at the component level becomes a *
 This is why a 10 ms operation can take 500 ms once it crosses twenty service boundaries: tail latency is a property of your *architecture*, not of any component in it. You cannot fix it by optimizing the slowest service. You fix it by reducing fan-out, hedging requests, or making each hop's p99 extremely good.
 :::
 
-The practical consequence is a trade-off people resist. An ensemble might buy 3% accuracy. If it pushes p99 past the budget, take the simpler model. Users rarely notice a slightly worse recommendation, but they always notice a slow page.
-
 ### ML Metrics Are Proxies {#sec-proxies}
 
 ML metrics are not business value. They are correlated with it, sometimes, over some range. A recommender's NDCG is not revenue. A fraud model's precision is not dollars saved.
 
-I learned this properly on a content recommendation system. We spent three months lifting the ranking model's AUC from 0.78 to 0.82, which is a real improvement by any offline standard. We deployed it and engagement did not move. The reason took another week to find: nearly all of the gain was in how we ranked items 50 through 100, and users almost never scrolled past item 20. We had spent a quarter optimizing a region of the ranking that no human being ever looked at.
+I learned this properly on a content recommendation system. We spent three months lifting the ranking model's AUC from 0.78 to 0.82, which is a real improvement by any offline standard. We deployed it and engagement did not move. The reason took another week to find: nearly all of the gain was in how we ranked items 50 through 100, and users almost never scrolled past item 20. We had spent a quarter optimizing a region of the ranking that almost no one ever looked at.
 
-AUC is not the villain. The problem is that an aggregate metric averages over regions of the input space that carry unequal business weight, and the model will happily buy its gains in the cheap ones. Before you optimize a metric, establish three things with whoever owns the P&L:
+The problem is NOT AUC, it is that an aggregate metric averages over regions of the input space that carry unequal business weight, and the model will happily buy its gains in the cheap ones. Before you optimize a metric, establish three things with whoever owns the P&L:
 
 1. What user behavior actually drives value?
 2. How does the model's output change that behavior?
 3. What is the *sensitivity*: how much business metric per unit of ML metric?
 
-Question 3 is the one that gets skipped, and it is the only one that tells you whether the project is worth doing. Sometimes the answer is that ML is a small term in a large equation. In a loan approval system, the model estimates creditworthiness, but the approval decision is dominated by regulatory floors, capital availability, and portfolio strategy. A better model may move nothing at all, and it is much cheaper to discover that in a spreadsheet than after two quarters of engineering.
+Question 3 is the one that usually gets skipped, and it is the only one that tells you whether the project is worth doing. Sometimes the answer is that ML is a small term in a large equation. In a loan approval system, the model estimates creditworthiness, but the approval decision is dominated by regulatory floors, capital availability, and portfolio strategy. A better model may move nothing at all, and it is much cheaper to discover that in a spreadsheet than after two quarters of engineering.
 
 ### The Four Pillars {#sec-pillars}
 
-Huyen's framing, and it holds up. Production systems need reliability, scalability, maintainability, and adaptability. Most of this is standard software engineering, so I will only dwell on the part that is ML-specific.
+Production systems need reliability, scalability, maintainability, and adaptability. Most of this is standard software engineering, so I will only dwell on the part that is ML-specific.
 
 **Reliability** in ML means more than uptime, because ML systems fail *silently*. A web server that breaks returns a 500. A model whose feature pipeline breaks returns a confident, plausible, wrong number, and it keeps doing so for months. The defense is a **degradation ladder** that is decided in advance:
 
@@ -121,7 +117,7 @@ Huyen's framing, and it holds up. Production systems need reliability, scalabili
 primary model  →  simpler/cached model  →  business rules  →  cached prediction  →  safe default
 ```
 
-Every rung must be implemented and *tested*, and the bottom rung must be safe rather than merely available. A fraud system whose fallback is "approve everything" is not degrading gracefully; it is failing open, and that is expensive.
+Every level of the system must be implemented and *tested*, and the lowest/basic level must be safe rather than merely available. A fraud system whose fallback is "approve everything" is not degrading gracefully; it is failing open, and that is expensive.
 
 **Scalability** has three axes that interact: model complexity, request volume, and *number of models*. The third is the one that surprises teams. An architecture tuned for one large model often collapses under three hundred small ones, because per-model overhead (loading, memory, monitoring, versioning) was never on anyone's radar.
 
@@ -135,7 +131,7 @@ Every rung must be implemented and *tested*, and the bottom rung must be safe ra
 
 ### Hierarchical Classification: What It Buys and What It Doesn't {#sec-hierarchy}
 
-For classification with many classes, decomposing into a hierarchy (coarse categories first, specialized models at the leaves) is often the right move. Three reasons it helps, and one common claim for it that does not survive scrutiny.
+For classification with many classes, decomposing into a hierarchy (coarse categories first, specialized models at the leaves) is often the right move.
 
 First, **different features at different levels**. Top-level routing can use broad, cheap features. Leaf models can use narrow features that only make sense within their subtree ("screen size" is meaningful for phones and meaningless for groceries).
 
@@ -149,7 +145,7 @@ It is commonly claimed that hierarchical classification slashes your data requir
 
 **This is wrong.** The leaf models still have to separate the fine-grained classes. If you want to distinguish 10,000 products, *something* in your system must see enough examples of each of the 10,000. Pooling data helps the *internal* nodes, where many leaf classes collapse into one coarse label. It does nothing for the leaves.
 
-What hierarchy actually reduces is the *difficulty of each decision*, not the *total supervision required*. Each classifier solves an easier problem over a more homogeneous input distribution with a purpose-built feature set. That is a substantial benefit. It is just not a data discount.
+What hierarchy actually reduces is the *difficulty of each decision*, not the *total supervision required*. Each classifier solves an easier problem over a more homogeneous input distribution with a purpose-built feature set, which is a substantial benefit.
 :::
 
 ### Multi-Label: Split or Joint? {#sec-multilabel}
@@ -160,17 +156,16 @@ Labels are almost never independent. Assume joint unless you have checked.
 
 ### Multiple Objectives: Decouple Them {#sec-objectives}
 
-When a system must serve several objectives (relevance, engagement, revenue), the tempting move is one model with a blended loss. Resist it. A single model with three objectives baked into its weights forces you to retrain the model every time the business changes its mind about the trade-off, which it will do quarterly.
+When a system must serve several objectives (relevance, engagement, revenue), the tempting move is one model with a blended loss. A single model with three objectives baked into its weights forces you to retrain the model every time the business changes its mind about the trade-off, which it will do quarterly.
 
 Train one model per objective. Combine at serving time with weights:
 
 ```python
 def score(item, user_ctx, business_ctx, models, rules):
-    """One model per objective; the trade-off lives in config, not in weights."""
+    """One model per objective; trade-off specified in config NOT in weights."""
     scores = {name: m.predict(item) for name, m in models.items()}
 
-    # Weights are configuration. Changing the business trade-off is a deploy,
-    # not a retrain: bump revenue during a sale, engagement for new users.
+    # Changing the business trade-off requires new deployment NOT retraining
     weights = get_weights(user_ctx, business_ctx)
     blended = sum(weights[name] * s for name, s in scores.items())
 
@@ -189,13 +184,13 @@ Data gets more valuable and more chaotic the closer it sits to you. The three ti
 
 **First-party data** (collected directly from your users) is the most valuable, because it is about *your* users doing *your* thing. It is also the filthiest data you will ever handle. Users leave fields blank, type `asdf@asdf.com`, and behave in ways no schema anticipated.
 
-On one system I found that 15% of users were born on January 1st. This was not a demographic anomaly. Our date picker defaulted to January 1st and most people did not bother changing it. The feature was not "date of birth." It was "date of birth, or evidence that the user was in a hurry," and those are different features with different relationships to the target.
+On one system I found that 15% of users were born on January 1st. Our date picker defaulted to January 1st and most people did not bother changing it. Therefore, January 1st now has two meanings (`NULL` and people who were actually born on January 1st) and we can extract more features out of "date of birth"
 
-The rule for first-party data is defensive processing. Validate everything. Assume every field is adversarial, not because users are malicious but because interfaces leak their defaults into your data.
+The rule for first-party data is defensive processing. Validate everything and assume every field is adversarial, not because users are malicious but because interfaces leak their defaults into your data.
 
-**Second-party data** (from partners) breaks on semantics rather than syntax. The schema matches; the meanings do not. One partner's "active user" is a 30-day login; another's is a 90-day purchase. Nothing in the data will tell you this. Build validation that checks distributions, not just types, and alert when a partner's field shifts.
+**Second-party data** (from partners) breaks on semantics rather than syntax. One partner's "active user" is a 30-day login; another's is a 90-day purchase. Nothing in the data will tell you this. Build validation that checks distributions, not just types, and alert when a partner's field shifts.
 
-**Third-party data** gives you coverage at the price of staleness, unknown bias, and legal exposure. That purchased demographic set may be two years old. That API may be gone next quarter when the terms change. Treat it as a dependency that could be withdrawn at any time.
+**Third-party data** gives you coverage at the price of staleness, unknown bias, and legal exposure. For example, a purchased demographic set may be two years old. Treat it as a dependency that could be withdrawn at any time.
 
 ### Data Passing Modes: Database, Service, Streaming {#sec-transport}
 
@@ -211,11 +206,11 @@ It is also a standing operational commitment. Out-of-order events, late arrivals
 
 ### Batch and Streaming Features {#sec-batch-streaming}
 
-**Batch features** (also called static) are computed periodically over large datasets: lifetime value, 90-day purchase histogram, demographic aggregates. Because nothing is waiting on them, they can be arbitrarily expensive. They are stable, cheap to serve, and *stale by construction*.
+**Batch features** (also called static) are computed periodically over large datasets: lifetime value, 90-day purchase histogram, demographic aggregates. Because nothing is waiting on them, they can be arbitrarily expensive. They are stable, cheap to serve, and *stale*.
 
-**Streaming features** (dynamic) capture the present: items viewed in the last ten minutes, current session depth, current location. They must fit inside the request budget, so they are simple by necessity: counters, sliding windows.
+**Streaming features** (dynamic) capture the present: items viewed in the last ten minutes, current session depth, current location. They must fit inside the request budget, so they are simple by necessity.
 
-Most real systems need both, and the moment you have both, you have created a new source of Mismatch 1. The batch pipeline computes `avg_order_value` in Spark. The streaming pipeline computes it in Flink. They disagree about how to handle nulls, or about whether the window is inclusive, and now your model is trained on one definition and served another. Nobody notices, because both numbers look reasonable.
+Most real systems need both, and the moment you have both, you have created a new source of Mismatch. The batch pipeline computes `avg_order_value` in Spark. The streaming pipeline computes it in Flink. They disagree about how to handle nulls, or about whether the window is inclusive, and now your model is trained on one definition and served another. Nobody notices, because both numbers look reasonable.
 
 This is the single most common silent failure in production ML, and the section on [training/serving skew](#sec-skew) covers what to do about it.
 
@@ -225,9 +220,7 @@ This is the single most common silent failure in production ML, and the section 
 
 ### Sampling Strategies {#sec-sampling}
 
-The default instinct is to grab the most recent data because it is convenient. This is **nonprobability sampling** and it is how you get burned.
-
-I once trained a fraud model on the most recent month available, which happened to be December. The model was excellent in validation and mediocre in production. December fraud is holiday fraud: different merchants, different amounts, different velocity. We had built a Christmas detector and deployed it in March.
+The default instinct is to grab the most recent data because it is convenient. This is **nonprobability sampling** and it is the source of some production headaches.
 
 The rest of the toolkit, briefly, because the choice is usually obvious once you name the constraint:
 
@@ -238,8 +231,6 @@ The rest of the toolkit, briefly, because the choice is usually obvious once you
 | **Weighted** | Some examples matter more (recency, customer value) | Wrong weights inject bias you will not detect offline |
 | **Reservoir** | Sampling from an unbounded stream in one pass | Uniform over the stream, which may not be what you want |
 | **Importance** | Training distribution $\neq$ target distribution | High variance when the two distributions barely overlap |
-
-Importance sampling deserves a note, because it is the direct antidote to Mismatch 1 when you know the shift: reweight each training example by $w(x) = P_{\text{target}}(x) / P_{\text{train}}(x)$ and you recover an unbiased estimate under the target distribution. It works. It also has variance proportional to how badly the two distributions disagree, so when the overlap is poor, the reweighted estimate is unbiased and useless.
 
 ### Feedback Signals: Volume, Delay, Noise {#sec-feedback}
 
@@ -273,21 +264,19 @@ graph LR
 
 ### When You Do Not Have Labels {#sec-no-labels}
 
-Labels are expensive. Four ways out, in rough order of how often they work.
+Labels are expensive. Four alternative in rough order of how often they work.
 
 **Transfer learning** is the first thing to try, and it usually wins. Start from a model pretrained on a related task and fine-tune. The amount of task-specific data you need is often shockingly small: hundreds of examples, not hundreds of thousands, because the pretrained model already has the representation and you are only teaching it the decision.
 
 **Weak supervision** replaces hand-labeling with *labeling functions*: heuristics, patterns, external knowledge, each individually noisy. A generative model learns how much to trust each one and resolves their disagreements ([Ratner et al., 2017](https://arxiv.org/abs/1711.10160)). I used this for content moderation, where the labeling functions were things like profanity lists, all-caps ratios, "reported by 3+ distinct users," and known-bad domains. No single function was better than mediocre. Combined, they were good enough to train on.
 
-**Semi-supervision** bootstraps from a small labeled set: train, predict on unlabeled data, keep the confident predictions, retrain. It works, and it has a nasty failure mode. The model is being trained on its own beliefs, so its errors are self-reinforcing. Confidence goes up while accuracy goes down, and the metric you would use to catch this is the one that has been corrupted. Always hold out a genuinely labeled validation set and stop when it degrades.
+**Semi-supervision** bootstraps from a small labeled set: train, predict on unlabeled data, keep the confident predictions, retrain. It works, but it has a dangerous failure mode. The model is being trained on its own beliefs, so its errors are self-reinforcing. Confidence goes up while accuracy goes down, and the metric you would use to catch this is the one that has been corrupted. Always hold out a genuinely labeled validation set and stop when it degrades.
 
 **Active learning** spends your labeling budget where it buys the most: uncertain examples, boundary cases, cluster representatives. The chicken-and-egg problem is that selecting informative examples requires a model, and the model requires labels, so start with a small random seed set and iterate.
 
 ---
 
 ## Class Imbalance and the Cost of Errors {#sec-imbalance}
-
-This is where the standard advice does the most damage.
 
 ### Why Accuracy Fails Under Imbalance {#sec-base-rate}
 
@@ -309,8 +298,6 @@ $$
 | 0.01% | 1.0% | 99.0% |
 
 At 1% prevalence, a 99%/99% model is **a coin flip**. At 0.1%, nine out of every ten alerts you send a human are wrong.
-
-This is the base-rate fallacy. It is not a modelling failure but a consequence of arithmetic: the model is doing its job, and the low prior overwhelms it. Two consequences follow immediately: your human review queue will be mostly false positives no matter how good the model gets, and you must therefore decide *what an alert is worth* before you decide what to alert on.
 
 ### Why 0.5 Is the Wrong Threshold {#sec-threshold}
 
@@ -354,7 +341,7 @@ Two things stand out in that figure, and the second matters more:
 2. **The basin is flat.** Anywhere from roughly 0.002 to 0.05 is nearly optimal. You do not need to compute $t^{*}$ precisely. You need to not be at 0.5.
 
 ::: {.callout-warning}
-## Calibration is a precondition, not a polish step
+## Importance of calibration
 The derivation assumed $p$ is a *calibrated probability*: when the model says 0.01, the event happens 1% of the time. If the model is overconfident, $t^{*}$ is computed against a number that does not mean what it says, and the whole thing collapses.
 
 Modern neural networks are systematically overconfident ([Guo et al., 2017](https://arxiv.org/abs/1706.04599)). So calibration is not a finishing touch you apply if there is time. It is the precondition for making a cost-optimal decision at all, and it is why [the calibration section](#sec-calibration) exists.
@@ -384,7 +371,7 @@ model.set_learning_rate(0.1 * lr)
 model.fit(X_train, y_train)
 ```
 
-Phase 2 is not optional, and it is the step everyone skips. A model trained only on rebalanced data has learned the *rebalanced prior*, so its probabilities are wrong by exactly the resampling ratio, which breaks [the threshold rule](#sec-threshold).
+A model trained only on rebalanced data has learned the *rebalanced prior*, so its probabilities are wrong by exactly the resampling ratio, which breaks [the threshold rule](#sec-threshold).
 
 ### Algorithm-Level Fixes: Cost-Sensitive and Focal Loss {#sec-loss}
 
@@ -410,7 +397,7 @@ Then ask *why* it is missing, because the mechanism determines the fix:
 - **MAR** (Missing At Random): missingness depends on other observed variables. Mobile users skip long forms. Predictable from what you do have.
 - **MCAR** (Missing Completely At Random): genuinely random. A dropped packet. Rare in practice, and if you think your data is MCAR, look harder.
 
-One rule gets repeated everywhere and justified nowhere: **always add a missing indicator.** It follows directly from the MNAR definition.
+**Always add a missing indicator.** It follows directly from the MNAR definition.
 
 Let $M$ be the binary missingness mask for a feature. Under MNAR, $M$ depends on the unobserved value, which means:
 
@@ -420,20 +407,20 @@ The two populations have different label distributions *given everything else yo
 
 This also tells you exactly when the rule does not apply: under MCAR, the two distributions are equal, $M$ is independent of $Y$, and the indicator is pure noise. That is the only case where you can skip it, and it is the case you almost never have.
 
-The rest follows:
+From this, several practical guidelines follow:
 
 - **Do not drop columns** for being 30% missing. That column is informative for the 70%, and its missingness is informative for the rest.
 - **Be careful dropping rows.** Under MAR or MNAR you are deleting a *segment*, and it is usually a segment you care about.
 - **Median/mode imputation plus an indicator** is a strong baseline and beats most of what people replace it with.
-- **Predictive imputation** is a model inside your model. Fit it on training data only, or you have built a leakage pipeline ([preprocessing leakage](#sec-other-leakage)).
+- **Predictive imputation** is a model inside your model. Fit it on training data only to avoid leakage([preprocessing leakage](#sec-other-leakage)).
 
 ### Scaling {#sec-scaling}
 
-Textbook scaling is `StandardScaler`. Production scaling has two problems the textbook does not mention.
+The most know scaling technique is `StandardScaler`, which has two problems:
 
 The first is that **outliers destroy your scaling parameters** before they ever touch your model. One value of $10^9$ in a column that otherwise ranges over $[0, 100]$ drags the mean, inflates the standard deviation, and compresses every real value into a sliver near zero. Clip first (1st and 99th percentile), *then* compute statistics. In that order.
 
-The second is that **training-time statistics go stale**. You standardized using a mean from six months ago. User behavior moved. Your "standardized" feature is now centered at 3.
+The second is that **training-time statistics go stale**. You standardized using a mean from six months ago, but user behavior moves continuously in productionand.
 
 Match the transform to the distribution:
 
@@ -447,9 +434,9 @@ Match the transform to the distribution:
 
 ### Encoding {#sec-encoding}
 
-One-hot is fine until the cardinality is 10,000 and your feature matrix explodes. Target encoding (replace each category with its mean target) is clever and leaks: the target of the row you are encoding is inside the encoding. If you do use it, compute the encoding out-of-fold, and know that you have taken on a debt.
+One-hot is fine until the cardinality is 10,000 and your feature matrix explodes. Target encoding (replace each category with its mean target) is clever and leaks: the target of the row you are encoding is inside the encoding. If you do use it, compute the encoding out-of-fold.
 
-The **hashing trick** is what tends to survive contact with production. Hash the category into a fixed number of buckets. Bounded dimensionality, no vocabulary to maintain, and (this is the part that matters) **unseen categories at serving time just work**, because hashing is defined for inputs you have never observed. One-hot and target encoding both have to be told what to do with a new category, and what they usually do is crash or silently return zeros.
+The **hashing trick** is what tends to survive contact with production. Hash the category into a fixed number of buckets. Bounded dimensionality, no vocabulary to maintain, and (this is the part that matters) **unseen categories at serving time just work**, because hashing is defined for inputs you have never observed. One-hot and target encoding both have to be told what to do with a new category.
 
 A collision costs a little accuracy, which is a far better failure than an unhandled new category crashing the request path at serving time.
 
@@ -461,52 +448,50 @@ Cross selectively, from domain knowledge, and monitor the cardinality of the res
 
 ### Training/Serving Skew {#sec-skew}
 
-This is Mismatch 1 in its purest form.
-
 You compute `avg_session_length` in a Pandas notebook for training. Someone reimplements it in Scala for the serving path. They handle a null differently, or round differently, or use a half-open interval where you used a closed one. The model now sees a feature at serving time that is subtly not the one it was trained on. Nothing throws an error and both numbers look reasonable, so performance degrades quietly, and every investigation starts at the model, which is not where the problem is.
 
 There is exactly one robust fix: the training path and the serving path must execute **the same code**, not two separate implementations that are meant to agree.
 
 ::: {.callout-note}
 ## What a feature store actually gives you
-This is what feature stores (Feast, Tecton) are *for*, and they are not just a database with a new label on it. A feature store's actual contribution is that it makes the feature definition a single artifact with two execution paths (a batch one for training, a low-latency one for serving) generated from one definition, plus point-in-time-correct joins so that when you build a training set you get the feature values *as they were at the prediction timestamp*, not as they are now.
+This is what feature stores (Feast, Tecton) are *for*, and they are not just a database. A feature store's actual contribution is that it makes the feature definition a single artifact with two execution paths (a batch one for training, a low-latency one for serving) generated from one definition, plus point-in-time-correct joins so that when you build a training set you get the feature values *as they were at the prediction timestamp*, not as they are now.
 
-That second property is a leakage prevention mechanism ([temporal leakage](#sec-temporal-leakage)), and it is the one people underrate. Most teams can hand-roll the first property. Almost nobody hand-rolls point-in-time correctness without getting it wrong at least once.
+That second property is a leakage prevention mechanism ([temporal leakage](#sec-temporal-leakage)). Most teams can hand-roll the first property, but very few hand-rolls point-in-time correctness without getting it wrong at least once.
 
-Whether you need one is a scale question. Whether you need the *properties* is not: if you have batch and streaming features and no feature store, you have to enforce those two invariants yourself, by hand, forever.
+Whether you need one is a scale question, but you need the two *properties* especially if you have batch and streaming features.
 :::
 
 ---
 
 ## Data Leakage {#sec-leakage}
 
-Leakage has caused more of the production failures I have personally debugged than any other single cause. It is uniquely nasty because it does not look like a bug. It looks like success, right up until you deploy.
+Leakage has caused more of the production failures I have personally debugged than any other single cause. It is uniquely dangerous because it does not look like a bug.
 
 ### Temporal Leakage {#sec-temporal-leakage}
 
 Temporal leakage is using information from after the prediction time to make the prediction. Stated that way it sounds impossible to do by accident, and yet it is one of the easiest mistakes to make.
 
-I debugged a churn model that scored 99% accuracy in validation. The team was ready to ship. In production it fell to 60%.
+I debugged a churn model that scored 99% accuracy in validation. In production it fell to 60%.
 
-The culprit was a feature called `account_status`, which was computed by a nightly job *after* churn was recorded. The model had not learned to predict churn. It had learned to recognize customers who had already churned. Offline, that field makes the model look 99% accurate. Online, at prediction time, it always reads "active," so the model has learned nothing it can use.
+The issue was a feature called `account_status`, which was computed by a nightly job *after* churn was recorded. The model had not learned to predict churn. It had learned to recognize customers who had already churned. Offline, that field makes the model look 99% accurate. Online, at prediction time, it always reads "active," so the model has learned nothing it can use.
 
 Any aggregate can hide this. `days_since_last_purchase` computed relative to *today* instead of relative to the prediction date. `lifetime_value` that includes the transaction you are trying to predict. The question to ask about every single feature is: **at the moment I need to make this prediction in production, does this value exist yet?**
 
-And the structural defense: **split by time, never at random**, for any problem with a temporal component. Your validation set must come from strictly after your training set, because that is the shape of the production task.
+**Always split by time, never at random**, for any problem with a temporal component. Your validation set must come from strictly after your training set, because that is the shape of the production task.
 
 ### Preprocessing, Duplicate, and Group Leakage {#sec-other-leakage}
 
 **Preprocessing leakage.** You computed the scaler's mean over the full dataset, then split. The test set's statistics are now baked into the training transform. Same for imputation values, feature selection, and text vocabularies. The rule: fit every transform on training data only, then apply the frozen transform to test.
 
-**Duplicate leakage.** The same record (or a near-duplicate) appears in both train and test. Your test score measures memorization. Deduplicate before splitting, and check for fuzzy duplicates, not just exact ones.
+**Duplicate leakage.** The same record (or a near-duplicate) appears in both train and test. Deduplicate before splitting, and check for fuzzy duplicates, not just exact ones.
 
-**Group leakage.** Correlated records straddle the split. Ten photos of the same person, split across train and test. Multiple transactions from one user on one day. The model learns to identify the *group* rather than the *pattern*, and the test set rewards it. Split by group, not by row.
+**Group leakage.** Correlated records straddle the split. Ten photos of the same person, split across train and test. Multiple transactions from one user on one day. The model learns to identify the *group* rather than the *pattern*. Therefore, split by group, not by row.
 
 ### Detecting Leakage: Adversarial Validation {#sec-adversarial}
 
 The best general-purpose leakage detector is a classifier that tries to tell your training set apart from your test set.
 
-The logic is exact: **if train and test are drawn from the same distribution, no classifier can separate them better than chance.** Any model, given infinite capacity and infinite data, achieves AUC 0.5. So an AUC materially above 0.5 is *evidence* that the two sets differ, and the features the classifier leans on are the ones that differ.
+The logic is: **if train and test are drawn from the same distribution, no classifier can separate them better than chance.** Any model, given infinite capacity and infinite data, achieves AUC 0.5. So an AUC materially above 0.5 is *evidence* that the two sets differ, and the features the classifier leans on are the ones that differ.
 
 ```python
 from sklearn.ensemble import RandomForestClassifier
@@ -527,9 +512,12 @@ def adversarial_validation(X_train, X_test, threshold=0.7):
     return auc, (suspects if auc > threshold else None)
 ```
 
-The 0.7 is a practical tolerance for finite-sample noise, not a law. Treat anything above ~0.6 as worth a look.
+The 0.7 is a practical tolerance for finite-sample noise. Treat anything above ~0.6 as worth a look.
 
-Two cheaper checks are worth running first. **Feature importance**: if one feature dominates every other, be suspicious rather than pleased. Genuine predictive features are rarely that dominant, and a feature that is "too good" usually contains the answer. **Ablation**: drop one feature, retrain, and see if performance collapses. Genuine predictive signal is usually spread across many features, whereas leakage tends to concentrate in one.
+Two cheaper checks are worth running first.
+
+- **Feature importance**: if one feature dominates every other, be suspicious. Genuine predictive features are rarely that dominant, and a feature that is "too good" usually contains the answer.
+- **Ablation**: drop one feature, retrain, and see if performance collapses. Genuine predictive signal is usually spread across many features, whereas leakage tends to concentrate in one.
 
 ---
 
@@ -546,7 +534,7 @@ Start with the dumbest thing that could work, and make each subsequent model bea
 
 Then ask whether the complex model's margin over step 4 is worth its cost, where "cost" includes serving latency, debugging difficulty, retraining time, and the engineer-months it will consume for as long as it lives.
 
-Simple models win in production more often than anyone likes to admit. They are faster, more interpretable, degrade more gracefully, and fail in ways you can reason about.
+Simple models win in production more often than not. They are faster, more interpretable, degrade more gracefully, and fail in ways you can reason about.
 
 ### Calibration {#sec-calibration}
 
@@ -564,7 +552,7 @@ Modern networks tend to be overconfident, and the effect got *worse* as models g
 
 An aggregate metric is an average over a population, and averages hide the segments that matter.
 
-I deployed a recommendation system that performed well overall and terribly for new users. We had trained and tuned on users with rich histories, because that was where most of the data was, and the model learned to lean hard on history. New users had none. The aggregate metric was fine, because new users were a small fraction of sessions. They were also the entire growth channel, and the model we shipped was pushing them away.
+I deployed a model that performed well overall and terribly for new users. We had trained and tuned on users with rich histories, because that was where most of the data was, and the model learned to lean hard on history. New users had none. The aggregate metric was fine, because new users were a small fraction of sessions. They were also the entire growth channel, and the model we shipped was pushing them away.
 
 Evaluate on slices, always, and choose them by business importance rather than by data volume: new versus returning, geography, device, language, high-value versus low-value customers, and the rare-but-critical cases. A model that is 2% better on average and 15% worse on new users is a worse model.
 
@@ -576,7 +564,7 @@ Evaluate on slices, always, and choose them by business importance rather than b
 - **Invariance**: changing a customer's name should not change their credit decision.
 - **Directional expectation**: adding a known-fraudulent signal should raise the fraud score.
 
-These catch spurious correlations that validation metrics reward.
+These catch spurious correlations that validation metrics won't catch.
 
 **Robustness tests** perturb inputs slightly and check that predictions do not swing wildly. Production is full of noise: sensor error, truncation, retries, typos. A model that is unstable under small perturbations will be unstable in production.
 
@@ -586,7 +574,7 @@ These catch spurious correlations that validation metrics reward.
 
 ### Batch, Online, and the Hybrid {#sec-serving-modes}
 
-**Batch prediction** precomputes everything on a schedule and serves from a lookup table. No latency problem, arbitrary model complexity, cheap serving. Three costs: storage grows with users × items, most of what you compute is never used, and every prediction is stale by up to one cycle. Staleness is worse than it sounds, because intent moves fast. A user shopping for a laptop this morning may be shopping for a monitor now, and a nightly batch cannot reflect that.
+**Batch prediction** precomputes everything on a schedule and serves from a lookup table. No latency problem, arbitrary model complexity, cheap serving. Three costs: storage grows with users x items, most of what you compute is never used, and every prediction is stale by up to one cycle. Staleness is worse than it sounds, because intent moves fast. A user shopping for a laptop this morning may be shopping for a monitor now, and a nightly batch cannot reflect that.
 
 **Online prediction** computes on demand. Always fresh, nothing wasted, and now you are inside a latency budget.
 
@@ -600,7 +588,7 @@ Models are wildly over-parameterized, which is good news when you need them smal
 
 - **Quantization**: 32-bit floats to 8-bit ints. ~4x smaller, usually negligible accuracy loss. Try this first; it is nearly free.
 - **Pruning**: remove low-magnitude weights. A large fraction of parameters can often go with little damage, and pruning sometimes *improves* generalization by acting as a regularizer.
-- **Distillation** ([Hinton et al., 2015](https://arxiv.org/abs/1503.02531)): train a small student on the large teacher's soft outputs. The soft targets carry more information than hard labels (they encode the teacher's uncertainty across classes), which is why the student can outperform the same architecture trained from scratch. Compression ratios vary a lot by task; treat any specific number you read (including the "100x" you will see quoted) as a claim about someone else's problem.
+- **Distillation** ([Hinton et al., 2015](https://arxiv.org/abs/1503.02531)): train a small student on the large teacher's soft outputs. The soft targets carry more information than hard labels (they encode the teacher's uncertainty across classes), which is why the student can outperform the same architecture trained from scratch. Compression ratios vary a lot by task.
 
 The unifying observation is that **model capacity and useful capacity are different quantities**, and compression removes the difference.
 
@@ -620,13 +608,13 @@ Deployment is the beginning of the system's life, not the end of the project. Mo
 
 ### ML Systems Fail Silently {#sec-silent-failures}
 
-Ordinary software failures announce themselves. Servers crash, requests 500, alerts fire. Handle these with ordinary SRE practice: redundancy, health checks, circuit breakers, gradual rollout. If you do not have these, ML-specific failures are not your biggest problem.
+Ordinary software failures are transparent. Servers crash, requests 500, alerts fire, etc. You can handle these with ordinary SRE practice: redundancy, health checks, circuit breakers, gradual rollout. If you do not have these, ML-specific failures are not your biggest problem.
 
-ML-specific failures do not announce themselves at all:
+Some ML-specific failures:
 
-- **Pipeline corruption.** A join key changes, a timestamp format shifts, an upstream system starts emitting a placeholder. Features become garbage. The model keeps serving confident predictions.
+- **Pipeline corruption.** A join key changes, a timestamp format shifts, an upstream system starts emitting a placeholder -> Features become garbage.
 - **[Training/serving skew](#sec-skew).** Two implementations of one feature, quietly disagreeing.
-- **Silent degradation.** Distribution drifts, accuracy decays, and with no ground-truth labels arriving you have no way to see it. I have seen models decay toward random while still returning confident, plausible numbers.
+- **Silent degradation.** Distribution drifts, accuracy decays, and with no ground-truth labels arriving you have no way to see it.
 - **Feedback loops.** The model's outputs become its own future training data. A recommender only gets feedback on what it recommended, so it learns that what it recommends is what users want. The system converges on a self-confirming worldview, and the metric that would reveal this has been corrupted by the same loop.
 
 Every one of these leaves the system running and responsive while its outputs are wrong.
@@ -659,14 +647,14 @@ Causation runs bottom to top: a low-level change propagates up into a business s
 
 Mismatch 3 was "$D_{\text{serve}}$ moved." The question is *moved how?* We factorize the **data** distribution, which exists whether or not your model estimates it, so none of this depends on a probabilistic model.
 
-The three types of drift are usually presented as a list to memorize. They are not a list. They are a consequence of the fact that the joint distribution factorizes two ways:
+The three types of drift are a consequence of the fact that the joint distribution factorizes two ways:
 
 $$
 P(X, Y) \;=\; \underbrace{P(Y \mid X)}_{\text{concept}} \cdot \underbrace{P(X)}_{\text{covariate}}
 \;=\; \underbrace{P(X \mid Y)}_{\text{class-conditional}} \cdot \underbrace{P(Y)}_{\text{label}}
 $$
 
-Drift is the question of *which factor moved*. The two factorizations enumerate the possibilities exhaustively, and the consequences fall out of the algebra rather than having to be memorized ([Moreno-Torres et al., 2012](https://doi.org/10.1016/j.patcog.2011.06.019)):
+Drift is the question of *which factor moved*. The two factorizations enumerate the possibilities exhaustively ([Moreno-Torres et al., 2012](https://doi.org/10.1016/j.patcog.2011.06.019)):
 
 | Type | What moves | What stays | Consequence | Fix |
 |---|---|---|---|---|
@@ -676,7 +664,7 @@ Drift is the question of *which factor moved*. The two factorizations enumerate 
 
 ![**Figure 5:** The three shifts, with the same two classes and decision boundary in each panel. Covariate shift moves the input region (the boundary is still right, but serving now lands where training was sparse). Label shift changes the class balance (the ranking is fine, the base rate is not). Concept drift moves the boundary itself (the shaded band is where labels have flipped). Only the third invalidates the learned function.](images/drift-types.svg)
 
-That third row is the dangerous one, and the table explains why in a way a list cannot: no amount of reweighting or recalibration can repair a function that is estimating the wrong thing. Covariate and label shift are bookkeeping problems. Concept drift is an obsolescence problem.
+That third row is the dangerous one, and the table explains why: no amount of reweighting or recalibration can repair a function that is estimating the wrong thing.
 
 ::: {.callout-warning}
 ## Rule out your own bug before calling it drift
@@ -689,7 +677,7 @@ Check your own deploy log before you retrain. Retraining on corrupted features d
 
 The obvious approach is a statistical test (Kolmogorov-Smirnov, chi-square) on each feature's distribution. This is a trap, and the reason is subtle.
 
-**The power of any statistical test goes to 1 as $n \to \infty$ for any nonzero effect.** At 10 million requests a day, every feature will differ from its training distribution at $p < 0.001$, every single day, because no two empirical distributions are ever exactly equal and you have enough samples to prove it. Your p-value is measuring your traffic volume, not your drift.
+**The power of any statistical test goes to 1 as $n \to \infty$ for any nonzero effect.** At 10 million requests a day, every feature will differ from its training distribution at $p < 0.001$, every single day, because no two empirical distributions are ever exactly equal and you have enough samples to prove it.
 
 The fix is to **threshold on effect size, not significance**. Population Stability Index is the standard choice:
 
@@ -710,8 +698,6 @@ def psi(expected, actual, bins=10):
     return float(np.sum((a - e) * np.log(a / e)))
 ```
 
-Never page a human on a p-value.
-
 The other approach is **[adversarial validation](#sec-adversarial) again**, applied to reference-versus-current data instead of train-versus-test. It is more robust than per-feature tests because it catches shifts in the *joint* distribution that no marginal test would see, and it tells you which features moved.
 
 Performance monitoring is the ground truth, and it requires labels, which are delayed or absent precisely when you most need them.
@@ -720,13 +706,9 @@ Performance monitoring is the ground truth, and it requires labels, which are de
 
 **Stateless retraining** rebuilds from scratch on a recent window. Reproducible, no catastrophic forgetting, clean lineage. Expensive and slow to adapt.
 
-**Stateful training** updates the existing model incrementally. Cheap and fast-adapting. Risks catastrophic forgetting, is permanently corruptible by bad data, and makes "what did this model actually learn from?" an unanswerable question.
+**Stateful training** updates the existing model incrementally. Cheap and fast-adapting. Risks catastrophic forgetting, is permanently corruptible by bad data, and makes "what did this model actually learn from?" hard to answer.
 
 Most mature systems do both: incremental updates for responsiveness, periodic full retrains for stability and lineage.
-
-The cadence question has an actual empirical answer, and almost nobody measures it. **Train models on progressively older data, evaluate all of them on current data, and plot performance against data age.** The curve is your domain's half-life, and it tells you your retraining schedule.
-
-Run this experiment. It will surprise you. I expected a financial fraud model to need daily retraining and it was fine on a monthly cadence, because the underlying fraud patterns turned out to move slowly and my intuition was just wrong. Meanwhile a content recommendation model I had assumed was stable needed daily updates, because user interest is genuinely volatile. Both of my priors were backwards, and an afternoon of measurement was worth more than either of them.
 
 Trigger retraining on a combination of signals, because each one alone has a gap:
 
@@ -739,7 +721,7 @@ Trigger retraining on a combination of signals, because each one alone has a gap
 
 ### Testing in Production {#sec-testing-prod}
 
-Each stage catches a different class of problem. Skipping stages is how you find out what they were for.
+Each stage catches a different class of problem.
 
 1. **Holdout.** Necessary, wildly insufficient. Tells you the model learned patterns. Says nothing about production.
 2. **Backtesting.** Evaluate on the most recent data available. If a model trained on last year fails on last month, it will fail tomorrow.
@@ -750,15 +732,13 @@ Each stage catches a different class of problem. Skipping stages is how you find
 
 ### The True Cost of Ownership {#sec-cost}
 
-The compute bill is the part everyone models, and it is rarely the largest term.
-
 **Training** costs labeling (usually the biggest single line item), the hundreds of failed experiments behind each success, and the engineer-months.
 
 **Serving** costs feature computation and storage, network, caching, monitoring, and the on-call rotation, of which model inference is often a minority.
 
 **Humans** cost the most: development, incident response, debugging, stakeholder communication, and the knowledge transfer when someone leaves.
 
-The conclusion that follows is uncomfortable and correct: **a simple model on more expensive hardware is frequently cheaper than a complex model that requires a dedicated team.** Optimize for total cost, and count the humans.
+In conclusion: **a simple model on more expensive hardware is frequently cheaper than a complex model that requires a dedicated team.** Optimize for total cost, and count the humans.
 
 ---
 
@@ -780,13 +760,9 @@ The conclusion that follows is uncomfortable and correct: **a simple model on mo
 
 7. **Data quality beats model sophistication, every time.** I have never seen a complex model rescue bad data. I have often seen a simple model succeed on good data.
 
-8. **Measure your data's half-life instead of guessing your retraining cadence.** My intuitions about this were backwards in both directions, and one afternoon of measurement settled it.
-
-9. **The model is 10% of the system** ([Sculley et al., 2015](https://papers.nips.cc/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html)). The rest is pipelines, features, serving, monitoring, and people.
+8. **The model is 10% of the system** ([Sculley et al., 2015](https://papers.nips.cc/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html)). The rest is pipelines, features, serving, monitoring, and people.
 
 ### A Roadmap for a New System
-
-In order, and do not skip step 2 because it is boring:
 
 1. **Write down the cost matrix.** What does a false positive cost? A false negative? If nobody can answer, you do not yet have a problem specification, and every threshold you pick afterward is a guess.
 2. **Build the [baselines](#sec-baselines)** and measure the business metric they produce. This is your real bar, and sometimes it is already high enough that you can stop.
