@@ -621,13 +621,13 @@ window.Quarto = {
 </section>
 <section id="the-problem-why-not-rnns" class="level2">
 <h2 class="anchored" data-anchor-id="the-problem-why-not-rnns">The Problem: Why Not RNNs?</h2>
-<p>To understand <em>why</em> the Transformer is designed the way it is, you first need to understand what it replaced, and what was fundamentally broken about it.</p>
+<p>To understand <em>why</em> the Transformer is designed the way it is, you first need to understand what it replaced, and what was broken about it.</p>
 <section id="the-rnn-mental-model" class="level3">
 <h3 class="anchored" data-anchor-id="the-rnn-mental-model">The RNN Mental Model</h3>
 <p>A Recurrent Neural Network processes a sequence one token at a time. After seeing each token <span class="math inline">\(w_t\)</span>, it updates a fixed-size <strong>hidden state</strong> <span class="math inline">\(h_t\)</span> that is supposed to summarize everything the model has seen so far:</p>
 <p><span class="math display">\[h_t = f(h_{t-1},\, w_t)\]</span></p>
-<p>The hidden state is then passed to the next step. Think of it as a single notepad that a reader carries through a book, rewriting one paragraph of notes after each page. By the time they reach page 500, that notepad contains almost nothing from page 1: there simply wasn’t room to preserve it through 499 rewrites.</p>
-<p>This is not a metaphor for a failure mode; it is the fundamental architectural constraint. The RNN must compress all prior context into a fixed-size vector, and that compression is lossy by design.</p>
+<p>The hidden state is then passed to the next step. Think of it as a single notepad that a reader carries through a book, rewriting one paragraph of notes after each page. By the time they reach page 500, that notepad contains almost nothing from page 1: there wasn’t room to preserve it through 499 rewrites.</p>
+<p>The notepad is not just an illustration: the RNN must compress all prior context into a fixed-size vector, and that compression is lossy by design.</p>
 </section>
 <section id="the-long-range-dependency-problem" class="level3">
 <h3 class="anchored" data-anchor-id="the-long-range-dependency-problem">The Long-Range Dependency Problem</h3>
@@ -641,7 +641,7 @@ window.Quarto = {
 <h3 class="anchored" data-anchor-id="the-vanishing-gradient-problem">The Vanishing Gradient Problem</h3>
 <p>The training-time failure mirrors the inference-time failure. When we backpropagate through an RNN, the gradient of the loss with respect to early hidden states is a product of Jacobians, one per time step:</p>
 <p><span class="math display">\[\frac{\partial L}{\partial h_0} = \frac{\partial L}{\partial h_T} \prod_{t=1}^{T} \frac{\partial h_t}{\partial h_{t-1}}\]</span></p>
-<p>If the entries of those Jacobians are consistently less than 1 (common with bounded activations like tanh), the product shrinks exponentially with <span class="math inline">\(T\)</span>. Gradients from the loss signal barely reach the early time steps, so the model cannot learn from long-range dependencies even if it wanted to.</p>
+<p>If the entries of those Jacobians are consistently less than 1 (common with bounded activations like tanh), the product shrinks exponentially with <span class="math inline">\(T\)</span>. Gradients from the loss signal barely reach the early time steps, so the model cannot learn from long-range dependencies.</p>
 <p>LSTMs and GRUs mitigate this with gating mechanisms, but they don’t eliminate it; they just slow the decay. (For a full treatment of LSTMs and their gating solution, see the <a href="../../posts/nlp/LSTM-Annotated-Implementation.html">Inside LSTMs</a> post.)</p>
 </section>
 <section id="the-sequential-processing-bottleneck" class="level3">
@@ -658,18 +658,18 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>RNNs fail in three compounding ways: (1) the hidden state <strong>bottleneck</strong> loses information over long sequences; (2) <strong>vanishing gradients</strong> prevent learning long-range relationships from the training signal; (3) <strong>sequential computation</strong> prevents parallelization, making training slow regardless of hardware. The Transformer addresses all three, not with patches, but by replacing sequential recurrence with a fundamentally different mechanism.</p>
+<p>RNNs fail in three compounding ways: (1) the hidden state <strong>bottleneck</strong> loses information over long sequences; (2) <strong>vanishing gradients</strong> prevent learning long-range relationships from the training signal; (3) <strong>sequential computation</strong> prevents parallelization, making training slow regardless of hardware. The Transformer addresses all three, not with patches, but by replacing sequential recurrence with a different mechanism.</p>
 </div>
 </div>
 </section>
 </section>
 <section id="the-big-idea-attention-as-direct-communication" class="level2">
 <h2 class="anchored" data-anchor-id="the-big-idea-attention-as-direct-communication">The Big Idea: Attention as Direct Communication</h2>
-<p>The central insight of the Transformer is deceptively simple: throw out sequential processing entirely and let every token communicate directly with every other token, in a single parallel operation.</p>
+<p>The central insight of the Transformer is simple: throw out sequential processing entirely and let every token communicate directly with every other token, in a single parallel operation.</p>
 <section id="from-sequential-relay-to-direct-access" class="level3">
 <h3 class="anchored" data-anchor-id="from-sequential-relay-to-direct-access">From Sequential Relay to Direct Access</h3>
 <p>With an RNN, every relationship between tokens must be mediated through the hidden state. Information travels through a long chain before it reaches its destination. With attention, every token asks every other token directly: <em>“How relevant are you to me?”</em> The answer shapes what information each token receives.</p>
-<p>This is a fundamentally different computational paradigm: instead of routing information through a bottleneck, we create a <strong>direct, differentiable communication channel</strong> between all pairs of tokens simultaneously. The attention matrix for a sequence of length <span class="math inline">\(T\)</span> is <span class="math inline">\(T \times T\)</span>. Every pair gets its own weight.</p>
+<p>This is a different kind of computation: instead of routing information through a bottleneck, we create a <strong>direct, differentiable communication channel</strong> between all pairs of tokens simultaneously. The attention matrix for a sequence of length <span class="math inline">\(T\)</span> is <span class="math inline">\(T \times T\)</span>. Every pair gets its own weight.</p>
 </section>
 <section id="sec-library" class="level3">
 <h3 class="anchored" data-anchor-id="sec-library">The Library Analogy: Query, Key, Value</h3>
@@ -699,9 +699,9 @@ window.Quarto = {
 </section>
 <section id="why-this-architecture-generalizes-beyond-language" class="level3">
 <h3 class="anchored" data-anchor-id="why-this-architecture-generalizes-beyond-language">Why This Architecture Generalizes Beyond Language</h3>
-<p>Here is the deeper insight that explains why Vision Transformers, AlphaFold2, audio Transformers, and point cloud Transformers all use the same architecture as BERT and GPT, often with almost no modification.</p>
+<p>One property explains why Vision Transformers, AlphaFold2, audio Transformers, and point cloud Transformers all use the same architecture as BERT and GPT, often with almost no modification.</p>
 <p><strong>The Transformer has almost no structural inductive bias.</strong> CNNs assume that nearby pixels are related: they bake in locality and translation equivariance as a prior. RNNs assume sequential order: they process left-to-right by construction. The Transformer assumes <em>nothing</em> about the structure of its input beyond what the positional encoding tells it. Every pair of positions is treated symmetrically by the attention mechanism until the training data says otherwise.</p>
-<p>This is simultaneously the weakness and the superpower:</p>
+<p>This is simultaneously the weakness and the strength:</p>
 <ul>
 <li><strong>Weakness</strong>: Without structural priors, the model needs more data to learn relationships that CNNs or RNNs would pick up for free. A CNN learns “adjacent pixels tend to be related” from very few examples; a Transformer must discover this from data.</li>
 <li><strong>Superpower</strong>: Any domain with a set of elements you want to relate to each other can be modeled by a Transformer. Images? Treat patches as tokens, inject 2D positional encodings (ViT). Proteins? Treat amino acids as tokens, use pairwise distances as positional information (AlphaFold2). Audio? Treat spectrogram frames as tokens. Graphs? Treat nodes as tokens.</li>
@@ -808,7 +808,7 @@ window.Quarto = {
 </section>
 <section id="strategy-3-rotary-positional-encoding-rope" class="level4">
 <h4 class="anchored" data-anchor-id="strategy-3-rotary-positional-encoding-rope">Strategy 3: Rotary Positional Encoding (RoPE)</h4>
-<p>RoPE, introduced by Su et al.&nbsp;(2021) and used in LLaMA, Mistral, and GPT-NeoX, takes a fundamentally different approach: instead of <em>adding</em> a fixed vector to the embeddings, it <em>rotates</em> the query and key vectors by an angle proportional to their absolute position before computing the attention dot product.</p>
+<p>RoPE, introduced by Su et al.&nbsp;(2021) and used in LLaMA, Mistral, and GPT-NeoX, takes a different approach: instead of <em>adding</em> a fixed vector to the embeddings, it <em>rotates</em> the query and key vectors by an angle proportional to their absolute position before computing the attention dot product.</p>
 <p>The key property: when you rotate <span class="math inline">\(Q\)</span> at position <span class="math inline">\(m\)</span> and <span class="math inline">\(K\)</span> at position <span class="math inline">\(n\)</span>, their dot product becomes a function of only the <em>relative distance</em> <span class="math inline">\(m - n\)</span>:</p>
 <p><span class="math display">\[Q_m \cdot K_n = f(m - n)\]</span></p>
 <p>This is highly desirable. Relative position (how far apart two tokens are) is often more informative than absolute position. Whether “cat” is token 5 or token 50 in the sentence matters less than how far it sits from the verb it modifies. Syntactic dependencies (subject → verb, adjective → noun) tend to hold over short distances regardless of where the sentence begins. RoPE bakes this directly into the attention computation at every layer, without requiring separate positional embedding vectors.</p>
@@ -975,7 +975,7 @@ window.Quarto = {
 </section>
 <section id="why-scale-by-sqrtd_k" class="level3">
 <h3 class="anchored" data-anchor-id="why-scale-by-sqrtd_k">Why Scale by <span class="math inline">\(\sqrt{d_k}\)</span>?</h3>
-<p>This is one of those design choices that looks arbitrary until you understand the numerical reason behind it.</p>
+<p>This design choice looks arbitrary until you see the numerical reason.</p>
 <p>Q and K are both initialized as approximately unit-variance random vectors. When you compute their dot product across <code>d_k</code> dimensions, the result has <strong>variance equal to <span class="math inline">\(d_k\)</span></strong> (sum of <code>d_k</code> independent unit-variance terms). For a typical <code>head_dim</code> of 64, the raw dot products have standard deviation 8. For <code>head_dim = 768</code>, standard deviation 27.</p>
 <p>Large-magnitude inputs to softmax cause a saturation problem. When one logit is much larger than the others, softmax approaches a one-hot distribution: almost all weight goes to one token, and gradients for every other position become negligibly small. The model can only learn from the one token it attends to, and ignores all the rest.</p>
 <p>Dividing by <span class="math inline">\(\sqrt{d_k}\)</span> rescales the dot products back to approximately unit variance, regardless of <code>head_dim</code>. Softmax then produces a diffuse distribution (not too concentrated, not too uniform), and gradients flow to all positions during training.</p>
@@ -1064,7 +1064,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>FlashAttention (Dao et al., 2022) is often described as “making attention faster.” What it actually does: reorders the computation to tile through the attention matrix in blocks that fit in GPU SRAM (fast memory), avoiding slow round-trips to HBM (GPU global memory). The FLOPs are identical to standard attention; the memory bandwidth cost drops dramatically: 2–4× wall-clock speedup with numerically identical outputs. It also reduces peak memory from <span class="math inline">\(O(T^2)\)</span> to <span class="math inline">\(O(T)\)</span> by never materializing the full attention matrix. This is why FlashAttention is the standard in every modern training stack, but it does not fix the fundamental quadratic scaling problem for very long contexts.</p>
+<p>FlashAttention (Dao et al., 2022) is often described as “making attention faster.” What it actually does: reorders the computation to tile through the attention matrix in blocks that fit in GPU SRAM (fast memory), avoiding slow round-trips to HBM (GPU global memory). The FLOPs are identical to standard attention; the memory bandwidth cost drops dramatically: 2–4x wall-clock speedup with numerically identical outputs. It also reduces peak memory from <span class="math inline">\(O(T^2)\)</span> to <span class="math inline">\(O(T)\)</span> by never materializing the full attention matrix. This is why FlashAttention is the standard in every modern training stack, but it does not fix the fundamental quadratic scaling problem for very long contexts.</p>
 </div>
 </div>
 <div id="0540e571-f6de-49d2-9535-e91755a7a78f" class="cell">
@@ -1744,7 +1744,7 @@ Note
 <section id="decoder-only-architecture" class="level3">
 <h3 class="anchored" data-anchor-id="decoder-only-architecture">Decoder-Only Architecture</h3>
 <p>Decoder-only models use causal self-attention: each token can only attend to itself and previous tokens. This is the natural architecture for <strong>language modeling</strong>: predicting the next token given all previous tokens.</p>
-<p><strong>Why causal?</strong> Generating text requires predicting one token at a time. If the model could see future tokens while predicting token <span class="math inline">\(t\)</span>, it would simply copy them. The causal mask enforces the constraint that prediction at position <span class="math inline">\(t\)</span> uses only information from positions <span class="math inline">\(0, 1, \ldots, t\)</span>.</p>
+<p><strong>Why causal?</strong> Generating text requires predicting one token at a time. If the model could see future tokens while predicting token <span class="math inline">\(t\)</span>, it would copy them. The causal mask enforces the constraint that prediction at position <span class="math inline">\(t\)</span> uses only information from positions <span class="math inline">\(0, 1, \ldots, t\)</span>.</p>
 <p><strong>The training objective: Causal Language Modeling (CLM).</strong> Decoder-only models are trained by next-token prediction: given a sequence of tokens, predict the next one at every position simultaneously. The loss is the average cross-entropy over all positions. Because the causal mask prevents each position from seeing future tokens, a single forward pass generates <span class="math inline">\(T\)</span> training examples from one sequence: every position is simultaneously a training target. This is why CLM scales so efficiently: a 2048-token document yields 2048 gradient signals per forward pass. The training objective directly shapes what the model learns: because it must predict the next token from all preceding context, the model is forced to compress everything useful about the past into each position’s representation, which is why later layers hold increasingly abstract, predictive features.</p>
 <p><strong>Autoregressive generation.</strong> At inference, the decoder generates text by repeating:</p>
 <div class="cell" data-layout-align="default">
@@ -1753,13 +1753,9 @@ Note
 <p></p><figure class="figure"><p></p>
 <div>
 <pre class="mermaid mermaid-js">graph LR
-    A["Input tokens
-[BOS, t₁, t₂]"] --&gt; B["Decoder
-(causal attention)"]
-    B --&gt; C["LM head
-(linear + softmax)"]
-    C --&gt; D["Next token
-t₃"]
+    A["Input tokens&lt;br/&gt;[BOS, t₁, t₂]"] --&gt; B["Decoder&lt;br/&gt;(causal attention)"]
+    B --&gt; C["LM head&lt;br/&gt;(linear + softmax)"]
+    C --&gt; D["Next token&lt;br/&gt;t₃"]
     D --&gt; A
 </pre>
 </div>
