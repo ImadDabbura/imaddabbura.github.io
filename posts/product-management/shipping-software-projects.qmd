@@ -16,11 +16,11 @@ Some ML projects I've worked on shipped six months late. Others shipped and quie
 A web feature has a clear definition of done: the button appears, the form submits, the data is saved. An ML feature doesn't. "Improve recommendation accuracy" could mean another week of training runs, another architecture experiment, another round of feature engineering, indefinitely. Unlike traditional software, where the solution space is bounded by the spec, ML projects have an effectively unbounded search space. Every model can be made larger, every feature set more complete, every training run longer.
 
 ```{mermaid}
-%%| fig-cap: "Traditional software has a bounded end state. ML projects without defined constraints loop indefinitely - each experiment looks like progress."
+%%| fig-cap: "Traditional software has a bounded end state. ML projects without defined constraints loop indefinitely: each experiment looks like progress."
 flowchart TD
     subgraph trad ["Traditional Software"]
         direction LR
-        t1["Define Feature"] --> t2["Build"] --> t3["Ship ✓"]
+        t1["Define Feature"] --> t2["Build"] --> t3["Ship"]
     end
     subgraph ml ["ML Without Constraints"]
         direction LR
@@ -93,7 +93,7 @@ With tasks in hand, ruthlessly prioritize against the version one criteria. Not 
 | **Nice-to-have** | Incremental gain, no blocker | Version two |
 | **Gold-plating** | No clear user benefit | Cut immediately |
 
-The failure mode is treating "should-haves" as "must-haves." It happens because, deep down, the team doesn't believe version two is coming. If this feels like the only shot, every improvement feels essential. But that's exactly backwards: version two only exists because version one shipped. Holding version one hostage to version two's requirements is how you guarantee neither does.
+The failure mode is treating "should-haves" as "must-haves." It happens because, deep down, the team doesn't believe version two is coming. If this feels like the only shot, every improvement feels essential. But that has it backwards: version two only exists because version one shipped. Holding version one hostage to version two's requirements is how you guarantee neither does.
 
 ## Validate the Core Assumption Before Building the System
 
@@ -104,17 +104,17 @@ I've fallen into this trap early in my career, and led teams into it later. The 
 ```{mermaid}
 %%| fig-cap: "The infrastructure trap: building the full system before validating the approach. The correct order validates cheaply first, then invests in infrastructure."
 flowchart TD
-    subgraph wrong ["❌ Common Mistake"]
+    subgraph wrong ["Common Mistake"]
         direction LR
         w1["Feature Store"] --> w2["Training Pipeline"] --> w3["Model Registry"] --> w4["Model"] --> w5["Works?"]
     end
-    subgraph right ["✓ Correct Order"]
+    subgraph right ["Correct Order"]
         direction LR
-        r1["Validate\nApproach"] --> r2["Establish\nDeploy Path"] --> r3["Build\nInfrastructure"] --> r4["Ship ✓"]
+        r1["Validate<br/>Approach"] --> r2["Establish<br/>Deploy Path"] --> r3["Build<br/>Infrastructure"] --> r4["Ship"]
     end
 ```
 
-The minimum viable experiment: train a simple baseline on a slice of the data, evaluate it against a manually-labeled holdout, and show the results to at least one person who'd actually use the output. Logistic regression, a small neural net, a fine-tuned pretrained model, whatever takes days, not months. If the results are promising, the infrastructure investment is justified. If not, you've learned the most important thing about the project for the cost of two weeks.
+The minimum viable experiment: train a simple baseline on a slice of the data, evaluate it against a manually-labeled holdout, and show the results to at least one person who'd actually use the output. Logistic regression, a small neural net, a fine-tuned pretrained model, whatever takes days, not months. If the results are promising, the infrastructure investment is justified. If not, you've learned the most important thing about the project for the cost of two weeks. I develop this validate-the-riskiest-assumption-first idea into a full method in [Improving ML Systems with the Theory of Constraints](../mlsys/improving-mlsys-theory-of-constraint.qmd).
 
 This also determines tool choice during validation. `scikit-learn`, `PyTorch`, pre-trained transformers from HuggingFace: these represent thousands of engineering hours and are battle-tested at scale. Custom architectures and bespoke training loops are justified when profiling data shows standard tools can't meet your requirements. That data doesn't exist before validation. Building custom infrastructure before validating the approach is the fastest way to spend six months on something nobody uses.
 
@@ -125,12 +125,12 @@ Once version one meets the criteria, ship it, even if it's not perfect.
 Every model I've shipped has surprised me in production. Not because the evaluation was wrong, but because it was measuring the wrong things. Your holdout set measures what you measured. Real users do things you didn't anticipate: edge cases you didn't label, inputs from distributions you didn't sample, and above all, they surface which errors actually matter. A model that's 92% accurate on the evaluation set might be systematically wrong on the 8% of inputs that are disproportionately important to users. You won't know that until the model is deployed.
 
 ```{mermaid}
-%%| fig-cap: "The iteration flywheel: each shipped version surfaces real failures that targeted improvements address, compounding over time."
+%%| fig-cap: "The iteration loop: each shipped version surfaces real failures that targeted improvements address, compounding over time."
 flowchart LR
-    A["Ship\nImperfect v1"] --> B["Real\nUsage Data"]
-    B --> C["Discover\nActual Failures"]
-    C --> D["Targeted\nFixes"]
-    D --> E["Ship\nBetter v2"]
+    A["Ship<br/>Imperfect v1"] --> B["Real<br/>Usage Data"]
+    B --> C["Discover<br/>Actual Failures"]
+    C --> D["Targeted<br/>Fixes"]
+    D --> E["Ship<br/>Better v2"]
     E --> B
 ```
 

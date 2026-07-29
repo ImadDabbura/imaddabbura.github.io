@@ -477,7 +477,7 @@ background-size: cover;
 <pre class="mermaid mermaid-js">flowchart TD
     subgraph trad ["Traditional Software"]
         direction LR
-        t1["Define Feature"] --&gt; t2["Build"] --&gt; t3["Ship ✓"]
+        t1["Define Feature"] --&gt; t2["Build"] --&gt; t3["Ship"]
     end
     subgraph ml ["ML Without Constraints"]
         direction LR
@@ -488,7 +488,7 @@ background-size: cover;
     end
 </pre>
 </div>
-<p></p><figcaption> Traditional software has a bounded end state. ML projects without defined constraints loop indefinitely - each experiment looks like progress.</figcaption> </figure><p></p>
+<p></p><figcaption> Traditional software has a bounded end state. ML projects without defined constraints loop indefinitely: each experiment looks like progress.</figcaption> </figure><p></p>
 </div>
 </div>
 </div>
@@ -581,7 +581,7 @@ background-size: cover;
 </tr>
 </tbody>
 </table>
-<p>The failure mode is treating “should-haves” as “must-haves.” It happens because, deep down, the team doesn’t believe version two is coming. If this feels like the only shot, every improvement feels essential. But that’s exactly backwards: version two only exists because version one shipped. Holding version one hostage to version two’s requirements is how you guarantee neither does.</p>
+<p>The failure mode is treating “should-haves” as “must-haves.” It happens because, deep down, the team doesn’t believe version two is coming. If this feels like the only shot, every improvement feels essential. But that has it backwards: version two only exists because version one shipped. Holding version one hostage to version two’s requirements is how you guarantee neither does.</p>
 </section>
 <section id="validate-the-core-assumption-before-building-the-system" class="level2">
 <h2 class="anchored" data-anchor-id="validate-the-core-assumption-before-building-the-system">Validate the Core Assumption Before Building the System</h2>
@@ -593,13 +593,13 @@ background-size: cover;
 <p></p><figure class="figure"><p></p>
 <div>
 <pre class="mermaid mermaid-js">flowchart TD
-    subgraph wrong ["❌ Common Mistake"]
+    subgraph wrong ["Common Mistake"]
         direction LR
         w1["Feature Store"] --&gt; w2["Training Pipeline"] --&gt; w3["Model Registry"] --&gt; w4["Model"] --&gt; w5["Works?"]
     end
-    subgraph right ["✓ Correct Order"]
+    subgraph right ["Correct Order"]
         direction LR
-        r1["Validate\nApproach"] --&gt; r2["Establish\nDeploy Path"] --&gt; r3["Build\nInfrastructure"] --&gt; r4["Ship ✓"]
+        r1["Validate&lt;br/&gt;Approach"] --&gt; r2["Establish&lt;br/&gt;Deploy Path"] --&gt; r3["Build&lt;br/&gt;Infrastructure"] --&gt; r4["Ship"]
     end
 </pre>
 </div>
@@ -607,7 +607,7 @@ background-size: cover;
 </div>
 </div>
 </div>
-<p>The minimum viable experiment: train a simple baseline on a slice of the data, evaluate it against a manually-labeled holdout, and show the results to at least one person who’d actually use the output. Logistic regression, a small neural net, a fine-tuned pretrained model, whatever takes days, not months. If the results are promising, the infrastructure investment is justified. If not, you’ve learned the most important thing about the project for the cost of two weeks.</p>
+<p>The minimum viable experiment: train a simple baseline on a slice of the data, evaluate it against a manually-labeled holdout, and show the results to at least one person who’d actually use the output. Logistic regression, a small neural net, a fine-tuned pretrained model, whatever takes days, not months. If the results are promising, the infrastructure investment is justified. If not, you’ve learned the most important thing about the project for the cost of two weeks. I develop this validate-the-riskiest-assumption-first idea into a full method in <a href="../../posts/mlsys/improving-mlsys-theory-of-constraint.html">Improving ML Systems with the Theory of Constraints</a>.</p>
 <p>This also determines tool choice during validation. <code>scikit-learn</code>, <code>PyTorch</code>, pre-trained transformers from HuggingFace: these represent thousands of engineering hours and are battle-tested at scale. Custom architectures and bespoke training loops are justified when profiling data shows standard tools can’t meet your requirements. That data doesn’t exist before validation. Building custom infrastructure before validating the approach is the fastest way to spend six months on something nobody uses.</p>
 </section>
 <section id="ship-then-compound" class="level2">
@@ -620,14 +620,14 @@ background-size: cover;
 <p></p><figure class="figure"><p></p>
 <div>
 <pre class="mermaid mermaid-js">flowchart LR
-    A["Ship\nImperfect v1"] --&gt; B["Real\nUsage Data"]
-    B --&gt; C["Discover\nActual Failures"]
-    C --&gt; D["Targeted\nFixes"]
-    D --&gt; E["Ship\nBetter v2"]
+    A["Ship&lt;br/&gt;Imperfect v1"] --&gt; B["Real&lt;br/&gt;Usage Data"]
+    B --&gt; C["Discover&lt;br/&gt;Actual Failures"]
+    C --&gt; D["Targeted&lt;br/&gt;Fixes"]
+    D --&gt; E["Ship&lt;br/&gt;Better v2"]
     E --&gt; B
 </pre>
 </div>
-<p></p><figcaption> The iteration flywheel: each shipped version surfaces real failures that targeted improvements address, compounding over time.</figcaption> </figure><p></p>
+<p></p><figcaption> The iteration loop: each shipped version surfaces real failures that targeted improvements address, compounding over time.</figcaption> </figure><p></p>
 </div>
 </div>
 </div>

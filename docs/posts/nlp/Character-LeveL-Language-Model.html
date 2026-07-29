@@ -195,13 +195,13 @@ window.Quarto = {
 
 <link rel="stylesheet" href="../../assets/posts.css">
 <meta property="og:title" content="Character-Level Language Model – Imad Dabbura">
-<meta property="og:description" content="How an RNN learns to generate names one character at a time - and what it teaches us about language models">
+<meta property="og:description" content="How an RNN learns to generate names one character at a time, and what it teaches us about language models">
 <meta property="og:image" content="https://imaddabbura.github.io/posts/nlp/images/character-level-lm.png">
 <meta property="og:site_name" content="Imad Dabbura">
 <meta property="og:image:height" content="358">
 <meta property="og:image:width" content="965">
 <meta name="twitter:title" content="Character-Level Language Model – Imad Dabbura">
-<meta name="twitter:description" content="How an RNN learns to generate names one character at a time - and what it teaches us about language models">
+<meta name="twitter:description" content="How an RNN learns to generate names one character at a time, and what it teaches us about language models">
 <meta name="twitter:image" content="https://imaddabbura.github.io/posts/nlp/images/character-level-lm.png">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
@@ -465,7 +465,7 @@ window.Quarto = {
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <div class="quarto-title-block"><div><h1 class="title">Character-Level Language Model</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li></ul></div></div>
-            <p class="subtitle lead">How an RNN learns to generate names one character at a time - and what it teaches us about language models</p>
+            <p class="subtitle lead">How an RNN learns to generate names one character at a time, and what it teaches us about language models</p>
                                 <div class="quarto-categories">
                 <div class="quarto-category">NLP</div>
               </div>
@@ -507,7 +507,7 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#the-simplest-language-model-you-can-actually-build" id="toc-the-simplest-language-model-you-can-actually-build" class="nav-link active" data-scroll-target="#the-simplest-language-model-you-can-actually-build">The Simplest Language Model You Can Actually Build</a></li>
+  <li><a href="#the-simplest-language-model-you-can-build" id="toc-the-simplest-language-model-you-can-build" class="nav-link active" data-scroll-target="#the-simplest-language-model-you-can-build">The Simplest Language Model You Can Build</a></li>
   <li><a href="#the-core-idea-one-character-at-a-time" id="toc-the-core-idea-one-character-at-a-time" class="nav-link" data-scroll-target="#the-core-idea-one-character-at-a-time">The Core Idea: One Character at a Time</a>
   <ul class="collapse">
   <li><a href="#why-rnns" id="toc-why-rnns" class="nav-link" data-scroll-target="#why-rnns">Why RNNs?</a></li>
@@ -537,7 +537,7 @@ window.Quarto = {
   <li><a href="#training-loop-overview" id="toc-training-loop-overview" class="nav-link" data-scroll-target="#training-loop-overview">Training Loop Overview</a></li>
   <li><a href="#results-analysis" id="toc-results-analysis" class="nav-link" data-scroll-target="#results-analysis">Results Analysis</a></li>
   </ul></li>
-  <li><a href="#what-we-learned---and-what-comes-next" id="toc-what-we-learned---and-what-comes-next" class="nav-link" data-scroll-target="#what-we-learned---and-what-comes-next">What We Learned - and What Comes Next</a>
+  <li><a href="#what-we-learned-and-what-comes-next" id="toc-what-we-learned-and-what-comes-next" class="nav-link" data-scroll-target="#what-we-learned-and-what-comes-next">What We Learned, and What Comes Next</a>
   <ul class="collapse">
   <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways">Key Takeaways</a></li>
   <li><a href="#scaling-up-what-would-change" id="toc-scaling-up-what-would-change" class="nav-link" data-scroll-target="#scaling-up-what-would-change">Scaling Up: What Would Change?</a></li>
@@ -555,16 +555,16 @@ window.Quarto = {
 
 
 <div class="status-badge-container" style="margin-bottom: 1rem;"><span class="status-badge evergreen">evergreen</span></div>
-<section id="the-simplest-language-model-you-can-actually-build" class="level2">
-<h2 class="anchored" data-anchor-id="the-simplest-language-model-you-can-actually-build">The Simplest Language Model You Can Actually Build</h2>
-<p>Every time Gmail suggests a reply or a speech recognition system transcribes your words, a language model is predicting the next token. State-of-the-art systems like Google’s Neural Machine Translation do this with millions of parameters and subword tokens - but the <em>core idea</em> is identical to what we’ll build here: <strong>predict the next character given everything that came before it.</strong></p>
-<p>In this post, we’ll build a character-level language model from scratch using a Recurrent Neural Network (RNN). We’ll train it on a dataset of human names, and by the end, it will generate plausible-sounding new names character by character. Along the way, we’ll cover the same fundamental concepts that power production NLP systems - from this toy RNN to large-scale neural machine translation: sequential prediction, backpropagation through time, gradient instabilities, and the creativity-coherence trade-off in sampling.</p>
+<section id="the-simplest-language-model-you-can-build" class="level2">
+<h2 class="anchored" data-anchor-id="the-simplest-language-model-you-can-build">The Simplest Language Model You Can Build</h2>
+<p>Every time Gmail suggests a reply or a speech recognition system transcribes your words, a language model is predicting the next token. State-of-the-art systems like Google’s Neural Machine Translation do this with millions of parameters and subword tokens, but the <em>core idea</em> is identical to what we’ll build here: predict the next character given everything that came before it.</p>
+<p>In this post, we’ll build a character-level language model from scratch using a Recurrent Neural Network (RNN). We’ll train it on a dataset of human names, and by the end, it will generate plausible-sounding new names character by character. Along the way, we’ll cover the same fundamental concepts that power production NLP systems, from this toy RNN to large-scale neural machine translation: sequential prediction, backpropagation through time, gradient instabilities, and the creativity-coherence trade-off in sampling.</p>
 </section>
 <section id="the-core-idea-one-character-at-a-time" class="level2">
 <h2 class="anchored" data-anchor-id="the-core-idea-one-character-at-a-time">The Core Idea: One Character at a Time</h2>
 <p>A <strong>statistical language model</strong> learns the joint probability distribution over sequences of tokens. For a sequence of <span class="math inline">\(T\)</span> characters, we want to maximize:</p>
 <p><span class="math display">\[P(c_1, c_2, \ldots, c_T) = \prod_{t=1}^{T} P(c_t \mid c_1, \ldots, c_{t-1})\]</span></p>
-<p>In plain English: the probability of the full sequence equals the product of each character’s probability <em>given everything before it</em>. This is the chain rule of probability - nothing more - and it’s the same factorization used by large-scale neural language models for machine translation and speech recognition. The only difference is scale: we work with 27 characters, while production systems work with vocabularies of tens of thousands of subword tokens.</p>
+<p>In plain English: the probability of the full sequence equals the product of each character’s probability <em>given everything before it</em>. This is the chain rule of probability, nothing more, and it’s the same factorization used by large-scale neural language models for machine translation and speech recognition. The only difference is scale: we work with 27 characters, while production systems work with vocabularies of tens of thousands of subword tokens.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -575,18 +575,18 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Every autoregressive neural language model - from this character RNN to large LSTM language models used in machine translation - runs the same loop: (1) encode the input, (2) update an internal state, (3) predict the next token, (4) consume the prediction as the next input. The architecture and scale differ enormously, but the loop is identical.</p>
+<p>Every autoregressive neural language model, from this character RNN to large LSTM language models used in machine translation, runs the same loop: (1) encode the input, (2) update an internal state, (3) predict the next token, (4) consume the prediction as the next input. The architecture and scale differ enormously, but the loop is identical.</p>
 </div>
 </div>
 <section id="why-rnns" class="level3">
 <h3 class="anchored" data-anchor-id="why-rnns">Why RNNs?</h3>
-<p>We need a model that can process sequences of <em>variable length</em> while maintaining memory of past inputs. An RNN does this by carrying a <strong>hidden state</strong> <span class="math inline">\(h^t\)</span> that gets updated at each time step as a function of the current input and the previous hidden state. In theory, the hidden state at the last time step captures the entire input history - it’s a compressed summary of everything the model has seen so far.</p>
+<p>We need a model that can process sequences of <em>variable length</em> while maintaining memory of past inputs. An RNN does this by carrying a <strong>hidden state</strong> <span class="math inline">\(h^t\)</span> that gets updated at each time step as a function of the current input and the previous hidden state. In theory, the hidden state at the last time step captures the entire input history: it’s a compressed summary of everything the model has seen so far.</p>
 </section>
 <section id="worked-example-generating-imad" class="level3">
 <h3 class="anchored" data-anchor-id="worked-example-generating-imad">Worked Example: Generating “imad”</h3>
 <p>Let’s trace through how the model processes a single name to make this concrete.</p>
 <p><strong>Step 1: Build a vocabulary.</strong> Collect all unique characters and assign each an integer index: <code>{"a": 0, "d": 1, "i": 2, "m": 3}</code>. So “imad” becomes <code>[2, 3, 0, 1]</code>.</p>
-<p><strong>Step 2: Align inputs and targets.</strong> The input at each time step is the <em>previous</em> character, and the target is the <em>current</em> character. We initialize <span class="math inline">\(x^1 = \vec{0}\)</span> (a zero vector - “no previous character”) and shift:</p>
+<p><strong>Step 2: Align inputs and targets.</strong> The input at each time step is the <em>previous</em> character, and the target is the <em>current</em> character. We initialize <span class="math inline">\(x^1 = \vec{0}\)</span> (a zero vector, “no previous character”) and shift:</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -620,14 +620,12 @@ window.Quarto = {
 </table>
 <p><strong>Step 3: At each time step</strong>, the model: converts the input to a one-hot vector → computes the hidden state → produces a probability distribution over the vocabulary via softmax → measures the loss against the true target.</p>
 <p>The goal: make the probability assigned to the correct next character as high as possible. We measure this with <strong>cross-entropy loss</strong> and update parameters via gradient descent.</p>
-<p align="left">
-<img src="images/char_level_example.png" style="width: 800px; height: 600px"><br>
-
-</p><center>
-<u><b><font color="00b7e4">Figure 1:</font></b></u> Illustrative example of character-level language model using RNN. Green values are the target probabilities we want to maximize; red values should be minimized. Notice that <span class="math inline">\(h^4\)</span> carries information about all previous characters.
-</center>
-
-<p></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/char_level_example.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure 1: Illustrative example of a character-level language model using an RNN. Green values are the target probabilities we want to maximize; red values should be minimized. Notice that h^4 carries information about all previous characters."><img src="images/char_level_example.png" class="img-fluid figure-img" width="800" alt="Figure 1: Illustrative example of a character-level language model using an RNN. Green values are the target probabilities we want to maximize; red values should be minimized. Notice that h^4 carries information about all previous characters."></a></p>
+<figcaption><strong>Figure 1:</strong> Illustrative example of a character-level language model using an RNN. Green values are the target probabilities we want to maximize; red values should be minimized. Notice that <span class="math inline">\(h^4\)</span> carries information about all previous characters.</figcaption>
+</figure>
+</div>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -638,27 +636,25 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>During training, we feed the <em>true</em> target character as the next input - not the model’s own prediction. This is called <strong>teacher forcing</strong> and it stabilizes training by preventing error accumulation across time steps. At generation time, we switch to feeding the model’s own predictions back in (autoregressive decoding).</p>
+<p>During training, we feed the <em>true</em> target character as the next input, not the model’s own prediction. This is called <strong>teacher forcing</strong> and it stabilizes training by preventing error accumulation across time steps. At generation time, we switch to feeding the model’s own predictions back in (autoregressive decoding).</p>
 </div>
 </div>
-<p><strong>Key takeaway:</strong> A character-level language model factorizes the probability of a name into a product of conditional probabilities, one per character. An RNN processes these sequentially, maintaining a hidden state that (in theory) summarizes all past context.</p>
+<p>A character-level language model factorizes the probability of a name into a product of conditional probabilities, one per character. An RNN processes these sequentially, maintaining a hidden state that (in theory) summarizes all past context.</p>
 </section>
 </section>
 <section id="training-setup" class="level2">
 <h2 class="anchored" data-anchor-id="training-setup">Training Setup</h2>
-<p>Now that we understand the core idea, let’s set up the training pipeline. The decisions made here - dataset, architecture variant, and optimization strategy - directly affect what the model can learn.</p>
+<p>Now that we understand the core idea, let’s set up the training pipeline. The decisions made here, dataset, architecture variant, and optimization strategy, directly affect what the model can learn.</p>
 <section id="dataset-architecture" class="level3">
 <h3 class="anchored" data-anchor-id="dataset-architecture">Dataset &amp; Architecture</h3>
 <p>The <a href="http://deron.meranda.us/data/census-derived-all-first.txt">dataset</a> contains <strong>5,163 names</strong> from US census data: 4,275 male names, 1,219 female names, and 331 names that can be either.</p>
-<p>We’ll use a <strong>many-to-many RNN</strong> architecture where the number of input time steps equals the number of output time steps (<span class="math inline">\(T_x = T_y\)</span>). At each step, the model reads one character and predicts the next - input and output are perfectly synced.</p>
-<p align="left">
-<img src="images/rnn_architecture.png" style="width: 600px; height: 600px"><br>
-
-</p><center>
-<u><b><font color="00b7e4">Figure 2:</font></b></u> RNN architecture: many to many - each time step produces a prediction
-</center>
-
-<p></p>
+<p>We’ll use a <strong>many-to-many RNN</strong> architecture where the number of input time steps equals the number of output time steps (<span class="math inline">\(T_x = T_y\)</span>). At each step, the model reads one character and predicts the next: input and output are perfectly synced.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/rnn_architecture.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure 2: RNN architecture (many-to-many): each time step produces a prediction."><img src="images/rnn_architecture.png" class="img-fluid figure-img" width="600" alt="Figure 2: RNN architecture (many-to-many): each time step produces a prediction."></a></p>
+<figcaption><strong>Figure 2:</strong> RNN architecture (many-to-many): each time step produces a prediction.</figcaption>
+</figure>
+</div>
 <p>The character-level language model will be trained on names; which means after we’re done with training the model, we’ll be able to generate interesting names :).</p>
 <p>In this section, we’ll go over four main parts:</p>
 <ol type="1">
@@ -690,7 +686,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>In production NLP systems (e.g., neural machine translation), batch size 1 would be very slow - the hardware can’t parallelize across a single short sequence. Real systems use mini-batches of hundreds of sequences, padded to uniform length, to better utilize GPU resources. But the <em>math</em> is identical: gradient descent on cross-entropy loss over next-token predictions. The only difference is how many examples contribute to each gradient update.</p>
+<p>In production NLP systems (e.g., neural machine translation), batch size 1 would be very slow: the hardware can’t parallelize across a single short sequence. Real systems use mini-batches of hundreds of sequences, padded to uniform length, to better utilize GPU resources. But the <em>math</em> is identical: gradient descent on cross-entropy loss over next-token predictions. The only difference is how many examples contribute to each gradient update.</p>
 </div>
 </div>
 </section>
@@ -703,7 +699,7 @@ window.Quarto = {
 <p><strong>1. Vocabulary Construction</strong></p>
 <p>We build two dictionaries from the unique lowercase characters in the dataset:</p>
 <ul>
-<li><code>chars_to_idx</code>: maps each character to an integer (e.g., <code>"a" → 1</code>, <code>"z" → 26</code>). Index <code>0</code> is reserved for the newline character <code>"\n"</code>, which serves as our <strong>end-of-sequence (EOS)</strong> token - the model learns to “stop” by predicting <code>"\n"</code>.</li>
+<li><code>chars_to_idx</code>: maps each character to an integer (e.g., <code>"a" → 1</code>, <code>"z" → 26</code>). Index <code>0</code> is reserved for the newline character <code>"\n"</code>, which serves as our <strong>end-of-sequence (EOS)</strong> token: the model learns to “stop” by predicting <code>"\n"</code>.</li>
 <li><code>idx_to_chars</code>: the reverse mapping, used to decode model output back into characters.</li>
 </ul>
 <p><strong>2. Parameter Initialization</strong></p>
@@ -750,14 +746,14 @@ window.Quarto = {
 </tbody>
 </table>
 <p><strong>3. One-Hot Encoding</strong></p>
-<p>Each character is converted to a one-hot vector of dimension <code>vocab_size × 1</code>. The first input <span class="math inline">\(x^1 = \vec{0}\)</span> (all zeros - “no previous character”). From <span class="math inline">\(t = 2\)</span> onward, <span class="math inline">\(x^{t} = y^{t-1}\)</span> (the previous target character).</p>
+<p>Each character is converted to a one-hot vector of dimension <code>vocab_size × 1</code>. The first input <span class="math inline">\(x^1 = \vec{0}\)</span> (all zeros, “no previous character”). From <span class="math inline">\(t = 2\)</span> onward, <span class="math inline">\(x^{t} = y^{t-1}\)</span> (the previous target character).</p>
 <p>The last target for every name is <code>"\n"</code>, so the model learns <em>when to stop generating</em>.</p>
 <p><strong>4. Hidden State Computation</strong></p>
 <p><span class="math display">\[h^t = \tanh(W_{hh} \cdot h^{t-1} + W_{xh} \cdot x^t + b) \tag{1}\]</span></p>
 <p>The <strong>tanh</strong> activation squashes values to <span class="math inline">\([-1, 1]\)</span>. One practical advantage: near the origin, tanh resembles the identity function, which helps gradients flow during early training when weights are small.</p>
 <p><strong>5. Output &amp; Softmax</strong></p>
 <p><span class="math display">\[o^t = W_{hy} \cdot h^t + c \tag{2}\]</span> <span class="math display">\[\hat{y}^t = \text{softmax}(o^t) = \frac{e^{o^t_i}}{\sum_j e^{o^t_j}} \tag{3}\]</span></p>
-<p>The softmax converts raw logits into a valid probability distribution - all values between 0 and 1, summing to 1. Each entry <span class="math inline">\(\hat{y}^t[i]\)</span> is the predicted probability that character <span class="math inline">\(i\)</span> comes next.</p>
+<p>The softmax converts raw logits into a valid probability distribution: all values between 0 and 1, summing to 1. Each entry <span class="math inline">\(\hat{y}^t[i]\)</span> is the predicted probability that character <span class="math inline">\(i\)</span> comes next.</p>
 <p><strong>6. Cross-Entropy Loss</strong></p>
 <p><span class="math display">\[\mathcal{L}^t = -\log \hat{y}^t[y^t] \tag{4}\]</span> <span class="math display">\[\mathcal{L} = \sum_{t=1}^{T} \mathcal{L}^t \tag{5}\]</span></p>
 <p>We only care about the probability the model assigned to the <em>correct</em> next character. The negative log makes this a loss: high probability → low loss, low probability → high loss.</p>
@@ -772,7 +768,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Cross-entropy loss is equivalent to minimizing the KL divergence between the model’s predicted distribution and the empirical data distribution (which is a one-hot vector). It’s also the negative log-likelihood of the data under the model - so minimizing cross-entropy is the same as maximum likelihood estimation.</p>
+<p>Cross-entropy loss is equivalent to minimizing the KL divergence between the model’s predicted distribution and the empirical data distribution (which is a one-hot vector). It’s also the negative log-likelihood of the data under the model, so minimizing cross-entropy is the same as maximum likelihood estimation. I look at how this loss behaves as the weights grow on separable data in <a href="../../posts/dl/why-cross-entropy-never-zero.html">Why Cross-Entropy Never Reaches Zero</a>.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -882,23 +878,21 @@ window.Quarto = {
 </section>
 <section id="backpropagation-through-time-bptt" class="level2">
 <h2 class="anchored" data-anchor-id="backpropagation-through-time-bptt">Backpropagation Through Time (BPTT)</h2>
-<p>Computing gradients for an RNN isn’t quite like standard backpropagation - and the difference has profound consequences for what these models can and cannot learn.</p>
+<p>Computing gradients for an RNN isn’t quite like standard backpropagation, and the difference has profound consequences for what these models can and cannot learn.</p>
 <section id="why-bptt-is-different" class="level3">
 <h3 class="anchored" data-anchor-id="why-bptt-is-different">Why BPTT Is Different</h3>
-<p>In a standard feedforward network, each layer has its <em>own</em> weights. In an RNN, <strong>the same weights are shared across all time steps</strong>. When we unroll the RNN across time, it looks like a very deep feedforward network - but with tied weights. This means the gradient of the loss with respect to any shared parameter must be <strong>summed across all time steps</strong>.</p>
+<p>In a standard feedforward network, each layer has its <em>own</em> weights. In an RNN, <strong>the same weights are shared across all time steps</strong>. When we unroll the RNN across time, it looks like a very deep feedforward network, but with tied weights. This means the gradient of the loss with respect to any shared parameter must be <strong>summed across all time steps</strong>.</p>
 <p>We start at the last time step <span class="math inline">\(T\)</span> and propagate the loss backward through the entire sequence, accumulating gradients at each step.</p>
-<p align="left">
-<img src="images/backprop.png" style="width: 800px; height: 400px"><br>
-
-</p><center>
-<u><b><font color="00b7e4">Figure 3:</font></b></u> Backpropagation Through Time - gradients flow backward from the loss at each time step, accumulating across the shared weights
-</center>
-
-<p></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/backprop.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure 3: Backpropagation through time: gradients flow backward from the loss at each time step, accumulating across the shared weights."><img src="images/backprop.png" class="img-fluid figure-img" width="800" alt="Figure 3: Backpropagation through time: gradients flow backward from the loss at each time step, accumulating across the shared weights."></a></p>
+<figcaption><strong>Figure 3:</strong> Backpropagation through time: gradients flow backward from the loss at each time step, accumulating across the shared weights.</figcaption>
+</figure>
+</div>
 </section>
 <section id="the-gradient-clipping-problem" class="level3">
 <h3 class="anchored" data-anchor-id="the-gradient-clipping-problem">The Gradient Clipping Problem</h3>
-<p>RNN loss landscapes are known for having <strong>steep cliffs</strong> - regions where the loss changes dramatically over a tiny change in parameters. When the gradient hits one of these cliffs, it can become enormous, causing a single update to overshoot the minimum and undo many iterations of progress.</p>
+<p>RNN loss landscapes are known for having <strong>steep cliffs</strong>: regions where the loss changes dramatically over a tiny change in parameters. When the gradient hits one of these cliffs, it can become enormous, causing a single update to overshoot the minimum and undo many iterations of progress.</p>
 <p>Why does this happen? The gradient is a <em>linear</em> approximation of the loss surface. It captures the local slope but knows nothing about curvature. A steep cliff means the local slope is huge, but the optimal step size is actually tiny.</p>
 <p>The fix is simple and effective: <strong>gradient clipping</strong>. Before updating, we clip every gradient element to the interval <span class="math inline">\([-5, 5]\)</span>. If any gradient value exceeds these bounds, it’s capped. This prevents catastrophic updates while preserving the gradient direction.</p>
 <div class="callout callout-style-default callout-important callout-titled">
@@ -916,7 +910,7 @@ window.Quarto = {
 <li>If the dominant eigenvalue of <span class="math inline">\(W_{hh}\)</span> is <strong>&lt; 1</strong> → gradients <strong>vanish</strong> (the model can’t learn long-range dependencies)</li>
 <li>If it’s <strong>&gt; 1</strong> → gradients <strong>explode</strong> (training becomes unstable)</li>
 </ul>
-<p>Gradient clipping addresses exploding gradients. Vanishing gradients require architectural changes - which is exactly what LSTMs (<a href="https://www.bioinf.jku.at/publications/older/2604.pdf">Hochreiter &amp; Schmidhuber, 1997</a>) and the recently proposed Transformer architecture (<a href="https://arxiv.org/abs/1706.03762">Vaswani et al., 2017</a>) were designed to solve.</p>
+<p>Gradient clipping addresses exploding gradients. Vanishing gradients require architectural changes, which is exactly what LSTMs (<a href="https://www.bioinf.jku.at/publications/older/2604.pdf">Hochreiter &amp; Schmidhuber, 1997</a>) and the Transformer architecture (<a href="https://arxiv.org/abs/1706.03762">Vaswani et al., 2017</a>) were designed to solve. I implement an LSTM from scratch in <a href="../../posts/nlp/LSTM-Annotated-Implementation.html">Inside LSTMs</a>, and build the Transformer in <a href="../../posts/nlp/Transformer-Architecture-Explained.html">The Transformer Architecture: A Deep Dive</a>.</p>
 </div>
 </div>
 </section>
@@ -935,13 +929,13 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The <span class="math inline">\((1 - tanh^2)\)</span> terms are the derivative of <span class="math inline">\(\tanh\)</span>. If you squint, the structure is always: <strong>upstream gradient × local Jacobian × input to this operation</strong>. That’s the chain rule applied at each node - the same pattern used by automatic differentiation frameworks like TensorFlow and PyTorch.</p>
+<p>The <span class="math inline">\((1 - tanh^2)\)</span> terms are the derivative of <span class="math inline">\(\tanh\)</span>. If you squint, the structure is always: <strong>upstream gradient × local Jacobian × input to this operation</strong>. That’s the chain rule applied at each node, the same pattern used by automatic differentiation frameworks like TensorFlow and PyTorch.</p>
 </div>
 </div>
 </section>
 <section id="optimizer-rmsprop" class="level3">
 <h3 class="anchored" data-anchor-id="optimizer-rmsprop">Optimizer: RMSProp</h3>
-<p>Since SGD with batch size 1 produces very noisy gradients, we use <strong>Root Mean Squared Propagation (RMSProp)</strong> - an adaptive learning rate method that divides each gradient by a running average of its recent magnitude. This dampens updates for parameters with consistently large gradients and amplifies updates for parameters with consistently small gradients, leading to more stable convergence.</p>
+<p>Since SGD with batch size 1 produces very noisy gradients, we use <strong>Root Mean Squared Propagation (RMSProp)</strong>, an adaptive learning rate method that divides each gradient by a running average of its recent magnitude. This dampens updates for parameters with consistently large gradients and amplifies updates for parameters with consistently small gradients, leading to more stable convergence.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -955,7 +949,7 @@ window.Quarto = {
 <p>RMSProp belongs to the family of adaptive learning rate methods, alongside Adagrad and Adam (<a href="https://arxiv.org/abs/1412.6980">Kingma &amp; Ba, 2015</a>). Adam combines RMSProp’s adaptive second moment with a momentum term (first moment) and is currently the most popular optimizer for training deep networks, especially for NLP tasks like machine translation and language modeling.</p>
 </div>
 </div>
-<p><strong>Key takeaway:</strong> BPTT computes gradients by unrolling the RNN through time and summing gradient contributions across all time steps. Gradient clipping prevents explosive updates, but vanishing gradients require architectural solutions (LSTM, GRU, or attention mechanisms).</p>
+<p>BPTT computes gradients by unrolling the RNN through time and summing gradient contributions across all time steps. Gradient clipping prevents explosive updates, but vanishing gradients require architectural solutions (LSTM, GRU, or attention mechanisms).</p>
 <div id="cell-12" class="cell" data-code_folding="[0]" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
@@ -1043,11 +1037,11 @@ window.Quarto = {
 </section>
 <section id="sampling-the-creativity-coherence-trade-off" class="level2">
 <h2 class="anchored" data-anchor-id="sampling-the-creativity-coherence-trade-off">Sampling: The Creativity-Coherence Trade-off</h2>
-<p>Training teaches the model <em>what</em> to predict. Sampling determines <em>how</em> we use those predictions to generate text - and it’s where the magic (and the control) lives.</p>
+<p>Training teaches the model <em>what</em> to predict. Sampling determines <em>how</em> we use those predictions to generate text, and it is where creativity and control are decided.</p>
 <section id="the-entropy-spectrum" class="level3">
 <h3 class="anchored" data-anchor-id="the-entropy-spectrum">The Entropy Spectrum</h3>
 <p>At each time step, the model outputs a conditional probability distribution over the next character: <span class="math inline">\(P(c_t \mid c_1, \ldots, c_{t-1})\)</span>. Suppose at time <span class="math inline">\(t = 3\)</span>, the distribution is <span class="math inline">\((0.2, 0.3, 0.4, 0.1)\)</span>. How do we pick the next character?</p>
-<p>There are two extremes - and a useful middle ground:</p>
+<p>There are two extremes, and a useful middle ground:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
@@ -1085,14 +1079,12 @@ window.Quarto = {
 </tbody>
 </table>
 <p>We use the middle option: <strong>sample from the model’s own distribution</strong>. Character with probability 0.4 gets picked 40% of the time, character with probability 0.1 gets picked 10% of the time. This preserves the model’s learned structure while allowing for variety. Using this sampling strategy on the above distribution, the index 0 has <span class="math inline">\(20\)</span>% probability of being picked, while index 2 has <span class="math inline">\(40\)</span>% probability to be picked.</p>
-<p align="left">
-<img src="images/sampling.png" style="width: 800px; height: 400px"><br>
-
-</p><center>
-<u><b><font color="00b7e4">Figure 4:</font></b></u> Sampling from the model’s predicted distribution - a balance between randomness and coherence
-</center>
-
-<p></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/sampling.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Figure 4: Sampling from the model’s predicted distribution: a balance between randomness and coherence."><img src="images/sampling.png" class="img-fluid figure-img" width="800" alt="Figure 4: Sampling from the model’s predicted distribution: a balance between randomness and coherence."></a></p>
+<figcaption><strong>Figure 4:</strong> Sampling from the model’s predicted distribution: a balance between randomness and coherence.</figcaption>
+</figure>
+</div>
 <p>As we increase randomness, text will loose local structure; however, as we decrease randomness, the generated text will sound more real and start to preserve its local structure.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -1124,11 +1116,11 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Greedy decoding (always picking the most likely character) produces the single most probable <em>next</em> character at each step, but this doesn’t necessarily produce the most probable <em>sequence</em>. It can get stuck in repetitive loops and miss globally better paths. Sampling introduces the randomness needed to explore the distribution and generate diverse, interesting outputs. This is why beam search - which tracks multiple hypotheses simultaneously - is preferred over greedy decoding in tasks like machine translation.</p>
+<p>Greedy decoding (always picking the most likely character) produces the single most probable <em>next</em> character at each step, but this doesn’t necessarily produce the most probable <em>sequence</em>. It can get stuck in repetitive loops and miss globally better paths. Sampling introduces the randomness needed to explore the distribution and generate diverse, interesting outputs. This is why beam search, which tracks multiple hypotheses simultaneously, is preferred over greedy decoding in tasks like machine translation.</p>
 </div>
 </div>
 <p>Therefore, sampling will be used at test time to generate names character by character.</p>
-<p><strong>Key takeaway:</strong> Sampling strategy controls the trade-off between creativity and coherence. Sampling from the model’s distribution is a sweet spot - it respects the learned probabilities while producing diverse outputs. Temperature scaling provides an additional dial to tune this balance.</p>
+<p>Sampling strategy controls the trade-off between creativity and coherence. Sampling from the model’s distribution is a sweet spot: it respects the learned probabilities while producing diverse outputs. Temperature scaling provides an additional dial to tune this balance.</p>
 <div id="cell-15" class="cell" data-code_folding="[0]" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
@@ -1409,7 +1401,7 @@ Smoothed loss: 15.7312
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="Character-LeveL-Language-Model_files/figure-html/cell-8-output-3.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="Character-LeveL-Language-Model_files/figure-html/cell-8-output-3.png" class="img-fluid figure-img"></a></p>
+<p><a href="Character-LeveL-Language-Model_files/figure-html/cell-8-output-3.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="Character-LeveL-Language-Model_files/figure-html/cell-8-output-3.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -1417,17 +1409,17 @@ Smoothed loss: 15.7312
 </section>
 <section id="results-analysis" class="level3">
 <h3 class="anchored" data-anchor-id="results-analysis">Results Analysis</h3>
-<p>As training progresses, the generated names evolve from random character soup to increasingly plausible names. By around epoch 15, the model has learned basic phonotactic patterns - which character combinations sound like real names. One of the interesting generated names is “Yasira,” which is an actual Arabic name - the model has learned cross-cultural naming patterns purely from statistical regularities!</p>
+<p>As training progresses, the generated names evolve from random strings of characters to increasingly plausible names. By around epoch 15, the model has learned basic phonotactic patterns: which character combinations sound like real names. One of the interesting generated names is “Yasira,” which is an actual Arabic name: the model has learned cross-cultural naming patterns purely from statistical regularities!</p>
 <p>The loss curve shows a typical pattern for character-level models: rapid initial decrease (learning basic character frequencies), followed by slower improvement (learning positional and contextual patterns).</p>
 </section>
 </section>
-<section id="what-we-learned---and-what-comes-next" class="level2">
-<h2 class="anchored" data-anchor-id="what-we-learned---and-what-comes-next">What We Learned - and What Comes Next</h2>
+<section id="what-we-learned-and-what-comes-next" class="level2">
+<h2 class="anchored" data-anchor-id="what-we-learned-and-what-comes-next">What We Learned, and What Comes Next</h2>
 <p>We built a complete character-level language model from scratch: vocabulary construction, forward propagation through an RNN, backpropagation through time, gradient clipping, and probabilistic sampling. The model learned to generate plausible names from 5,163 training examples using just 10 hidden units.</p>
 <section id="key-takeaways" class="level3">
 <h3 class="anchored" data-anchor-id="key-takeaways">Key Takeaways</h3>
 <ul>
-<li><strong>The core autoregressive loop</strong> - predict next token, feed prediction back as input - is identical across all neural language models, from this character RNN to large-scale LSTM systems used in production.</li>
+<li><strong>The core autoregressive loop</strong> (predict the next token, feed the prediction back as input) is identical across all neural language models, from this character RNN to large-scale LSTM systems used in production.</li>
 <li><strong>Sampling strategy matters.</strong> The same model produces gibberish (uniform sampling), boring repetition (greedy), or creative-yet-plausible names (distribution sampling). Temperature scaling gives fine-grained control over this spectrum.</li>
 <li><strong>Gradient instabilities are fundamental to RNNs.</strong> Shared weights across time steps cause gradients to explode or vanish exponentially with sequence length. Clipping handles explosions; architectural changes (LSTM, GRU, attention) handle vanishing.</li>
 <li><strong>SGD with batch size 1 works but is slow.</strong> Increasing batch size (e.g., packing multiple names into sequences of 50 characters) would speed up learning and improve gradient estimates.</li>
@@ -1472,7 +1464,7 @@ Smoothed loss: 15.7312
 </tr>
 </tbody>
 </table>
-<p>People have used 3-layer deep LSTM models with dropout and achieved impressive results on tasks like generating Shakespeare poems and cooking recipes. LSTM models outperform simple RNNs due to their ability to capture longer-range temporal dependencies. The recently proposed Transformer architecture (<a href="https://arxiv.org/abs/1706.03762">Vaswani et al., 2017</a>), which replaces recurrence entirely with self-attention, is showing very promising results for sequence modeling and may reshape how we build language models going forward.</p>
+<p>People have used 3-layer deep LSTM models with dropout and achieved impressive results on tasks like generating Shakespeare poems and cooking recipes. LSTM models outperform simple RNNs due to their ability to capture longer-range temporal dependencies. The Transformer architecture (<a href="https://arxiv.org/abs/1706.03762">Vaswani et al., 2017</a>), which replaces recurrence entirely with self-attention, is showing very promising results for sequence modeling and may reshape how we build language models going forward.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1491,15 +1483,15 @@ Smoothed loss: 15.7312
 <section id="references-resources" class="level2">
 <h2 class="anchored" data-anchor-id="references-resources">References &amp; Resources</h2>
 <ul>
-<li><strong>Karpathy, A.</strong> (2015). <a href="https://karpathy.github.io/2015/05/21/rnn-effectiveness/">The Unreasonable Effectiveness of Recurrent Neural Networks</a>. The blog post that popularized character-level RNN language models - includes stunning examples of Shakespeare, Wikipedia, LaTeX, and C code generation.</li>
-<li><strong>Hochreiter, S. &amp; Schmidhuber, J.</strong> (1997). <a href="https://www.bioinf.jku.at/publications/older/2604.pdf">Long Short-Term Memory</a>. <em>Neural Computation</em>, 9(8), 1735–1780. The original LSTM paper that introduced gating mechanisms to address vanishing gradients in RNNs.</li>
-<li><strong>Vaswani, A. et al.</strong> (2017). <a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need</a>. <em>NeurIPS 2017</em>. Introduced the Transformer architecture, replacing recurrence with self-attention for sequence modeling.</li>
-<li><strong>Kingma, D. P. &amp; Ba, J.</strong> (2015). <a href="https://arxiv.org/abs/1412.6980">Adam: A Method for Stochastic Optimization</a>. <em>ICLR 2015</em>. The Adam optimizer, which combines RMSProp’s adaptive learning rates with momentum.</li>
-<li><strong>Merity, S. et al.</strong> (2018). <a href="https://arxiv.org/abs/1708.02182">Regularizing and Optimizing LSTM Language Models</a>. <em>ICLR 2018</em>. Achieved state-of-the-art word-level perplexity on Penn Treebank using weight-dropped LSTMs (AWD-LSTM).</li>
-<li><strong>Bengio, Y. et al.</strong> (2003). <a href="https://www.jmlr.org/papers/volume3/bengio03a/bengio03a.pdf">A Neural Probabilistic Language Model</a>. <em>JMLR</em>, 3, 1137–1155. One of the foundational papers on neural language models, introducing the idea of learning distributed word representations jointly with a language model.</li>
-<li><strong>Pascanu, R. et al.</strong> (2013). <a href="https://arxiv.org/abs/1211.5063">On the Difficulty of Training Recurrent Neural Networks</a>. <em>ICML 2013</em>. Formal analysis of vanishing and exploding gradients in RNNs and the gradient clipping solution.</li>
-<li><strong>Sutskever, I. et al.</strong> (2014). <a href="https://arxiv.org/abs/1409.3215">Sequence to Sequence Learning with Neural Networks</a>. <em>NeurIPS 2014</em>. Demonstrated that deep LSTMs can learn complex sequence-to-sequence mappings for machine translation.</li>
-<li><strong>Graves, A.</strong> (2013). <a href="https://arxiv.org/abs/1308.0850">Generating Sequences With Recurrent Neural Networks</a>. Extended RNN text generation to handwriting synthesis with impressive results.</li>
+<li><strong>Hochreiter, S. &amp; Schmidhuber, J.</strong> (1997). <a href="https://www.bioinf.jku.at/publications/older/2604.pdf">Long Short-Term Memory</a>. <em>Neural Computation</em>, 9(8).</li>
+<li><strong>Bengio, Y. et al.</strong> (2003). <a href="https://www.jmlr.org/papers/volume3/bengio03a/bengio03a.pdf">A Neural Probabilistic Language Model</a>. <em>JMLR</em>, 3.</li>
+<li><strong>Graves, A.</strong> (2013). <a href="https://arxiv.org/abs/1308.0850">Generating Sequences With Recurrent Neural Networks</a>.</li>
+<li><strong>Pascanu, R. et al.</strong> (2013). <a href="https://arxiv.org/abs/1211.5063">On the Difficulty of Training Recurrent Neural Networks</a>. <em>ICML</em>.</li>
+<li><strong>Sutskever, I. et al.</strong> (2014). <a href="https://arxiv.org/abs/1409.3215">Sequence to Sequence Learning with Neural Networks</a>. <em>NeurIPS</em>.</li>
+<li><strong>Karpathy, A.</strong> (2015). <a href="https://karpathy.github.io/2015/05/21/rnn-effectiveness/">The Unreasonable Effectiveness of Recurrent Neural Networks</a>.</li>
+<li><strong>Kingma, D. P. &amp; Ba, J.</strong> (2015). <a href="https://arxiv.org/abs/1412.6980">Adam: A Method for Stochastic Optimization</a>. <em>ICLR</em>.</li>
+<li><strong>Vaswani, A. et al.</strong> (2017). <a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need</a>. <em>NeurIPS</em>.</li>
+<li><strong>Merity, S. et al.</strong> (2018). <a href="https://arxiv.org/abs/1708.02182">Regularizing and Optimizing LSTM Language Models</a>. <em>ICLR</em>.</li>
 </ul>
 
 

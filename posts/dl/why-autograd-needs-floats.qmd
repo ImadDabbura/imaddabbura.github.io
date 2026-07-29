@@ -1,6 +1,6 @@
 ---
 title: "Why Autograd Needs Floats, Not Ints"
-subtitle: "Calculus is continuous - and integer tensors quietly kill the gradient signal"
+subtitle: "Calculus is continuous, and integer tensors quietly kill the gradient signal"
 date: "2026-04-21"
 image: "images/autograd-floats-img.png"
 title-block-banner: "images/autograd-floats-img.png"
@@ -10,9 +10,9 @@ status: evergreen
 
 ## Introduction
 
-Set `requires_grad=True` on an integer tensor in PyTorch and you get a runtime error: only floating point and complex tensors can require gradients. The fix is one keyword argument. The rule itself isn't a framework choice - it's a structural constraint on gradient descent, and the same constraint explains a handful of related failures that aren't loud enough to throw errors of their own.
+Set `requires_grad=True` on an integer tensor in PyTorch and you get a runtime error: only floating point and complex tensors can require gradients. The fix is one keyword argument. The rule itself isn't a framework choice: it's a structural constraint on gradient descent, and the same constraint explains a handful of related failures that aren't loud enough to throw errors of their own.
 
-Gradient descent works by reading how the loss responds to a tiny change in a parameter and stepping in the direction that lowers it. Two conditions have to hold for the nudge to carry information: the parameter has to be able to move by arbitrarily small amounts, and the loss has to respond smoothly to that move. Integers break both - once in the calculus that produces the gradient, once in the arithmetic that applies it. The rest of this post works through both failures, the cases where integer tensors remain safe, and why quantized training is a workaround rather than a counterexample. (Chain-rule mechanics this post relies on are covered in [Automatic Differentiation Demystified](../mlsys/automatic-differentiation.qmd).)
+Gradient descent works by reading how the loss responds to a tiny change in a parameter and stepping in the direction that lowers it. Two conditions have to hold for the nudge to carry information: the parameter has to be able to move by arbitrarily small amounts, and the loss has to respond smoothly to that move. Integers break both: once in the calculus that produces the gradient, once in the arithmetic that applies it. The rest of this post works through both failures, the cases where integer tensors remain safe, and why quantized training is a workaround rather than a counterexample. (Chain-rule mechanics this post relies on are covered in [Automatic Differentiation Demystified](../mlsys/automatic-differentiation.qmd).)
 
 ## The Derivative on Floats and Integers
 
@@ -21,7 +21,7 @@ Plotting the same function over floats and over integers makes the contrast imme
 ```{python}
 #| echo: false
 #| label: fig-autograd-widget
-#| fig-cap: "Drag the slider to move **x**. Flip **Continuous Mode** off to see the same function snapped to integer outputs - the tangent flattens, the gradient reads 0.00, and STATUS changes from OPTIMIZING to STUCK. That flat gradient is exactly what autograd would hand back to your optimizer."
+#| fig-cap: "Drag the slider to move **x**. Flip **Continuous Mode** off to see the same function snapped to integer outputs: the tangent flattens, the gradient reads 0.00, and STATUS changes from OPTIMIZING to STUCK. That flat gradient is exactly what autograd would hand back to your optimizer."
 
 import numpy as np
 from bokeh.plotting import figure
@@ -147,7 +147,7 @@ cb = CustomJS(
 
     caption.text = cont
         ? "<div style='font-size:13px; color:#57606a; padding:4px 0;'>Continuous Gradient: the slope changes smoothly. Gradient descent 'feels' the curve and knows which direction to move.</div>"
-        : "<div style='font-size:13px; color:#57606a; padding:4px 0;'>Discrete Gradient: the slope is zero on every tread. Gradient descent has no signal to follow - learning stalls.</div>";
+        : "<div style='font-size:13px; color:#57606a; padding:4px 0;'>Discrete Gradient: the slope is zero on every step. Gradient descent has no signal to follow, so learning stalls.</div>";
 
     chart_label.text = cont
         ? "<span style='color:#57606a; font-size:12px;'>↗ Continuous Flow</span>"
@@ -176,11 +176,11 @@ script, div = components(layout)
 HTML(f"{CDN.render()}{div}{script}")
 ```
 
-On the float curve the tangent tilts smoothly with slope $2x$. On the staircase, the slope is zero on every tread and undefined at every riser; those are the only two values the derivative can take. The derivative at a point is the limit of the slope as the neighborhood around it shrinks, and on an integer-valued function every neighborhood resolves to either a flat tread or a vertical jump. There is no third case to converge to, and a gradient computed at either of these points carries no information about which direction lowers the loss.
+On the float curve the tangent tilts smoothly with slope $2x$. On the integer-rounded function, the slope is zero on every flat step and undefined at every jump; those are the only two values the derivative can take. The derivative at a point is the limit of the slope as the neighborhood around it shrinks, and on an integer-valued function every neighborhood resolves to either a flat step or a vertical jump. There is no third case to converge to, and a gradient computed at either of these points carries no information about which direction lowers the loss.
 
 ## Integer Casts and the Chain Rule
 
-A network is a long chain of operations. Reverse-mode autograd computes the gradient of the loss with respect to any parameter by multiplying local gradients along that chain (covered in [Automatic Differentiation Demystified](../mlsys/automatic-differentiation.qmd)), so one zero anywhere in the product zeros the entire product. A single integer-rounding step in the forward pass - explicit (`.to(torch.int)`, `torch.round`) or implicit (`argmax`, a boolean mask from `>` or `<`) - has local gradient zero almost everywhere, and zeros the gradient for every parameter upstream of it.
+A network is a long chain of operations. Reverse-mode autograd computes the gradient of the loss with respect to any parameter by multiplying local gradients along that chain (covered in [Automatic Differentiation Demystified](../mlsys/automatic-differentiation.qmd)), so one zero anywhere in the product zeros the entire product. A single integer-rounding step in the forward pass, explicit (`.to(torch.int)`, `torch.round`) or implicit (`argmax`, a boolean mask from `>` or `<`), has local gradient zero almost everywhere, and zeros the gradient for every parameter upstream of it.
 
 ```python
 import torch
@@ -191,18 +191,18 @@ loss.backward()
 print(x.grad)   # tensor([0.])
 ```
 
-The loss computes, the backward pass runs without error, and `x.grad` is zero. Training will proceed; the upstream parameters won't move. The structure is the same as a dead ReLU, except a dead ReLU only kills the gradient for negative pre-activations - an integer cast represents a function with no nonzero gradient anywhere it's defined.
+The loss computes, the backward pass runs without error, and `x.grad` is zero. Training will proceed; the upstream parameters won't move. The structure is the same as a dead ReLU, except a dead ReLU only kills the gradient for negative pre-activations; an integer cast represents a function with no nonzero gradient anywhere it's defined.
 
 ::: {.callout-warning}
-## Integer Operations in the Forward Pass Are Gradient Walls
+## Integer Operations in the Forward Pass Zero the Gradient
 `.to(torch.int)`, `torch.round`, `torch.floor`, `torch.ceil`, `argmax`, and boolean masks from `>` / `<` all have zero or undefined local gradient. Each one zeros the gradient for every parameter upstream of it, and the loss continues to compute as if nothing were wrong.
 :::
 
 ## The Update-Granularity Problem
 
-The second reason is independent of calculus. The SGD update is $w \leftarrow w - \eta \cdot g$, and $\eta \cdot g$ is typically on the order of $10^{-3}$ to $10^{-5}$ per step. On a float weight that nudges it; on an integer weight `5 - 0.0015` rounds straight back to `5`. The weight doesn't move until a gradient arrives that's large enough to round to at least 1, which is orders of magnitude above any stable learning rate.
+The second reason is independent of calculus. The SGD update is $w \leftarrow w - \eta \cdot g$, and $\eta \cdot g$ is typically on the order of $10^{-3}$ to $10^{-5}$ per step (the update rule and its variants are the subject of [Gradient Descent and Its Variants](../optimization/gradient-descent.qmd)). On a float weight that nudges it; on an integer weight `5 - 0.0015` rounds straight back to `5`. The weight doesn't move until a gradient arrives that's large enough to round to at least 1, which is orders of magnitude above any stable learning rate.
 
-This is why low-precision training (bfloat16, fp8) still uses *floating* point. The issue isn't the bit count, it's continuity: a float grid is dense enough that the rounding error stays below the update magnitude. An integer grid isn't.
+This is why low-precision training (bfloat16, fp8) still uses *floating* point. The issue isn't the bit count, it's continuity: a float grid is dense enough that the rounding error stays below the update magnitude; an integer grid is not.
 
 ## Safe Uses of Integer Tensors
 
@@ -213,15 +213,15 @@ The rule is about the gradient path, not about integer tensors as such. Integer 
 - **Masks, `gather` indices, segment IDs**: data, not values on the gradient path.
 
 ::: {.callout-tip}
-## Integer Tensors Are Fine as Addresses, Never as Values
+## Integer Tensors Are Fine as Indices, Never as Values
 When a tensor's dtype is integer, autograd treats it as an index and drops it from the graph. That is correct for lookups and labels, and silently wrong if it happens to a weight or an activation.
 :::
 
 ## Quantization and the Straight-Through Estimator
 
-The obvious counterexample is quantized networks, which use integer weights at inference. They train as floats. In quantization-aware training the weights are kept in `float32`; the forward pass simulates the quantization by rounding, but the backward pass replaces the round's true local gradient (zero almost everywhere) with 1 - the **straight-through estimator** (Bengio et al., 2013). Gradients flow through the rounding as if it weren't there.
+The obvious counterexample is quantized networks, which use integer weights at inference. They train as floats. In quantization-aware training the weights are kept in `float32`; the forward pass simulates the quantization by rounding, but the backward pass replaces the round's true local gradient (zero almost everywhere) with 1, the **straight-through estimator** (Bengio et al., 2013). Gradients flow through the rounding as if it weren't there.
 
-The STE is not calculus. It is a known approximation, used because the true derivative is what the rest of this post has been about: useless. It is the workaround for the rule, not an exception to it.
+The STE is not calculus; it is a known approximation, used because the round's true derivative (zero almost everywhere) is useless. It is the workaround for the rule, not an exception to it.
 
 ## Key Takeaways
 
@@ -229,10 +229,10 @@ The STE is not calculus. It is a known approximation, used because the true deri
 2. **One integer cast zeros the gradient for everything upstream of it.** The chain rule multiplies local gradients along the network; a single zero in the product is enough to kill the whole thing. The loss continues to compute, so the failure is silent.
 3. **Even setting calculus aside, the SGD update fails on integers.** Step sizes of $10^{-3}$ to $10^{-5}$ round straight back to the previous integer; the weight never moves.
 4. **Integer tensors are fine off the gradient path.** Embedding indices, class labels, and masks are all valid uses. Autograd refuses `requires_grad=True` on integer dtypes precisely to keep them off the path.
-5. **Quantization works by training in float and quantizing afterwards.** The straight-through estimator substitutes a usable gradient for the round's true (useless) one - a known approximation, not a counterexample to the rule.
+5. **Quantization works by training in float and quantizing afterwards.** The straight-through estimator substitutes a usable gradient for the round's true (useless) one, a known approximation, not a counterexample to the rule.
 
 ## Resources
 
-1. [**Automatic Differentiation Demystified**](../mlsys/automatic-differentiation.qmd) - Companion post on how autograd actually builds and traverses the graph; covers chain rule mechanics, activation memory, and gradient checkpointing.
-2. [**PyTorch Autograd Mechanics**](https://pytorch.org/docs/stable/notes/autograd.html) - How `requires_grad` propagates and how non-differentiable ops are handled.
-3. [**Bengio, Léonard, Courville (2013) - Estimating or Propagating Gradients Through Stochastic Neurons**](https://arxiv.org/abs/1308.3432) - The straight-through estimator.
+- [Automatic Differentiation Demystified](../mlsys/automatic-differentiation.qmd).
+- [PyTorch Autograd Mechanics](https://pytorch.org/docs/stable/notes/autograd.html).
+- **Bengio, Y., Léonard, N., & Courville, A.** (2013). [Estimating or Propagating Gradients Through Stochastic Neurons for Conditional Computation](https://arxiv.org/abs/1308.3432).

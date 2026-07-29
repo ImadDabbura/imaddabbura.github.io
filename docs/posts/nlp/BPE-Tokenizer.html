@@ -167,11 +167,11 @@ background-size: cover;
 
 <link rel="stylesheet" href="../../assets/posts.css">
 <meta property="og:title" content="Byte Pair Encoding from Scratch – Imad Dabbura">
-<meta property="og:description" content="Building a BPE tokenizer step by step - the algorithm that decides how language models see text">
+<meta property="og:description" content="Building a BPE tokenizer step by step: the algorithm that decides how language models see text">
 <meta property="og:image" content="https://imaddabbura.github.io/posts/nlp/images/bpe-tokenizer.jpg">
 <meta property="og:site_name" content="Imad Dabbura">
 <meta name="twitter:title" content="Byte Pair Encoding from Scratch – Imad Dabbura">
-<meta name="twitter:description" content="Building a BPE tokenizer step by step - the algorithm that decides how language models see text">
+<meta name="twitter:description" content="Building a BPE tokenizer step by step: the algorithm that decides how language models see text">
 <meta name="twitter:image" content="https://imaddabbura.github.io/posts/nlp/images/bpe-tokenizer.jpg">
 <meta name="twitter:creator" content="@imaddabbura">
 <meta name="twitter:card" content="summary_large_image">
@@ -433,7 +433,7 @@ background-size: cover;
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">Byte Pair Encoding from Scratch</h1>
-            <p class="subtitle lead">Building a BPE tokenizer step by step - the algorithm that decides how language models see text</p>
+            <p class="subtitle lead">Building a BPE tokenizer step by step: the algorithm that decides how language models see text</p>
                                 <div class="quarto-categories">
                 <div class="quarto-category">NLP</div>
               </div>
@@ -501,8 +501,8 @@ background-size: cover;
 <div class="status-badge-container" style="margin-bottom: 1rem;"><span class="status-badge evergreen">evergreen</span></div>
 <section id="why-tokenization-matters" class="level2">
 <h2 class="anchored" data-anchor-id="why-tokenization-matters">Why Tokenization Matters</h2>
-<p>When you type “unhappiness” into ChatGPT, the model doesn’t see the word “unhappiness.” It sees something like <code>["un", "happ", "iness"]</code> - three <strong>tokens</strong> that were chosen by an algorithm months before the model was even trained. That algorithm decided, based on statistics from a massive training corpus, that these three pieces are the right granularity. Not individual characters (too many tokens, too little meaning per token). Not whole words (too many unique words, no way to handle words never seen in training). Subwords - the sweet spot.</p>
-<p>This isn’t a minor preprocessing detail. Tokenization defines <strong>what the model can see</strong>. Consider three strategies on the same sentence:</p>
+<p>When you type “unhappiness” into ChatGPT, the model doesn’t see the word “unhappiness.” It sees something like <code>["un", "happ", "iness"]</code>, three <strong>tokens</strong> that were chosen by an algorithm months before the model was even trained. That algorithm decided, based on statistics from a massive training corpus, that these three pieces are the right granularity. The tokenizer is its own model with its own training run, fit once on its own corpus to compress text into a fixed vocabulary, then frozen before the language model sees a single example. Not individual characters (too many tokens, too little meaning per token). Not whole words (too many unique words, no way to handle words never seen in training). Subwords: the sweet spot.</p>
+<p>This isn’t a minor preprocessing detail. Tokenization defines <strong>what the model can see</strong>: the model perceives the world only through tokens, and a surprising share of language-model failures (trouble with arithmetic, spelling, and rare languages) are really tokenizer failures. Consider three strategies on the same sentence:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
@@ -539,13 +539,13 @@ background-size: cover;
 </tr>
 </tbody>
 </table>
-<p>With characters, a fixed context window of 2048 tokens covers ~400 words. With subwords, the same window covers ~1500 words - nearly 4× more context for the model to reason over. Word-level is compact but brittle: “unhappily” might never appear in training data, making it an <code>&lt;UNK&gt;</code> token the model is completely blind to. But “un”, “happ”, and “ily” almost certainly do appear - the model can compose meaning from pieces it knows.</p>
-<p>The algorithm that learns these splits is <strong>Byte Pair Encoding (BPE)</strong> - originally a data compression technique (<a href="https://www.derczynski.com/papers/archive/BPE_Gage.pdf">Gage, 1994</a>), adapted for NLP by <a href="https://arxiv.org/abs/1508.07909">Sennrich et al.&nbsp;(2016)</a>, and now used in GPT-2, GPT-3/4, LLaMA, and most modern language models. In this post, we’ll understand how it works, implement it from scratch, and see how GPT-2 refined the basic algorithm for production.</p>
+<p>With characters, a fixed context window of 2048 tokens covers ~400 words. With subwords, the same window covers ~1500 words, nearly 4× more context for the model to reason over. Word-level is compact but brittle: “unhappily” might never appear in training data, making it an <code>&lt;UNK&gt;</code> token the model is completely blind to. But “un”, “happ”, and “ily” almost certainly do appear, and the model can compose meaning from pieces it knows.</p>
+<p>The algorithm that learns these splits is <strong>Byte Pair Encoding (BPE)</strong>, originally a data compression technique (<a href="https://www.derczynski.com/papers/archive/BPE_Gage.pdf">Gage, 1994</a>), adapted for NLP by <a href="https://arxiv.org/abs/1508.07909">Sennrich et al.&nbsp;(2016)</a>, and now used in GPT-2, GPT-3/4, LLaMA, and most modern language models. In this post, we’ll understand how it works, implement it from scratch, and see how GPT-2 refined the basic algorithm for production. For the broader picture, I compare character, word, and subword tokenization in <a href="../../posts/nlp/Tokenization-Strategies.html">Breaking Text Apart (The Smart Way)</a>.</p>
 </section>
 <section id="how-bpe-works" class="level2">
 <h2 class="anchored" data-anchor-id="how-bpe-works">How BPE Works</h2>
-<p>The core insight is simple: <strong>if two symbols frequently appear next to each other, they probably belong together.</strong> Merge them into a single token, then look for the next most frequent pair, and repeat. It’s exactly how you’d compress a text file - find repeated patterns and replace them with shorter symbols. Frequent patterns get absorbed into single tokens; rare patterns stay as smaller pieces.</p>
-<p>Think of it like learning abbreviations. If you keep writing “machine learning” in your notes, you’d eventually start writing “ML.” Then if “ML model” keeps appearing, maybe you’d abbreviate that too. BPE does the same thing, but systematically and bottom-up - starting from the smallest units (bytes) and building up to subwords.</p>
+<p>The core insight is simple: if two symbols frequently appear next to each other, they probably belong together. Merge them into a single token, then look for the next most frequent pair, and repeat. It’s exactly how you’d compress a text file: find repeated patterns and replace them with shorter symbols. Frequent patterns get absorbed into single tokens; rare patterns stay as smaller pieces.</p>
+<p>Think of it like learning abbreviations. If you keep writing “machine learning” in your notes, you’d eventually start writing “ML.” Then if “ML model” keeps appearing, maybe you’d abbreviate that too. BPE does the same thing, but systematically and bottom-up, starting from the smallest units (bytes) and building up to subwords.</p>
 <section id="seeing-it-in-action" class="level3">
 <h3 class="anchored" data-anchor-id="seeing-it-in-action">Seeing It in Action</h3>
 <p>Before formalizing the algorithm, let’s watch it work on a real example. Consider a tiny training corpus containing the words <code>"low lower lowest"</code>:</p>
@@ -585,8 +585,8 @@ background-size: cover;
 </tr>
 </tbody>
 </table>
-<p>BPE discovered that <code>l</code> and <code>o</code> always appear together, then that <code>lo</code> and <code>w</code> always appear together, building up <code>low</code> as a token - effectively learning the word stem. Then it found <code>lowe</code> as a shared prefix of “lower” and “lowest.” Without any linguistic rules, purely from frequency, BPE learned morphological structure.</p>
-<p>Notice what happened in merge 2: the algorithm merged <code>lo</code> with <code>w</code>, where <code>lo</code> itself was created in merge 1. BPE builds tokens <strong>hierarchically</strong> - later merges compose earlier ones. We can visualize this as a tree:</p>
+<p>BPE discovered that <code>l</code> and <code>o</code> always appear together, then that <code>lo</code> and <code>w</code> always appear together, building up <code>low</code> as a token, effectively learning the word stem. Then it found <code>lowe</code> as a shared prefix of “lower” and “lowest.” Without any linguistic rules, purely from frequency, BPE learned morphological structure.</p>
+<p>Notice what happened in merge 2: the algorithm merged <code>lo</code> with <code>w</code>, where <code>lo</code> itself was created in merge 1. BPE builds tokens <strong>hierarchically</strong>: later merges compose earlier ones. We can visualize this as a tree:</p>
 <div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div>
@@ -600,26 +600,19 @@ background-size: cover;
     low --&gt; lowe["lowe (merge 3)"]
     e["e (byte)"] --&gt; lowe
 
-    style l fill:#f0f0f0,stroke:#999
-    style o fill:#f0f0f0,stroke:#999
-    style w fill:#f0f0f0,stroke:#999
-    style e fill:#f0f0f0,stroke:#999
-    style lo fill:#d4e6f1,stroke:#2980b9
-    style low fill:#aed6f1,stroke:#2471a3
-    style lowe fill:#85c1e9,stroke:#1a5276
 </pre>
 </div>
 <p></p><figcaption> BPE merges build tokens bottom-up. Each merge composes two existing tokens into a new one, forming a hierarchy from bytes to subwords.</figcaption> </figure><p></p>
 </div>
 </div>
 </div>
-<p>Each level in the tree depends on the levels below it. This is why merge order matters during encoding - you can’t build <code>low</code> until <code>lo</code> exists.</p>
+<p>Each level in the tree depends on the levels below it. This is why merge order matters during encoding: you can’t build <code>low</code> until <code>lo</code> exists.</p>
 </section>
 <section id="the-algorithm" class="level3">
 <h3 class="anchored" data-anchor-id="the-algorithm">The Algorithm</h3>
 <p>With the intuition in place, here’s the formal procedure:</p>
 <ol type="1">
-<li><p><strong>Initialize</strong>: Start with a base vocabulary of all 256 byte values (0–255). Every string can be represented as bytes, so this guarantees full coverage - no <code>&lt;UNK&gt;</code> tokens, ever.</p></li>
+<li><p><strong>Initialize</strong>: Start with a base vocabulary of all 256 byte values (0–255). Every string can be represented as bytes, so this guarantees full coverage: no <code>&lt;UNK&gt;</code> tokens, ever.</p></li>
 <li><p><strong>Count pairs</strong>: Scan the corpus and count every adjacent pair of tokens.</p></li>
 <li><p><strong>Merge the most frequent pair</strong>: Create a new token for it and replace all occurrences in the corpus.</p></li>
 <li><p><strong>Repeat</strong> steps 2–3 until you’ve done <code>vocab_size - 256</code> merges.</p></li>
@@ -629,24 +622,24 @@ background-size: cover;
 <section id="training-vs.-encoding-a-subtle-difference" class="level3">
 <h3 class="anchored" data-anchor-id="training-vs.-encoding-a-subtle-difference">Training vs.&nbsp;Encoding: A Subtle Difference</h3>
 <p>There’s an important asymmetry between how BPE <em>learns</em> merges (training) and how it <em>applies</em> them to new text (encoding).</p>
-<p>During <strong>training</strong>, we always merge the globally most <em>frequent</em> pair - that’s how we decide which merges to learn. But during <strong>encoding</strong>, we apply merges in the <em>order they were learned</em>, not by their frequency in the new text.</p>
+<p>During <strong>training</strong>, we always merge the globally most <em>frequent</em> pair; that’s how we decide which merges to learn. But during <strong>encoding</strong>, we apply merges in the <em>order they were learned</em>, not by their frequency in the new text.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>Encoding Replays Merges - It Doesn’t Re-learn Them
+<span class="screen-reader-only">Warning</span>Encoding Replays Merges: It Doesn’t Re-learn Them
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>A common misconception is that encoding finds the most frequent pair in the new text and merges it. It doesn’t. Encoding applies the <em>training-time</em> merges in their original order. The token <code>low</code> only exists after <code>lo</code> has been created (merge 1). If we tried to merge <code>(lo, w)</code> before creating <code>lo</code>, we’d never find the pair. In the implementation, this shows up as <code>min(stats, key=lambda p: self.merges.get(p, float("inf")))</code> - picking the pair with the <em>lowest merge index</em>, not the highest frequency.</p>
+<p>A common misconception is that encoding finds the most frequent pair in the new text and merges it. It doesn’t. Encoding applies the <em>training-time</em> merges in their original order. The token <code>low</code> only exists after <code>lo</code> has been created (merge 1). If we tried to merge <code>(lo, w)</code> before creating <code>lo</code>, we’d never find the pair. In the implementation, this shows up as <code>min(stats, key=lambda p: self.merges.get(p, float("inf")))</code>: picking the pair with the <em>lowest merge index</em>, not the highest frequency.</p>
 </div>
 </div>
 </section>
 <section id="why-bytes-not-characters" class="level3">
 <h3 class="anchored" data-anchor-id="why-bytes-not-characters">Why Bytes, Not Characters?</h3>
-<p>Starting from bytes (0–255) rather than Unicode code points is a practical decision. Unicode has over 150,000 code points - that’s an impractically large base vocabulary. By working at the byte level, we start with just 256 symbols and can represent <em>any</em> string in <em>any</em> language or script. BPE merges then learn to compose bytes into characters, characters into subwords, and subwords into common words - all driven by frequency in the training data.</p>
+<p>Starting from bytes (0–255) rather than Unicode code points is a practical decision. Unicode has over 150,000 code points, an impractically large base vocabulary. By working at the byte level, we start with just 256 symbols and can represent <em>any</em> string in <em>any</em> language or script, since UTF-8 encodes every Unicode code point as one to four of these bytes. BPE merges then learn to compose bytes into characters, characters into subwords, and subwords into common words, all driven by frequency in the training data.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -657,7 +650,7 @@ background-size: cover;
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Languages underrepresented in training data pay a tokenization tax. English “hello” might be one token, but the same greeting in a low-resource language could take 3–4 tokens because the byte sequences were never frequent enough to merge. This means the model burns more of its context window on the same content - a well-documented source of multilingual inefficiency (<a href="https://arxiv.org/abs/2311.09071">Petrov et al., 2023</a>). It also means the model takes more compute per word for these languages, making inference more expensive.</p>
+<p>This is a property of the tokenizer’s training data, not of the language. English dominates most tokenizer corpora, so English merges into long, dense tokens while an underrepresented script like Korean stays fragmented into many short ones. The same sentence then costs several times more tokens in Korean than in English. Two costs follow. The model burns more of its fixed context window on the same meaning, so within one window an English token effectively attends to more real content than a Korean one; and it runs more forward passes for that sentence, so inference is more expensive. It is a well-documented source of multilingual inefficiency (<a href="https://arxiv.org/abs/2311.09071">Petrov et al., 2023</a>), and it traces back entirely to which languages were frequent when the tokenizer was trained.</p>
 </div>
 </div>
 </section>
@@ -700,11 +693,21 @@ background-size: cover;
 </tr>
 </tbody>
 </table>
-<p>Larger vocabularies mean each token carries more information, so sequences are shorter and the model sees more context per forward pass. But each token also needs an embedding vector, so the embedding table grows linearly. And tokens that appear rarely in training will have poorly learned embeddings - they’ve simply not been seen enough times.</p>
+<p>Larger vocabularies mean each token carries more information, so sequences are shorter and the model sees more context per forward pass. But each token also needs an embedding vector, so the embedding table grows linearly, and so does the output head: the final layer scores every candidate token with a dot product, so a wider vocabulary makes the last layer and its softmax more expensive at every step. And tokens that appear rarely in training will have poorly learned embeddings: they’ve simply not been seen enough times.</p>
+<p>There is a subtler ceiling than cost. The Transformer does a fixed amount of work per token, so compressing more text into each token eventually packs in more than a single forward pass can unpack. A token that stands for a whole common phrase leaves the model no intermediate steps in which to reason about its parts. The sweet spot is therefore not as much compression as the hardware allows: it is the point where tokens are dense enough to give long-range context but still coarse enough that one forward pass can digest each one.</p>
 <p>Most modern models settle in the 32k–100k range. GPT-2 uses ~50k tokens. LLaMA uses 32k. GPT-4 reportedly uses ~100k. The right size depends on the training data, the target languages, and the compute budget.</p>
-<div id="660e14ce-2270-4cf4-9078-36759f24db29" class="cell" data-execution_count="2">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">## | echo: false</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">## %load_ext lab_black</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>BPE Is Adaptive Computation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>There is a deeper way to read what merging buys you. The Transformer spends the same compute on every token: one slot in the residual stream, one forward pass. BPE decides how much text each of those fixed-cost slots has to cover. Common words are merged into a single token and get one forward pass; rare words survive as several tokens and get several. Because a word’s rarity tracks its information content, this is the right allocation almost by accident: the tokenizer routes more of the model’s compute toward the surprising parts of the input and less toward the boilerplate. Merging also hands the model priors for free, since a word arriving as <code>un</code> + <code>happ</code> + <code>iness</code> means morphology is baked into the input rather than relearned from scratch.</p>
+</div>
 </div>
 </section>
 </section>
@@ -712,116 +715,129 @@ background-size: cover;
 <h2 class="anchored" data-anchor-id="implementation">Implementation</h2>
 <p>Let’s turn the algorithm into code. The <code>BPETokenizer</code> class below has four core methods, each mapping directly to a step we’ve discussed:</p>
 <ul>
-<li><strong><code>train</code></strong>: The learning loop - encode the corpus to bytes, then greedily merge the most frequent pair <code>vocab_size - 256</code> times. Each merge is recorded in <code>self.merges</code> as a <code>(pair) → index</code> mapping. This ordered dictionary <em>is</em> the tokenizer.</li>
-<li><strong><code>encode</code></strong>: The encoding step - convert new text to bytes, then apply merges in <em>learned order</em> (earliest first, using the <code>min</code> trick we discussed). This is where training-order matters: we pick the pair with the smallest merge index, not the most frequent.</li>
-<li><strong><code>decode</code></strong>: The inverse - look up each token ID in the vocabulary to get its byte sequence, concatenate, and decode back to a string.</li>
+<li><strong><code>train</code></strong> (the learning loop): encode the corpus to bytes, then greedily merge the most frequent pair <code>vocab_size - 256</code> times. Each merge is recorded in <code>self.merges</code> as a <code>(pair) → index</code> mapping. This ordered dictionary <em>is</em> the tokenizer.</li>
+<li><strong><code>encode</code></strong> (the encoding step): convert new text to bytes, then apply merges in <em>learned order</em> (earliest first, using the <code>min</code> trick we discussed). This is where training-order matters: we pick the pair with the smallest merge index, not the most frequent.</li>
+<li><strong><code>decode</code></strong> (the inverse): look up each token ID in the vocabulary to get its byte sequence, concatenate, and decode back to a string. Not every byte sequence is valid UTF-8 (a merge can produce bytes that don’t form a legal character), so decoding passes <code>errors="replace"</code>, substituting <code>�</code> rather than crashing.</li>
 <li><strong><code>_get_stats</code> / <code>_merge</code></strong>: Helpers that count adjacent pairs and replace a specific pair with its merged token throughout a sequence.</li>
 </ul>
-<p>One implementation detail: <code>_build_vocab</code> relies on Python 3.7+ dictionary insertion order. Since merges are inserted chronologically, iterating <code>self.merges</code> replays them in order - each merged token is the byte-concatenation of its two parents, which must already exist in the vocabulary.</p>
-<div id="1517b8b6-f809-44a3-a368-2ecf7073c0d5" class="cell" data-execution_count="23">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">## | code-fold: true</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Iterable</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>One implementation detail: <code>_build_vocab</code> relies on Python 3.7+ dictionary insertion order. Since merges are inserted chronologically, iterating <code>self.merges</code> replays them in order: each merged token is the byte-concatenation of its two parents, which must already exist in the vocabulary.</p>
+<div id="1517b8b6-f809-44a3-a368-2ecf7073c0d5" class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Iterable</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 </div>
-<div id="a672ce35-a11c-4452-92fa-09b54198aa31" class="cell" data-execution_count="24">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> BPETokenizer:</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Byte-pair encoder."""</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, vocab_sz: <span class="bu">int</span>):</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">            vocab_sz (int): Vocabulary size.</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.vocab_sz <span class="op">=</span> vocab_sz</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.vocab <span class="op">=</span> {}</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.merges <span class="op">=</span> {}</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> train(<span class="va">self</span>, text: Iterable[<span class="bu">str</span>]):</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Train Byte-pair encoder."""</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        ids <span class="op">=</span> <span class="bu">list</span>(text.encode(<span class="st">"utf-8"</span>))</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> idx <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">256</span>, <span class="va">self</span>.vocab_sz):</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>            stats <span class="op">=</span> <span class="va">self</span>._get_stats(ids)</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>            pair <span class="op">=</span> <span class="bu">max</span>(stats, key<span class="op">=</span>stats.get)</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.merges[pair] <span class="op">=</span> idx</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>            ids <span class="op">=</span> <span class="va">self</span>._merge(ids, pair, idx)</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.vocab <span class="op">=</span> <span class="va">self</span>._build_vocab(ids)</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> encode(<span class="va">self</span>, text):</span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Encode string to bytes using vocabulary built during training."""</span></span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>        ids <span class="op">=</span> <span class="bu">list</span>(text.encode(<span class="st">"utf-8"</span>))</span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>        <span class="co">## If text is empty or has one character -&gt; it is already encoded from previous step</span></span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> <span class="bu">len</span>(ids) <span class="op">&gt;=</span> <span class="dv">2</span>:</span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>            <span class="co">## stats is used only for getting pairs next to each other</span></span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>            stats <span class="op">=</span> <span class="va">self</span>._get_stats(ids)</span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>            <span class="co">## Because we built vocab (and merges) bottom-up, we need to encode</span></span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>            <span class="co">## idx from smallest index because some later pairs depend on pairs</span></span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>            <span class="co">## occured before</span></span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>            <span class="co">## If a pair doesn't exist, it wouldn't participate in the list</span></span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>            pair <span class="op">=</span> <span class="bu">min</span>(stats, key<span class="op">=</span><span class="kw">lambda</span> p: <span class="va">self</span>.merges.get(p, <span class="bu">float</span>(<span class="st">"inf"</span>)))</span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> pair <span class="kw">not</span> <span class="kw">in</span> <span class="va">self</span>.merges:</span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>                <span class="cf">break</span>  <span class="co">## No more pairs to merge</span></span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>            idx <span class="op">=</span> <span class="va">self</span>.merges[pair]</span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>            ids <span class="op">=</span> <span class="va">self</span>._merge(ids, pair, idx)</span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ids</span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> decode(<span class="va">self</span>, tokens: Iterable[<span class="bu">int</span>]):</span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Decode tokens into string using the vocabulary built during training."""</span></span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>        tokens <span class="op">=</span> <span class="st">b""</span>.join(<span class="va">self</span>.vocab[idx] <span class="cf">for</span> idx <span class="kw">in</span> tokens)</span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>        <span class="co">## It is important to replace tokens that were not seen during training</span></span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>        <span class="co">## with `?`; otherwise, it would fail</span></span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> tokens.decode(<span class="st">"utf-8"</span>, errors<span class="op">=</span><span class="st">"replace"</span>)</span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _get_stats(<span class="va">self</span>, ids: Iterable[<span class="bu">int</span>]):</span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Get pair counts."""</span></span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>        counts <span class="op">=</span> {}</span>
-<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> pair <span class="kw">in</span> <span class="bu">zip</span>(ids, ids[<span class="dv">1</span>:]):</span>
-<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>            counts[pair] <span class="op">=</span> counts.get(pair, <span class="dv">0</span>) <span class="op">+</span> <span class="dv">1</span></span>
-<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> counts</span>
-<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _merge(<span class="va">self</span>, ids: Iterable[<span class="bu">int</span>], pair: Iterable[<span class="bu">int</span>], idx: <span class="bu">int</span>):</span>
-<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Merge pairs that match `pair` with new index `idx`."""</span></span>
-<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>        newids <span class="op">=</span> []</span>
-<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>        i <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> i <span class="op">&lt;</span> <span class="bu">len</span>(ids):</span>
-<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> i <span class="op">&lt;</span> <span class="bu">len</span>(ids) <span class="op">-</span> <span class="dv">1</span> <span class="kw">and</span> pair[<span class="dv">0</span>] <span class="op">==</span> ids[i] <span class="kw">and</span> pair[<span class="dv">1</span>] <span class="op">==</span> ids[i <span class="op">+</span> <span class="dv">1</span>]:</span>
-<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>                newids.append(idx)</span>
-<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>                i <span class="op">+=</span> <span class="dv">2</span></span>
-<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>:</span>
-<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>                newids.append(ids[i])</span>
-<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>                i <span class="op">+=</span> <span class="dv">1</span></span>
-<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> newids</span>
-<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _build_vocab(<span class="va">self</span>, ids: Iterable[<span class="bu">int</span>]):</span>
-<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Build vocabulary from 0-255 bytes and merges."""</span></span>
-<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>        vocab <span class="op">=</span> {idx: <span class="bu">bytes</span>([idx]) <span class="cf">for</span> idx <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">256</span>)}</span>
-<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>        <span class="co">## Here we assume the items returned would be in the same order they were inserted.</span></span>
-<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>        <span class="co">## This is Okay Python 3.7+</span></span>
-<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> (p0, p1), idx <span class="kw">in</span> <span class="va">self</span>.merges.items():</span>
-<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>            <span class="co">## This would be a concatenation of the bytes</span></span>
-<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>            vocab[idx] <span class="op">=</span> vocab[p0] <span class="op">+</span> vocab[p1]</span>
-<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> vocab</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="a672ce35-a11c-4452-92fa-09b54198aa31" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> BPETokenizer:</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Byte-pair encoder."""</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, vocab_sz: <span class="bu">int</span>):</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">            vocab_sz (int): Vocabulary size.</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.vocab_sz <span class="op">=</span> vocab_sz</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.vocab <span class="op">=</span> {}</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.merges <span class="op">=</span> {}</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> train(<span class="va">self</span>, text: Iterable[<span class="bu">str</span>]):</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Train Byte-pair encoder."""</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        ids <span class="op">=</span> <span class="bu">list</span>(text.encode(<span class="st">"utf-8"</span>))</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> idx <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">256</span>, <span class="va">self</span>.vocab_sz):</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>            stats <span class="op">=</span> <span class="va">self</span>._get_stats(ids)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>            pair <span class="op">=</span> <span class="bu">max</span>(stats, key<span class="op">=</span>stats.get)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.merges[pair] <span class="op">=</span> idx</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>            ids <span class="op">=</span> <span class="va">self</span>._merge(ids, pair, idx)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.vocab <span class="op">=</span> <span class="va">self</span>._build_vocab(ids)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> encode(<span class="va">self</span>, text):</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Encode string to bytes using vocabulary built during training."""</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>        ids <span class="op">=</span> <span class="bu">list</span>(text.encode(<span class="st">"utf-8"</span>))</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>        <span class="co">## If text is empty or has one character -&gt; it is already encoded from previous step</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> <span class="bu">len</span>(ids) <span class="op">&gt;=</span> <span class="dv">2</span>:</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>            <span class="co">## stats is used only for getting pairs next to each other</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>            stats <span class="op">=</span> <span class="va">self</span>._get_stats(ids)</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>            <span class="co">## Because we built vocab (and merges) bottom-up, we need to encode</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>            <span class="co">## idx from smallest index because some later pairs depend on pairs</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>            <span class="co">## occured before. In other words, more frequent pairs would have</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>            <span class="co">## lower indices that less frequent pairs -&gt; To get the fist pairs</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>            <span class="co">## we need to get the lowest indices first before moving on.</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>            <span class="co">## If a pair doesn't exist, it wouldn't participate in the list</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>            pair <span class="op">=</span> <span class="bu">min</span>(stats, key<span class="op">=</span><span class="kw">lambda</span> p: <span class="va">self</span>.merges.get(p, <span class="bu">float</span>(<span class="st">"inf"</span>)))</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> pair <span class="kw">not</span> <span class="kw">in</span> <span class="va">self</span>.merges:</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>                <span class="cf">break</span>  <span class="co">## No more pairs to merge</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>            idx <span class="op">=</span> <span class="va">self</span>.merges[pair]</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>            ids <span class="op">=</span> <span class="va">self</span>._merge(ids, pair, idx)</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ids</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> decode(<span class="va">self</span>, tokens: Iterable[<span class="bu">int</span>]):</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Decode tokens into string using the vocabulary built during training."""</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>        tokens <span class="op">=</span> <span class="st">b""</span>.join(<span class="va">self</span>.vocab[idx] <span class="cf">for</span> idx <span class="kw">in</span> tokens)</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>        <span class="co">## It is important to replace tokens that were not seen during training</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>        <span class="co">## with `?`; otherwise, it would fail</span></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> tokens.decode(<span class="st">"utf-8"</span>, errors<span class="op">=</span><span class="st">"replace"</span>)</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _get_stats(<span class="va">self</span>, ids: Iterable[<span class="bu">int</span>]):</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Get pair counts."""</span></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>        counts <span class="op">=</span> {}</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> pair <span class="kw">in</span> <span class="bu">zip</span>(ids, ids[<span class="dv">1</span>:]):</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>            counts[pair] <span class="op">=</span> counts.get(pair, <span class="dv">0</span>) <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> counts</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _merge(<span class="va">self</span>, ids: Iterable[<span class="bu">int</span>], pair: Iterable[<span class="bu">int</span>], idx: <span class="bu">int</span>):</span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Merge pairs that match `pair` with new index `idx`."""</span></span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>        newids <span class="op">=</span> []</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>        i <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> i <span class="op">&lt;</span> <span class="bu">len</span>(ids):</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> i <span class="op">&lt;</span> <span class="bu">len</span>(ids) <span class="op">-</span> <span class="dv">1</span> <span class="kw">and</span> pair[<span class="dv">0</span>] <span class="op">==</span> ids[i] <span class="kw">and</span> pair[<span class="dv">1</span>] <span class="op">==</span> ids[i <span class="op">+</span> <span class="dv">1</span>]:</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>                newids.append(idx)</span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>                i <span class="op">+=</span> <span class="dv">2</span></span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>:</span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>                newids.append(ids[i])</span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>                i <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> newids</span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _build_vocab(<span class="va">self</span>, ids: Iterable[<span class="bu">int</span>]):</span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Build vocabulary from 0-255 bytes and merges."""</span></span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>        vocab <span class="op">=</span> {idx: <span class="bu">bytes</span>([idx]) <span class="cf">for</span> idx <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">256</span>)}</span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>        <span class="co">## Here we assume the items returned would be in the same order they were inserted.</span></span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>        <span class="co">## This is Okay Python 3.7+</span></span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> (p0, p1), idx <span class="kw">in</span> <span class="va">self</span>.merges.items():</span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>            <span class="co">## This would be a concatenation of the bytes</span></span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>            vocab[idx] <span class="op">=</span> vocab[p0] <span class="op">+</span> vocab[p1]</span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> vocab</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="a26b9c11-cf65-45ca-a03a-7f2acef56f13" class="cell" data-execution_count="25">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> requests.get(<span class="st">"https://docs.python.org/3/library/stdtypes.html#bytes.decode"</span>).text</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="a26b9c11-cf65-45ca-a03a-7f2acef56f13" class="cell" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> requests.get(<span class="st">"https://docs.python.org/3/library/stdtypes.html#bytes.decode"</span>).text</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="4368c372-793e-4ca7-be14-c8e62b9c9ca9" class="cell" data-execution_count="26">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>tokenizer <span class="op">=</span> BPETokenizer(<span class="dv">300</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="4368c372-793e-4ca7-be14-c8e62b9c9ca9" class="cell" data-execution_count="24">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>tokenizer <span class="op">=</span> BPETokenizer(<span class="dv">300</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="6a4e7562-ca4c-4e81-907c-70479b2448ce" class="cell" data-execution_count="27">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>tokenizer.train(text)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="6a4e7562-ca4c-4e81-907c-70479b2448ce" class="cell" data-execution_count="25">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>tokenizer.train(text)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="3ba82c99-8c22-4c9e-be22-717b6be33ab3" class="cell" data-execution_count="28">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>tokenizer.decode(tokenizer.encode(text)) <span class="op">==</span> text</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="28">
+<div id="3ba82c99-8c22-4c9e-be22-717b6be33ab3" class="cell" data-execution_count="26">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>tokenizer.decode(tokenizer.encode(text)) <span class="op">==</span> text</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="26">
 <pre><code>True</code></pre>
 </div>
+</div>
+<div id="c051bad1" class="cell" data-execution_count="41">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Compression rate: </span><span class="sc">{</span><span class="bu">len</span>(<span class="bu">list</span>(text.encode(<span class="st">'utf-8'</span>))) <span class="op">/</span> <span class="bu">len</span>(tokenizer.encode(text))<span class="sc">:.1f}</span><span class="ss">x"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Compression rate: 1.9x</code></pre>
+</div>
+</div>
+<div id="8f6f6a89" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>BPETokenizer(<span class="dv">10</span>).train(<span class="st">"imad"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="from-vanilla-bpe-to-gpt-2s-tokenizer" class="level2">
 <h2 class="anchored" data-anchor-id="from-vanilla-bpe-to-gpt-2s-tokenizer">From Vanilla BPE to GPT-2’s Tokenizer</h2>
-<p>The implementation above is vanilla byte-level BPE - it works, but it has a practical problem. Because merges are purely frequency-driven, the algorithm doesn’t respect word boundaries. The word “play” might appear in the corpus as “play.”, “play!”, “play,”, and “play” - and BPE will learn separate tokens for each variant, wasting vocabulary slots on what is essentially the same word with different punctuation.</p>
-<p>GPT-2 (<a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf">Radford et al., 2019</a>) introduced a key refinement: <strong>pre-tokenization with a regex pattern</strong> that splits text into chunks <em>before</em> BPE runs. The regex prevents merges from crossing certain boundaries - letters can’t merge with digits, punctuation stays separate from words, and spaces attach to the <em>beginning</em> of words rather than the end.</p>
+<p>The implementation above is vanilla byte-level BPE: it works, but it has a practical problem. Because merges are purely frequency-driven, the algorithm doesn’t respect word boundaries. The word “play” might appear in the corpus as “play.”, “play!”, “play,”, and “play”, and BPE will learn separate tokens for each variant, wasting vocabulary slots on what is essentially the same word with different punctuation.</p>
+<p>GPT-2 (<a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf">Radford et al., 2019</a>) introduced a key refinement: <strong>pre-tokenization with a regex pattern</strong> that splits text into chunks <em>before</em> BPE runs. The regex prevents merges from crossing certain boundaries: letters can’t merge with digits, punctuation stays separate from words, and spaces attach to the <em>beginning</em> of words rather than the end.</p>
 <p>The GPT-2 regex pattern:</p>
 <pre><code>'(?:[sdmt]|ll|ve|re)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+</code></pre>
 <p>This ensures that:</p>
@@ -842,21 +858,21 @@ background-size: cover;
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Use <a href="https://tiktokenizer.vercel.app">Tiktokenizer</a> to see how GPT-2 and GPT-4 tokenize arbitrary text. Try pasting the same sentence in English and another language - you’ll immediately see the multilingual tokenization tax in action: the non-English version will use significantly more tokens for the same meaning.</p>
+<p>Use <a href="https://tiktokenizer.vercel.app">Tiktokenizer</a> to see how GPT-2 and GPT-4 tokenize arbitrary text. Try pasting the same sentence in English and another language, and you’ll immediately see the multilingual tokenization tax in action: the non-English version will use significantly more tokens for the same meaning.</p>
 </div>
 </div>
-<p>This pre-tokenization pattern has been refined in later models. GPT-4 uses a <a href="https://github.com/openai/tiktoken">more sophisticated pattern</a> that handles apostrophes, numbers, and whitespace more carefully, and also limits the length of digit sequences to avoid learning overly specific number tokens. The core idea remains the same: constrain where merges can happen to produce a more useful vocabulary.</p>
+<p>This pre-tokenization pattern has been refined in later models. GPT-4 uses a <a href="https://github.com/openai/tiktoken">more sophisticated pattern</a> that handles apostrophes, numbers, and whitespace more carefully, and also limits the length of digit sequences to avoid learning overly specific number tokens. The core idea remains the same: constrain where merges can happen to produce a more useful vocabulary. I build a working GPT-2 on top of a tokenizer like this in <a href="../../posts/nlp/GPT2-From-Scratch.html">Building GPT-2 from Scratch</a>.</p>
 </section>
 <section id="references-resources" class="level2">
 <h2 class="anchored" data-anchor-id="references-resources">References &amp; Resources</h2>
 <ul>
-<li><strong>Gage, P.</strong> (1994). <a href="https://www.derczynski.com/papers/archive/BPE_Gage.pdf">A New Algorithm for Data Compression</a>. <em>The C Users Journal</em>. The original BPE paper - a compression algorithm that found new life in NLP.</li>
-<li><strong>Sennrich, R. et al.</strong> (2016). <a href="https://arxiv.org/abs/1508.07909">Neural Machine Translation of Rare Words with Subword Units</a>. <em>ACL 2016</em>. The paper that adapted BPE for NLP tokenization.</li>
-<li><strong>Radford, A. et al.</strong> (2019). <a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf">Language Models are Unsupervised Multitask Learners</a>. The GPT-2 paper that introduced byte-level BPE with regex pre-tokenization.</li>
-<li><strong>Karpathy, A.</strong> (2024). <a href="https://www.youtube.com/watch?v=zduSFxRajkE">Let’s build the GPT Tokenizer</a>. Excellent video walkthrough of building a BPE tokenizer from scratch.</li>
-<li><a href="https://www.reedbeta.com/blog/programmers-intro-to-unicode/">A Programmer’s Introduction to Unicode</a> - why bytes vs.&nbsp;code points matters.</li>
-<li><a href="https://utf8everywhere.org/">UTF-8 Everywhere</a> - the case for UTF-8 as the universal encoding.</li>
-<li><a href="https://tiktokenizer.vercel.app">Tiktokenizer</a> - interactive web app to visualize how different tokenizers split text.</li>
+<li><strong>Gage, P.</strong> (1994). <a href="https://www.derczynski.com/papers/archive/BPE_Gage.pdf">A New Algorithm for Data Compression</a>. <em>The C Users Journal</em>.</li>
+<li><strong>Sennrich, R. et al.</strong> (2016). <a href="https://arxiv.org/abs/1508.07909">Neural Machine Translation of Rare Words with Subword Units</a>. <em>ACL</em>.</li>
+<li><strong>Radford, A. et al.</strong> (2019). <a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf">Language Models are Unsupervised Multitask Learners</a>.</li>
+<li><strong>Karpathy, A.</strong> (2024). <a href="https://www.youtube.com/watch?v=zduSFxRajkE">Let’s build the GPT Tokenizer</a>.</li>
+<li><a href="https://www.reedbeta.com/blog/programmers-intro-to-unicode/">A Programmer’s Introduction to Unicode</a>.</li>
+<li><a href="https://utf8everywhere.org/">UTF-8 Everywhere</a>.</li>
+<li><a href="https://tiktokenizer.vercel.app">Tiktokenizer</a>.</li>
 </ul>
 
 
