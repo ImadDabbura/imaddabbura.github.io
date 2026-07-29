@@ -1,0 +1,69 @@
+---
+title: "QLORA: Efficient Finetuning of Quantized LLMs"
+date: 2023-07-15
+description: "4-bit quantized LLM fine-tuning with LoRA adapters: near full-precision performance, drastic memory reduction, single-GPU training."
+categories:
+  - Efficient Adaptation
+---
+
+[QLORA: Efficient Finetuning of Quantized LLMs](https://arxiv.org/pdf/2305.14314)
+
+* **Thesis**: It is possible to fine-tune a 4-bit quantized large language model without sacrificing the performance of 16-bit fine-tuning by keeping the pretrained model frozen, training only LoRA adapters, and introducing new quantization and memory-management techniques. This reduces the memory required to fine-tune a 65B model from over 780 GB to under 48 GB, making single-GPU fine-tuning practical.
+* **Methods**:
+  * Freeze the pretrained model and store it in 4-bit NF4 (NormalFloat4) format.
+  * Train only LoRA adapters while gradients flow through the frozen quantized model.
+  * Dequantize on-the-fly from 4-bit storage to BF16 whenever a layer is used for computation.
+  * Introduce NF4, an information-theoretically optimal quantization format for normally distributed weights.
+  * Introduce Double Quantization (DQ), which quantizes the quantization constants themselves to save additional memory.
+  * Introduce Paged Optimizers, which use NVIDIA Unified Memory to avoid GPU OOM spikes during gradient checkpointing.
+  * Apply LoRA adapters to all linear layers, not just attention projections, to recover full fine-tuning performance.
+* **Contribution**:
+  1. First demonstration that 4-bit quantized models can be fine-tuned without measurable loss relative to 16-bit training.
+  2. Introduces NF4, a quantization datatype specifically designed for neural network weight distributions.
+  3. Introduces Double Quantization, reducing memory by about 0.37 bits per parameter.
+  4. Introduces Paged Optimizers to eliminate memory spikes during training.
+  6. Releases the Guanaco family of instruction-tuned models, achieving state-of-the-art open-source chatbot performance.
+* **Importance**: This paper fundamentally changes the economics of LLM fine-tuning. The paper also demonstrates that increasing model size while lowering precision can be a better use of a fixed memory budget than using a smaller model at higher precision.
+  * Before QLoRA:
+    * Large models required clusters of high-memory GPUs.
+    * Academic labs and individuals could rarely fine-tune models above ~13B.
+  * After QLoRA:
+    * A 65B model can be fine-tuned on a single professional GPU.
+    * Parameter-efficient fine-tuning became accessible to a much broader community.
+    * QLoRA became the foundation for much of the Hugging Face PEFT ecosystem and many practical LLM fine-tuning workflows.
+* **Takeaways**:
+  * Quantization is no longer just an inference optimization—it can also enable training.
+  * Storage precision and computation precision should be treated separately. QLoRA stores weights in 4-bit but computes in BF16.
+  * The largest memory bottleneck during PEFT is often the frozen base model, not the LoRA parameters.
+  * NF4 is consistently better than FP4 and Int4 for pretrained weight quantization.
+  * Data quality matters more than dataset size for instruction tuning.
+  * Strong MMLU performance does not necessarily imply strong chatbot performance.
+  * GPT-4 is a useful but imperfect evaluator; human evaluation remains important.
+* **Improvements**: The authors themselves identify several areas for future work:
+  * Better characterize when paged optimizers incur runtime slowdowns.
+  * Determine where the performance–precision trade-off lies below 4-bit quantization.
+  * Develop stronger chatbot evaluation benchmarks, as current ones have weaknesses.
+  * Improve robustness in instruction following and reduce failure modes revealed by qualitative analysis (e.g., math, prompt injection, inconsistent refusals).
+* **Questions**:
+  * Why does NF4 outperform FP4 despite both using 4 bits?
+  * Why does dequantizing every forward pass not erase the speed gains from reduced memory traffic?
+  * Could the same storage/computation separation work with 2-bit or ternary weights?
+  * What assumptions about pretrained weight distributions make NF4 effective?
+  * How much of QLoRA's success comes from quantization versus simply using LoRA on all linear layers?
+  * Could optimizer states also be quantized without harming convergence?
+* **Notes**:
+  * QLoRA is not a new adapter method; it is LoRA applied to a quantized base model.
+  * Base model:
+    * Stored in 4-bit NF4
+    * Frozen
+    * Never updated
+  * LoRA adapters:
+    * Stored and trained in BF16
+    * Only trainable parameters
+  * Every forward/backward pass performs:
+    1. Load 4-bit weights
+    2. Dequantize to BF16
+    3. Matrix multiplication
+    4. Compute gradients only for LoRA adapters
+  * Memory is saved because the model remains stored in 4-bit throughout training; the temporary BF16 representation exists only during computation.
+  * The paper's conceptual innovation is separating storage precision from computation precision, enabling efficient training without sacrificing model quality.
